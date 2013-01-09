@@ -1,0 +1,20 @@
+Description: Disable graphics intensive modes for LTSP
+Bug: https://bugs.edge.launchpad.net/ubuntu/+source/ltsp/+bug/18595 
+Author: Oliver Grawert
+
+Index: gnome-screensaver-2.91.0/src/gs-manager.c
+===================================================================
+--- gnome-screensaver-2.91.0.orig/src/gs-manager.c	2010-12-08 15:18:39.577450001 +1100
++++ gnome-screensaver-2.91.0/src/gs-manager.c	2010-12-08 15:18:41.981450001 +1100
+@@ -143,6 +143,11 @@
+                 return NULL;
+         }
+ 
++	if (g_getenv("LTSP_CLIENT")) {
++		gs_debug ("On LTSP Client, forcing blank only mode");
++		return NULL;
++	}
++
+         if (manager->priv->themes) {
+                 int number = 0;
+ 

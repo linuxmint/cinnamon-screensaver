@@ -1,0 +1,18 @@
+Description: Work around LP: #546578 by disabling the fade effect on screen locking
+Bug-Ubuntu: https://launchpad.net/bugs/546578
+Forwarded: not-needed
+Author: Chris Coulson <chris.coulson@canonical.com>
+
+Index: gnome-screensaver-2.91.0/src/gs-manager.c
+===================================================================
+--- gnome-screensaver-2.91.0.orig/src/gs-manager.c	2010-12-08 15:18:47.137450000 +1100
++++ gnome-screensaver-2.91.0/src/gs-manager.c	2010-12-08 15:18:52.665450001 +1100
+@@ -1743,7 +1743,7 @@
+         manager->priv->active = TRUE;
+ 
+         /* fade to black and show windows */
+-        do_fade = TRUE;
++        do_fade = FALSE;
+         if (do_fade) {
+                 manager->priv->fading = TRUE;
+                 gs_debug ("fading out");

@@ -1,0 +1,1 @@
+rm_conffile /etc/xdg/menus/gnome-screensavers.menu 3.2.0-1 gnome-screensaver

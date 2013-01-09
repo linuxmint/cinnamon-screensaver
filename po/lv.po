@@ -1,0 +1,681 @@
+# translation of lv.po to Latvian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+#
+# Valdis Vizulis <valdis.vizulis@gmail.com>, 2006.
+# Raivis Dejus <orvils@gmail.com>, 2006, 2007, 2009.
+# Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2009, 2010.
+# Rudolfs <rudolfs.mazurs@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: lv\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
+"cgi?product=gnome-screensaver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-03-15 12:22+0000\n"
+"PO-Revision-Date: 2011-03-26 14:08+0200\n"
+"Last-Translator: Rudolfs <rudolfs.mazurs@gmail.com>\n"
+"Language-Team: Latvian <lata-l10n@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"X-Generator: Lokalize 1.1\n"
+
+#: ../src/gnome-screensaver-command.c:46
+msgid "Causes the screensaver to exit gracefully"
+msgstr "Liek ekrānsaudzētājam saudzīgi iziet"
+
+#: ../src/gnome-screensaver-command.c:48
+msgid "Query the state of the screensaver"
+msgstr "Vaicā ekrānsaudzētāja stāvokli"
+
+#: ../src/gnome-screensaver-command.c:50
+msgid "Query the length of time the screensaver has been active"
+msgstr "Vaicājums par laiku, kurā ekrānsaudzētāja ir bijis aktīvs"
+
+#: ../src/gnome-screensaver-command.c:52
+msgid "Tells the running screensaver process to lock the screen immediately"
+msgstr "Liek strādājošam ekrānsaudzētāja procesam nekavējoties noslēgt ekrānu"
+
+#: ../src/gnome-screensaver-command.c:54
+msgid "Turn the screensaver on (blank the screen)"
+msgstr "Ieslēgt ekrānsaudzētāju (notīrīt ekrānu)"
+
+#: ../src/gnome-screensaver-command.c:56
+msgid "If the screensaver is active then deactivate it (un-blank the screen)"
+msgstr "Ja ekrānsaudzētājs ir aktīvs, tad deaktivizēt to (at-notīrīt ekrānu)"
+
+#: ../src/gnome-screensaver-command.c:58 ../src/gnome-screensaver-dialog.c:59
+#: ../src/gnome-screensaver.c:56
+msgid "Version of this application"
+msgstr "Šīs lietotnes versija"
+
+#: ../src/gnome-screensaver-command.c:224
+#, c-format
+msgid "The screensaver is active\n"
+msgstr "Ekrānsaudzētājs ir aktīvs\n"
+
+#: ../src/gnome-screensaver-command.c:226
+#, c-format
+msgid "The screensaver is inactive\n"
+msgstr "Ekrānsaudzētājs ir neaktīvs\n"
+
+#: ../src/gnome-screensaver-command.c:256
+#, c-format
+#| msgid "The screensaver has been active for %d seconds.\n"
+msgid "The screensaver has been active for %d second.\n"
+msgid_plural "The screensaver has been active for %d seconds.\n"
+msgstr[0] "Ekrānsaudzētājs ir bijis aktīvs %d sekundi.\n"
+msgstr[1] "Ekrānsaudzētājs ir bijis aktīvs %d sekundes.\n"
+msgstr[2] "Ekrānsaudzētājs ir bijis aktīvs %d sekundes.\n"
+
+#: ../src/gnome-screensaver-command.c:258
+#, c-format
+msgid "The screensaver is not currently active.\n"
+msgstr "Ekrānsaudzētājs pašlaik nav aktīvs.\n"
+
+#: ../src/gnome-screensaver-dialog.c:57
+msgid "Show debugging output"
+msgstr "Rādīt atkļūdošanas izvadu"
+
+#: ../src/gnome-screensaver-dialog.c:61
+msgid "Show the logout button"
+msgstr "Rādīt atteikšanās pogu"
+
+#: ../src/gnome-screensaver-dialog.c:63
+msgid "Command to invoke from the logout button"
+msgstr "Komanda, kuru izsaukt, nospiežot atteikšanās pogu"
+
+#: ../src/gnome-screensaver-dialog.c:65
+msgid "Show the switch user button"
+msgstr "Rādīt lietotāju pārslēgšanas pogu"
+
+#: ../src/gnome-screensaver-dialog.c:67
+msgid "Message to show in the dialog"
+msgstr "Logā rādāmais ziņojums"
+
+#. Translators: This is the example input for the --status-message command line option.
+#. Translators: This is the example input for the --away-message command line option.
+#: ../src/gnome-screensaver-dialog.c:69 ../src/gnome-screensaver-dialog.c:73
+msgid "MESSAGE"
+msgstr "ZIŅOJUMS"
+
+#: ../src/gnome-screensaver-dialog.c:71
+msgid "Not used"
+msgstr "Nav izmantots"
+
+#. login: is whacked always translate to Username:
+#: ../src/gnome-screensaver-dialog.c:183 ../src/gnome-screensaver-dialog.c:184
+#: ../src/gnome-screensaver-dialog.c:185 ../src/gs-auth-pam.c:698
+msgid "Username:"
+msgstr "Lietotājvārds:"
+
+#: ../src/gnome-screensaver-dialog.c:186 ../src/gnome-screensaver-dialog.c:187
+#: ../src/gs-auth-pam.c:166
+msgid "Password:"
+msgstr "Parole:"
+
+#: ../src/gnome-screensaver-dialog.c:188
+msgid "You are required to change your password immediately (password aged)"
+msgstr "Jums nekavējoties jānomaina parole (parole novecojusi)"
+
+#: ../src/gnome-screensaver-dialog.c:189
+msgid "You are required to change your password immediately (root enforced)"
+msgstr "Jums nekavējoties jānomaina parole (administratora prasība)"
+
+#: ../src/gnome-screensaver-dialog.c:190
+msgid "Your account has expired; please contact your system administrator"
+msgstr ""
+"Jūsu konta derīgums ir beidzies. Lūdzu, sazinieties ar sistēmas "
+"administratoru"
+
+#: ../src/gnome-screensaver-dialog.c:191
+msgid "No password supplied"
+msgstr "Nav ievadīta parole"
+
+#: ../src/gnome-screensaver-dialog.c:192
+msgid "Password unchanged"
+msgstr "Parole nav mainīta"
+
+#: ../src/gnome-screensaver-dialog.c:193
+msgid "Cannot get username"
+msgstr "Nevar noteikt lietotājvārdu"
+
+#: ../src/gnome-screensaver-dialog.c:194
+msgid "Retype new Unix password:"
+msgstr "Ievadiet jauno Unix paroli vēlreiz:"
+
+#: ../src/gnome-screensaver-dialog.c:195
+msgid "Enter new Unix password:"
+msgstr "Ievadiet jauno Unix paroli:"
+
+#: ../src/gnome-screensaver-dialog.c:196
+msgid "(current) Unix password:"
+msgstr "(pašreizējā) Unix parole:"
+
+#: ../src/gnome-screensaver-dialog.c:197
+msgid "Error while changing NIS password."
+msgstr "Kļūda, mainot NIS paroli."
+
+#: ../src/gnome-screensaver-dialog.c:198
+msgid "You must choose a longer password"
+msgstr "Jums jāizvēlas garāka parole"
+
+#: ../src/gnome-screensaver-dialog.c:199
+msgid "Password has been already used. Choose another."
+msgstr "Šāda parole jau ir tikusi izmantota. Izvēlieties citu."
+
+#: ../src/gnome-screensaver-dialog.c:200
+msgid "You must wait longer to change your password"
+msgstr "Jums jāuzgaida ilgāk, lai nomainītu savu paroli"
+
+#: ../src/gnome-screensaver-dialog.c:201
+msgid "Sorry, passwords do not match"
+msgstr "Atvainojiet, paroles nesakrīt"
+
+#: ../src/gnome-screensaver-dialog.c:267
+msgid "Checking…"
+msgstr "Pārbauda…"
+
+#: ../src/gnome-screensaver-dialog.c:309 ../src/gs-auth-pam.c:457
+msgid "Authentication failed."
+msgstr "Autentifikācija nav izdevusies."
+
+#: ../src/gnome-screensaver.c:57
+msgid "Don't become a daemon"
+msgstr "Nekļūst par dēmonu"
+
+#: ../src/gnome-screensaver.c:58
+msgid "Enable debugging code"
+msgstr "Ieslēgt atkļūdošans kodu"
+
+#: ../src/gnome-screensaver.desktop.in.in.h:1
+msgid "Launch screensaver and locker program"
+msgstr "Palaist ekrāna saudzētāju un noslēgšanas programmu"
+
+#: ../src/gnome-screensaver.desktop.in.in.h:2
+msgid "Screensaver"
+msgstr "Ekrānsaudzētājs"
+
+#: ../src/gs-auth-pam.c:397
+#, c-format
+msgid "Unable to establish service %s: %s\n"
+msgstr "Nevar uzsākt servisu %s: %s\n"
+
+#: ../src/gs-auth-pam.c:423
+#, c-format
+msgid "Can't set PAM_TTY=%s"
+msgstr "Nevar iestatīt PAM_TTY=%s"
+
+#: ../src/gs-auth-pam.c:455
+msgid "Incorrect password."
+msgstr "Nepareiza parole."
+
+#: ../src/gs-auth-pam.c:471
+msgid "Not permitted to gain access at this time."
+msgstr "Šādā laikā nav ļauts piekļūt sistēmai."
+
+#: ../src/gs-auth-pam.c:477
+msgid "No longer permitted to access the system."
+msgstr "Vairs nav tiesību piekļūt sistēmai."
+
+#: ../src/gs-listener-dbus.c:1148
+msgid "failed to register with the message bus"
+msgstr "Neizdevās reģistrēt ar ziņojumu kopni"
+
+#: ../src/gs-listener-dbus.c:1158
+msgid "not connected to the message bus"
+msgstr "nav savienots ar ziņojumu kopni"
+
+#: ../src/gs-listener-dbus.c:1167 ../src/gs-listener-dbus.c:1197
+msgid "screensaver already running in this session"
+msgstr "Ekrānsaudzētājs jau darbojas šajā sesijā"
+
+#: ../src/gs-lock-plug.c:256
+msgid "Time has expired."
+msgstr "Laiks ir iztecējis."
+
+#: ../src/gs-lock-plug.c:287
+msgid "You have the Caps & Num Lock keys on."
+msgstr "Jums ir ieslēgti Caps Lock un Num Lock taustiņi."
+
+#: ../src/gs-lock-plug.c:290
+msgid "You have the Caps Lock key on."
+msgstr "Jums ir ieslēgts Caps Lock taustiņš."
+
+#: ../src/gs-lock-plug.c:293
+msgid "You have the Num Lock key on."
+msgstr "Jums ir ieslēgts Num Lock taustiņš."
+
+#: ../src/gs-lock-plug.c:1350
+msgid "S_witch User…"
+msgstr "Pār_slēgt lietotāju…"
+
+#: ../src/gs-lock-plug.c:1359
+msgid "Log _Out"
+msgstr "Ats_lēgties"
+
+#: ../src/gs-lock-plug.c:1366
+msgid "_Unlock"
+msgstr "_Atslēgt"
+
+#: ../src/gs-lock-plug.c:1401
+msgid "_Password:"
+msgstr "_Parole:"
+
+#. Translators, this is the 24h date format used in the panel clock
+#: ../src/gs-window-x11.c:2199
+msgid "%a %R"
+msgstr "%a %R"
+
+#. Translators, this is the 12h date format used in the panel clock
+#: ../src/gs-window-x11.c:2202
+msgid "%a %l:%M %p"
+msgstr "%a %l:%M %p"
+
+#~ msgid "Set your screensaver preferences"
+#~ msgstr "Iestatīt sava ekrānsaudzētāja iestatījumus"
+
+#~ msgid "Power _Management"
+#~ msgstr "Barošanas _pārvaldība"
+
+#~ msgid "Regard the computer as _idle after:"
+#~ msgstr "Uzskatīt datoru kā _neaktīvu pēc:"
+
+#~ msgid "Screensaver Preferences"
+#~ msgstr "Ekrānsaudzētāja iestatījumi"
+
+#~ msgid "Screensaver Preview"
+#~ msgstr "Ekrānsaudzētāja priekšskatījums"
+
+#~| msgid "Screensaver Preview"
+#~ msgid "Screensaver preview"
+#~ msgstr "Ekrānsaudzētāja priekšskatījums"
+
+#~| msgid "<b>Warning: the screen will not be locked for the root user.</b>"
+#~ msgid "Warning: the screen will not be locked for the root user."
+#~ msgstr "Uzmanību: root lietotājam šis ekrāns netiks noslēgts."
+
+#~ msgid "_Activate screensaver when computer is idle"
+#~ msgstr "_Aktivizēt ekrānsaudzētāju, kad dators ir neaktīvs"
+
+#~ msgid "_Lock screen when screensaver is active"
+#~ msgstr "Nozs_lēgt ekrānu, kad ekrānsaudzētājs ir aktīvs"
+
+#~ msgid "_Preview"
+#~ msgstr "_Priekšskatījums"
+
+#~ msgid "_Screensaver theme:"
+#~ msgstr "Ekrān_saudzētāja tēma:"
+
+#~ msgid "Screensaver themes"
+#~ msgstr "Ekrānsaudzētāja tēmas"
+
+#~ msgid "Screensavers"
+#~ msgstr "Ekrānsaudzētāji"
+
+#~ msgid "Cosmos"
+#~ msgstr "Kosmoss"
+
+#~ msgid "Display a slideshow of pictures of the cosmos"
+#~ msgstr "Rādīt kosmosa attēlu slīdrādi"
+
+#~ msgid "Bubbles the GNOME foot logo around the screen"
+#~ msgstr "Burbuļo GNOME pēdas logo pa visu ekrānu"
+
+#~ msgid "Floating Feet"
+#~ msgstr "Peldoša pēda"
+
+#~ msgid "Display a slideshow from your Pictures folder"
+#~ msgstr "Rādīt jūsu bilžu mapes slīdrādi"
+
+#~ msgid "Pictures folder"
+#~ msgstr "Bilžu mape"
+
+#~ msgid "A pop-art-ish grid of pulsing colors."
+#~ msgstr "Pulsējošu krāsu popārtisks režģis."
+
+#~ msgid "Pop art squares"
+#~ msgstr "Popārta kvadrāti"
+
+#~ msgid "%s. See --help for usage information.\n"
+#~ msgstr "%s. Apskatiet --help, lai uzzinātu lietošanas instrukcijas.\n"
+
+#~ msgid "Show paths that images follow"
+#~ msgstr "Rādīt ceļus, kuriem seko attēli"
+
+#~ msgid "Occasionally rotate images as they move"
+#~ msgstr "Ik pa laikam rotēt bildes, kamēr tās kustās"
+
+#~ msgid "Print out frame rate and other statistics"
+#~ msgstr "Drukāt kadra ātrumu un citu statistiku"
+
+#~ msgid "The maximum number of images to keep on screen"
+#~ msgstr "Maksimālais bilžu skaits uz ekrāna"
+
+#~ msgid "MAX_IMAGES"
+#~ msgstr "MAX_IMAGES"
+
+#~ msgid "The initial size and position of window"
+#~ msgstr "Loga sākotnējais izmērs un pozīcija"
+
+#~ msgid "WIDTHxHEIGHT+X+Y"
+#~ msgstr "PLATUMSxAUGSTUMS+X+Y"
+
+#~ msgid "The source image to use"
+#~ msgstr "Sākumā izmantojamā bilde"
+
+#~| msgid "image - floats images around the screen"
+#~ msgid "image — floats images around the screen"
+#~ msgstr "bilde — peldina bildes pa visu ekrānu"
+
+#~ msgid "You must specify one image.  See --help for usage information.\n"
+#~ msgstr ""
+#~ "Jums jānorāda viena bilde.  Apskatiet --help, lai uzzinātu lietošanas "
+#~ "instrukcijas.\n"
+
+#~ msgid "Location to get images from"
+#~ msgstr "Atrašanās vieta, kur meklēt bildes"
+
+#~ msgid "PATH"
+#~ msgstr "CEĻŠ"
+
+#~| msgid "Color to use for images background"
+#~ msgid "Color to use for image background"
+#~ msgstr "Attēlu fonam izmantojamā krāsa"
+
+#~ msgid "\"#rrggbb\""
+#~ msgstr "\"#rrggbb\""
+
+#~ msgid "Do not randomize pictures from location"
+#~ msgstr "Rādīt bildes secīgi no vietas"
+
+#~ msgid "Do not try to stretch images on screen"
+#~ msgstr "Nemēģināt izstiept bildes uz ekrāna"
+
+#~ msgid "Copying files"
+#~ msgstr "Kopē failus"
+
+#~ msgid "From:"
+#~ msgstr "No:"
+
+#~ msgid "To:"
+#~ msgstr "Uz:"
+
+#~ msgid "Copying themes"
+#~ msgstr "Kopē tēmas"
+
+#~ msgid "Invalid screensaver theme"
+#~ msgstr "Nederīga ekrānsaudzētāja tēma"
+
+#~ msgid "%s does not appear to be a valid screensaver theme."
+#~ msgstr "Izskatās, ka %s nav derīga ekrānsaudzētāja tēma."
+
+#~ msgid "Copying file: %u of %u"
+#~ msgstr "Kopē failu:%u no %u"
+
+#~ msgid "If the screensaver is active then switch to another graphics demo"
+#~ msgstr ""
+#~ "Ja ekrānsaudzētājs ir aktīvs, tad pārslēgties uz citu grafikas "
+#~ "demonstrāciju"
+
+#~ msgid "Poke the running screensaver to simulate user activity"
+#~ msgstr ""
+#~ "Pabikstīt darbojošos ekrānsaudzētāju, lai simulētu lietotāja aktivitāti"
+
+#~ msgid ""
+#~ "Inhibit the screensaver from activating.  Command blocks while inhibit is "
+#~ "active."
+#~ msgstr ""
+#~ "Atturēt ekrānsaudzētāju no aktivizēšanās. Komanda bloķē, kamēr atturēšana "
+#~ "ir aktīva."
+
+#~ msgid "The calling application that is inhibiting the screensaver"
+#~ msgstr "Izsaucošā lietotne, kas nomāc ekrānsaudzētāju"
+
+#~ msgid "The reason for inhibiting the screensaver"
+#~ msgstr "Ekrānsaudzētāja nomākšanas iemesls"
+
+#~ msgid "The screensaver is not inhibited\n"
+#~ msgstr "Ekrānsaudzētājs nav nomākts\n"
+
+#~ msgid "The screensaver is being inhibited by:\n"
+#~ msgstr "Ekrānsaudzētāju nomāc:\n"
+
+#~ msgid "Blank screen"
+#~ msgstr "Tukšs ekrāns"
+
+#~ msgid "Random"
+#~ msgstr "Nejaušs"
+
+#~ msgid "%d hour"
+#~ msgid_plural "%d hours"
+#~ msgstr[0] "%d stunda"
+#~ msgstr[1] "%d stundas"
+#~ msgstr[2] "%d stundu"
+
+#~ msgid "%d minute"
+#~ msgid_plural "%d minutes"
+#~ msgstr[0] "%d minūte"
+#~ msgstr[1] "%d minūtes"
+#~ msgstr[2] "%d minūšu"
+
+#~ msgid "%d second"
+#~ msgid_plural "%d seconds"
+#~ msgstr[0] "%d sekunde"
+#~ msgstr[1] "%d sekundes"
+#~ msgstr[2] "%d sekunžu"
+
+#~ msgid "%s %s %s"
+#~ msgstr "%s %s %s"
+
+#~ msgid "%s %s"
+#~ msgstr "%s %s"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid "Never"
+#~ msgstr "Nekad"
+
+#~ msgid "Could not load the main interface"
+#~ msgstr "Nevar ielādēt galveno saskarni"
+
+#~ msgid "Please make sure that the screensaver is properly installed"
+#~ msgstr "Lūdzu, pārliecinieties, ka ekrānsaudzētājs ir pareizi uzinstalēts"
+
+#~ msgid "<b>Screensaver preview</b>"
+#~ msgstr "<b>Ekrānsaudzētāja priekšskatījums</b>"
+
+#~ msgid "Activate when idle"
+#~ msgstr "Aktivizēt, kad neaktīvs"
+
+#~ msgid "Allow embedding a keyboard into the window"
+#~ msgstr "Atļaut logos iegult tastatūru"
+
+#~ msgid "Allow logout"
+#~ msgstr "Atļaut atteikšanos"
+
+#~ msgid "Allow the session status message to be displayed"
+#~ msgstr "Ļaut rādīt sesijas statusa ziņojumus"
+
+#~ msgid ""
+#~ "Allow the session status message to be displayed when the screen is "
+#~ "locked."
+#~ msgstr "Ļaut rādīt sesijas statusa ziņojumus, kad ekrāns ir noslēgts"
+
+#~ msgid "Allow user switching"
+#~ msgstr "Atļaut lietotāju pārslēgšanu"
+
+#~ msgid "Embedded keyboard command"
+#~ msgstr "Iegultā tastatūras komanda"
+
+#~ msgid "Lock on activation"
+#~ msgstr "Noslēgt aktivizācijas brīdī"
+
+#~ msgid "Logout command"
+#~ msgstr "Atteikšanās komanda"
+
+#~ msgid "Screensaver theme selection mode"
+#~ msgstr "Ekrānsaudzētāja tēmas izvēles režīms"
+
+#~ msgid ""
+#~ "Set this to TRUE to activate the screensaver when the session is idle."
+#~ msgstr ""
+#~ "Iestatīt kā PATIESS, lai aktivizētu ekrānsaudzētāju, kad sesija ir "
+#~ "neaktīva."
+
+#~ msgid ""
+#~ "Set this to TRUE to allow embedding a keyboard into the window when "
+#~ "trying to unlock. The \"keyboard_command\" key must be set with the "
+#~ "appropriate command."
+#~ msgstr ""
+#~ "Iestatiet uz PATIESS, lai atļautu logos atslēgšanas laikā iegult "
+#~ "tastatūru. \"keyboard_command\" vērtībā jānorāda atbilstoša komanda."
+
+#~ msgid ""
+#~ "Set this to TRUE to lock the screen when the screensaver goes active."
+#~ msgstr ""
+#~ "Iestatīt kā PATIESS, lai noslēgtu ekrānu, kad ekrānsaudzētājs kļūst "
+#~ "aktīvs."
+
+#~ msgid ""
+#~ "Set this to TRUE to offer an option in the unlock dialog to switch to a "
+#~ "different user account."
+#~ msgstr ""
+#~ "Iestatīt kā PATIESS, lai piedāvātu opciju atslēgšanas dialoga logā, lai "
+#~ "pārslēgtos uz citu lietotāja kontu."
+
+#~ msgid ""
+#~ "Set this to TRUE to offer an option in unlock dialog to logging out after "
+#~ "a delay. The Delay is specified in the \"logout_delay\" key."
+#~ msgstr ""
+#~ "Iestatīt kā PATIESS, lai piedāvātu opciju atslēgšanas dialoga logā, lai "
+#~ "atteiktos pēc aizkaves. Aizkave ir norādīta \"logout_delay\" atslēgā."
+
+#~ msgid ""
+#~ "The command that will be run, if the \"embedded_keyboard_enabled\" key is "
+#~ "set to TRUE, to embed a keyboard widget into the window. This command "
+#~ "should implement an XEMBED plug interface and output a window XID on the "
+#~ "standard output."
+#~ msgstr ""
+#~ "Komanda, kas tiks palaista, ja \"embedded_keyboard_enabled\" vērtība ir "
+#~ "PATIESS, lai logā iegultu tastatūras sīklietotni. Komandai būtu jārealizē "
+#~ "XEMBED ievades saskarne un izvades logs ar XID izvadu."
+
+#~ msgid ""
+#~ "The command to invoke when the logout button is clicked. This command "
+#~ "should simply log the user out without any interaction. This key has "
+#~ "effect only if the \"logout_enable\" key is set to TRUE."
+#~ msgstr ""
+#~ "Komanda, kuru izsauc, kad ir nospiesta atteikšanās poga. Šai komandai "
+#~ "vajadzētu vienkārši atteikt lietotāju bez jebkādas mijiedarbības. Šai "
+#~ "atslēgai ir ietekme tikai, ja \"logout_enable\" atslēga ir iestatīta kā "
+#~ "PATIESS."
+
+#~ msgid ""
+#~ "The number of minutes after screensaver activation before locking the "
+#~ "screen."
+#~ msgstr ""
+#~ "Minūšu skaits pēc ekrānsaudzētāja aktivizācijas pirms ekrāna noslēgšanas."
+
+#~ msgid ""
+#~ "The number of minutes after the screensaver activation before a logout "
+#~ "option will appear in unlock dialog. This key has effect only if the "
+#~ "\"logout_enable\" key is set to TRUE."
+#~ msgstr ""
+#~ "Minūšu skaits pēc ekrānsaudzētāja aktivizēšanas pirms atslēgšanās opcija "
+#~ "parādās atslēgšanas dialoga logā. Šai atslēgai ir ietekme tikai, ja "
+#~ "\"logout_enable\" atslēga ir iestatīta kā PATIESS."
+
+#~ msgid ""
+#~ "The number of minutes of inactivity before the session is considered idle."
+#~ msgstr "Bezdarbības minūšu skaits pirms sesija tiek uzskatīta par neaktīvu."
+
+#~ msgid "The number of minutes to run before changing the screensaver theme."
+#~ msgstr ""
+#~ "Minūšu skaits, kam jāpaiet, pirms tiek mainīta ekrānsaudzētāja tēma."
+
+#~ msgid ""
+#~ "The number of seconds of inactivity before signalling to power-"
+#~ "management. This key is set and maintained by the session power-"
+#~ "management agent."
+#~ msgstr ""
+#~ "Bezdarbības sekunžu skaits, pirms signalizēt barošanas pārvaldniekam. Šo "
+#~ "vērtību iestata un pārvalda sesijas barošanas pārvaldnieka aģents."
+
+#~ msgid ""
+#~ "The selection mode used by screensaver. May be \"blank-only\" to enable "
+#~ "the screensaver without using any theme on activation, \"single\" to "
+#~ "enable screensaver using only one theme on activation (specified in "
+#~ "\"themes\" key), and \"random\" to enable the screensaver using a random "
+#~ "theme on activation."
+#~ msgstr ""
+#~ "Ekrānsaudzētāja lietotais izvēles režīms. Var būt \"blank-only\", lai "
+#~ "aktivizētu ekrānsaudzētāju, kas nelieto nevienu tēmu aktivizācijas brīdī, "
+#~ "\"single\", lai aktivizētu ekrānsaudzētāju, kas lieto tikai vienu tēmu "
+#~ "aktivizācijas brīdī (precizē atslēgā \"themes\"), un \"random\", lai "
+#~ "aktivizētu ekrānsaudzētāju, kas lieto nejaušu tēmu aktivizācijas brīdī."
+
+#~ msgid "Theme for lock dialog"
+#~ msgstr "Noslēgšanas dialoga tēma"
+
+#~ msgid "Theme to use for the lock dialog."
+#~ msgstr "Tēma kas tiks lietota ekrāna noslēgšanas dialogam."
+
+#~ msgid ""
+#~ "This key specifies the list of themes to be used by the screensaver. It's "
+#~ "ignored when \"mode\" key is \"blank-only\", should provide the theme "
+#~ "name when \"mode\" is \"single\", and should provide a list of themes "
+#~ "when \"mode\" is \"random\"."
+#~ msgstr ""
+#~ "Šī atslēga precizē tēmu sarakstu, ko lietos ekrānsaudzētājs. Tās tiek "
+#~ "ignorētas, ja \"mode\" atslēga ir \"blank-only\". Ieteicams norādīt tēmas "
+#~ "nosaukumu, ja \"mode\" ir \"single\" un tēmu sarakstu, ja \"mode\" ir "
+#~ "\"random\"."
+
+#~ msgid "Time before locking"
+#~ msgstr "Laiks pirms noslēgšanas"
+
+#~ msgid "Time before logout option"
+#~ msgstr "Laiks pirms atteikšanās opcijas"
+
+#~ msgid "Time before power-management baseline"
+#~ msgstr "Laiks pirms barošanas pārvaldnieka bāzlīnijas"
+
+#~ msgid "Time before session is considered idle"
+#~ msgstr "Bezdarbības minūšu skaits, pirms sesija tiek uzskatīta par neaktīvu"
+
+#~ msgid "Time before theme change"
+#~ msgstr "Laiks pirms tēmas maiņas"
+
+#~ msgid "<b>Leave a message for %R:</b>"
+#~ msgstr "<b>Atstāt ziņojumu lietotājam %R:</b>"
+
+#~ msgid "<span size=\"small\">%U on %h</span>"
+#~ msgstr "<span size=\"small\">Lietotājs %U uz datora %h</span>"
+
+#~ msgid "<span size=\"x-large\">%R</span>"
+#~ msgstr "<span size=\"x-large\">%R</span>"
+
+#~ msgid "_Cancel"
+#~ msgstr "At_celt"
+
+#~ msgid "_Leave Message"
+#~ msgstr "_Atstāt ziņojumu"
+
+#~ msgid "_Log Out"
+#~ msgstr "Beigt _darbu"
+
+#~ msgid "active"
+#~ msgstr "aktīvs"
+
+#~ msgid "inactive"
+#~ msgstr "neaktīvs"
+
+#~ msgid "S_witch User..."
+#~ msgstr "Pār_slēgt lietotāju..."
+
+#~ msgid "%U on %h"
+#~ msgstr "%U uz %h"

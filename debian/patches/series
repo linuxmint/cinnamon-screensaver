@@ -1,0 +1,16 @@
+03_fix_ltsp-fading.patch
+#04_force_blank_only_on_ltsp.patch
+05_dbus_service.patch
+10_legacy_scrsvr_inhibit.patch
+11_autostart_delay.patch
+13_nvidia_gamma_fade_fallback.patch
+14_no_fade_on_user_switch.patch
+15_dont_crash_on_no_fade.patch
+16_dont_crash_in_kvm.patch
+17_remove_top_panel.patch
+18_unity_dialog_layout.patch
+19_autostart_in_unity.patch
+24_use_user_settings.patch
+25_fix_lock_command.patch
+#26_lightdm_greeter_on_lock.patch
+27_lightdm_switch_user.patch

@@ -1,0 +1,22 @@
+diff -Nur -x '*.orig' -x '*~' gnome-screensaver-2.28.0/src/gnome-screensaver.desktop.in gnome-screensaver-2.28.0.new/src/gnome-screensaver.desktop.in
+--- gnome-screensaver-2.28.0/src/gnome-screensaver.desktop.in	2009-09-23 09:27:27.000000000 +0100
++++ gnome-screensaver-2.28.0.new/src/gnome-screensaver.desktop.in	2010-02-01 23:27:00.882707509 +0000
+@@ -6,6 +6,7 @@
+ Exec=gnome-screensaver
+ OnlyShowIn=GNOME;
+ NoDisplay=true
++X-GNOME-Autostart-Delay=20
+ X-GNOME-Autostart-Phase=Application
+ X-GNOME-Autostart-Notify=true
+ X-GNOME-Bugzilla-Bugzilla=GNOME
+diff -Nur -x '*.orig' -x '*~' gnome-screensaver-2.28.0/src/gnome-screensaver.desktop.in.in gnome-screensaver-2.28.0.new/src/gnome-screensaver.desktop.in.in
+--- gnome-screensaver-2.28.0/src/gnome-screensaver.desktop.in.in	2009-08-26 17:06:12.000000000 +0100
++++ gnome-screensaver-2.28.0.new/src/gnome-screensaver.desktop.in.in	2010-02-01 23:26:47.685209757 +0000
+@@ -6,6 +6,7 @@
+ Exec=gnome-screensaver
+ OnlyShowIn=GNOME;
+ NoDisplay=true
++X-GNOME-Autostart-Delay=20
+ X-GNOME-Autostart-Phase=Application
+ X-GNOME-Autostart-Notify=true
+ X-GNOME-Bugzilla-Bugzilla=GNOME

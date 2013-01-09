@@ -1,0 +1,54 @@
+From fe931bed8649dc57274c81b3d7f424e4352afdce Mon Sep 17 00:00:00 2001
+From: Robert Ancell <robert.ancell@canonical.com>
+Date: Fri, 10 Feb 2012 16:05:59 +1100
+Subject: [PATCH] Switch to greeter when locking screen
+
+---
+ src/gs-manager.c |   31 +++++++++++++++++++++++++++++++
+ 1 files changed, 31 insertions(+), 0 deletions(-)
+
+diff --git a/src/gs-manager.c b/src/gs-manager.c
+index d42bd27..e6cae77 100644
+--- a/src/gs-manager.c
++++ b/src/gs-manager.c
+@@ -136,6 +136,37 @@ gs_manager_set_lock_active (GSManager *manager,
+                         gs_window_set_lock_enabled (l->data, lock_active);
+                 }
+         }
++
++        /* If running under LightDM switch to the greeter and use that as the screenlock */
++        if (lock_active && g_getenv("XDG_SEAT_PATH")) {
++                GDBusConnection *bus;
++                GVariant *result = NULL;
++                GError *error = NULL;
++
++                bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error);
++                if (error)
++                        g_warning ("Failed to get system bus: %s", error->message);
++                g_clear_error (&error);
++
++                if (bus)
++                    result = g_dbus_connection_call_sync (bus,
++                                                          "org.freedesktop.DisplayManager",
++                                                          g_getenv ("XDG_SEAT_PATH"),
++                                                          "org.freedesktop.DisplayManager.Seat",
++                                                          "SwitchToGreeter",
++                                                          g_variant_new ("()"),
++                                                          G_VARIANT_TYPE ("()"),
++                                                          G_DBUS_CALL_FLAGS_NONE,
++                                                          -1,
++                                                          NULL,
++                                                          &error);
++                if (error)
++                        g_warning ("Failed to switch to greeter: %s", error->message);
++                g_clear_error (&error);
++          
++                if (result)
++                        g_variant_unref (result);
++        }
+ }
+ 
+ void
+-- 
+1.7.9
+

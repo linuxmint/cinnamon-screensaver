@@ -1,0 +1,394 @@
+# translation of gu.po to Gujarati
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+#
+# Ankit Patel <ankit644@yahoo.com>, 2005, 2006.
+# Ankit Patel <ankit@redhat.com>, 2006, 2007.
+# Sweta Kothari <swkothar@redhat.com>, 2008, 2009, 2010, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: gu\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
+"cgi?product=gnome-screensaver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-09-02 20:21+0000\n"
+"PO-Revision-Date: 2011-09-20 15:14+0000\n"
+"Last-Translator: \n"
+"Language-Team: gu_IN <kde-i18n-doc@kde.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"X-Generator: Lokalize 1.0\n"
+
+#: ../src/gnome-screensaver-command.c:46
+msgid "Causes the screensaver to exit gracefully"
+msgstr "સ્ક્રીનસેવરને સારી રીતે બંધ કરવાનું કારણ બને છે"
+
+#: ../src/gnome-screensaver-command.c:48
+msgid "Query the state of the screensaver"
+msgstr "સ્ક્રીનસેવરની સ્થિતિને પ્રશ્ન પૂછે છે"
+
+#: ../src/gnome-screensaver-command.c:50
+msgid "Query the length of time the screensaver has been active"
+msgstr "સ્ક્રીનસેવર જેટલા સમયથી સક્રિય છે તેટલા સમયની લંબાઈનો પ્રશ્ન"
+
+#: ../src/gnome-screensaver-command.c:52
+msgid "Tells the running screensaver process to lock the screen immediately"
+msgstr "ચાલી રહેલ સ્ક્રીનસેવર પ્રક્રિયાને સ્ક્રીન તુરંત જ તાળું મારવા માટે કહે છે"
+
+#: ../src/gnome-screensaver-command.c:54
+msgid "Turn the screensaver on (blank the screen)"
+msgstr "સ્ક્રીનસેવરને ચાલુ કરો (સ્ક્રીન કોરી કરો)"
+
+#: ../src/gnome-screensaver-command.c:56
+msgid "If the screensaver is active then deactivate it (un-blank the screen)"
+msgstr "જો સ્ક્રીનસેવર સક્રિય હોય તો પછી તેને અસક્રિય કરો (સ્ક્રીનને કોરી-નહિં રાખો)"
+
+#: ../src/gnome-screensaver-command.c:58 ../src/gnome-screensaver-dialog.c:59
+#: ../src/gnome-screensaver.c:56
+msgid "Version of this application"
+msgstr "આ કાર્યક્રમની આવૃત્તિ"
+
+#: ../src/gnome-screensaver-command.c:224
+#, c-format
+msgid "The screensaver is active\n"
+msgstr "સ્ક્રીનસેવર એ સક્રિય છે\n"
+
+#: ../src/gnome-screensaver-command.c:226
+#, c-format
+msgid "The screensaver is inactive\n"
+msgstr "સ્ક્રીનસેવર એ નિષ્ક્રિય છે\n"
+
+#: ../src/gnome-screensaver-command.c:256
+#, c-format
+#| msgid "The screensaver has been active for %d seconds.\n"
+msgid "The screensaver has been active for %d second.\n"
+msgid_plural "The screensaver has been active for %d seconds.\n"
+msgstr[0] "સ્ક્રીનસેવર %d સેકંડ માટે સક્રિય કરી દેવામાં આવ્યુ છે.\n"
+msgstr[1] "સ્ક્રીનસેવર %d સેકંડો માટે સક્રિય કરી દેવામાં આવ્યુ છે.\n"
+
+#: ../src/gnome-screensaver-command.c:258
+#, c-format
+msgid "The screensaver is not currently active.\n"
+msgstr "સ્ક્રીનસેવર એ હમણાં સક્રિય નથી.\n"
+
+#: ../src/gnome-screensaver-dialog.c:57
+msgid "Show debugging output"
+msgstr "ડિબગીંગ આઉટપુટ બતાવો"
+
+#: ../src/gnome-screensaver-dialog.c:61
+msgid "Show the logout button"
+msgstr "બહાર નીકળો બટન બતાવો"
+
+#: ../src/gnome-screensaver-dialog.c:63
+msgid "Command to invoke from the logout button"
+msgstr "બહાર નીકળો બટનમાંથી ચલાવવાનો આદેશ"
+
+#: ../src/gnome-screensaver-dialog.c:65
+msgid "Show the switch user button"
+msgstr "વપરાશકર્તા બદલો બટન બતાવો"
+
+#: ../src/gnome-screensaver-dialog.c:67
+msgid "Message to show in the dialog"
+msgstr "સંવાદમાં બતાવવા માટેનો સંદેશો"
+
+#. Translators: This is the example input for the --status-message command line option.
+#. Translators: This is the example input for the --away-message command line option.
+#: ../src/gnome-screensaver-dialog.c:69 ../src/gnome-screensaver-dialog.c:73
+msgid "MESSAGE"
+msgstr "MESSAGE"
+
+#: ../src/gnome-screensaver-dialog.c:71
+msgid "Not used"
+msgstr "વપરાયેલ નથી"
+
+#. login: is whacked always translate to Username:
+#: ../src/gnome-screensaver-dialog.c:183 ../src/gnome-screensaver-dialog.c:184
+#: ../src/gnome-screensaver-dialog.c:185 ../src/gs-auth-pam.c:698
+msgid "Username:"
+msgstr "વપરાશકર્તાનામ:"
+
+#: ../src/gnome-screensaver-dialog.c:186 ../src/gnome-screensaver-dialog.c:187
+#: ../src/gs-auth-pam.c:166
+msgid "Password:"
+msgstr "પાસવર્ડ:"
+
+#: ../src/gnome-screensaver-dialog.c:188
+msgid "You are required to change your password immediately (password aged)"
+msgstr "તમે તમારો પાસવર્ડ તુરંત બદલવા માટે આગ્રહ કરવામાં આવે છે (પાસવર્ડની આયુ)"
+
+#: ../src/gnome-screensaver-dialog.c:189
+msgid "You are required to change your password immediately (root enforced)"
+msgstr "તમે તમારો પાસવર્ડ તુરંત બદલવા માટે આગ્રહ કરવામાં આવે છે (રુટ દ્વારા દબાણ)"
+
+#: ../src/gnome-screensaver-dialog.c:190
+msgid "Your account has expired; please contact your system administrator"
+msgstr ""
+"તમારા ખાતાની સમયમર્યાદા સમાપ્ત થઈ ગઈ; મહેરબાની કરીને તમારા સિસ્ટમ સંચાલકનો સંપર્ક કરો"
+
+#: ../src/gnome-screensaver-dialog.c:191
+msgid "No password supplied"
+msgstr "કોઈ પાસવર્ડો પૂરા પાડવામાં આવેલ નથી"
+
+#: ../src/gnome-screensaver-dialog.c:192
+msgid "Password unchanged"
+msgstr "પાસવર્ડ બદલાયેલ નથી"
+
+#: ../src/gnome-screensaver-dialog.c:193
+msgid "Cannot get username"
+msgstr "વપરાશકર્તાનામ મેળવી શકતુ નથી"
+
+#: ../src/gnome-screensaver-dialog.c:194
+msgid "Retype new Unix password:"
+msgstr "નવો Unix પાસવર્ડ ફરી લખો:"
+
+#: ../src/gnome-screensaver-dialog.c:195
+msgid "Enter new Unix password:"
+msgstr "નવો Unix પાસવર્ડ દાખલ કરો:"
+
+#: ../src/gnome-screensaver-dialog.c:196
+msgid "(current) Unix password:"
+msgstr "(વર્તમાન) Unix પાસવર્ડ:"
+
+#: ../src/gnome-screensaver-dialog.c:197
+msgid "Error while changing NIS password."
+msgstr "NIS પાસવર્ડ બદલતી વખતે ભૂલ."
+
+#: ../src/gnome-screensaver-dialog.c:198
+msgid "You must choose a longer password"
+msgstr "તમારે લાંબો પાસવર્ડ જ પસંદ કરવો જોઈએ"
+
+#: ../src/gnome-screensaver-dialog.c:199
+msgid "Password has been already used. Choose another."
+msgstr "પાસવર્ડ પહેલાથી જ વપરાઈ ગયેલ છે. અન્ય પસંદ કરો."
+
+#: ../src/gnome-screensaver-dialog.c:200
+msgid "You must wait longer to change your password"
+msgstr "તમારે તમારો પાસવર્ડ બદલવા માટે લાંબે સુધી રાહ જોવી જ પડશે"
+
+#: ../src/gnome-screensaver-dialog.c:201
+msgid "Sorry, passwords do not match"
+msgstr "માફ કરજો, પાસવર્ડો બંધ બેસતા નથી"
+
+#: ../src/gnome-screensaver-dialog.c:267
+msgid "Checking…"
+msgstr "ચકાસી રહ્યા છીએ..."
+
+#: ../src/gnome-screensaver-dialog.c:309 ../src/gs-auth-pam.c:457
+msgid "Authentication failed."
+msgstr "સત્તાધિકરણ નિષ્ફળ."
+
+#: ../src/gnome-screensaver.c:57
+msgid "Don't become a daemon"
+msgstr "ડિમન બનશો નહિં"
+
+#: ../src/gnome-screensaver.c:58
+msgid "Enable debugging code"
+msgstr "ડિબગીંગ કોડ સક્રિય કરો"
+
+#: ../src/gnome-screensaver.desktop.in.in.h:1
+msgid "Launch screensaver and locker program"
+msgstr "સ્ક્રીન સેવર અને લોકર પ્રક્રિયાને શરૂ કરો"
+
+#: ../src/gnome-screensaver.desktop.in.in.h:2
+msgid "Screensaver"
+msgstr "સ્ક્રીનસેવર"
+
+#: ../src/gs-auth-pam.c:397
+#, c-format
+msgid "Unable to establish service %s: %s\n"
+msgstr "સેવા %s અધિષ્ઠાપિત કરવામાં અસમર્થ: %s\n"
+
+#: ../src/gs-auth-pam.c:423
+#, c-format
+msgid "Can't set PAM_TTY=%s"
+msgstr "PAM_TTY=%s સુયોજિત કરી શકતા નથી"
+
+#: ../src/gs-auth-pam.c:455
+msgid "Incorrect password."
+msgstr "અયોગ્ય પાસવર્ડ."
+
+#: ../src/gs-auth-pam.c:471
+msgid "Not permitted to gain access at this time."
+msgstr "આ સમયે વપરાશની પરવાનગી નથી."
+
+#: ../src/gs-auth-pam.c:477
+msgid "No longer permitted to access the system."
+msgstr "સિસ્ટમના વપરાશની લાંબા સમય સુધી પરવાનગી નથી."
+
+#: ../src/gs-listener-dbus.c:1148
+msgid "failed to register with the message bus"
+msgstr "સંદેશા બસ સાથે રજીસ્ટર કરવામાં નિષ્ફળ"
+
+#: ../src/gs-listener-dbus.c:1158
+msgid "not connected to the message bus"
+msgstr "સંદેશા બસમાં જોડાયેલ નથી"
+
+#: ../src/gs-listener-dbus.c:1167 ../src/gs-listener-dbus.c:1197
+msgid "screensaver already running in this session"
+msgstr "આ સત્રમાં સ્ક્રીનસેવર પહેલાથી જ ચાલી રહ્યું છે"
+
+#: ../src/gs-lock-plug.c:256
+msgid "Time has expired."
+msgstr "સમય સમાપ્ત થઈ ગયો."
+
+#: ../src/gs-lock-plug.c:287
+msgid "You have the Caps & Num Lock keys on."
+msgstr "તમારી પાસે Caps અને Num Lock કી ચાલુ છે."
+
+#: ../src/gs-lock-plug.c:290
+msgid "You have the Caps Lock key on."
+msgstr "તમારી Caps Lock કી ચાલુ છે."
+
+#: ../src/gs-lock-plug.c:293
+msgid "You have the Num Lock key on."
+msgstr "તમારી પાસે Num Lock કી ચાલુ છે."
+
+#: ../src/gs-lock-plug.c:1350
+msgid "S_witch User…"
+msgstr "વપરાશકર્તા બદલો (_w)..."
+
+#: ../src/gs-lock-plug.c:1359
+msgid "Log _Out"
+msgstr "બહાર નીકળો (_O)"
+
+#: ../src/gs-lock-plug.c:1366
+msgid "_Unlock"
+msgstr "તાળું ખોલો (_U)"
+
+#: ../src/gs-lock-plug.c:1405
+msgid "_Password:"
+msgstr "પાસવર્ડ (_P):"
+
+#~ msgid "Screensaver themes"
+#~ msgstr "સ્ક્રીનસેવર થીમો"
+
+#~ msgid "Screensavers"
+#~ msgstr "સ્ક્રીનસેવરો"
+
+#~ msgid "Cosmos"
+#~ msgstr "કોસમોસ"
+
+#~ msgid "Display a slideshow of pictures of the cosmos"
+#~ msgstr "કોસમોસના ચિત્રોનો સ્લાઈડશો દર્શાવો"
+
+#~ msgid "Bubbles the GNOME foot logo around the screen"
+#~ msgstr "સ્ક્રીનની ફરતે GNOME પગનો લોગો બબલ કરે છે"
+
+#~ msgid "Floating Feet"
+#~ msgstr "તરતો પગ"
+
+#~ msgid "Display a slideshow from your Pictures folder"
+#~ msgstr "તમારા ચિત્રો ફોલ્ડરમાંથી સ્લાઈડશો દર્શાવો"
+
+#~ msgid "Pictures folder"
+#~ msgstr "ચિત્રો ફોલ્ડર"
+
+#~ msgid "A pop-art-ish grid of pulsing colors."
+#~ msgstr "રંગોના કંપન માટે pop-art-ish જાળી."
+
+#~ msgid "Pop art squares"
+#~ msgstr "ઝબૂકતા ચોકઠાઓ"
+
+#~ msgid "%s. See --help for usage information.\n"
+#~ msgstr "%s. વપરાશ જાણકારી માટે --help જુઓ.\n"
+
+#~ msgid "Show paths that images follow"
+#~ msgstr "ચિત્રો જેને અનુસરે તે પાથ બતાવો"
+
+#~ msgid "Occasionally rotate images as they move"
+#~ msgstr "ઘટનાકીય રીતે ચિત્રો ફેરવો જેમ તેઓ ખસે"
+
+#~ msgid "Print out frame rate and other statistics"
+#~ msgstr "ચોકઠાં દર અને અન્ય પરિસ્થિતિ છાપો"
+
+#~ msgid "The maximum number of images to keep on screen"
+#~ msgstr "સ્ક્રીન પર રાખવા માટેના ચિત્રોની મહત્તમ સંખ્યા"
+
+#~ msgid "MAX_IMAGES"
+#~ msgstr "MAX_IMAGES"
+
+#~ msgid "The initial size and position of window"
+#~ msgstr "વિન્ડોનું આરંભિક માપ અને સ્થાન"
+
+#~ msgid "WIDTHxHEIGHT+X+Y"
+#~ msgstr "WIDTHxHEIGHT+X+Y"
+
+#~ msgid "The source image to use"
+#~ msgstr "વાપરવા માટેનું સ્રોત ચિત્ર"
+
+#~| msgid "image - floats images around the screen"
+#~ msgid "image — floats images around the screen"
+#~ msgstr "ચિત્ર — સ્ક્રીનની ફરતે ચિત્રો તરે છે"
+
+#~ msgid "You must specify one image.  See --help for usage information.\n"
+#~ msgstr "તમારે એક ચિત્ર સ્પષ્ટ કરવું જ પડશે.  વપરાશ જાણકારી માટે --help જુઓ.\n"
+
+#~ msgid "Location to get images from"
+#~ msgstr "ચિત્રો મેળવવા માટેનું સ્થાન"
+
+#~ msgid "PATH"
+#~ msgstr "PATH"
+
+#~| msgid "Color to use for images background"
+#~ msgid "Color to use for image background"
+#~ msgstr "ચિત્ર પાશ્ર્વભાગ માટે વપરાતો રંગ"
+
+#~ msgid "\"#rrggbb\""
+#~ msgstr "\"#rrggbb\""
+
+#~ msgid "Do not randomize pictures from location"
+#~ msgstr "સ્થાનમાંથી ચિત્રો રેન્ડમાઈઝ કરો નહિં"
+
+#~ msgid "Do not try to stretch images on screen"
+#~ msgstr "સ્ક્રીન પર ચિત્રો ખેંચવાનો પ્રયાસ કરો નહિં"
+
+#~ msgid "If the screensaver is active then switch to another graphics demo"
+#~ msgstr "જો સ્ક્રીનસેવર સક્રિય હોય તો પછી અન્ય ગ્રાફિક્સ ડેમોમાં બદલાવ"
+
+#~ msgid "Poke the running screensaver to simulate user activity"
+#~ msgstr "વપરાશકર્તા ક્રિયા સિમ્યુલેટ કરવા માટે ચાલી રહેલ સ્ક્રીનસેવરને ધક્કો મારો"
+
+#~ msgid ""
+#~ "Inhibit the screensaver from activating.  Command blocks while inhibit is "
+#~ "active."
+#~ msgstr ""
+#~ "સ્ક્રીનસેવરને સક્રિય કરવાથી બચાવવું.  જ્યારે બચાવવાનું સક્રિય હોય ત્યારે આદેશો અટકાવે છે."
+
+#~ msgid "The calling application that is inhibiting the screensaver"
+#~ msgstr "બોલાવી રહેલ કાર્યક્રમ કે જે સ્ક્રીનસેવરને અટકાવી રહ્યો છે"
+
+#~ msgid "The reason for inhibiting the screensaver"
+#~ msgstr "સ્ક્રીનસેવરને બચાવવા માટેનું કારણ"
+
+#~ msgid "The screensaver is not inhibited\n"
+#~ msgstr "સ્ક્રીનસેવર એ અટકાવાયેલ છે\n"
+
+#~ msgid "The screensaver is being inhibited by:\n"
+#~ msgstr "સ્ક્રીનસેવર એ અટકાવી દેવામાં આવ્યું છે:\n"
+
+#~| msgid "%s %s"
+#~ msgid "%a %R"
+#~ msgstr "%a %R"
+
+#~ msgid "%a %l:%M %p"
+#~ msgstr "%a %l:%M %p"
