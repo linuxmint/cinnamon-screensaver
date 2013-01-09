@@ -72,6 +72,7 @@ struct GSLockPlugPrivate
         GtkWidget   *notebook;
         GtkWidget   *auth_face_image;
         GtkWidget   *auth_realname_label;
+        GtkWidget   *auth_username_label;
         GtkWidget   *auth_prompt_label;
         GtkWidget   *auth_prompt_entry;
         GtkWidget   *auth_prompt_box;
@@ -1431,6 +1432,40 @@ get_user_display_name (void)
         return utf8_name;
 }
 
+static char *
+get_user_name (void)
+{
+        const char *name;
+        char       *utf8_name;
+
+        name = g_get_user_name ();
+        
+        utf8_name = NULL;
+
+        if (name != NULL) {
+                utf8_name = g_locale_to_utf8 (name, -1, NULL, NULL, NULL);
+        }
+
+        return utf8_name;
+}
+
+static char *
+get_host_name (void)
+{
+        const char *name;
+        char       *utf8_name;
+
+        name = g_get_host_name ();
+        
+        utf8_name = NULL;
+
+        if (name != NULL) {
+                utf8_name = g_locale_to_utf8 (name, -1, NULL, NULL, NULL);
+        }
+
+        return utf8_name;
+}
+
 static void
 update_realname_label (GSLockPlug *plug)
 {
@@ -1442,6 +1477,22 @@ update_realname_label (GSLockPlug *plug)
         g_free (markup);
         g_free (name);
 }
+
+static void
+update_username_label (GSLockPlug *plug)
+{
+        char *name;
+        char *hostname;
+        char *markup;
+        name = get_user_name ();
+        hostname = get_host_name ();
+        markup = g_strdup_printf ("<span font_desc=\"Ubuntu 10\">%s @ %s</span>", name, hostname);
+        gtk_label_set_markup (GTK_LABEL (plug->priv->auth_username_label), markup);
+        g_free (markup);
+        g_free (name);
+        g_free (hostname);
+}
+
 
 static void
 create_page_one (GSLockPlug *plug)
@@ -1476,10 +1527,16 @@ create_page_one (GSLockPlug *plug)
         
         gtk_box_set_spacing (vbox2, 0);
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_face_image), 0, 0.5);
+        
         plug->priv->auth_realname_label = gtk_label_new (NULL);
         update_realname_label (plug);
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_realname_label), 0, 1);
         gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_realname_label, FALSE, FALSE, 0);
+        
+        plug->priv->auth_username_label = gtk_label_new (NULL);
+        update_username_label (plug);
+        gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_username_label), 0, 1);
+        gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_username_label, FALSE, FALSE, 0);
 
         plug->priv->auth_prompt_label = gtk_label_new_with_mnemonic (_("_Password:"));
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_prompt_label), 0, 0);
