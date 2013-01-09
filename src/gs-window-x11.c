@@ -2334,28 +2334,11 @@ gs_window_init (GSWindow *window)
         window->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
         gtk_widget_show (window->priv->vbox);
         gtk_container_add (GTK_CONTAINER (window), window->priv->vbox);
-
         
-
         window->priv->drawing_area = gtk_drawing_area_new ();
         gtk_widget_show (window->priv->drawing_area);
         gtk_widget_set_app_paintable (window->priv->drawing_area, TRUE);
         gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->drawing_area, TRUE, TRUE, 0);
-        
-        /* Only display top bar if we're not running under Unity */
-        if (!g_getenv ("XDG_CURRENT_DESKTOP") ||
-            strcmp (g_getenv ("XDG_CURRENT_DESKTOP"), "Unity") != 0) {
-                window->priv->panel = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-                gtk_widget_show (window->priv->panel);
-                gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->panel, FALSE, FALSE, 0);
-                create_panel (window);
-
-                window->priv->clock_tracker = g_object_new (GNOME_TYPE_WALL_CLOCK, NULL);
-                g_signal_connect (window->priv->clock_tracker, "notify::clock", G_CALLBACK (on_clock_changed), window);
-                update_clock (window);
-        }
-        
-        
         create_info_bar (window);
 
         force_no_pixmap_background (window->priv->drawing_area);

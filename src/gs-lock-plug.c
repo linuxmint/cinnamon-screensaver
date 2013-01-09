@@ -1274,14 +1274,8 @@ gs_lock_plug_enable_prompt (GSLockPlug *plug,
         gtk_widget_set_sensitive (plug->priv->auth_unlock_button, TRUE);
         gtk_widget_show (plug->priv->auth_unlock_button);
         gtk_widget_grab_default (plug->priv->auth_unlock_button);
-
-        /* Change appearance if we're running under Unity */
-        if (g_getenv ("XDG_CURRENT_DESKTOP") &&
-            strcmp (g_getenv ("XDG_CURRENT_DESKTOP"), "Unity") == 0) {
-                markup = g_strdup_printf ("<span font_desc=\"Ubuntu 10\">%s</span>", message);
-        } else {
-                markup = g_strdup_printf ("<b><big>%s</big></b>", message);
-        }
+        
+        markup = g_strdup_printf ("<span font_desc=\"Ubuntu 10\">%s</span>", message);        
 
         gtk_label_set_markup (GTK_LABEL (plug->priv->auth_prompt_label), markup);
         g_free (markup);
@@ -1479,60 +1473,35 @@ create_page_one (GSLockPlug *plug)
 #ifdef WITH_KBD_LAYOUT_INDICATOR
         gtk_box_pack_start (GTK_BOX (hbox), plug->priv->auth_prompt_kbd_layout_indicator, FALSE, FALSE, 0);
 #endif
+        
+        gtk_box_set_spacing (vbox2, 0);
+        gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_face_image), 0, 0.5);
+        plug->priv->auth_realname_label = gtk_label_new (NULL);
+        update_realname_label (plug);
+        gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_realname_label), 0, 1);
+        gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_realname_label, FALSE, FALSE, 0);
 
-        /* Change appearance if we're running under Unity */
-        if (g_getenv ("XDG_CURRENT_DESKTOP") &&
-            strcmp (g_getenv ("XDG_CURRENT_DESKTOP"), "Unity") == 0) {
-                gtk_box_set_spacing (vbox2, 0);
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_face_image), 0, 0.5);
-                plug->priv->auth_realname_label = gtk_label_new (NULL);
-                update_realname_label (plug);
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_realname_label), 0, 1);
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_realname_label, FALSE, FALSE, 0);
+        plug->priv->auth_prompt_label = gtk_label_new_with_mnemonic (_("_Password:"));
+        gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_prompt_label), 0, 0);
+        gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_prompt_label, FALSE, FALSE, 0);
 
-                plug->priv->auth_prompt_label = gtk_label_new_with_mnemonic (_("_Password:"));
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_prompt_label), 0, 0);
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_prompt_label, FALSE, FALSE, 0);
+        plug->priv->auth_prompt_entry = gtk_entry_new ();
+        gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_prompt_entry, TRUE, TRUE, 6);
 
-                plug->priv->auth_prompt_entry = gtk_entry_new ();
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_prompt_entry, TRUE, TRUE, 6);
+        gtk_label_set_mnemonic_widget (GTK_LABEL (plug->priv->auth_prompt_label),
+                                       plug->priv->auth_prompt_entry);
 
-                gtk_label_set_mnemonic_widget (GTK_LABEL (plug->priv->auth_prompt_label),
-                                               plug->priv->auth_prompt_entry);
+        plug->priv->auth_capslock_label = gtk_label_new ("");
+        gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_capslock_label), 0, 0.5);
+        gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_capslock_label, FALSE, FALSE, 0);
 
-                plug->priv->auth_capslock_label = gtk_label_new ("");
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_capslock_label), 0, 0.5);
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_capslock_label, FALSE, FALSE, 0);
+        /* Status text */
 
-                /* Status text */
+        plug->priv->auth_message_label = gtk_label_new (NULL);
+        gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_message_label), 0, 0.5);
+        gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_message_label,
+                            FALSE, FALSE, 0);
 
-                plug->priv->auth_message_label = gtk_label_new (NULL);
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_message_label), 0, 0.5);
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_message_label,
-                                    FALSE, FALSE, 0);
-
-        } else {
-
-                plug->priv->auth_prompt_label = gtk_label_new_with_mnemonic (_("_Password:"));
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_prompt_label), 0, 0.5);
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_prompt_label, FALSE, FALSE, 0);
-
-                plug->priv->auth_prompt_entry = gtk_entry_new ();
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_prompt_entry, TRUE, TRUE, 0);
-
-                gtk_label_set_mnemonic_widget (GTK_LABEL (plug->priv->auth_prompt_label),
-                                           plug->priv->auth_prompt_entry);
-
-                plug->priv->auth_capslock_label = gtk_label_new ("");
-                gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_capslock_label), 0.5, 0.5);
-                gtk_box_pack_start (GTK_BOX (vbox2), plug->priv->auth_capslock_label, FALSE, FALSE, 0);
-
-                /* Status text */
-
-                plug->priv->auth_message_label = gtk_label_new (NULL);
-                gtk_box_pack_start (GTK_BOX (vbox), plug->priv->auth_message_label,
-                                    FALSE, FALSE, 0);
-        }
         /* Buttons */
         plug->priv->auth_action_area = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
 
