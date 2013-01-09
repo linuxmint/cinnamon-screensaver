@@ -96,12 +96,12 @@ lock_initialization (char **nolock_reason)
         }
 
         /* If locking is currently enabled, but the environment indicates that
-           we have been launched as GDM's "Background" program, then disable
+           we have been launched as MDM's "Background" program, then disable
            locking just in case.
         */
-        if (getenv ("RUNNING_UNDER_GDM")) {
+        if (getenv ("RUNNING_UNDER_MDM")) {
                 if (nolock_reason) {
-                        *nolock_reason = g_strdup ("running under GDM");
+                        *nolock_reason = g_strdup ("running under MDM");
                 }
                 return FALSE;
         }

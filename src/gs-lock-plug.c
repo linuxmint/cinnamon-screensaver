@@ -44,8 +44,8 @@
 
 #include "gs-debug.h"
 
-#define GDM_FLEXISERVER_COMMAND "gdmflexiserver"
-#define GDM_FLEXISERVER_ARGS    "--startnew Standard"
+#define MDM_FLEXISERVER_COMMAND "mdmflexiserver"
+#define MDM_FLEXISERVER_ARGS    "--startnew Standard"
 
 enum {
         AUTH_PAGE = 0,
@@ -185,12 +185,12 @@ do_user_switch (GSLockPlug *plug)
                 char    *command;
 
                 command = g_strdup_printf ("%s %s",
-                                           GDM_FLEXISERVER_COMMAND,
-                                           GDM_FLEXISERVER_ARGS);
+                                           MDM_FLEXISERVER_COMMAND,
+                                           MDM_FLEXISERVER_ARGS);
 
                 error = NULL;
                 context = (GAppLaunchContext*)gdk_app_launch_context_new ();
-                app = g_app_info_create_from_commandline (command, "gdmflexiserver", 0, &error);
+                app = g_app_info_create_from_commandline (command, "mdmflexiserver", 0, &error);
                 if (app)
                         g_app_info_launch (app, NULL, context, &error);
 
@@ -199,7 +199,7 @@ do_user_switch (GSLockPlug *plug)
                 g_object_unref (app);
 
                 if (error != NULL) {
-                        gs_debug ("Unable to start GDM greeter: %s", error->message);
+                        gs_debug ("Unable to start MDM greeter: %s", error->message);
                         g_error_free (error);
                 }
         }
@@ -589,7 +589,7 @@ rounded_rectangle (cairo_t *cr,
         cairo_close_path (cr);
 }
 
-/* copied from gdm-user.c */
+/* copied from mdm-user.c */
 
 /**
  * go_cairo_convert_data_to_pixbuf:
@@ -751,7 +751,7 @@ frame_pixbuf (GdkPixbuf *source)
         return dest;
 }
 
-/* end copied from gdm-user.c */
+/* end copied from mdm-user.c */
 
 static void
 image_set_from_pixbuf (GtkImage  *image,
@@ -1057,11 +1057,11 @@ gs_lock_plug_set_switch_enabled (GSLockPlug *plug,
 
         if (switch_enabled) {
                 gboolean found;
-                found = is_program_in_path (GDM_FLEXISERVER_COMMAND);
+                found = is_program_in_path (MDM_FLEXISERVER_COMMAND);
                 if (found || g_getenv("XDG_SEAT_PATH")) {
                         gtk_widget_show (plug->priv->auth_switch_button);
                 } else {
-                        gs_debug ("Waring: GDM flexiserver command not found: %s", GDM_FLEXISERVER_COMMAND);
+                        gs_debug ("Waring: MDM flexiserver command not found: %s", MDM_FLEXISERVER_COMMAND);
                         gtk_widget_hide (plug->priv->auth_switch_button);
                 }
         } else {
