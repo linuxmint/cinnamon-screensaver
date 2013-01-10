@@ -52,12 +52,12 @@ desktop_in_files = cinnamon-screensaver.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
-gnome_screensaver_command_SOURCES = 	\
+cinnamon_screensaver_command_SOURCES = 	\
 	bus.h				\
 	cinnamon-screensaver-command.c	\
 	$(NULL)
 
-gnome_screensaver_command_LDADD =	\
+cinnamon_screensaver_command_LDADD =	\
 	$(CINNAMON_SCREENSAVER_COMMAND_LIBS)	\
 	$(NULL)
 
@@ -128,7 +128,7 @@ test_window_LDADD =			\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
-gnome_screensaver_dialog_SOURCES = 	\
+cinnamon_screensaver_dialog_SOURCES = 	\
 	cinnamon-screensaver-dialog.c	\
 	gs-lock-plug.c			\
 	gs-lock-plug.h			\
@@ -142,7 +142,7 @@ gnome_screensaver_dialog_SOURCES = 	\
 	$(AUTH_SOURCES)			\
 	$(NULL)
 
-gnome_screensaver_dialog_LDADD =	\
+cinnamon_screensaver_dialog_LDADD =	\
 	$(CINNAMON_SCREENSAVER_DIALOG_LIBS)\
 	$(SAVER_LIBS)			\
 	$(AUTH_LIBS)			\
@@ -162,7 +162,7 @@ gs-marshal.c: gs-marshal.list
 gs-marshal.h: gs-marshal.list
 	@GLIB_GENMARSHAL@ $< --prefix=gs_marshal --header > $@
 
-gnome_screensaver_SOURCES =	\
+cinnamon_screensaver_SOURCES =	\
 	bus.h			\
 	cinnamon-screensaver.c	\
 	cinnamon-screensaver.h	\
@@ -193,13 +193,13 @@ gnome_screensaver_SOURCES =	\
 	$(BUILT_SOURCES)	\
 	$(NULL)
 
-gnome_screensaver_LDADD =		\
+cinnamon_screensaver_LDADD =		\
 	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(SYSTEMD_LIBS)                 \
 	$(NULL)
 
-gnome_screensaver_LDFLAGS = -export-dynamic
+cinnamon_screensaver_LDFLAGS = -export-dynamic
 
 EXTRA_DIST =				\
 	debug-screensaver.sh		\

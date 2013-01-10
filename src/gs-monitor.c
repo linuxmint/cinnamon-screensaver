@@ -216,7 +216,7 @@ listener_quit_cb (GSListener *listener,
                   GSMonitor  *monitor)
 {
         gs_listener_set_active (monitor->priv->listener, FALSE);
-        gnome_screensaver_quit ();
+        cinnamon_screensaver_quit ();
 }
 
 static void
