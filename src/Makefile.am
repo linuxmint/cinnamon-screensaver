@@ -186,6 +186,10 @@ gnome_screensaver_SOURCES =	\
 	gs-grab.h		\
 	gs-fade.c		\
 	gs-fade.h		\
+	gnome-datetime-source.c \
+	gnome-datetime-source.h \
+	gnome-wall-clock.c \
+	gnome-wall-clock.h \
 	$(BUILT_SOURCES)	\
 	$(NULL)
 

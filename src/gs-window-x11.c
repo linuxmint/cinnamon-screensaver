@@ -32,10 +32,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
 
-#include <gdesktop-enums.h>
-
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-wall-clock.h>
+#include "gnome-wall-clock.h"
 
 #include "gs-window.h"
 #include "gs-marshal.h"
@@ -2174,7 +2171,7 @@ update_clock (GSWindow *window)
 {
         char *markup;
 
-        markup = g_strdup_printf ("<b><span font_desc=\"Ubuntu 48\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker));
+        markup = g_strdup_printf ("%s", gnome_wall_clock_get_clock (window->priv->clock_tracker));
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
         g_free (markup);
 }
@@ -2185,6 +2182,17 @@ on_clock_changed (GnomeWallClock *clock,
                   gpointer        user_data)
 {
         update_clock (GS_WINDOW (user_data));
+}
+
+static gboolean
+shade_background (GtkWidget    *widget,
+               cairo_t      *cr,
+               GSWindow     *window)
+{
+        cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.7);
+        cairo_paint (cr);
+
+        return FALSE;
 }
 
 static void
@@ -2221,13 +2229,19 @@ gs_window_init (GSWindow *window)
                                | GDK_ENTER_NOTIFY_MASK
                                | GDK_LEAVE_NOTIFY_MASK);
                            
+        GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
         GtkWidget *grid = gtk_grid_new();
         gtk_widget_show (grid);
                      
         window->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
         gtk_widget_show (window->priv->vbox);
         
-        gtk_container_add (GTK_CONTAINER (window), grid);                
+        gtk_container_add (GTK_CONTAINER (window), main_box);                
+        
+        gtk_box_pack_start (GTK_BOX (main_box), grid, TRUE, TRUE, 0);
+        
+        gtk_widget_show (main_box);
                                 
         gtk_widget_set_valign (window->priv->vbox, GTK_ALIGN_CENTER);
         gtk_widget_set_halign (window->priv->vbox, GTK_ALIGN_CENTER);
@@ -2254,6 +2268,8 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_hexpand (grid, TRUE);
         gtk_widget_set_vexpand (grid, TRUE);
         
+        g_signal_connect (main_box, "draw", G_CALLBACK (shade_background), window);
+        
         window->priv->drawing_area = gtk_drawing_area_new ();
         gtk_widget_show (window->priv->drawing_area);
         gtk_widget_set_app_paintable (window->priv->drawing_area, TRUE);
@@ -2262,6 +2278,8 @@ gs_window_init (GSWindow *window)
 
         force_no_pixmap_background (window->priv->drawing_area);
 }
+
+
 
 static void
 remove_command_watches (GSWindow *window)
