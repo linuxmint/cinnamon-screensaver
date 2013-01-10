@@ -2185,7 +2185,7 @@ update_clock (GSWindow *window)
 {
         char *markup;
 
-        markup = g_strdup_printf ("<b><span foreground=\"#ccc\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker));
+        markup = g_strdup_printf ("<b><span font_desc=\"Ubuntu 48\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker));
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
         g_free (markup);
 }
@@ -2330,10 +2330,20 @@ gs_window_init (GSWindow *window)
                                | GDK_VISIBILITY_NOTIFY_MASK
                                | GDK_ENTER_NOTIFY_MASK
                                | GDK_LEAVE_NOTIFY_MASK);
-
+            
         window->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
         gtk_widget_show (window->priv->vbox);
         gtk_container_add (GTK_CONTAINER (window), window->priv->vbox);
+        
+        // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
+        /**window->priv->clock = gtk_label_new (NULL);
+        gtk_widget_show (window->priv->clock);
+        window->priv->clock_tracker = g_object_new (GNOME_TYPE_WALL_CLOCK, NULL);
+        g_signal_connect (window->priv->clock_tracker, "notify::clock", G_CALLBACK (on_clock_changed), window);
+        update_clock (window);*/
+
+        gtk_misc_set_padding (GTK_MISC (window->priv->clock), 4, 4);
+        gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->clock, FALSE, FALSE, 0);        
         
         window->priv->drawing_area = gtk_drawing_area_new ();
         gtk_widget_show (window->priv->drawing_area);
