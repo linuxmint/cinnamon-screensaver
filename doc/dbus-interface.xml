@@ -22,15 +22,15 @@
         <tbody>
           <row>
             <entry>DBUS Service:</entry>
-            <entry><literal>org.cinnamon.ScreenSaver</literal></entry>
+            <entry><literal>org.gnome.ScreenSaver</literal></entry>
           </row>
           <row>
             <entry>DBUS Object Path:</entry>
-            <entry><literal>/org.cinnamon.ScreenSaver</literal></entry>
+            <entry><literal>/org.gnome.ScreenSaver</literal></entry>
           </row>
           <row>
             <entry>DBUS Interface:</entry>
-            <entry><literal>org.cinnamon.ScreenSaver</literal></entry>
+            <entry><literal>org.gnome.ScreenSaver</literal></entry>
           </row>
         </tbody>
       </tgroup>
@@ -370,24 +370,24 @@
     </para>
     <screen>
 dbus-send --session \
-          --dest=org.cinnamon.ScreenSaver \
+          --dest=org.gnome.ScreenSaver \
           --type=method_call \
           --print-reply \
           --reply-timeout=20000 \
-          /org/cinnamon/ScreenSaver \
-          org.cinnamon.ScreenSaver.GetSessionIdleTime
+          /org/gnome/ScreenSaver \
+          org.gnome.ScreenSaver.GetSessionIdleTime
     </screen>
     <para>
       You can activate the screensaver like so:
     </para>
     <screen>
 dbus-send --session \
-          --dest=org.cinnamon.ScreenSaver \
+          --dest=org.gnome.ScreenSaver \
           --type=method_call \
           --print-reply \
           --reply-timeout=20000 \
-          /org/cinnamon/ScreenSaver \
-          org.cinnamon.ScreenSaver.SetActive \
+          /org/gnome/ScreenSaver \
+          org.gnome.ScreenSaver.SetActive \
           boolean:true
     </screen>
 
@@ -396,7 +396,7 @@ dbus-send --session \
     </para>
     <screen>
 dbus-monitor --session \
-          "type='signal',interface='org.cinnamon.ScreenSaver'"
+          "type='signal',interface='org.gnome.ScreenSaver'"
     </screen>
 
     <para>
@@ -404,7 +404,7 @@ dbus-monitor --session \
     </para>
     <screen>
 dbus-monitor --session \
-          "type='signal',interface='org.cinnamon.ScreenSaver',member='SessionIdleChanged'"
+          "type='signal',interface='org.gnome.ScreenSaver',member='SessionIdleChanged'"
     </screen>
   </sect1>
 
