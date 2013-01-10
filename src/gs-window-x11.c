@@ -2253,8 +2253,7 @@ gs_window_init (GSWindow *window)
         
         g_signal_connect (main_box, "draw", G_CALLBACK (shade_background), window);
         
-        window->priv->drawing_area = gtk_drawing_area_new ();
-        gtk_widget_show (window->priv->drawing_area);
+        window->priv->drawing_area = gtk_drawing_area_new ();        
         gtk_widget_set_app_paintable (window->priv->drawing_area, TRUE);
         gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->drawing_area, TRUE, TRUE, 0);
         
