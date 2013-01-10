@@ -1,9 +1,8 @@
 Source: cinnamon-screensaver
 Section: gnome
 Priority: optional
-Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
+Maintainer: Linux Mint <root@linuxmint.com>
 XSBC-Original-Maintainer: Guilherme de S. Pastore <gpastore@debian.org>
-Uploaders: @GNOME_TEAM@
 Build-Depends: cdbs,
                debhelper (>= 8.1.0~),
                dh-apport,               
@@ -30,8 +29,6 @@ Build-Depends: cdbs,
                libgl1-mesa-dev | libgl1-mesa-swx11-dev,
                gsettings-desktop-schemas-dev (>= 2.91.91)
 Standards-Version: 3.9.2
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/cinnamon-screensaver/ubuntu
-Homepage: http://live.gnome.org/CinnamonScreensaver
 
 Package: cinnamon-screensaver
 Architecture: any
