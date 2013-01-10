@@ -420,13 +420,13 @@ request_shell_exit_overview (GSGrab *grab)
         if (!grab->priv->session_bus)
                 return;
 
-        message = g_dbus_message_new_method_call ("org.gnome.Shell",
-                                                  "/org/gnome/Shell",
+        message = g_dbus_message_new_method_call ("org.Cinnamon",
+                                                  "/org/Cinnamon",
                                                   "org.freedesktop.DBus.Properties",
                                                   "Set");
         g_dbus_message_set_body (message,
                                  g_variant_new ("(ssv)",
-                                                "org.gnome.Shell",
+                                                "org.Cinnamon",
                                                 "OverviewActive",
                                                 g_variant_new ("b",
                                                                FALSE)));
