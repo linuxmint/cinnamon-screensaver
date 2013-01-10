@@ -5,7 +5,6 @@ Maintainer: Linux Mint <root@linuxmint.com>
 XSBC-Original-Maintainer: Guilherme de S. Pastore <gpastore@debian.org>
 Build-Depends: cdbs,
                debhelper (>= 8.1.0~),
-               dh-apport,               
                dh-autoreconf,
                gnome-common,
                gnome-pkg-tools (>= 0.10),

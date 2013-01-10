@@ -2,6 +2,7 @@
 # 
 # Modifications should be made to debian/control.in instead.
 # This file is regenerated automatically in the clean target.
+
 Source: cinnamon-screensaver
 Section: gnome
 Priority: optional
@@ -9,7 +10,6 @@ Maintainer: Linux Mint <root@linuxmint.com>
 XSBC-Original-Maintainer: Guilherme de S. Pastore <gpastore@debian.org>
 Build-Depends: cdbs,
                debhelper (>= 8.1.0~),
-               dh-apport,               
                dh-autoreconf,
                gnome-common,
                gnome-pkg-tools (>= 0.10),
