@@ -768,8 +768,6 @@ src/Makefile
 src/cinnamon-screensaver.desktop.in
 data/Makefile
 data/org.cinnamon.ScreenSaver.service
-doc/Makefile
-doc/cinnamon-screensaver.xml
 files/Makefile
 ])
 
