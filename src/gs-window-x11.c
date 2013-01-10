@@ -2169,17 +2169,6 @@ create_info_bar (GSWindow *window)
         gtk_box_pack_end (GTK_BOX (window->priv->vbox), window->priv->info_bar, FALSE, FALSE, 0);
 }
 
-static gboolean
-on_panel_draw (GtkWidget    *widget,
-               cairo_t      *cr,
-               GSWindow     *window)
-{
-        cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 1.0);
-        cairo_paint (cr);
-
-        return FALSE;
-}
-
 static void
 update_clock (GSWindow *window)
 {
@@ -2196,105 +2185,6 @@ on_clock_changed (GnomeWallClock *clock,
                   gpointer        user_data)
 {
         update_clock (GS_WINDOW (user_data));
-}
-
-static char *
-get_user_display_name (void)
-{
-        const char *name;
-        char       *utf8_name;
-
-        name = g_get_real_name ();
-
-        if (name == NULL || name[0] == '\0' || strcmp (name, "Unknown") == 0) {
-                name = g_get_user_name ();
-        }
-
-        utf8_name = NULL;
-
-        if (name != NULL) {
-                utf8_name = g_locale_to_utf8 (name, -1, NULL, NULL, NULL);
-        }
-
-        return utf8_name;
-}
-
-static void
-update_name_label (GSWindow *window)
-{
-        char *name;
-        char *markup;
-        name = get_user_display_name ();
-        markup = g_strdup_printf ("<b><span foreground=\"#ccc\">%s</span></b>", name);
-        gtk_label_set_markup (GTK_LABEL (window->priv->name_label), markup);
-        g_free (markup);
-        g_free (name);
-}
-
-static void
-create_panel (GSWindow *window)
-{
-        GtkWidget    *left_hbox;
-        GtkWidget    *right_hbox;
-        GtkWidget    *alignment;
-        GtkWidget    *right_alignment;
-        GtkWidget    *image;
-        GtkSizeGroup *sg;
-        GdkRGBA       bg;
-        GdkRGBA       fg;
-        int           all_states;
-        GIcon        *gicon;
-
-        bg.red = 0;
-        bg.green = 0;
-        bg.blue = 0;
-        bg.alpha = 1.0;
-
-        fg.red = 0.8;
-        fg.green = 0.8;
-        fg.blue = 0.8;
-        fg.alpha = 1.0;
-
-        all_states = 0;
-
-        gtk_widget_override_background_color (window->priv->panel, all_states, &bg);
-        gtk_widget_override_color (window->priv->panel, all_states, &fg);
-        gtk_container_set_border_width (GTK_CONTAINER (window->priv->panel), 0);
-
-        g_signal_connect (window->priv->panel, "draw", G_CALLBACK (on_panel_draw), window);
-
-        left_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-        gtk_box_pack_start (GTK_BOX (window->priv->panel), left_hbox, TRUE, TRUE, 0);
-
-        alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
-        gtk_box_pack_start (GTK_BOX (window->priv->panel), alignment, FALSE, FALSE, 0);
-        window->priv->clock = gtk_label_new (NULL);
-        gtk_misc_set_padding (GTK_MISC (window->priv->clock), 4, 4);
-        gtk_container_add (GTK_CONTAINER (alignment), window->priv->clock);
-
-        right_alignment = gtk_alignment_new (1, 0.5, 1, 1);
-        gtk_box_pack_end (GTK_BOX (window->priv->panel), right_alignment, TRUE, TRUE, 0);
-        gtk_alignment_set_padding (GTK_ALIGNMENT (right_alignment),
-                                   0, 0, 10, 10);
-
-        right_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-        gtk_container_add (GTK_CONTAINER (right_alignment), right_hbox);
-
-        window->priv->name_label = gtk_label_new (NULL);
-        update_name_label (window);
-        gtk_box_pack_end (GTK_BOX (right_hbox), window->priv->name_label, FALSE, FALSE, 0);
-
-        gicon = g_themed_icon_new_with_default_fallbacks ("changes-prevent-symbolic");
-        image = gtk_image_new_from_gicon (gicon, GTK_ICON_SIZE_MENU);
-        gtk_widget_override_color (image, all_states, &fg);
-        g_object_unref (gicon);
-        gtk_box_pack_end (GTK_BOX (right_hbox), image, FALSE, FALSE, 0);
-
-        sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-        gtk_size_group_add_widget (sg, left_hbox);
-        gtk_size_group_add_widget (sg, right_hbox);
-
-        gtk_widget_show_all (window->priv->panel);
 }
 
 static void
@@ -2330,20 +2220,39 @@ gs_window_init (GSWindow *window)
                                | GDK_VISIBILITY_NOTIFY_MASK
                                | GDK_ENTER_NOTIFY_MASK
                                | GDK_LEAVE_NOTIFY_MASK);
-            
+                           
+        GtkWidget *grid = gtk_grid_new();
+        gtk_widget_show (grid);
+                     
         window->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
         gtk_widget_show (window->priv->vbox);
-        gtk_container_add (GTK_CONTAINER (window), window->priv->vbox);
+        
+        gtk_container_add (GTK_CONTAINER (window), grid);                
+                                
+        gtk_widget_set_valign (window->priv->vbox, GTK_ALIGN_CENTER);
+        gtk_widget_set_halign (window->priv->vbox, GTK_ALIGN_CENTER);
+        gtk_widget_set_size_request(window->priv->vbox,450, -1);
         
         // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
-        /**window->priv->clock = gtk_label_new (NULL);
+        window->priv->clock = gtk_label_new (NULL);
         gtk_widget_show (window->priv->clock);
         window->priv->clock_tracker = g_object_new (GNOME_TYPE_WALL_CLOCK, NULL);
         g_signal_connect (window->priv->clock_tracker, "notify::clock", G_CALLBACK (on_clock_changed), window);
-        update_clock (window);*/
+        update_clock (window);
 
         gtk_misc_set_padding (GTK_MISC (window->priv->clock), 4, 4);
-        gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->clock, FALSE, FALSE, 0);        
+        gtk_grid_attach(GTK_GRID(grid), window->priv->clock, 0, 1, 1, 1);   
+        gtk_grid_attach(GTK_GRID(grid), window->priv->vbox, 1, 1, 1, 1);        
+        GtkWidget * right_label = gtk_label_new(NULL);        
+        gtk_widget_show (right_label);
+        gtk_grid_attach(GTK_GRID(grid), right_label, 2, 1, 1, 1); 
+                
+        gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
+        
+        gtk_widget_set_valign (grid, GTK_ALIGN_CENTER);
+        gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
+        gtk_widget_set_hexpand (grid, TRUE);
+        gtk_widget_set_vexpand (grid, TRUE);
         
         window->priv->drawing_area = gtk_drawing_area_new ();
         gtk_widget_show (window->priv->drawing_area);
