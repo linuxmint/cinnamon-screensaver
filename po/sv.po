@@ -1,11 +1,11 @@
-# Swedish messages for gnome-screensaver.
+# Swedish messages for cinnamon-screensaver.
 # Copyright (C) 2005-2011 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2005.
 # Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008, 2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-screensaver\n"
+"Project-Id-Version: cinnamon-screensaver\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-03-17 21:38+0100\n"
 "PO-Revision-Date: 2011-03-17 21:38+0100\n"
@@ -17,181 +17,181 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/gnome-screensaver-command.c:46
+#: ../src/cinnamon-screensaver-command.c:46
 msgid "Causes the screensaver to exit gracefully"
 msgstr "Gör så att skärmsläckaren avslutas snällt"
 
-#: ../src/gnome-screensaver-command.c:48
+#: ../src/cinnamon-screensaver-command.c:48
 msgid "Query the state of the screensaver"
 msgstr "Fråga om status för skärmsläckaren"
 
-#: ../src/gnome-screensaver-command.c:50
+#: ../src/cinnamon-screensaver-command.c:50
 msgid "Query the length of time the screensaver has been active"
 msgstr "Fråga om tidsperioden som skärmsläckaren har varit aktiv"
 
-#: ../src/gnome-screensaver-command.c:52
+#: ../src/cinnamon-screensaver-command.c:52
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr "Berättar för den körande skärmsläckarprocessen att skärmen ska låsas omedelbart"
 
-#: ../src/gnome-screensaver-command.c:54
+#: ../src/cinnamon-screensaver-command.c:54
 msgid "Turn the screensaver on (blank the screen)"
 msgstr "Slå på skärmsläckaren (töm skärmen)"
 
-#: ../src/gnome-screensaver-command.c:56
+#: ../src/cinnamon-screensaver-command.c:56
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr "Om skärmsläckaren är aktiv, inaktivera den (väck upp skärmen)"
 
-#: ../src/gnome-screensaver-command.c:58
-#: ../src/gnome-screensaver-dialog.c:59
-#: ../src/gnome-screensaver.c:56
+#: ../src/cinnamon-screensaver-command.c:58
+#: ../src/cinnamon-screensaver-dialog.c:59
+#: ../src/cinnamon-screensaver.c:56
 msgid "Version of this application"
 msgstr "Detta programs versionsnummer"
 
-#: ../src/gnome-screensaver-command.c:224
+#: ../src/cinnamon-screensaver-command.c:224
 #, c-format
 msgid "The screensaver is active\n"
 msgstr "Skärmsläckaren är aktiv\n"
 
-#: ../src/gnome-screensaver-command.c:226
+#: ../src/cinnamon-screensaver-command.c:226
 #, c-format
 msgid "The screensaver is inactive\n"
 msgstr "Skärmsläckaren är inaktiv\n"
 
-#: ../src/gnome-screensaver-command.c:256
+#: ../src/cinnamon-screensaver-command.c:256
 #, c-format
 msgid "The screensaver has been active for %d second.\n"
 msgid_plural "The screensaver has been active for %d seconds.\n"
 msgstr[0] "Skärmsläckaren har varit aktiv i %d sekund.\n"
 msgstr[1] "Skärmsläckaren har varit aktiv i %d sekunder.\n"
 
-#: ../src/gnome-screensaver-command.c:258
+#: ../src/cinnamon-screensaver-command.c:258
 #, c-format
 msgid "The screensaver is not currently active.\n"
 msgstr "Skärmsläckaren är för närvarande inte aktiv.\n"
 
-#: ../src/gnome-screensaver-dialog.c:57
+#: ../src/cinnamon-screensaver-dialog.c:57
 msgid "Show debugging output"
 msgstr "Visa felsökningsutdata"
 
-#: ../src/gnome-screensaver-dialog.c:61
+#: ../src/cinnamon-screensaver-dialog.c:61
 msgid "Show the logout button"
 msgstr "Visa utloggningsknappen"
 
-#: ../src/gnome-screensaver-dialog.c:63
+#: ../src/cinnamon-screensaver-dialog.c:63
 msgid "Command to invoke from the logout button"
 msgstr "Kommando att starta från utloggningsknappen"
 
-#: ../src/gnome-screensaver-dialog.c:65
+#: ../src/cinnamon-screensaver-dialog.c:65
 msgid "Show the switch user button"
 msgstr "Visa knapp för byte av användare"
 
-#: ../src/gnome-screensaver-dialog.c:67
+#: ../src/cinnamon-screensaver-dialog.c:67
 msgid "Message to show in the dialog"
 msgstr "Meddelande att visa i dialogrutan"
 
 #. Translators: This is the example input for the --status-message command line option.
 #. Translators: This is the example input for the --away-message command line option.
-#: ../src/gnome-screensaver-dialog.c:69
-#: ../src/gnome-screensaver-dialog.c:73
+#: ../src/cinnamon-screensaver-dialog.c:69
+#: ../src/cinnamon-screensaver-dialog.c:73
 msgid "MESSAGE"
 msgstr "MEDDELANDE"
 
-#: ../src/gnome-screensaver-dialog.c:71
+#: ../src/cinnamon-screensaver-dialog.c:71
 msgid "Not used"
 msgstr "Används inte"
 
 #. login: is whacked always translate to Username:
-#: ../src/gnome-screensaver-dialog.c:183
-#: ../src/gnome-screensaver-dialog.c:184
-#: ../src/gnome-screensaver-dialog.c:185
+#: ../src/cinnamon-screensaver-dialog.c:183
+#: ../src/cinnamon-screensaver-dialog.c:184
+#: ../src/cinnamon-screensaver-dialog.c:185
 #: ../src/gs-auth-pam.c:698
 msgid "Username:"
 msgstr "Användarnamn:"
 
-#: ../src/gnome-screensaver-dialog.c:186
-#: ../src/gnome-screensaver-dialog.c:187
+#: ../src/cinnamon-screensaver-dialog.c:186
+#: ../src/cinnamon-screensaver-dialog.c:187
 #: ../src/gs-auth-pam.c:166
 msgid "Password:"
 msgstr "Lösenord:"
 
-#: ../src/gnome-screensaver-dialog.c:188
+#: ../src/cinnamon-screensaver-dialog.c:188
 msgid "You are required to change your password immediately (password aged)"
 msgstr "Du måste ändra ditt lösenord omedelbart (lösenord för gammalt)"
 
-#: ../src/gnome-screensaver-dialog.c:189
+#: ../src/cinnamon-screensaver-dialog.c:189
 msgid "You are required to change your password immediately (root enforced)"
 msgstr "Du måste ändra ditt lösenord omedelbart (root kräver det)"
 
-#: ../src/gnome-screensaver-dialog.c:190
+#: ../src/cinnamon-screensaver-dialog.c:190
 msgid "Your account has expired; please contact your system administrator"
 msgstr "Ditt konto har gått ut; kontakta din systemadministratör"
 
-#: ../src/gnome-screensaver-dialog.c:191
+#: ../src/cinnamon-screensaver-dialog.c:191
 msgid "No password supplied"
 msgstr "Inget lösenord angivit"
 
-#: ../src/gnome-screensaver-dialog.c:192
+#: ../src/cinnamon-screensaver-dialog.c:192
 msgid "Password unchanged"
 msgstr "Lösenordet inte ändrat"
 
-#: ../src/gnome-screensaver-dialog.c:193
+#: ../src/cinnamon-screensaver-dialog.c:193
 msgid "Cannot get username"
 msgstr "Kan inte få tag på användarnamnet"
 
-#: ../src/gnome-screensaver-dialog.c:194
+#: ../src/cinnamon-screensaver-dialog.c:194
 msgid "Retype new Unix password:"
 msgstr "Skriv in nytt Unix-lösenord igen:"
 
-#: ../src/gnome-screensaver-dialog.c:195
+#: ../src/cinnamon-screensaver-dialog.c:195
 msgid "Enter new Unix password:"
 msgstr "Ange nytt Unix-lösenord:"
 
-#: ../src/gnome-screensaver-dialog.c:196
+#: ../src/cinnamon-screensaver-dialog.c:196
 msgid "(current) Unix password:"
 msgstr "(nuvarande) UNIX-lösenord:"
 
-#: ../src/gnome-screensaver-dialog.c:197
+#: ../src/cinnamon-screensaver-dialog.c:197
 msgid "Error while changing NIS password."
 msgstr "Fel vid ändring av NIS-lösenord."
 
-#: ../src/gnome-screensaver-dialog.c:198
+#: ../src/cinnamon-screensaver-dialog.c:198
 msgid "You must choose a longer password"
 msgstr "Du måste välja ett längre lösenord"
 
-#: ../src/gnome-screensaver-dialog.c:199
+#: ../src/cinnamon-screensaver-dialog.c:199
 msgid "Password has been already used. Choose another."
 msgstr "Lösenordet har redan använts tidigare. Välj ett annat."
 
-#: ../src/gnome-screensaver-dialog.c:200
+#: ../src/cinnamon-screensaver-dialog.c:200
 msgid "You must wait longer to change your password"
 msgstr "Du måste vänta längre för att ändra ditt lösenord"
 
-#: ../src/gnome-screensaver-dialog.c:201
+#: ../src/cinnamon-screensaver-dialog.c:201
 msgid "Sorry, passwords do not match"
 msgstr "Tyvärr, lösenorden stämmer inte överens"
 
-#: ../src/gnome-screensaver-dialog.c:267
+#: ../src/cinnamon-screensaver-dialog.c:267
 msgid "Checking…"
 msgstr "Kontrollerar..."
 
-#: ../src/gnome-screensaver-dialog.c:309
+#: ../src/cinnamon-screensaver-dialog.c:309
 #: ../src/gs-auth-pam.c:457
 msgid "Authentication failed."
 msgstr "Autentisering misslyckades."
 
-#: ../src/gnome-screensaver.c:57
+#: ../src/cinnamon-screensaver.c:57
 msgid "Don't become a daemon"
 msgstr "Bli inte en demon"
 
-#: ../src/gnome-screensaver.c:58
+#: ../src/cinnamon-screensaver.c:58
 msgid "Enable debugging code"
 msgstr "Aktivera felsökningskod"
 
-#: ../src/gnome-screensaver.desktop.in.in.h:1
+#: ../src/cinnamon-screensaver.desktop.in.in.h:1
 msgid "Launch screensaver and locker program"
 msgstr "Starta program för skärmsläckare och -låsning"
 
-#: ../src/gnome-screensaver.desktop.in.in.h:2
+#: ../src/cinnamon-screensaver.desktop.in.in.h:2
 msgid "Screensaver"
 msgstr "Skärmsläckare"
 

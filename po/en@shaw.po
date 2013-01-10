@@ -1,10 +1,10 @@
-# Shavian translation for gnome-screensaver.
+# Shavian translation for cinnamon-screensaver.
 # Copyright (C) 2009 The Gnome Foundation.
 # Thomas Thurman <tthurman@gnome.org>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: metacity\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-screensaver&component=general\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=cinnamon-screensaver&component=general\n"
 "POT-Creation-Date: 2010-05-05 07:49+0000\n"
 "PO-Revision-Date: 2010-05-12 18:36 -0400\n"
 "Last-Translator: Thomas Thurman <tthurman@gnome.org>\n"
@@ -14,115 +14,115 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n!=1;\n"
 
-#: ../data/gnome-screensaver-preferences.desktop.in.h:1
-#: ../src/gnome-screensaver.desktop.in.in.h:2
+#: ../data/cinnamon-screensaver-preferences.desktop.in.h:1
+#: ../src/cinnamon-screensaver.desktop.in.in.h:2
 msgid "Screensaver"
 msgstr "𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼"
 
-#: ../data/gnome-screensaver-preferences.desktop.in.h:2
+#: ../data/cinnamon-screensaver-preferences.desktop.in.h:2
 msgid "Set your screensaver preferences"
 msgstr "𐑕𐑧𐑑 𐑿𐑼 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑐𐑮𐑧𐑓𐑼𐑩𐑯𐑕𐑩𐑟"
 
-#: ../data/gnome-screensaver-preferences.ui.h:1
+#: ../data/cinnamon-screensaver-preferences.ui.h:1
 msgid "<b>Screensaver preview</b>"
 msgstr "<b>𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑐𐑮𐑰𐑝𐑿</b>"
 
-#: ../data/gnome-screensaver-preferences.ui.h:2
+#: ../data/cinnamon-screensaver-preferences.ui.h:2
 msgid "<b>Warning: the screen will not be locked for the root user.</b>"
 msgstr "<b>𐑢𐑹𐑯𐑦𐑙: 𐑞 𐑕𐑒𐑮𐑰𐑯 𐑢𐑦𐑤 𐑯𐑪𐑑 𐑚𐑰 𐑤𐑪𐑒𐑑 𐑓𐑹 𐑞 𐑮𐑵𐑑 𐑿𐑟𐑼.</b>"
 
-#: ../data/gnome-screensaver-preferences.ui.h:3
+#: ../data/cinnamon-screensaver-preferences.ui.h:3
 msgid "Power _Management"
 msgstr "𐑐𐑬𐑼 _𐑥𐑨𐑯𐑩𐑡𐑥𐑩𐑯𐑑"
 
-#: ../data/gnome-screensaver-preferences.ui.h:4
+#: ../data/cinnamon-screensaver-preferences.ui.h:4
 msgid "Regard the computer as _idle after:"
 msgstr "𐑮𐑦𐑜𐑸𐑛 𐑞 𐑒𐑩𐑥𐑐𐑿𐑑𐑼 𐑨𐑟 _𐑲𐑛𐑩𐑤 𐑭𐑓𐑑𐑼:"
 
-#: ../data/gnome-screensaver-preferences.ui.h:5
+#: ../data/cinnamon-screensaver-preferences.ui.h:5
 msgid "Screensaver Preferences"
 msgstr "𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑐𐑮𐑧𐑓𐑼𐑩𐑯𐑕𐑩𐑟"
 
-#: ../data/gnome-screensaver-preferences.ui.h:6
+#: ../data/cinnamon-screensaver-preferences.ui.h:6
 msgid "Screensaver Preview"
 msgstr "𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑐𐑮𐑰𐑝𐑿"
 
-#: ../data/gnome-screensaver-preferences.ui.h:7
+#: ../data/cinnamon-screensaver-preferences.ui.h:7
 msgid "_Activate screensaver when computer is idle"
 msgstr "_𐑨𐑒𐑑𐑦𐑝𐑱𐑑 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑢𐑧𐑯 𐑒𐑩𐑥𐑐𐑿𐑑𐑼 𐑦𐑟 𐑲𐑛𐑩𐑤"
 
-#: ../data/gnome-screensaver-preferences.ui.h:8
+#: ../data/cinnamon-screensaver-preferences.ui.h:8
 msgid "_Lock screen when screensaver is active"
 msgstr "_𐑤𐑪𐑒 𐑕𐑒𐑮𐑰𐑯 𐑢𐑧𐑯 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑨𐑒𐑑𐑦𐑝"
 
-#: ../data/gnome-screensaver-preferences.ui.h:9
+#: ../data/cinnamon-screensaver-preferences.ui.h:9
 msgid "_Preview"
 msgstr "_𐑐𐑮𐑰𐑝𐑿"
 
-#: ../data/gnome-screensaver-preferences.ui.h:10
+#: ../data/cinnamon-screensaver-preferences.ui.h:10
 msgid "_Screensaver theme:"
 msgstr "_𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑔𐑰𐑥:"
 
-#: ../data/gnome-screensaver.directory.in.h:1
-#: ../data/gnome-screensaver.schemas.in.h:11
+#: ../data/cinnamon-screensaver.directory.in.h:1
+#: ../data/cinnamon-screensaver.schemas.in.h:11
 msgid "Screensaver themes"
 msgstr "𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑔𐑰𐑥𐑟"
 
 #, fuzzy
-#: ../data/gnome-screensaver.directory.in.h:2
+#: ../data/cinnamon-screensaver.directory.in.h:2
 msgid "Screensavers"
 msgstr "Screensavers"
 
-#: ../data/gnome-screensaver.schemas.in.h:1
+#: ../data/cinnamon-screensaver.schemas.in.h:1
 msgid "Activate when idle"
 msgstr "𐑨𐑒𐑑𐑦𐑝𐑱𐑑 𐑢𐑧𐑯 𐑲𐑛𐑩𐑤"
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:2
+#: ../data/cinnamon-screensaver.schemas.in.h:2
 msgid "Allow embedding a keyboard into the window"
 msgstr "𐑩𐑤𐑬 embedding 𐑩 𐑒𐑰𐑚𐑪𐑮𐑛 𐑦𐑯𐑑𐑫 𐑞 𐑢𐑦𐑯𐑛𐑴"
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:3
+#: ../data/cinnamon-screensaver.schemas.in.h:3
 msgid "Allow logout"
 msgstr "𐑩𐑤𐑬 logout"
 
-#: ../data/gnome-screensaver.schemas.in.h:4
+#: ../data/cinnamon-screensaver.schemas.in.h:4
 msgid "Allow the session status message to be displayed"
 msgstr "𐑩𐑤𐑬 𐑞 𐑕𐑧𐑖𐑩𐑯 𐑕𐑑𐑱𐑑𐑫𐑕 𐑥𐑧𐑕𐑦𐑡 𐑑 𐑚𐑰 𐑛𐑩𐑕𐑐𐑤𐑱𐑛"
 
-#: ../data/gnome-screensaver.schemas.in.h:5
+#: ../data/cinnamon-screensaver.schemas.in.h:5
 msgid ""
 "Allow the session status message to be displayed when the screen is locked."
 msgstr "𐑩𐑤𐑬 𐑞 𐑕𐑧𐑖𐑩𐑯 𐑕𐑑𐑱𐑑𐑫𐑕 𐑥𐑧𐑕𐑦𐑡 𐑑 𐑚𐑰 𐑛𐑩𐑕𐑐𐑤𐑱𐑛 𐑢𐑧𐑯 𐑞 𐑕𐑒𐑮𐑰𐑯 𐑦𐑟 𐑤𐑪𐑒𐑑."
 
-#: ../data/gnome-screensaver.schemas.in.h:6
+#: ../data/cinnamon-screensaver.schemas.in.h:6
 msgid "Allow user switching"
 msgstr "𐑩𐑤𐑬 𐑿𐑟𐑼 𐑕𐑢𐑦𐑗𐑦𐑙"
 
-#: ../data/gnome-screensaver.schemas.in.h:7
+#: ../data/cinnamon-screensaver.schemas.in.h:7
 msgid "Embedded keyboard command"
 msgstr "𐑧𐑥𐑚𐑧𐑛𐑦𐑛 𐑒𐑰𐑚𐑪𐑮𐑛 𐑒𐑩𐑥𐑭𐑯𐑛"
 
-#: ../data/gnome-screensaver.schemas.in.h:8
+#: ../data/cinnamon-screensaver.schemas.in.h:8
 msgid "Lock on activation"
 msgstr "𐑤𐑪𐑒 𐑪𐑯 𐑨𐑒𐑑𐑩𐑝𐑱𐑖𐑩𐑯"
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:9
+#: ../data/cinnamon-screensaver.schemas.in.h:9
 msgid "Logout command"
 msgstr "Logout 𐑒𐑩𐑥𐑭𐑯𐑛"
 
-#: ../data/gnome-screensaver.schemas.in.h:10
+#: ../data/cinnamon-screensaver.schemas.in.h:10
 msgid "Screensaver theme selection mode"
 msgstr "𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑔𐑰𐑥 𐑕𐑦𐑤𐑧𐑒𐑖𐑩𐑯 𐑥𐑴𐑛"
 
-#: ../data/gnome-screensaver.schemas.in.h:12
+#: ../data/cinnamon-screensaver.schemas.in.h:12
 msgid "Set this to TRUE to activate the screensaver when the session is idle."
 msgstr "𐑕𐑧𐑑 𐑞𐑦𐑕 𐑑 𐑑𐑮𐑵 𐑑 𐑨𐑒𐑑𐑦𐑝𐑱𐑑 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑢𐑧𐑯 𐑞 𐑕𐑧𐑖𐑩𐑯 𐑦𐑟 𐑲𐑛𐑩𐑤."
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:13
+#: ../data/cinnamon-screensaver.schemas.in.h:13
 msgid ""
 "Set this to TRUE to allow embedding a keyboard into the window when trying to "
 "unlock. The \"keyboard_command\" key must be set with the appropriate command."
@@ -130,18 +130,18 @@ msgstr ""
 "𐑕𐑧𐑑 𐑞𐑦𐑕 𐑑 𐑑𐑮𐑵 𐑑 𐑩𐑤𐑬 embedding 𐑩 𐑒𐑰𐑚𐑪𐑮𐑛 𐑦𐑯𐑑𐑫 𐑞 𐑢𐑦𐑯𐑛𐑴 𐑢𐑧𐑯 𐑑𐑮𐑲𐑦𐑙 𐑑 𐑩𐑯𐑤𐑭𐑒. 𐑞 "
 "\"keyboard_command\" 𐑒𐑰 𐑥𐑳𐑕𐑑 𐑚𐑰 𐑕𐑧𐑑 𐑢𐑦𐑞 𐑞 𐑩𐑐𐑮𐑴𐑐𐑮𐑦𐑩𐑑 𐑒𐑩𐑥𐑭𐑯𐑛."
 
-#: ../data/gnome-screensaver.schemas.in.h:14
+#: ../data/cinnamon-screensaver.schemas.in.h:14
 msgid "Set this to TRUE to lock the screen when the screensaver goes active."
 msgstr "𐑕𐑧𐑑 𐑞𐑦𐑕 𐑑 𐑑𐑮𐑵 𐑑 𐑤𐑪𐑒 𐑞 𐑕𐑒𐑮𐑰𐑯 𐑢𐑧𐑯 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑜𐑴𐑟 𐑨𐑒𐑑𐑦𐑝."
 
-#: ../data/gnome-screensaver.schemas.in.h:15
+#: ../data/cinnamon-screensaver.schemas.in.h:15
 msgid ""
 "Set this to TRUE to offer an option in the unlock dialog to switch to a "
 "different user account."
 msgstr ""
 "𐑕𐑧𐑑 𐑞𐑦𐑕 𐑑 𐑑𐑮𐑵 𐑑 𐑪𐑓𐑼 𐑩𐑯 𐑪𐑐𐑖𐑩𐑯 𐑦𐑯 𐑞 𐑩𐑯𐑤𐑭𐑒 𐑛𐑲𐑩𐑤𐑪𐑜 𐑑 𐑕𐑢𐑦𐑗 𐑑 𐑩 𐑛𐑦𐑓𐑼𐑩𐑯𐑑 𐑿𐑟𐑼 𐑩𐑒𐑬𐑯𐑑."
 
-#: ../data/gnome-screensaver.schemas.in.h:16
+#: ../data/cinnamon-screensaver.schemas.in.h:16
 msgid ""
 "Set this to TRUE to offer an option in unlock dialog to logging out after a "
 "delay. The Delay is specified in the \"logout_delay\" key."
@@ -150,7 +150,7 @@ msgstr ""
 "𐑦𐑟 𐑕𐑐𐑧𐑕𐑦𐑓𐑲𐑛 𐑦𐑯 𐑞 \"logout_delay\" 𐑒𐑰."
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:17
+#: ../data/cinnamon-screensaver.schemas.in.h:17
 msgid ""
 "The command that will be run, if the \"embedded_keyboard_enabled\" key is set "
 "to TRUE, to embed a keyboard widget into the window. This command should "
@@ -162,7 +162,7 @@ msgstr ""
 "𐑦𐑯𐑑𐑼𐑓𐑱𐑕 𐑯 𐑬𐑑𐑐𐑫𐑑 𐑩 𐑢𐑦𐑯𐑛𐑴 XID 𐑪𐑯 𐑞 𐑕𐑑𐑨𐑯𐑛𐑼𐑛 𐑬𐑑𐑐𐑫𐑑."
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:18
+#: ../data/cinnamon-screensaver.schemas.in.h:18
 msgid ""
 "The command to invoke when the logout button is clicked. This command should "
 "simply log the user out without any interaction. This key has effect only if "
@@ -172,13 +172,13 @@ msgstr ""
 "𐑬𐑑 𐑢𐑦𐑞𐑬𐑑 𐑧𐑯𐑦 𐑦𐑯𐑑𐑻𐑨𐑒𐑖𐑩𐑯. 𐑞𐑦𐑕 𐑒𐑰 𐑣𐑨𐑟 𐑦𐑓𐑧𐑒𐑑 𐑴𐑯𐑤𐑦 𐑦𐑓 𐑞 \"logout_enable\" 𐑒𐑰 𐑦𐑟 "
 "𐑕𐑧𐑑 𐑑 𐑑𐑮𐑵."
 
-#: ../data/gnome-screensaver.schemas.in.h:19
+#: ../data/cinnamon-screensaver.schemas.in.h:19
 msgid ""
 "The number of minutes after screensaver activation before locking the screen."
 msgstr "𐑞 𐑯𐑳𐑥𐑚𐑼 𐑝 𐑥𐑦𐑯𐑦𐑑𐑕 𐑭𐑓𐑑𐑼 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑨𐑒𐑑𐑩𐑝𐑱𐑖𐑩𐑯 𐑚𐑦𐑓𐑹 𐑤𐑪𐑒𐑦𐑙 𐑞 𐑕𐑒𐑮𐑰𐑯."
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:20
+#: ../data/cinnamon-screensaver.schemas.in.h:20
 msgid ""
 "The number of minutes after the screensaver activation before a logout option "
 "will appear in unlock dialog. This key has effect only if the "
@@ -187,16 +187,16 @@ msgstr ""
 "𐑞 𐑯𐑳𐑥𐑚𐑼 𐑝 𐑥𐑦𐑯𐑦𐑑𐑕 𐑭𐑓𐑑𐑼 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑨𐑒𐑑𐑩𐑝𐑱𐑖𐑩𐑯 𐑚𐑦𐑓𐑹 𐑩 logout 𐑪𐑐𐑖𐑩𐑯 𐑢𐑦𐑤 𐑩𐑐𐑽 𐑦𐑯 "
 "𐑩𐑯𐑤𐑭𐑒 𐑛𐑲𐑩𐑤𐑪𐑜. 𐑞𐑦𐑕 𐑒𐑰 𐑣𐑨𐑟 𐑦𐑓𐑧𐑒𐑑 𐑴𐑯𐑤𐑦 𐑦𐑓 𐑞 \"logout_enable\" 𐑒𐑰 𐑦𐑟 𐑕𐑧𐑑 𐑑 𐑑𐑮𐑵."
 
-#: ../data/gnome-screensaver.schemas.in.h:21
+#: ../data/cinnamon-screensaver.schemas.in.h:21
 msgid ""
 "The number of minutes of inactivity before the session is considered idle."
 msgstr "𐑞 𐑯𐑳𐑥𐑚𐑼 𐑝 𐑥𐑦𐑯𐑦𐑑𐑕 𐑝 𐑦𐑯𐑨𐑒𐑑𐑦𐑝𐑦𐑑𐑰 𐑚𐑦𐑓𐑹 𐑞 𐑕𐑧𐑖𐑩𐑯 𐑦𐑟 𐑒𐑩𐑯𐑕𐑦𐑛𐑼𐑛 𐑲𐑛𐑩𐑤."
 
-#: ../data/gnome-screensaver.schemas.in.h:22
+#: ../data/cinnamon-screensaver.schemas.in.h:22
 msgid "The number of minutes to run before changing the screensaver theme."
 msgstr "𐑞 𐑯𐑳𐑥𐑚𐑼 𐑝 𐑥𐑦𐑯𐑦𐑑𐑕 𐑑 𐑮𐑳𐑯 𐑚𐑦𐑓𐑹 𐑗𐑱𐑯𐑡𐑦𐑙 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑔𐑰𐑥."
 
-#: ../data/gnome-screensaver.schemas.in.h:23
+#: ../data/cinnamon-screensaver.schemas.in.h:23
 msgid ""
 "The number of seconds of inactivity before signalling to power-management. "
 "This key is set and maintained by the session power-management agent."
@@ -204,7 +204,7 @@ msgstr ""
 "𐑞 𐑯𐑳𐑥𐑚𐑼 𐑝 𐑕𐑧𐑒𐑩𐑯𐑛𐑟 𐑝 𐑦𐑯𐑨𐑒𐑑𐑦𐑝𐑦𐑑𐑰 𐑚𐑦𐑓𐑹 𐑕𐑦𐑜𐑯𐑩𐑤𐑦𐑙 𐑑 𐑐𐑬𐑼-𐑥𐑨𐑯𐑩𐑡𐑥𐑩𐑯𐑑. 𐑞𐑦𐑕 𐑒𐑰 𐑦𐑟 𐑕𐑧𐑑 𐑯 "
 "𐑥𐑱𐑯𐑑𐑱𐑯𐑛 𐑚𐑲 𐑞 𐑕𐑧𐑖𐑩𐑯 𐑐𐑬𐑼-𐑥𐑨𐑯𐑩𐑡𐑥𐑩𐑯𐑑 𐑱𐑡𐑩𐑯𐑑."
 
-#: ../data/gnome-screensaver.schemas.in.h:24
+#: ../data/cinnamon-screensaver.schemas.in.h:24
 msgid ""
 "The selection mode used by screensaver. May be \"blank-only\" to enable the "
 "screensaver without using any theme on activation, \"single\" to enable "
@@ -216,15 +216,15 @@ msgstr ""
 "𐑔𐑰𐑥 𐑪𐑯 𐑨𐑒𐑑𐑩𐑝𐑱𐑖𐑩𐑯 (𐑕𐑐𐑧𐑕𐑦𐑓𐑲𐑛 𐑦𐑯 \"themes\" 𐑒𐑰), 𐑯 \"random\" 𐑑 𐑦𐑯𐑱𐑚𐑩𐑤 𐑞 "
 "𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑿𐑟𐑦𐑙 𐑩 𐑮𐑨𐑯𐑛𐑩𐑥 𐑔𐑰𐑥 𐑪𐑯 𐑨𐑒𐑑𐑩𐑝𐑱𐑖𐑩𐑯."
 
-#: ../data/gnome-screensaver.schemas.in.h:25
+#: ../data/cinnamon-screensaver.schemas.in.h:25
 msgid "Theme for lock dialog"
 msgstr "𐑔𐑰𐑥 𐑓𐑹 𐑤𐑪𐑒 𐑛𐑲𐑩𐑤𐑪𐑜"
 
-#: ../data/gnome-screensaver.schemas.in.h:26
+#: ../data/cinnamon-screensaver.schemas.in.h:26
 msgid "Theme to use for the lock dialog."
 msgstr "𐑔𐑰𐑥 𐑑 𐑿𐑕 𐑓𐑹 𐑞 𐑤𐑪𐑒 𐑛𐑲𐑩𐑤𐑪𐑜."
 
-#: ../data/gnome-screensaver.schemas.in.h:27
+#: ../data/cinnamon-screensaver.schemas.in.h:27
 msgid ""
 "This key specifies the list of themes to be used by the screensaver. It's "
 "ignored when \"mode\" key is \"blank-only\", should provide the theme name "
@@ -235,24 +235,24 @@ msgstr ""
 "𐑒𐑰 𐑦𐑟 \"blank-only\", 𐑖𐑫𐑛 𐑐𐑮𐑩𐑝𐑲𐑛 𐑞 𐑔𐑰𐑥 𐑯𐑱𐑥 𐑢𐑧𐑯 \"mode\" 𐑦𐑟 \"single\", 𐑯 𐑖𐑫𐑛 "
 "𐑐𐑮𐑩𐑝𐑲𐑛 𐑩 𐑤𐑦𐑕𐑑 𐑝 𐑔𐑰𐑥𐑟 𐑢𐑧𐑯 \"mode\" 𐑦𐑟 \"random\"."
 
-#: ../data/gnome-screensaver.schemas.in.h:28
+#: ../data/cinnamon-screensaver.schemas.in.h:28
 msgid "Time before locking"
 msgstr "𐑑𐑲𐑥 𐑚𐑦𐑓𐑹 𐑤𐑪𐑒𐑦𐑙"
 
 #, fuzzy
-#: ../data/gnome-screensaver.schemas.in.h:29
+#: ../data/cinnamon-screensaver.schemas.in.h:29
 msgid "Time before logout option"
 msgstr "𐑑𐑲𐑥 𐑚𐑦𐑓𐑹 logout 𐑪𐑐𐑖𐑩𐑯"
 
-#: ../data/gnome-screensaver.schemas.in.h:30
+#: ../data/cinnamon-screensaver.schemas.in.h:30
 msgid "Time before power-management baseline"
 msgstr "𐑑𐑲𐑥 𐑚𐑦𐑓𐑹 𐑐𐑬𐑼-𐑥𐑨𐑯𐑩𐑡𐑥𐑩𐑯𐑑 𐑚𐑱𐑕𐑤𐑲𐑯"
 
-#: ../data/gnome-screensaver.schemas.in.h:31
+#: ../data/cinnamon-screensaver.schemas.in.h:31
 msgid "Time before session is considered idle"
 msgstr "𐑑𐑲𐑥 𐑚𐑦𐑓𐑹 𐑕𐑧𐑖𐑩𐑯 𐑦𐑟 𐑒𐑩𐑯𐑕𐑦𐑛𐑼𐑛 𐑲𐑛𐑩𐑤"
 
-#: ../data/gnome-screensaver.schemas.in.h:32
+#: ../data/cinnamon-screensaver.schemas.in.h:32
 msgid "Time before theme change"
 msgstr "𐑑𐑲𐑥 𐑚𐑦𐑓𐑹 𐑔𐑰𐑥 𐑗𐑱𐑯𐑡"
 
@@ -433,222 +433,222 @@ msgstr "%s 𐑛𐑳𐑟 𐑯𐑪𐑑 𐑩𐑐𐑽 𐑑 𐑚𐑰 𐑩 𐑝𐑨�
 msgid "Copying file: %u of %u"
 msgstr "𐑒𐑪𐑐𐑦𐑦𐑙 𐑓𐑲𐑤: %u 𐑝 %u"
 
-#: ../src/gnome-screensaver-command.c:62
+#: ../src/cinnamon-screensaver-command.c:62
 msgid "Causes the screensaver to exit gracefully"
 msgstr "𐑒𐑷𐑟𐑩𐑟 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑑 𐑧𐑜𐑟𐑦𐑑 𐑜𐑮𐑱𐑕𐑓𐑫𐑤𐑦"
 
-#: ../src/gnome-screensaver-command.c:64
+#: ../src/cinnamon-screensaver-command.c:64
 msgid "Query the state of the screensaver"
 msgstr "𐑒𐑢𐑽𐑦 𐑞 𐑕𐑑𐑱𐑑 𐑝 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼"
 
-#: ../src/gnome-screensaver-command.c:66
+#: ../src/cinnamon-screensaver-command.c:66
 msgid "Query the length of time the screensaver has been active"
 msgstr "𐑒𐑢𐑽𐑦 𐑞 𐑤𐑧𐑙𐑔 𐑝 𐑑𐑲𐑥 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑣𐑨𐑟 𐑚𐑰𐑯 𐑨𐑒𐑑𐑦𐑝"
 
-#: ../src/gnome-screensaver-command.c:68
+#: ../src/cinnamon-screensaver-command.c:68
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr "𐑑𐑧𐑤𐑟 𐑞 𐑮𐑳𐑯𐑦𐑙 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑐𐑮𐑴𐑕𐑧𐑕 𐑑 𐑤𐑪𐑒 𐑞 𐑕𐑒𐑮𐑰𐑯 𐑦𐑥𐑰𐑛𐑾𐑑𐑤𐑰"
 
-#: ../src/gnome-screensaver-command.c:70
+#: ../src/cinnamon-screensaver-command.c:70
 msgid "If the screensaver is active then switch to another graphics demo"
 msgstr "𐑦𐑓 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑨𐑒𐑑𐑦𐑝 𐑞𐑧𐑯 𐑕𐑢𐑦𐑗 𐑑 𐑩𐑯𐑳𐑞𐑼 𐑜𐑮𐑨𐑓𐑦𐑒𐑕 𐑛𐑧𐑥𐑴"
 
-#: ../src/gnome-screensaver-command.c:72
+#: ../src/cinnamon-screensaver-command.c:72
 msgid "Turn the screensaver on (blank the screen)"
 msgstr "𐑑𐑻𐑯 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑪𐑯 (𐑚𐑤𐑨𐑙𐑒 𐑞 𐑕𐑒𐑮𐑰𐑯)"
 
-#: ../src/gnome-screensaver-command.c:74
+#: ../src/cinnamon-screensaver-command.c:74
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr "𐑦𐑓 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑨𐑒𐑑𐑦𐑝 𐑞𐑧𐑯 𐑛𐑰𐑨𐑒𐑑𐑦𐑝𐑱𐑑 𐑦𐑑 (𐑳𐑯-𐑚𐑤𐑨𐑙𐑒 𐑞 𐑕𐑒𐑮𐑰𐑯)"
 
-#: ../src/gnome-screensaver-command.c:76
+#: ../src/cinnamon-screensaver-command.c:76
 msgid "Poke the running screensaver to simulate user activity"
 msgstr "𐑐𐑴𐑒 𐑞 𐑮𐑳𐑯𐑦𐑙 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑑 𐑕𐑦𐑥𐑘𐑩𐑤𐑩𐑑 𐑿𐑟𐑼 𐑨𐑒𐑑𐑦𐑝𐑦𐑑𐑦"
 
-#: ../src/gnome-screensaver-command.c:78
+#: ../src/cinnamon-screensaver-command.c:78
 msgid ""
 "Inhibit the screensaver from activating.  Command blocks while inhibit is "
 "active."
 msgstr ""
 "𐑦𐑯𐑣𐑦𐑚𐑩𐑑 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑓𐑮𐑪𐑥 𐑨𐑒𐑑𐑩𐑝𐑱𐑑𐑦𐑙.  𐑒𐑩𐑥𐑭𐑯𐑛 𐑚𐑤𐑪𐑒𐑕 𐑢𐑲𐑤 𐑦𐑯𐑣𐑦𐑚𐑩𐑑 𐑦𐑟 𐑨𐑒𐑑𐑦𐑝."
 
-#: ../src/gnome-screensaver-command.c:80
+#: ../src/cinnamon-screensaver-command.c:80
 msgid "The calling application that is inhibiting the screensaver"
 msgstr "𐑞 𐑒𐑷𐑤𐑦𐑙 𐑩𐑐𐑤𐑦𐑒𐑱𐑕𐑩𐑯 𐑞𐑨𐑑 𐑦𐑟 𐑦𐑯𐑣𐑦𐑚𐑩𐑑𐑦𐑙 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼"
 
-#: ../src/gnome-screensaver-command.c:82
+#: ../src/cinnamon-screensaver-command.c:82
 msgid "The reason for inhibiting the screensaver"
 msgstr "𐑞 𐑮𐑰𐑟𐑩𐑯 𐑓𐑹 𐑦𐑯𐑣𐑦𐑚𐑩𐑑𐑦𐑙 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼"
 
-#: ../src/gnome-screensaver-command.c:84 ../src/gnome-screensaver-dialog.c:59
-#: ../src/gnome-screensaver.c:56
+#: ../src/cinnamon-screensaver-command.c:84 ../src/cinnamon-screensaver-dialog.c:59
+#: ../src/cinnamon-screensaver.c:56
 msgid "Version of this application"
 msgstr "𐑝𐑻𐑠𐑩𐑯 𐑝 𐑞𐑦𐑕 𐑩𐑐𐑤𐑦𐑒𐑱𐑕𐑩𐑯"
 
 #, c-format
-#: ../src/gnome-screensaver-command.c:311
+#: ../src/cinnamon-screensaver-command.c:311
 msgid "The screensaver is %s\n"
 msgstr "𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 %s\n"
 
-#: ../src/gnome-screensaver-command.c:311
+#: ../src/cinnamon-screensaver-command.c:311
 msgid "active"
 msgstr "𐑨𐑒𐑑𐑦𐑝"
 
-#: ../src/gnome-screensaver-command.c:311
+#: ../src/cinnamon-screensaver-command.c:311
 msgid "inactive"
 msgstr "𐑦𐑯𐑨𐑒𐑑𐑦𐑝"
 
 #, c-format
-#: ../src/gnome-screensaver-command.c:325
+#: ../src/cinnamon-screensaver-command.c:325
 msgid "The screensaver is not inhibited\n"
 msgstr "𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑯𐑪𐑑 𐑦𐑯𐑣𐑦𐑚𐑩𐑑𐑦𐑛\n"
 
 #, c-format
-#: ../src/gnome-screensaver-command.c:331
+#: ../src/cinnamon-screensaver-command.c:331
 msgid "The screensaver is being inhibited by:\n"
 msgstr "𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑚𐑰𐑦𐑙 𐑦𐑯𐑣𐑦𐑚𐑩𐑑𐑦𐑛 𐑚𐑲:\n"
 
 #, c-format
-#: ../src/gnome-screensaver-command.c:362
+#: ../src/cinnamon-screensaver-command.c:362
 msgid "The screensaver has been active for %d seconds.\n"
 msgstr "𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑣𐑨𐑟 𐑚𐑰𐑯 𐑨𐑒𐑑𐑦𐑝 𐑓𐑹 %d 𐑕𐑧𐑒𐑩𐑯𐑛𐑟.\n"
 
 #, c-format
-#: ../src/gnome-screensaver-command.c:366
+#: ../src/cinnamon-screensaver-command.c:366
 msgid "The screensaver is not currently active.\n"
 msgstr "𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑯𐑪𐑑 𐑒𐑳𐑮𐑩𐑯𐑑𐑤𐑦 𐑨𐑒𐑑𐑦𐑝.\n"
 
-#: ../src/gnome-screensaver-dialog.c:57
+#: ../src/cinnamon-screensaver-dialog.c:57
 msgid "Show debugging output"
 msgstr "𐑖𐑴 𐑛𐑰𐑚𐑳𐑜𐑦𐑙 𐑬𐑑𐑐𐑫𐑑"
 
 #, fuzzy
-#: ../src/gnome-screensaver-dialog.c:61
+#: ../src/cinnamon-screensaver-dialog.c:61
 msgid "Show the logout button"
 msgstr "𐑖𐑴 𐑞 logout 𐑚𐑳𐑑𐑩𐑯"
 
 #, fuzzy
-#: ../src/gnome-screensaver-dialog.c:63
+#: ../src/cinnamon-screensaver-dialog.c:63
 msgid "Command to invoke from the logout button"
 msgstr "𐑒𐑩𐑥𐑭𐑯𐑛 𐑑 𐑦𐑯𐑝𐑴𐑒 𐑓𐑮𐑪𐑥 𐑞 logout 𐑚𐑳𐑑𐑩𐑯"
 
-#: ../src/gnome-screensaver-dialog.c:65
+#: ../src/cinnamon-screensaver-dialog.c:65
 msgid "Show the switch user button"
 msgstr "𐑖𐑴 𐑞 𐑕𐑢𐑦𐑗 𐑿𐑟𐑼 𐑚𐑳𐑑𐑩𐑯"
 
-#: ../src/gnome-screensaver-dialog.c:67
+#: ../src/cinnamon-screensaver-dialog.c:67
 msgid "Message to show in the dialog"
 msgstr "𐑥𐑧𐑕𐑦𐑡 𐑑 𐑖𐑴 𐑦𐑯 𐑞 𐑛𐑲𐑩𐑤𐑪𐑜"
 
-#: ../src/gnome-screensaver-dialog.c:67 ../src/gnome-screensaver-dialog.c:69
+#: ../src/cinnamon-screensaver-dialog.c:67 ../src/cinnamon-screensaver-dialog.c:69
 msgid "MESSAGE"
 msgstr "𐑥𐑧𐑕𐑦𐑡"
 
-#: ../src/gnome-screensaver-dialog.c:69
+#: ../src/cinnamon-screensaver-dialog.c:69
 msgid "Not used"
 msgstr "𐑯𐑪𐑑 𐑿𐑕𐑑"
 
 #. login: is whacked always translate to Username:
-#: ../src/gnome-screensaver-dialog.c:179 ../src/gnome-screensaver-dialog.c:180
-#: ../src/gnome-screensaver-dialog.c:181 ../src/gs-auth-pam.c:698
+#: ../src/cinnamon-screensaver-dialog.c:179 ../src/cinnamon-screensaver-dialog.c:180
+#: ../src/cinnamon-screensaver-dialog.c:181 ../src/gs-auth-pam.c:698
 msgid "Username:"
 msgstr "𐑿𐑟𐑼𐑯𐑱𐑥:"
 
-#: ../src/gnome-screensaver-dialog.c:182 ../src/gnome-screensaver-dialog.c:183
+#: ../src/cinnamon-screensaver-dialog.c:182 ../src/cinnamon-screensaver-dialog.c:183
 #: ../src/gs-auth-pam.c:166
 msgid "Password:"
 msgstr "𐑐𐑭𐑕𐑢𐑼𐑛:"
 
-#: ../src/gnome-screensaver-dialog.c:184
+#: ../src/cinnamon-screensaver-dialog.c:184
 msgid "You are required to change your password immediately (password aged)"
 msgstr "𐑿 𐑸 𐑮𐑦𐑒𐑢𐑲𐑼𐑛 𐑑 𐑗𐑱𐑯𐑡 𐑿𐑼 𐑐𐑭𐑕𐑢𐑼𐑛 𐑦𐑥𐑰𐑛𐑾𐑑𐑤𐑰 (𐑐𐑭𐑕𐑢𐑼𐑛 𐑱𐑡𐑛)"
 
-#: ../src/gnome-screensaver-dialog.c:185
+#: ../src/cinnamon-screensaver-dialog.c:185
 msgid "You are required to change your password immediately (root enforced)"
 msgstr "𐑿 𐑸 𐑮𐑦𐑒𐑢𐑲𐑼𐑛 𐑑 𐑗𐑱𐑯𐑡 𐑿𐑼 𐑐𐑭𐑕𐑢𐑼𐑛 𐑦𐑥𐑰𐑛𐑾𐑑𐑤𐑰 (𐑮𐑵𐑑 𐑧𐑯𐑓𐑪𐑮𐑕𐑑)"
 
-#: ../src/gnome-screensaver-dialog.c:186
+#: ../src/cinnamon-screensaver-dialog.c:186
 msgid "Your account has expired; please contact your system administrator"
 msgstr "𐑿𐑼 𐑩𐑒𐑬𐑯𐑑 𐑣𐑨𐑟 𐑦𐑒𐑕𐑐𐑲𐑮𐑛; 𐑐𐑤𐑰𐑟 𐑒𐑪𐑯𐑑𐑨𐑒𐑑 𐑿𐑼 𐑕𐑦𐑕𐑑𐑩𐑥 𐑩𐑛𐑥𐑦𐑯𐑦𐑕𐑑𐑮𐑱𐑑𐑼"
 
-#: ../src/gnome-screensaver-dialog.c:187
+#: ../src/cinnamon-screensaver-dialog.c:187
 msgid "No password supplied"
 msgstr "𐑯𐑴 𐑐𐑭𐑕𐑢𐑼𐑛 𐑕𐑩𐑐𐑤𐑲𐑛"
 
-#: ../src/gnome-screensaver-dialog.c:188
+#: ../src/cinnamon-screensaver-dialog.c:188
 msgid "Password unchanged"
 msgstr "𐑐𐑭𐑕𐑢𐑼𐑛 𐑩𐑯𐑗𐑱𐑯𐑡𐑛"
 
-#: ../src/gnome-screensaver-dialog.c:189
+#: ../src/cinnamon-screensaver-dialog.c:189
 msgid "Can not get username"
 msgstr "𐑒𐑨𐑯 𐑯𐑪𐑑 𐑜𐑧𐑑 𐑿𐑟𐑼𐑯𐑱𐑥"
 
 #, fuzzy
-#: ../src/gnome-screensaver-dialog.c:190
+#: ../src/cinnamon-screensaver-dialog.c:190
 msgid "Retype new UNIX password:"
 msgstr "Retype 𐑯𐑿 ·𐑿𐑯𐑦𐑒𐑕 𐑐𐑭𐑕𐑢𐑼𐑛:"
 
-#: ../src/gnome-screensaver-dialog.c:191
+#: ../src/cinnamon-screensaver-dialog.c:191
 msgid "Enter new UNIX password:"
 msgstr "𐑧𐑯𐑑𐑼 𐑯𐑿 ·𐑿𐑯𐑦𐑒𐑕 𐑐𐑭𐑕𐑢𐑼𐑛:"
 
-#: ../src/gnome-screensaver-dialog.c:192
+#: ../src/cinnamon-screensaver-dialog.c:192
 msgid "(current) UNIX password:"
 msgstr "(𐑒𐑳𐑮𐑩𐑯𐑑) ·𐑿𐑯𐑦𐑒𐑕 𐑐𐑭𐑕𐑢𐑼𐑛:"
 
 #, fuzzy
-#: ../src/gnome-screensaver-dialog.c:193
+#: ../src/cinnamon-screensaver-dialog.c:193
 msgid "Error while changing NIS password."
 msgstr "𐑻𐑼 𐑢𐑲𐑤 𐑗𐑱𐑯𐑡𐑦𐑙 NIS 𐑐𐑭𐑕𐑢𐑼𐑛."
 
-#: ../src/gnome-screensaver-dialog.c:194
+#: ../src/cinnamon-screensaver-dialog.c:194
 msgid "You must choose a longer password"
 msgstr "𐑿 𐑥𐑳𐑕𐑑 𐑗𐑵𐑟 𐑩 𐑤𐑪𐑙𐑜𐑼 𐑐𐑭𐑕𐑢𐑼𐑛"
 
-#: ../src/gnome-screensaver-dialog.c:195
+#: ../src/cinnamon-screensaver-dialog.c:195
 msgid "Password has been already used. Choose another."
 msgstr "𐑐𐑭𐑕𐑢𐑼𐑛 𐑣𐑨𐑟 𐑚𐑰𐑯 𐑷𐑤𐑮𐑧𐑛𐑦 𐑿𐑕𐑑. 𐑗𐑵𐑟 𐑩𐑯𐑳𐑞𐑼."
 
-#: ../src/gnome-screensaver-dialog.c:196
+#: ../src/cinnamon-screensaver-dialog.c:196
 msgid "You must wait longer to change your password"
 msgstr "𐑿 𐑥𐑳𐑕𐑑 𐑢𐑱𐑑 𐑤𐑪𐑙𐑜𐑼 𐑑 𐑗𐑱𐑯𐑡 𐑿𐑼 𐑐𐑭𐑕𐑢𐑼𐑛"
 
-#: ../src/gnome-screensaver-dialog.c:197
+#: ../src/cinnamon-screensaver-dialog.c:197
 msgid "Sorry, passwords do not match"
 msgstr "𐑕𐑪𐑮𐑦, 𐑐𐑭𐑕𐑢𐑼𐑛𐑟 𐑛𐑵 𐑯𐑪𐑑 𐑥𐑨𐑗"
 
-#: ../src/gnome-screensaver-dialog.c:263
+#: ../src/cinnamon-screensaver-dialog.c:263
 msgid "Checking..."
 msgstr "𐑗𐑧𐑒𐑦𐑙..."
 
-#: ../src/gnome-screensaver-dialog.c:305 ../src/gs-auth-pam.c:457
+#: ../src/cinnamon-screensaver-dialog.c:305 ../src/gs-auth-pam.c:457
 msgid "Authentication failed."
 msgstr "𐑷𐑔𐑧𐑯𐑑𐑦𐑒𐑱𐑖𐑩𐑯 𐑓𐑱𐑤𐑛."
 
-#: ../src/gnome-screensaver-preferences.c:524
+#: ../src/cinnamon-screensaver-preferences.c:524
 msgid "Blank screen"
 msgstr "𐑚𐑤𐑨𐑙𐑒 𐑕𐑒𐑮𐑰𐑯"
 
-#: ../src/gnome-screensaver-preferences.c:530
+#: ../src/cinnamon-screensaver-preferences.c:530
 msgid "Random"
 msgstr "𐑮𐑨𐑯𐑛𐑩𐑥"
 
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:980
+#: ../src/cinnamon-screensaver-preferences.c:980
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d 𐑬𐑼"
 msgstr[1] "%d 𐑬𐑼𐑟"
 
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:983
+#: ../src/cinnamon-screensaver-preferences.c:983
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d 𐑥𐑦𐑯𐑩𐑑"
 msgstr[1] "%d 𐑥𐑦𐑯𐑩𐑑𐑕"
 
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:986
+#: ../src/cinnamon-screensaver-preferences.c:986
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d 𐑕𐑧𐑒𐑩𐑯𐑛"
@@ -656,15 +656,15 @@ msgstr[1] "%d 𐑕𐑧𐑒𐑩𐑯𐑛𐑟"
 
 #. hour:minutes:seconds
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:992
+#: ../src/cinnamon-screensaver-preferences.c:992
 msgid "%s %s %s"
 msgstr "%s %s %s"
 
 #. hour:minutes
 #. minutes:seconds
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:995
-#: ../src/gnome-screensaver-preferences.c:1003
+#: ../src/cinnamon-screensaver-preferences.c:995
+#: ../src/cinnamon-screensaver-preferences.c:1003
 msgid "%s %s"
 msgstr "%s %s"
 
@@ -672,34 +672,34 @@ msgstr "%s %s"
 #. minutes
 #. seconds
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:998
-#: ../src/gnome-screensaver-preferences.c:1006
-#: ../src/gnome-screensaver-preferences.c:1010
+#: ../src/cinnamon-screensaver-preferences.c:998
+#: ../src/cinnamon-screensaver-preferences.c:1006
+#: ../src/cinnamon-screensaver-preferences.c:1010
 msgid "%s"
 msgstr "%s"
 
 #, c-format
-#: ../src/gnome-screensaver-preferences.c:1025
+#: ../src/cinnamon-screensaver-preferences.c:1025
 msgid "Never"
 msgstr "𐑯𐑧𐑝𐑼"
 
-#: ../src/gnome-screensaver-preferences.c:1467
+#: ../src/cinnamon-screensaver-preferences.c:1467
 msgid "Could not load the main interface"
 msgstr "𐑒𐑫𐑛 𐑯𐑪𐑑 𐑤𐑴𐑛 𐑞 𐑥𐑱𐑯 𐑦𐑯𐑑𐑼𐑓𐑱𐑕"
 
-#: ../src/gnome-screensaver-preferences.c:1469
+#: ../src/cinnamon-screensaver-preferences.c:1469
 msgid "Please make sure that the screensaver is properly installed"
 msgstr "𐑐𐑤𐑰𐑟 𐑥𐑱𐑒 𐑖𐑫𐑼 𐑞𐑨𐑑 𐑞 𐑕𐑒𐑮𐑰𐑯𐑕𐑱𐑝𐑼 𐑦𐑟 𐑐𐑮𐑪𐑐𐑼𐑤𐑦 𐑦𐑯𐑕𐑑𐑷𐑤𐑛"
 
-#: ../src/gnome-screensaver.c:57
+#: ../src/cinnamon-screensaver.c:57
 msgid "Don't become a daemon"
 msgstr "𐑛𐑴𐑯𐑑 𐑚𐑦𐑒𐑳𐑥 𐑩 𐑛𐑰𐑥𐑩𐑯"
 
-#: ../src/gnome-screensaver.c:58
+#: ../src/cinnamon-screensaver.c:58
 msgid "Enable debugging code"
 msgstr "𐑦𐑯𐑱𐑚𐑩𐑤 𐑛𐑰𐑚𐑳𐑜𐑦𐑙 𐑒𐑴𐑛"
 
-#: ../src/gnome-screensaver.desktop.in.in.h:1
+#: ../src/cinnamon-screensaver.desktop.in.in.h:1
 msgid "Launch screen saver and locker program"
 msgstr "𐑤𐑷𐑯𐑗 𐑕𐑒𐑮𐑰𐑯 𐑕𐑱𐑝𐑼 𐑯 𐑤𐑪𐑒𐑼 𐑐𐑮𐑴𐑜𐑮𐑨𐑥"
 

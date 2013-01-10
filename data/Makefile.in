@@ -154,16 +154,16 @@ GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_GENMARSHAL = @GLIB_GENMARSHAL@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
-GNOME_SCREENSAVER_CAPPLET_CFLAGS = @GNOME_SCREENSAVER_CAPPLET_CFLAGS@
-GNOME_SCREENSAVER_CAPPLET_LIBS = @GNOME_SCREENSAVER_CAPPLET_LIBS@
-GNOME_SCREENSAVER_CFLAGS = @GNOME_SCREENSAVER_CFLAGS@
-GNOME_SCREENSAVER_COMMAND_CFLAGS = @GNOME_SCREENSAVER_COMMAND_CFLAGS@
-GNOME_SCREENSAVER_COMMAND_LIBS = @GNOME_SCREENSAVER_COMMAND_LIBS@
-GNOME_SCREENSAVER_DIALOG_CFLAGS = @GNOME_SCREENSAVER_DIALOG_CFLAGS@
-GNOME_SCREENSAVER_DIALOG_LIBS = @GNOME_SCREENSAVER_DIALOG_LIBS@
-GNOME_SCREENSAVER_LIBS = @GNOME_SCREENSAVER_LIBS@
-GNOME_SCREENSAVER_SAVER_CFLAGS = @GNOME_SCREENSAVER_SAVER_CFLAGS@
-GNOME_SCREENSAVER_SAVER_LIBS = @GNOME_SCREENSAVER_SAVER_LIBS@
+CINNAMON_SCREENSAVER_CAPPLET_CFLAGS = @CINNAMON_SCREENSAVER_CAPPLET_CFLAGS@
+CINNAMON_SCREENSAVER_CAPPLET_LIBS = @CINNAMON_SCREENSAVER_CAPPLET_LIBS@
+CINNAMON_SCREENSAVER_CFLAGS = @CINNAMON_SCREENSAVER_CFLAGS@
+CINNAMON_SCREENSAVER_COMMAND_CFLAGS = @CINNAMON_SCREENSAVER_COMMAND_CFLAGS@
+CINNAMON_SCREENSAVER_COMMAND_LIBS = @CINNAMON_SCREENSAVER_COMMAND_LIBS@
+CINNAMON_SCREENSAVER_DIALOG_CFLAGS = @CINNAMON_SCREENSAVER_DIALOG_CFLAGS@
+CINNAMON_SCREENSAVER_DIALOG_LIBS = @CINNAMON_SCREENSAVER_DIALOG_LIBS@
+CINNAMON_SCREENSAVER_LIBS = @CINNAMON_SCREENSAVER_LIBS@
+CINNAMON_SCREENSAVER_SAVER_CFLAGS = @CINNAMON_SCREENSAVER_SAVER_CFLAGS@
+CINNAMON_SCREENSAVER_SAVER_LIBS = @CINNAMON_SCREENSAVER_SAVER_LIBS@
 GREP = @GREP@
 GSETTINGS_DISABLE_SCHEMAS_COMPILE = @GSETTINGS_DISABLE_SCHEMAS_COMPILE@
 HAVE_PAM = @HAVE_PAM@
@@ -299,15 +299,15 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 NULL = 
 man_MANS = \
-	gnome-screensaver.1		\
-	gnome-screensaver-command.1	\
+	cinnamon-screensaver.1		\
+	cinnamon-screensaver-command.1	\
 	$(NULL)
 
 dbussessionservicedir = $(DBUS_SESSION_SERVICE_DIR)
 dbussessionservice_DATA = org.gnome.ScreenSaver.service
 EXTRA_DIST = \
 	$(man_MANS)			\
-	gnome-screensaver		\
+	cinnamon-screensaver		\
 	org.gnome.ScreenSaver.service.in\
 	$(NULL)
 
@@ -609,15 +609,15 @@ install-data-hook:
 		chmod 755 $(DESTDIR)$(PAM_PREFIX)/pam.d; \
 	   fi; \
 	   if test $$system = Linux; then \
-		if test '!' -f $(DESTDIR)$(PAM_PREFIX)/pam.d/gnome-screensaver; then \
-		     $(INSTALL_DATA) gnome-screensaver $(DESTDIR)$(PAM_PREFIX)/pam.d/gnome-screensaver; \
+		if test '!' -f $(DESTDIR)$(PAM_PREFIX)/pam.d/cinnamon-screensaver; then \
+		     $(INSTALL_DATA) cinnamon-screensaver $(DESTDIR)$(PAM_PREFIX)/pam.d/cinnamon-screensaver; \
 		fi; \
 		if test "x$(PAM_PREFIX)" != "x/etc/pam.d"; then \
 	             echo "***" ; \
-	             echo "***  Warning: gnome-screensaver has been compiled with support for" ; \
+	             echo "***  Warning: cinnamon-screensaver has been compiled with support for" ; \
 	             echo "***           Pluggable Authentication Modules (PAM).  However, you may need to" ; \
-	             echo "***           manually install $(PAM_PREFIX)/pam.d/gnome-screensaver" ; \
-	             echo "***           to /etc/pam.d/gnome-screensaver.  Otherwise, unlocking might" ; \
+	             echo "***           manually install $(PAM_PREFIX)/pam.d/cinnamon-screensaver" ; \
+	             echo "***           to /etc/pam.d/cinnamon-screensaver.  Otherwise, unlocking might" ; \
 	             echo "***           not work." ; \
 	             echo "***" ; \
 	             echo "***           Note: If you are using SuSE/Novell you may have to modify this file." ; \
@@ -626,9 +626,9 @@ install-data-hook:
 	   fi; \
 	   if test $$system = SunOS; then \
 	        echo "***" ; \
-	        echo "***  Warning: gnome-screensaver has been compiled with support for" ; \
+	        echo "***  Warning: cinnamon-screensaver has been compiled with support for" ; \
 	        echo "***           Pluggable Authentication Modules (PAM).  However, you" ; \
-	        echo "***           need to manually add authentication for gnome-screensaver in" ; \
+	        echo "***           need to manually add authentication for cinnamon-screensaver in" ; \
 	        echo "***           $(PAM_PREFIX)/pam.conf or /etc/pam.conf." ; \
 	        echo "***           Otherwise, unlocking might not work." ; \
 	        echo "***" ; \

@@ -52,21 +52,21 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = gnome-screensaver$(EXEEXT) \
-	gnome-screensaver-command$(EXEEXT) $(am__EXEEXT_1)
-libexec_PROGRAMS = gnome-screensaver-dialog$(EXEEXT) $(am__EXEEXT_1)
+bin_PROGRAMS = cinnamon-screensaver$(EXEEXT) \
+	cinnamon-screensaver-command$(EXEEXT) $(am__EXEEXT_1)
+libexec_PROGRAMS = cinnamon-screensaver-dialog$(EXEEXT) $(am__EXEEXT_1)
 noinst_PROGRAMS = test-fade$(EXEEXT) test-passwd$(EXEEXT) \
 	test-watcher$(EXEEXT) test-window$(EXEEXT) $(am__EXEEXT_1)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/gnome-screensaver.desktop.in.in
+	$(srcdir)/cinnamon-screensaver.desktop.in.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = gnome-screensaver.desktop.in
+CONFIG_CLEAN_FILES = cinnamon-screensaver.desktop.in
 CONFIG_CLEAN_VPATH_FILES =
 am__EXEEXT_1 =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libexecdir)" \
@@ -74,7 +74,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libexecdir)" \
 PROGRAMS = $(bin_PROGRAMS) $(libexec_PROGRAMS) $(noinst_PROGRAMS)
 am__objects_1 =
 am__objects_2 = gs-marshal.$(OBJEXT) $(am__objects_1)
-am_gnome_screensaver_OBJECTS = gnome-screensaver.$(OBJEXT) \
+am_gnome_screensaver_OBJECTS = cinnamon-screensaver.$(OBJEXT) \
 	gs-monitor.$(OBJEXT) gs-watcher-x11.$(OBJEXT) \
 	gs-listener-dbus.$(OBJEXT) gs-manager.$(OBJEXT) \
 	gs-window-x11.$(OBJEXT) gs-prefs.$(OBJEXT) gs-debug.$(OBJEXT) \
@@ -94,14 +94,14 @@ gnome_screensaver_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_CFLAGS) $(CFLAGS) $(gnome_screensaver_LDFLAGS) $(LDFLAGS) \
 	-o $@
 am_gnome_screensaver_command_OBJECTS =  \
-	gnome-screensaver-command.$(OBJEXT) $(am__objects_1)
+	cinnamon-screensaver-command.$(OBJEXT) $(am__objects_1)
 gnome_screensaver_command_OBJECTS =  \
 	$(am_gnome_screensaver_command_OBJECTS)
 gnome_screensaver_command_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am__objects_3 = gs-auth-@AUTH_SCHEME@.$(OBJEXT) $(am__objects_1)
 am_gnome_screensaver_dialog_OBJECTS =  \
-	gnome-screensaver-dialog.$(OBJEXT) gs-lock-plug.$(OBJEXT) \
+	cinnamon-screensaver-dialog.$(OBJEXT) gs-lock-plug.$(OBJEXT) \
 	gs-debug.$(OBJEXT) setuid.$(OBJEXT) subprocs.$(OBJEXT) \
 	$(am__objects_3) $(am__objects_1)
 gnome_screensaver_dialog_OBJECTS =  \
@@ -248,16 +248,16 @@ GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_GENMARSHAL = @GLIB_GENMARSHAL@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
-GNOME_SCREENSAVER_CAPPLET_CFLAGS = @GNOME_SCREENSAVER_CAPPLET_CFLAGS@
-GNOME_SCREENSAVER_CAPPLET_LIBS = @GNOME_SCREENSAVER_CAPPLET_LIBS@
-GNOME_SCREENSAVER_CFLAGS = @GNOME_SCREENSAVER_CFLAGS@
-GNOME_SCREENSAVER_COMMAND_CFLAGS = @GNOME_SCREENSAVER_COMMAND_CFLAGS@
-GNOME_SCREENSAVER_COMMAND_LIBS = @GNOME_SCREENSAVER_COMMAND_LIBS@
-GNOME_SCREENSAVER_DIALOG_CFLAGS = @GNOME_SCREENSAVER_DIALOG_CFLAGS@
-GNOME_SCREENSAVER_DIALOG_LIBS = @GNOME_SCREENSAVER_DIALOG_LIBS@
-GNOME_SCREENSAVER_LIBS = @GNOME_SCREENSAVER_LIBS@
-GNOME_SCREENSAVER_SAVER_CFLAGS = @GNOME_SCREENSAVER_SAVER_CFLAGS@
-GNOME_SCREENSAVER_SAVER_LIBS = @GNOME_SCREENSAVER_SAVER_LIBS@
+CINNAMON_SCREENSAVER_CAPPLET_CFLAGS = @CINNAMON_SCREENSAVER_CAPPLET_CFLAGS@
+CINNAMON_SCREENSAVER_CAPPLET_LIBS = @CINNAMON_SCREENSAVER_CAPPLET_LIBS@
+CINNAMON_SCREENSAVER_CFLAGS = @CINNAMON_SCREENSAVER_CFLAGS@
+CINNAMON_SCREENSAVER_COMMAND_CFLAGS = @CINNAMON_SCREENSAVER_COMMAND_CFLAGS@
+CINNAMON_SCREENSAVER_COMMAND_LIBS = @CINNAMON_SCREENSAVER_COMMAND_LIBS@
+CINNAMON_SCREENSAVER_DIALOG_CFLAGS = @CINNAMON_SCREENSAVER_DIALOG_CFLAGS@
+CINNAMON_SCREENSAVER_DIALOG_LIBS = @CINNAMON_SCREENSAVER_DIALOG_LIBS@
+CINNAMON_SCREENSAVER_LIBS = @CINNAMON_SCREENSAVER_LIBS@
+CINNAMON_SCREENSAVER_SAVER_CFLAGS = @CINNAMON_SCREENSAVER_SAVER_CFLAGS@
+CINNAMON_SCREENSAVER_SAVER_LIBS = @CINNAMON_SCREENSAVER_SAVER_LIBS@
 GREP = @GREP@
 GSETTINGS_DISABLE_SCHEMAS_COMPILE = @GSETTINGS_DISABLE_SCHEMAS_COMPILE@
 HAVE_PAM = @HAVE_PAM@
@@ -393,13 +393,13 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = 1.7
 NULL = 
-saverdir = $(libexecdir)/gnome-screensaver
+saverdir = $(libexecdir)/cinnamon-screensaver
 INCLUDES = \
 	-I.							\
 	-I$(srcdir)						\
-	$(GNOME_SCREENSAVER_CFLAGS)				\
-	$(GNOME_SCREENSAVER_DIALOG_CFLAGS)			\
-	$(GNOME_SCREENSAVER_CAPPLET_CFLAGS)			\
+	$(CINNAMON_SCREENSAVER_CFLAGS)				\
+	$(CINNAMON_SCREENSAVER_DIALOG_CFLAGS)			\
+	$(CINNAMON_SCREENSAVER_CAPPLET_CFLAGS)			\
 	$(DISABLE_DEPRECATED_CFLAGS)				\
 	-DPREFIX=\""$(prefix)"\" 				\
 	-DBINDIR=\""$(bindir)"\"				\
@@ -410,7 +410,7 @@ INCLUDES = \
 	-DGNOMELOCALEDIR=\""$(datadir)/locale"\"		\
 	-DSAVERDIR=\""$(saverdir)"\"				\
 	-DGTKBUILDERDIR=\"$(pkgdatadir)\"				\
-	-DPAM_SERVICE_NAME=\""gnome-screensaver"\"		\
+	-DPAM_SERVICE_NAME=\""cinnamon-screensaver"\"		\
 	$(WARN_CFLAGS)						\
 	$(AUTH_CFLAGS)						\
 	$(DEBUG_CFLAGS)						\
@@ -421,15 +421,15 @@ INCLUDES = \
 	$(NULL)
 
 desktopdir = $(sysconfdir)/xdg/autostart
-desktop_in_files = gnome-screensaver.desktop.in
+desktop_in_files = cinnamon-screensaver.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 gnome_screensaver_command_SOURCES = \
 	bus.h				\
-	gnome-screensaver-command.c	\
+	cinnamon-screensaver-command.c	\
 	$(NULL)
 
 gnome_screensaver_command_LDADD = \
-	$(GNOME_SCREENSAVER_COMMAND_LIBS)	\
+	$(CINNAMON_SCREENSAVER_COMMAND_LIBS)	\
 	$(NULL)
 
 AUTH_SOURCES = \
@@ -445,7 +445,7 @@ test_fade_SOURCES = \
 	$(NULL)
 
 test_fade_LDADD = \
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
@@ -460,7 +460,7 @@ test_passwd_SOURCES = \
 	$(NULL)
 
 test_passwd_LDADD = \
-	$(GNOME_SCREENSAVER_DIALOG_LIBS)\
+	$(CINNAMON_SCREENSAVER_DIALOG_LIBS)\
 	$(AUTH_LIBS)			\
 	$(NULL)
 
@@ -476,7 +476,7 @@ test_watcher_SOURCES = \
 	$(NULL)
 
 test_watcher_LDADD = \
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
@@ -495,12 +495,12 @@ test_window_SOURCES = \
 	$(NULL)
 
 test_window_LDADD = \
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
 gnome_screensaver_dialog_SOURCES = \
-	gnome-screensaver-dialog.c	\
+	cinnamon-screensaver-dialog.c	\
 	gs-lock-plug.c			\
 	gs-lock-plug.h			\
 	gs-debug.c			\
@@ -514,7 +514,7 @@ gnome_screensaver_dialog_SOURCES = \
 	$(NULL)
 
 gnome_screensaver_dialog_LDADD = \
-	$(GNOME_SCREENSAVER_DIALOG_LIBS)\
+	$(CINNAMON_SCREENSAVER_DIALOG_LIBS)\
 	$(SAVER_LIBS)			\
 	$(AUTH_LIBS)			\
 	$(LIBGNOMEKBDUI_LIBS)		\
@@ -528,8 +528,8 @@ BUILT_SOURCES = \
 
 gnome_screensaver_SOURCES = \
 	bus.h			\
-	gnome-screensaver.c	\
-	gnome-screensaver.h	\
+	cinnamon-screensaver.c	\
+	cinnamon-screensaver.h	\
 	gs-monitor.c		\
 	gs-monitor.h		\
 	gs-watcher-x11.c	\
@@ -558,7 +558,7 @@ gnome_screensaver_SOURCES = \
 	$(NULL)
 
 gnome_screensaver_LDADD = \
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(SYSTEMD_LIBS)                 \
 	$(NULL)
@@ -567,12 +567,12 @@ gnome_screensaver_LDFLAGS = -export-dynamic
 EXTRA_DIST = \
 	debug-screensaver.sh		\
 	gs-marshal.list			\
-	gnome-screensaver.desktop.in	\
+	cinnamon-screensaver.desktop.in	\
 	$(NULL)
 
 CLEANFILES = \
 	$(desktop_DATA) 		\
-	gnome-screensaver.desktop.in	\
+	cinnamon-screensaver.desktop.in	\
 	$(BUILT_SOURCES)
 
 MAINTAINERCLEANFILES = \
@@ -614,7 +614,7 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-gnome-screensaver.desktop.in: $(top_builddir)/config.status $(srcdir)/gnome-screensaver.desktop.in.in
+cinnamon-screensaver.desktop.in: $(top_builddir)/config.status $(srcdir)/cinnamon-screensaver.desktop.in.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -717,14 +717,14 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-gnome-screensaver$(EXEEXT): $(gnome_screensaver_OBJECTS) $(gnome_screensaver_DEPENDENCIES) $(EXTRA_gnome_screensaver_DEPENDENCIES) 
-	@rm -f gnome-screensaver$(EXEEXT)
+cinnamon-screensaver$(EXEEXT): $(gnome_screensaver_OBJECTS) $(gnome_screensaver_DEPENDENCIES) $(EXTRA_gnome_screensaver_DEPENDENCIES) 
+	@rm -f cinnamon-screensaver$(EXEEXT)
 	$(AM_V_CCLD)$(gnome_screensaver_LINK) $(gnome_screensaver_OBJECTS) $(gnome_screensaver_LDADD) $(LIBS)
-gnome-screensaver-command$(EXEEXT): $(gnome_screensaver_command_OBJECTS) $(gnome_screensaver_command_DEPENDENCIES) $(EXTRA_gnome_screensaver_command_DEPENDENCIES) 
-	@rm -f gnome-screensaver-command$(EXEEXT)
+cinnamon-screensaver-command$(EXEEXT): $(gnome_screensaver_command_OBJECTS) $(gnome_screensaver_command_DEPENDENCIES) $(EXTRA_gnome_screensaver_command_DEPENDENCIES) 
+	@rm -f cinnamon-screensaver-command$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gnome_screensaver_command_OBJECTS) $(gnome_screensaver_command_LDADD) $(LIBS)
-gnome-screensaver-dialog$(EXEEXT): $(gnome_screensaver_dialog_OBJECTS) $(gnome_screensaver_dialog_DEPENDENCIES) $(EXTRA_gnome_screensaver_dialog_DEPENDENCIES) 
-	@rm -f gnome-screensaver-dialog$(EXEEXT)
+cinnamon-screensaver-dialog$(EXEEXT): $(gnome_screensaver_dialog_OBJECTS) $(gnome_screensaver_dialog_DEPENDENCIES) $(EXTRA_gnome_screensaver_dialog_DEPENDENCIES) 
+	@rm -f cinnamon-screensaver-dialog$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gnome_screensaver_dialog_OBJECTS) $(gnome_screensaver_dialog_LDADD) $(LIBS)
 test-fade$(EXEEXT): $(test_fade_OBJECTS) $(test_fade_DEPENDENCIES) $(EXTRA_test_fade_DEPENDENCIES) 
 	@rm -f test-fade$(EXEEXT)
@@ -746,9 +746,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnome-datetime-source.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnome-screensaver-command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnome-screensaver-dialog.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnome-screensaver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cinnamon-screensaver-command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cinnamon-screensaver-dialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cinnamon-screensaver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnome-wall-clock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gs-auth-@AUTH_SCHEME@.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gs-debug.Po@am__quote@
@@ -1045,13 +1045,13 @@ gs-marshal.h: gs-marshal.list
 install-exec-hook:
 	@if [ "x@NEED_SETUID@" = "xyes" ]; then \
 	    echo "***" ; \
-	    echo "***  Warning: gnome-screensaver has been compiled with support for" ; \
+	    echo "***  Warning: cinnamon-screensaver has been compiled with support for" ; \
 	    echo "***           bsdauth(3) and must be installed as a setuid root" ; \
 	    echo "***           program in order for locking to work.  To do this, you" ; \
 	    echo "***           must run:" ; \
 	    echo "***" ; \
-	    echo "***           chown root $(DESTDIR)$(libexecdir)/gnome-screensaver-dialog" ; \
-	    echo "***           chmod +s $(DESTDIR)$(libexecdir)/gnome-screensaver-dialog" ; \
+	    echo "***           chown root $(DESTDIR)$(libexecdir)/cinnamon-screensaver-dialog" ; \
+	    echo "***           chmod +s $(DESTDIR)$(libexecdir)/cinnamon-screensaver-dialog" ; \
 	    echo "***" ; \
 	    echo "***           For now, it will be installed non-setuid, which" ; \
 	    echo "***           means that locking might not work." ; \

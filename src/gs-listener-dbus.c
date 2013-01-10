@@ -918,7 +918,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
                 /* NB that `ActiveChanged' refers to the active
                  * session in ConsoleKit terminology - ie which
                  * session is currently displayed on the screen.
-                 * gnome-screensaver uses `active' to mean `is the
+                 * cinnamon-screensaver uses `active' to mean `is the
                  * screensaver active' (ie, is the screen locked) but
                  * that's not what we're referring to here.
                  */

@@ -1,14 +1,14 @@
-# Russian translation of gnome-screensaver.
+# Russian translation of cinnamon-screensaver.
 # Copyright (C) 2006 Free Software Foundation
-# This file is distributed under the same license as the gnome-screensaver package.
+# This file is distributed under the same license as the cinnamon-screensaver package.
 #
 # Sergio Kvantos <kvantos@plotinka.ru>, 2006.
 # Leonid Kanter <leon@asplinux.ru>, 2006.
 # Alexander Saprykin <xelfium@gmail.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-screensaver trunk\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-screensaver&keywords=I18N+L10N&component=general\n"
+"Project-Id-Version: cinnamon-screensaver trunk\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=cinnamon-screensaver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-03-15 12:22+0000\n"
 "PO-Revision-Date: 2011-03-23 23:51+0400\n"
 "Last-Translator: Yuri Myaseodov <omerta13@yandex.ru>\n"
@@ -18,47 +18,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: ../src/gnome-screensaver-command.c:46
+#: ../src/cinnamon-screensaver-command.c:46
 msgid "Causes the screensaver to exit gracefully"
 msgstr "Приводит к корректному завершению работы хранителя экрана"
 
-#: ../src/gnome-screensaver-command.c:48
+#: ../src/cinnamon-screensaver-command.c:48
 msgid "Query the state of the screensaver"
 msgstr "Запрашивает состояние хранителя экрана"
 
-#: ../src/gnome-screensaver-command.c:50
+#: ../src/cinnamon-screensaver-command.c:50
 msgid "Query the length of time the screensaver has been active"
 msgstr "Запрашивает промежуток времени, в течение которого работал хранитель экрана"
 
-#: ../src/gnome-screensaver-command.c:52
+#: ../src/cinnamon-screensaver-command.c:52
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr "Указывает запущенному процессу хранителя экрана заблокировать экран немедленно"
 
-#: ../src/gnome-screensaver-command.c:54
+#: ../src/cinnamon-screensaver-command.c:54
 msgid "Turn the screensaver on (blank the screen)"
 msgstr "Включить хранитель экрана (чёрный экран)"
 
-#: ../src/gnome-screensaver-command.c:56
+#: ../src/cinnamon-screensaver-command.c:56
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr "Если хранитель экрана активен, деактивировать его (восстановить экран)"
 
-#: ../src/gnome-screensaver-command.c:58
-#: ../src/gnome-screensaver-dialog.c:59
-#: ../src/gnome-screensaver.c:56
+#: ../src/cinnamon-screensaver-command.c:58
+#: ../src/cinnamon-screensaver-dialog.c:59
+#: ../src/cinnamon-screensaver.c:56
 msgid "Version of this application"
 msgstr "Версия этого приложения"
 
-#: ../src/gnome-screensaver-command.c:224
+#: ../src/cinnamon-screensaver-command.c:224
 #, c-format
 msgid "The screensaver is active\n"
 msgstr "Хранитель экрана включён\n"
 
-#: ../src/gnome-screensaver-command.c:226
+#: ../src/cinnamon-screensaver-command.c:226
 #, c-format
 msgid "The screensaver is inactive\n"
 msgstr "Хранитель экрана выключен\n"
 
-#: ../src/gnome-screensaver-command.c:256
+#: ../src/cinnamon-screensaver-command.c:256
 #, c-format
 #| msgid "The screensaver has been active for %d seconds.\n"
 msgid "The screensaver has been active for %d second.\n"
@@ -67,134 +67,134 @@ msgstr[0] "Хранитель экрана работал в течение %d �
 msgstr[1] "Хранитель экрана работал в течение %d секунд.\n"
 msgstr[2] "Хранитель экрана работал в течение %d секунд.\n"
 
-#: ../src/gnome-screensaver-command.c:258
+#: ../src/cinnamon-screensaver-command.c:258
 #, c-format
 msgid "The screensaver is not currently active.\n"
 msgstr "Хранитель экрана сейчас неактивен.\n"
 
-#: ../src/gnome-screensaver-dialog.c:57
+#: ../src/cinnamon-screensaver-dialog.c:57
 msgid "Show debugging output"
 msgstr "Показывать отладочный вывод"
 
-#: ../src/gnome-screensaver-dialog.c:61
+#: ../src/cinnamon-screensaver-dialog.c:61
 msgid "Show the logout button"
 msgstr "Показывать кнопку выхода из сеанса"
 
-#: ../src/gnome-screensaver-dialog.c:63
+#: ../src/cinnamon-screensaver-dialog.c:63
 msgid "Command to invoke from the logout button"
 msgstr "Команда, вызываемая при нажатии кнопки выхода"
 
-#: ../src/gnome-screensaver-dialog.c:65
+#: ../src/cinnamon-screensaver-dialog.c:65
 msgid "Show the switch user button"
 msgstr "Показывать кнопку переключения пользователя"
 
-#: ../src/gnome-screensaver-dialog.c:67
+#: ../src/cinnamon-screensaver-dialog.c:67
 msgid "Message to show in the dialog"
 msgstr "Показывать сообщение в диалоговом окне"
 
 #. Translators: This is the example input for the --status-message command line option.
 #. Translators: This is the example input for the --away-message command line option.
-#: ../src/gnome-screensaver-dialog.c:69
-#: ../src/gnome-screensaver-dialog.c:73
+#: ../src/cinnamon-screensaver-dialog.c:69
+#: ../src/cinnamon-screensaver-dialog.c:73
 msgid "MESSAGE"
 msgstr "СООБЩЕНИЕ"
 
-#: ../src/gnome-screensaver-dialog.c:71
+#: ../src/cinnamon-screensaver-dialog.c:71
 msgid "Not used"
 msgstr "Не использовано"
 
 #. login: is whacked always translate to Username:
-#: ../src/gnome-screensaver-dialog.c:183
-#: ../src/gnome-screensaver-dialog.c:184
-#: ../src/gnome-screensaver-dialog.c:185
+#: ../src/cinnamon-screensaver-dialog.c:183
+#: ../src/cinnamon-screensaver-dialog.c:184
+#: ../src/cinnamon-screensaver-dialog.c:185
 #: ../src/gs-auth-pam.c:698
 msgid "Username:"
 msgstr "Имя пользователя:"
 
-#: ../src/gnome-screensaver-dialog.c:186
-#: ../src/gnome-screensaver-dialog.c:187
+#: ../src/cinnamon-screensaver-dialog.c:186
+#: ../src/cinnamon-screensaver-dialog.c:187
 #: ../src/gs-auth-pam.c:166
 msgid "Password:"
 msgstr "Пароль:"
 
-#: ../src/gnome-screensaver-dialog.c:188
+#: ../src/cinnamon-screensaver-dialog.c:188
 msgid "You are required to change your password immediately (password aged)"
 msgstr "Вам необходимо сменить ваш пароль немедленно (срок действия пароля истёк)"
 
-#: ../src/gnome-screensaver-dialog.c:189
+#: ../src/cinnamon-screensaver-dialog.c:189
 msgid "You are required to change your password immediately (root enforced)"
 msgstr "Вам необходимо сменить пароль немедленно (требование администратора)"
 
-#: ../src/gnome-screensaver-dialog.c:190
+#: ../src/cinnamon-screensaver-dialog.c:190
 msgid "Your account has expired; please contact your system administrator"
 msgstr "Срок действия вашей учетной записи истёк, свяжитесь со своим системным администратором"
 
-#: ../src/gnome-screensaver-dialog.c:191
+#: ../src/cinnamon-screensaver-dialog.c:191
 msgid "No password supplied"
 msgstr "Пароль не введён"
 
-#: ../src/gnome-screensaver-dialog.c:192
+#: ../src/cinnamon-screensaver-dialog.c:192
 msgid "Password unchanged"
 msgstr "Пароль оставлен без изменения"
 
-#: ../src/gnome-screensaver-dialog.c:193
+#: ../src/cinnamon-screensaver-dialog.c:193
 msgid "Cannot get username"
 msgstr "Не удалось получить получить имя пользователя"
 
-#: ../src/gnome-screensaver-dialog.c:194
+#: ../src/cinnamon-screensaver-dialog.c:194
 msgid "Retype new Unix password:"
 msgstr "Повторите новый пароль UNIX:"
 
-#: ../src/gnome-screensaver-dialog.c:195
+#: ../src/cinnamon-screensaver-dialog.c:195
 msgid "Enter new Unix password:"
 msgstr "Введите новый пароль UNIX:"
 
-#: ../src/gnome-screensaver-dialog.c:196
+#: ../src/cinnamon-screensaver-dialog.c:196
 msgid "(current) Unix password:"
 msgstr "(текущий) пароль UNIX:"
 
-#: ../src/gnome-screensaver-dialog.c:197
+#: ../src/cinnamon-screensaver-dialog.c:197
 msgid "Error while changing NIS password."
 msgstr "Ошибка при изменении пароля NIS."
 
-#: ../src/gnome-screensaver-dialog.c:198
+#: ../src/cinnamon-screensaver-dialog.c:198
 msgid "You must choose a longer password"
 msgstr "Вы должны выбрать более длинный пароль"
 
-#: ../src/gnome-screensaver-dialog.c:199
+#: ../src/cinnamon-screensaver-dialog.c:199
 msgid "Password has been already used. Choose another."
 msgstr "Этот пароль уже был использован. Выберите другой пароль."
 
-#: ../src/gnome-screensaver-dialog.c:200
+#: ../src/cinnamon-screensaver-dialog.c:200
 msgid "You must wait longer to change your password"
 msgstr "Вы должны подождать дольше, чтобы сменить ваш пароль"
 
-#: ../src/gnome-screensaver-dialog.c:201
+#: ../src/cinnamon-screensaver-dialog.c:201
 msgid "Sorry, passwords do not match"
 msgstr "Пароли не совпадают"
 
-#: ../src/gnome-screensaver-dialog.c:267
+#: ../src/cinnamon-screensaver-dialog.c:267
 msgid "Checking…"
 msgstr "Проверка…"
 
-#: ../src/gnome-screensaver-dialog.c:309
+#: ../src/cinnamon-screensaver-dialog.c:309
 #: ../src/gs-auth-pam.c:457
 msgid "Authentication failed."
 msgstr "Сбой аутентификации."
 
-#: ../src/gnome-screensaver.c:57
+#: ../src/cinnamon-screensaver.c:57
 msgid "Don't become a daemon"
 msgstr "Не становиться демоном"
 
-#: ../src/gnome-screensaver.c:58
+#: ../src/cinnamon-screensaver.c:58
 msgid "Enable debugging code"
 msgstr "Включить режим отладки"
 
-#: ../src/gnome-screensaver.desktop.in.in.h:1
+#: ../src/cinnamon-screensaver.desktop.in.in.h:1
 msgid "Launch screensaver and locker program"
 msgstr "Запустить хранитель экрана и программу блокировки"
 
-#: ../src/gnome-screensaver.desktop.in.in.h:2
+#: ../src/cinnamon-screensaver.desktop.in.in.h:2
 msgid "Screensaver"
 msgstr "Хранитель экрана"
 

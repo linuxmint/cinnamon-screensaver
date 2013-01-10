@@ -1,8 +1,8 @@
 # GNOME ekraanisäästja eesti keele tõlge.
-# Estonian translation of GNOME screensaver.
+# Estonian translation of Cinnamon Screensaver.
 #
 # Copyright (C) 2006–2008, 2010, 2011, The GNOME Project.
-# This file is distributed under the same license as the gnome-screensaver
+# This file is distributed under the same license as the cinnamon-screensaver
 # package.
 #
 # Ivar Smolin <okul@linux.ee>, 2006–2008, 2010, 2011.
@@ -10,7 +10,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-screensaver MASTER\n"
+"Project-Id-Version: cinnamon-screensaver MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "screensaver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-03-15 12:22+0000\n"

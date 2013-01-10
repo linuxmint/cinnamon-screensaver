@@ -14,6 +14,6 @@ DEB_CONFIGURE_EXTRA_FLAGS += \
 
 LDFLAGS += -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 
-binary-post-install/gnome-screensaver::
-	rm -rf debian/gnome-screensaver/usr/share/doc/gnome-screensaver-*
+binary-post-install/cinnamon-screensaver::
+	rm -rf debian/cinnamon-screensaver/usr/share/doc/cinnamon-screensaver-*
 	dh_apport

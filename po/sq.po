@@ -1,11 +1,11 @@
-# Përkthimi i mesazheve të gnome-screensaver në shqip
+# Përkthimi i mesazheve të cinnamon-screensaver në shqip
 # Copyright (C) 2006 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gnome-screensaver package.
+# This file is distributed under the same license as the cinnamon-screensaver package.
 #
 # Laurent Dhima <laurenti@alblinux.net>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-screensaver HEAD\n"
+"Project-Id-Version: cinnamon-screensaver HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-06 14:58+0100\n"
 "PO-Revision-Date: 2006-03-08 18:14+0100\n"
@@ -16,84 +16,84 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../data/gnome-screensaver-preferences.desktop.in.h:1
+#: ../data/cinnamon-screensaver-preferences.desktop.in.h:1
 msgid "Screensaver"
 msgstr "Ruajtës ekrani"
 
-#: ../data/gnome-screensaver-preferences.desktop.in.h:2
+#: ../data/cinnamon-screensaver-preferences.desktop.in.h:2
 msgid "Set your screensaver preferences"
 msgstr "Përcakto preferimet e ruajtësit tuaj të ekranit"
 
-#: ../data/gnome-screensaver-preferences.glade.h:1
+#: ../data/cinnamon-screensaver-preferences.glade.h:1
 msgid "Screensaver Preferences"
 msgstr "Preferimet e ruajtësit të ekranit"
 
-#: ../data/gnome-screensaver-preferences.glade.h:2
+#: ../data/cinnamon-screensaver-preferences.glade.h:2
 msgid "Set session as _idle after:"
 msgstr "Cakto seancën si joakt_ive mbas:"
 
-#: ../data/gnome-screensaver-preferences.glade.h:3
+#: ../data/cinnamon-screensaver-preferences.glade.h:3
 msgid "_Activate screensaver when session is idle"
 msgstr "_Aktivo ruajtësin e ekranit kur seanca është joaktive"
 
-#: ../data/gnome-screensaver-preferences.glade.h:4
+#: ../data/cinnamon-screensaver-preferences.glade.h:4
 msgid "_Lock screen when screensaver is active"
 msgstr "B_Lloko ekranin kur ruajtësi i ekranit është aktiv"
 
-#: ../data/gnome-screensaver-preferences.glade.h:5
+#: ../data/cinnamon-screensaver-preferences.glade.h:5
 msgid "_Screensaver"
 msgstr "Ruajtë_S ekrani"
 
-#: ../data/gnome-screensaver.directory.in.h:1
-#: ../data/gnome-screensaver.schemas.in.h:8
+#: ../data/cinnamon-screensaver.directory.in.h:1
+#: ../data/cinnamon-screensaver.schemas.in.h:8
 msgid "Screensaver themes"
 msgstr "Temat e ruajtësit të ekranit"
 
-#: ../data/gnome-screensaver.directory.in.h:2
+#: ../data/cinnamon-screensaver.directory.in.h:2
 msgid "Screensavers"
 msgstr "Ruajtës ekrani"
 
-#: ../data/gnome-screensaver.schemas.in.h:1
+#: ../data/cinnamon-screensaver.schemas.in.h:1
 msgid "Activate when idle"
 msgstr "Aktivo kur nuk ka aktivitet"
 
-#: ../data/gnome-screensaver.schemas.in.h:2
+#: ../data/cinnamon-screensaver.schemas.in.h:2
 msgid "Allow logout"
 msgstr "Lejo daljen"
 
-#: ../data/gnome-screensaver.schemas.in.h:3
+#: ../data/cinnamon-screensaver.schemas.in.h:3
 msgid "Allow monitor power management"
 msgstr "Lejo manazhimin e energjisë së monitorit"
 
-#: ../data/gnome-screensaver.schemas.in.h:4
+#: ../data/cinnamon-screensaver.schemas.in.h:4
 msgid "Allow user switching"
 msgstr "Lejo shkëmbimin e përdoruesve"
 
-#: ../data/gnome-screensaver.schemas.in.h:5
+#: ../data/cinnamon-screensaver.schemas.in.h:5
 msgid "Lock on activation"
 msgstr "Blloko kur aktivohet"
 
-#: ../data/gnome-screensaver.schemas.in.h:6
+#: ../data/cinnamon-screensaver.schemas.in.h:6
 msgid "Logout command"
 msgstr "Komanda e daljes"
 
-#: ../data/gnome-screensaver.schemas.in.h:7
+#: ../data/cinnamon-screensaver.schemas.in.h:7
 msgid "Screensaver theme selection mode"
 msgstr "Modaliteti i zgjedhjes së temave të ruajtësit të ekranit"
 
-#: ../data/gnome-screensaver.schemas.in.h:9
+#: ../data/cinnamon-screensaver.schemas.in.h:9
 msgid "Set this to TRUE to activate the screensaver when the session is idle."
 msgstr "Vendose në TRUE për të aktivuar ruajtësin e ekranit kur nuk ka aktivitet në seancë."
 
-#: ../data/gnome-screensaver.schemas.in.h:10
+#: ../data/cinnamon-screensaver.schemas.in.h:10
 msgid "Set this to TRUE to allow the screensaver to power down the monitor."
 msgstr "Vendose në TRUE për të lejuar fikjen e monitorit nga ruajtësi i ekranit."
 
-#: ../data/gnome-screensaver.schemas.in.h:11
+#: ../data/cinnamon-screensaver.schemas.in.h:11
 msgid "Set this to TRUE to lock the screen when the screensaver goes active."
 msgstr "Vendose në TRUE për të bllokuar ekranin kur hyn në funksion ruajtësi i ekranit."
 
-#: ../data/gnome-screensaver.schemas.in.h:12
+#: ../data/cinnamon-screensaver.schemas.in.h:12
 msgid ""
 "Set this to TRUE to offer an option in the unlock dialog to switch to a "
 "different user account."
@@ -101,7 +101,7 @@ msgstr ""
 "Vendose në TRUE që të afrosh një opsionin e kalimit në një profil tjetër "
 "përdoruesi tek dialogu i zhbllokimit."
 
-#: ../data/gnome-screensaver.schemas.in.h:13
+#: ../data/cinnamon-screensaver.schemas.in.h:13
 msgid ""
 "Set this to TRUE to offer an option in unlock dialog to logging out after a "
 "delay. The Delay is specified in the \"logout_delay\" key."
@@ -109,7 +109,7 @@ msgstr ""
 "Vendose në TRUE për të afruar opsionin e shkëputjes pas një intervali të caktuar "
 "tek dialogu i zhbllokimit. Intervali përcaktohet tek vlera \"logout_delay\"."
 
-#: ../data/gnome-screensaver.schemas.in.h:14
+#: ../data/cinnamon-screensaver.schemas.in.h:14
 msgid ""
 "The command to invoke when the logout button is clicked. This command should "
 "simply log the user out without any interaction. This key has effect only if "
@@ -119,11 +119,11 @@ msgstr ""
 "thjesht të shkëpusë përdoruesin pa asnjë lloj komunikimi. Kjo vlerë ka efekt vetëm "
 "nëse vlera \"logout_enable\" është vendosur në TRUE."
 
-#: ../data/gnome-screensaver.schemas.in.h:15
+#: ../data/cinnamon-screensaver.schemas.in.h:15
 msgid "The number of minutes after screensaver activation before locking the screen."
 msgstr "Numri i minutave mbas aktivimit të ruajtësit të ekranit para se të bllokohet ekrani."
 
-#: ../data/gnome-screensaver.schemas.in.h:16
+#: ../data/cinnamon-screensaver.schemas.in.h:16
 msgid ""
 "The number of minutes after the screensaver activation before a logout "
 "option will appear in unlock dialog. This key has effect only if the "
@@ -133,7 +133,7 @@ msgstr ""
 "daljes të shfaqet tek dialogu i zhbllokimit. Kjo vlerë ka efekt vetëm nëse "
 "vlera \"logout_enable\" është vendosur në TRUE."
 
-#: ../data/gnome-screensaver.schemas.in.h:17
+#: ../data/cinnamon-screensaver.schemas.in.h:17
 msgid ""
 "The number of minutes after the screensaver activation until the monitor "
 "goes into standby power mode."
@@ -141,7 +141,7 @@ msgstr ""
 "Numri i minutave mbas aktivimit të ruajtësit të ekranit para se monitori të shkojë "
 "në modalitetin e kursimit të energjisë."
 
-#: ../data/gnome-screensaver.schemas.in.h:18
+#: ../data/cinnamon-screensaver.schemas.in.h:18
 msgid ""
 "The number of minutes after the screensaver activation until the monitor "
 "goes into suspend power mode."
@@ -149,21 +149,21 @@ msgstr ""
 "Numri i minutave mbas aktivimit të ruajtësit të ekranit para se monitori të shkojë "
 "në modalitetin ndërprerjes së energjisë."
 
-#: ../data/gnome-screensaver.schemas.in.h:19
+#: ../data/cinnamon-screensaver.schemas.in.h:19
 msgid ""
 "The number of minutes after the screensaver activation until the monitor "
 "powers off."
 msgstr "Numri i minutave mbas aktivimit të ruajtësit të ekranit para se monitori të fiket."
 
-#: ../data/gnome-screensaver.schemas.in.h:20
+#: ../data/cinnamon-screensaver.schemas.in.h:20
 msgid "The number of minutes of inactivity before the session is considered idle."
 msgstr "Numri i minutave pa aktivitet para se seanca të konsiderohet jo aktive."
 
-#: ../data/gnome-screensaver.schemas.in.h:21
+#: ../data/cinnamon-screensaver.schemas.in.h:21
 msgid "The number of minutes to run before changing the screensaver theme."
 msgstr "Numri i minutave para se të ndryshohet tema e ruajtësit të ekranit."
 
-#: ../data/gnome-screensaver.schemas.in.h:22
+#: ../data/cinnamon-screensaver.schemas.in.h:22
 msgid ""
 "The selection mode used by screensaver. May be \"blank-only\" to enable the "
 "screensaver without using any theme on activation, \"single\" to enable "
@@ -176,7 +176,7 @@ msgstr ""
 "përdorur një temë të vetme (të përcaktuar tek vlera \"temat\"), dhe \"random\" për "
 "të aktivuar ruajtësin e ekranit duke përdorur një temë të rastit në aktivim."
 
-#: ../data/gnome-screensaver.schemas.in.h:23
+#: ../data/cinnamon-screensaver.schemas.in.h:23
 msgid ""
 "This key specifies the list of themes to be used by the screensaver. It's "
 "ignored when \"mode\" key is \"blank-only\", should provide the theme name "
@@ -188,31 +188,31 @@ msgstr ""
 "temës kur \"modaliteti\" është \"single\", dhe duhet të afrojë një listë temash "
 "kur \"modaliteti\" është \"random\"."
 
-#: ../data/gnome-screensaver.schemas.in.h:24
+#: ../data/cinnamon-screensaver.schemas.in.h:24
 msgid "Time before activation"
 msgstr "Koha para aktivimit"
 
-#: ../data/gnome-screensaver.schemas.in.h:25
+#: ../data/cinnamon-screensaver.schemas.in.h:25
 msgid "Time before locking"
 msgstr "Koha para bllokimit"
 
-#: ../data/gnome-screensaver.schemas.in.h:26
+#: ../data/cinnamon-screensaver.schemas.in.h:26
 msgid "Time before logout option"
 msgstr "Koha para opsionit të daljes"
 
-#: ../data/gnome-screensaver.schemas.in.h:27
+#: ../data/cinnamon-screensaver.schemas.in.h:27
 msgid "Time before power off"
 msgstr "Koha para fikjes"
 
-#: ../data/gnome-screensaver.schemas.in.h:28
+#: ../data/cinnamon-screensaver.schemas.in.h:28
 msgid "Time before standby"
 msgstr "Koha para se të kalojë në pritje"
 
-#: ../data/gnome-screensaver.schemas.in.h:29
+#: ../data/cinnamon-screensaver.schemas.in.h:29
 msgid "Time before suspend"
 msgstr "Koha para se të ndalohet"
 
-#: ../data/gnome-screensaver.schemas.in.h:30
+#: ../data/cinnamon-screensaver.schemas.in.h:30
 msgid "Time before theme change"
 msgstr "Koha para ndryshimit të temës"
 
@@ -594,107 +594,107 @@ msgstr "Për:"
 msgid "Connecting..."
 msgstr "Duke u lidhur..."
 
-#: ../src/gnome-screensaver-command.c:59
+#: ../src/cinnamon-screensaver-command.c:59
 msgid "Causes the screensaver to exit gracefully"
 msgstr "Shkakton daljen e plotë të ruajtësit të ekranit"
 
-#: ../src/gnome-screensaver-command.c:61
+#: ../src/cinnamon-screensaver-command.c:61
 msgid "Query the state of the screensaver"
 msgstr "Kontrollon gjendjen e ruajtësit të ekranit"
 
-#: ../src/gnome-screensaver-command.c:63
+#: ../src/cinnamon-screensaver-command.c:63
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr "I thotë proçesit në zbatim të ruajtësit të bllokojë menjëherë ekranin"
 
-#: ../src/gnome-screensaver-command.c:65
+#: ../src/cinnamon-screensaver-command.c:65
 msgid "If the screensaver is active then switch to another graphics demo"
 msgstr "Nëse reuajtësi është aktiv atëhere kalon tek një grafik tjetër demostrativ"
 
-#: ../src/gnome-screensaver-command.c:67
+#: ../src/cinnamon-screensaver-command.c:67
 msgid "Turn the screensaver on (blank the screen)"
 msgstr "Aktivon ruajtësin e ekranit (ekrani bosh)"
 
-#: ../src/gnome-screensaver-command.c:69
+#: ../src/cinnamon-screensaver-command.c:69
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr "Nëse reujatësi është akitv atëhere e çaktivon (ekrani jo bosh)"
 
-#: ../src/gnome-screensaver-command.c:71
+#: ../src/cinnamon-screensaver-command.c:71
 msgid "Disable running graphical themes while blanked"
 msgstr "Çaktivon temat grafike në ekzekutim kur zbrazet"
 
-#: ../src/gnome-screensaver-command.c:73
+#: ../src/cinnamon-screensaver-command.c:73
 msgid "Enable running graphical themes while blanked (if applicable)"
 msgstr "Aktivon temat grafike në ekzekutim kur zbrazet (nëse e mundur)"
 
-#: ../src/gnome-screensaver-command.c:75
+#: ../src/cinnamon-screensaver-command.c:75
 msgid "Poke the running screensaver to simulate user activity"
 msgstr "Ngacmo ruajtësin e ekranit në ekzekutim për të simuluar aktivitet përdoruesi"
 
-#: ../src/gnome-screensaver-command.c:77 ../src/gnome-screensaver-dialog.c:110
-#: ../src/gnome-screensaver.c:56
+#: ../src/cinnamon-screensaver-command.c:77 ../src/cinnamon-screensaver-dialog.c:110
+#: ../src/cinnamon-screensaver.c:56
 msgid "Version of this application"
 msgstr "Versioni i këtij programi"
 
-#: ../src/gnome-screensaver-command.c:202
+#: ../src/cinnamon-screensaver-command.c:202
 #, c-format
 msgid "The screensaver is %s\n"
 msgstr "Ruajtësi i ekranit është %s\n"
 
-#: ../src/gnome-screensaver-command.c:202
+#: ../src/cinnamon-screensaver-command.c:202
 msgid "active"
 msgstr "aktiv"
 
-#: ../src/gnome-screensaver-command.c:202
+#: ../src/cinnamon-screensaver-command.c:202
 msgid "inactive"
 msgstr "jo aktiv"
 
-#: ../src/gnome-screensaver-dialog.c:108
+#: ../src/cinnamon-screensaver-dialog.c:108
 msgid "Show debugging output"
 msgstr "Shfaq rezultatet e debug"
 
-#: ../src/gnome-screensaver-dialog.c:112
+#: ../src/cinnamon-screensaver-dialog.c:112
 msgid "Show the logout button"
 msgstr "Shfaq pulsantin e daljes"
 
-#: ../src/gnome-screensaver-dialog.c:114
+#: ../src/cinnamon-screensaver-dialog.c:114
 msgid "Command to invoke from the logout button"
 msgstr "Komanda që duhet zbatuar nga pulsanti i daljes"
 
-#: ../src/gnome-screensaver-dialog.c:116
+#: ../src/cinnamon-screensaver-dialog.c:116
 msgid "Show the switch user button"
 msgstr "Shfaq pulsantin e ndryshimit të përdoruesit"
 
-#: ../src/gnome-screensaver-preferences.c:427
+#: ../src/cinnamon-screensaver-preferences.c:427
 msgid "Blank screen"
 msgstr "Ekran bosh"
 
-#: ../src/gnome-screensaver-preferences.c:433
+#: ../src/cinnamon-screensaver-preferences.c:433
 msgid "Random"
 msgstr "Pa renditje"
 
-#: ../src/gnome-screensaver-preferences.c:723
+#: ../src/cinnamon-screensaver-preferences.c:723
 msgid "Invalid screensaver theme"
 msgstr "Temë e pavlefshme ruajtës ekrani"
 
-#: ../src/gnome-screensaver-preferences.c:726
+#: ../src/cinnamon-screensaver-preferences.c:726
 msgid "This file does not appear to be a valid screensaver theme."
 msgstr "Ky file nuk duket të jetë një file teme i vlefshëm ruajtësi."
 
-#: ../src/gnome-screensaver-preferences.c:843
+#: ../src/cinnamon-screensaver-preferences.c:843
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d orë"
 msgstr[1] "%d orë"
 
-#: ../src/gnome-screensaver-preferences.c:846
+#: ../src/cinnamon-screensaver-preferences.c:846
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minutë"
 msgstr[1] "%d minuta"
 
-#: ../src/gnome-screensaver-preferences.c:849
+#: ../src/cinnamon-screensaver-preferences.c:849
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -702,15 +702,15 @@ msgstr[0] "%d sekondë"
 msgstr[1] "%d sekonda"
 
 #. hour:minutes:seconds
-#: ../src/gnome-screensaver-preferences.c:855
+#: ../src/cinnamon-screensaver-preferences.c:855
 #, c-format
 msgid "%s %s %s"
 msgstr "%s %s %s"
 
 #. hour:minutes
 #. minutes:seconds
-#: ../src/gnome-screensaver-preferences.c:858
-#: ../src/gnome-screensaver-preferences.c:866
+#: ../src/cinnamon-screensaver-preferences.c:858
+#: ../src/cinnamon-screensaver-preferences.c:866
 #, c-format
 msgid "%s %s"
 msgstr "%s %s"
@@ -718,35 +718,35 @@ msgstr "%s %s"
 #. hour
 #. minutes
 #. seconds
-#: ../src/gnome-screensaver-preferences.c:861
-#: ../src/gnome-screensaver-preferences.c:869
-#: ../src/gnome-screensaver-preferences.c:873
+#: ../src/cinnamon-screensaver-preferences.c:861
+#: ../src/cinnamon-screensaver-preferences.c:869
+#: ../src/cinnamon-screensaver-preferences.c:873
 #, c-format
 msgid "%s"
 msgstr "%s"
 
 #. 0 seconds
-#: ../src/gnome-screensaver-preferences.c:876
+#: ../src/cinnamon-screensaver-preferences.c:876
 msgid "0 seconds"
 msgstr "0 sekonda"
 
-#: ../src/gnome-screensaver-preferences.c:891
+#: ../src/cinnamon-screensaver-preferences.c:891
 msgid "Never"
 msgstr "Asnjëherë"
 
-#: ../src/gnome-screensaver-preferences.c:1047
+#: ../src/cinnamon-screensaver-preferences.c:1047
 msgid "Could not load the main interface"
 msgstr "I pamundur ngarkimi i interfaqes kryesore"
 
-#: ../src/gnome-screensaver-preferences.c:1049
+#: ../src/cinnamon-screensaver-preferences.c:1049
 msgid "Please make sure that the screensaver is properly installed"
 msgstr "Sigurohu që ruajtësi i ekranit të jetë instaluar si duhet"
 
-#: ../src/gnome-screensaver.c:57
+#: ../src/cinnamon-screensaver.c:57
 msgid "Don't become a daemon"
 msgstr "Mos u kthe në deamon"
 
-#: ../src/gnome-screensaver.c:58
+#: ../src/cinnamon-screensaver.c:58
 msgid "Enable debugging code"
 msgstr "Aktivo kodin e debug"
 

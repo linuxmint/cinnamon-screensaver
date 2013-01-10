@@ -1,22 +1,22 @@
 NULL =
 
 SPEC_XML_FILES =			\
-	gnome-screensaver.xml		\
+	cinnamon-screensaver.xml		\
 	dbus-interface.xml		\
 	$(NULL)
 
 if DOCBOOK_DOCS_ENABLED
 
 htmldocdir = $(DOCDIR)/spec
-htmldoc_DATA = gnome-screensaver.html
+htmldoc_DATA = cinnamon-screensaver.html
 
-gnome-screensaver.html : dbus-interface.xml
-	$(XMLTO) html-nochunks -m config.xsl gnome-screensaver.xml
+cinnamon-screensaver.html : dbus-interface.xml
+	$(XMLTO) html-nochunks -m config.xsl cinnamon-screensaver.xml
 
 endif # DOCBOOK_DOCS_ENABLED
 
 EXTRA_DIST =				\
-	gnome-screensaver.xml.in	\
+	cinnamon-screensaver.xml.in	\
 	config.xsl			\
 	docbook.css			\
 	$(SPEC_XML_FILES)
@@ -24,6 +24,6 @@ EXTRA_DIST =				\
 
 clean-local:
 	rm -f *~
-	rm -f gnome-screensaver.html
+	rm -f cinnamon-screensaver.html
 
 -include $(top_srcdir)/git.mk

@@ -1454,7 +1454,7 @@ popup_dialog (GSWindow *window)
 
         gs_debug ("Popping up dialog");
 
-        tmp = g_build_filename (LIBEXECDIR, "gnome-screensaver-dialog", NULL);
+        tmp = g_build_filename (LIBEXECDIR, "cinnamon-screensaver-dialog", NULL);
         command = g_string_new (tmp);
         g_free (tmp);
 

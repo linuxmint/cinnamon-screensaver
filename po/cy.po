@@ -1,5 +1,5 @@
-# GNOME Screensaver in Welsh.
-# This file is distributed under the same license as GNOME Screensaver.
+# Cinnamon Screensaver in Welsh.
+# This file is distributed under the same license as Cinnamon Screensaver.
 # Rhys Jones <rhys@sucs.org>, 2006.
 #
 msgid ""
@@ -16,88 +16,88 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural= (n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != "
 "11) ? 2 : 3;\n"
 
-#: ../data/gnome-screensaver-preferences.desktop.in.h:1
+#: ../data/cinnamon-screensaver-preferences.desktop.in.h:1
 msgid "Screensaver"
 msgstr "Arbedwr sgrin"
 
-#: ../data/gnome-screensaver-preferences.desktop.in.h:2
+#: ../data/cinnamon-screensaver-preferences.desktop.in.h:2
 msgid "Set your screensaver preferences"
 msgstr "Gosod eich hoffterau arbedwr sgrin"
 
-#: ../data/gnome-screensaver-preferences.glade.h:1
+#: ../data/cinnamon-screensaver-preferences.glade.h:1
 msgid "Screensaver Preferences"
 msgstr "Hoffterau Arbedwr Sgrin"
 
-#: ../data/gnome-screensaver-preferences.glade.h:2
+#: ../data/cinnamon-screensaver-preferences.glade.h:2
 msgid "Set session as _idle after:"
 msgstr "Gosod y sesiwn yn _segur ar ôl:"
 
-#: ../data/gnome-screensaver-preferences.glade.h:3
+#: ../data/cinnamon-screensaver-preferences.glade.h:3
 msgid "_Activate screensaver when session is idle"
 msgstr "_Dechrau'r arbedwr sgrin pan fo'r sesiwn yn segur"
 
-#: ../data/gnome-screensaver-preferences.glade.h:4
+#: ../data/cinnamon-screensaver-preferences.glade.h:4
 msgid "_Lock screen when screensaver is active"
 msgstr "_Cloi'r sgrin pan mae'r arbedwr sgrin ar waith"
 
-#: ../data/gnome-screensaver-preferences.glade.h:5
+#: ../data/cinnamon-screensaver-preferences.glade.h:5
 msgid "_Screensaver"
 msgstr "_Arbedwr Sgrin"
 
-#: ../data/gnome-screensaver.directory.in.h:1
-#: ../data/gnome-screensaver.schemas.in.h:8
+#: ../data/cinnamon-screensaver.directory.in.h:1
+#: ../data/cinnamon-screensaver.schemas.in.h:8
 msgid "Screensaver themes"
 msgstr "Themâu arbedwr sgrin"
 
-#: ../data/gnome-screensaver.directory.in.h:2
+#: ../data/cinnamon-screensaver.directory.in.h:2
 msgid "Screensavers"
 msgstr "Arbedwyr Sgrin"
 
-#: ../data/gnome-screensaver.schemas.in.h:1
+#: ../data/cinnamon-screensaver.schemas.in.h:1
 msgid "Activate when idle"
 msgstr "Rhoi ar waith pan yn segur"
 
-#: ../data/gnome-screensaver.schemas.in.h:2
+#: ../data/cinnamon-screensaver.schemas.in.h:2
 msgid "Allow logout"
 msgstr "Caniatáu allgofnodi"
 
-#: ../data/gnome-screensaver.schemas.in.h:3
+#: ../data/cinnamon-screensaver.schemas.in.h:3
 msgid "Allow monitor power management"
 msgstr "Caniatáu rheolaeth pŵer y monitor"
 
-#: ../data/gnome-screensaver.schemas.in.h:4
+#: ../data/cinnamon-screensaver.schemas.in.h:4
 msgid "Allow user switching"
 msgstr "Caniatáu newid defnyddiwr"
 
-#: ../data/gnome-screensaver.schemas.in.h:5
+#: ../data/cinnamon-screensaver.schemas.in.h:5
 msgid "Lock on activation"
 msgstr "Cloi wrth roi ar waith"
 
-#: ../data/gnome-screensaver.schemas.in.h:6
+#: ../data/cinnamon-screensaver.schemas.in.h:6
 msgid "Logout command"
 msgstr "Gorchymyn allgofnodi"
 
-#: ../data/gnome-screensaver.schemas.in.h:7
+#: ../data/cinnamon-screensaver.schemas.in.h:7
 msgid "Screensaver theme selection mode"
 msgstr "Modd dewis thema arbedwr sgrin"
 
-#: ../data/gnome-screensaver.schemas.in.h:9
+#: ../data/cinnamon-screensaver.schemas.in.h:9
 msgid "Set this to TRUE to activate the screensaver when the session is idle."
 msgstr ""
 "Gosod hyn yn WIR er mwyn rhoi'r arbedwr sgrin ar waith pan fo'r sesiwn yn "
 "segur."
 
-#: ../data/gnome-screensaver.schemas.in.h:10
+#: ../data/cinnamon-screensaver.schemas.in.h:10
 msgid "Set this to TRUE to allow the screensaver to power down the monitor."
 msgstr ""
 "Gosod hyn yn WIR er mwyn caniatáu i'r arbedwr sgrin ddiffodd pŵer y monitor."
 
-#: ../data/gnome-screensaver.schemas.in.h:11
+#: ../data/cinnamon-screensaver.schemas.in.h:11
 msgid "Set this to TRUE to lock the screen when the screensaver goes active."
 msgstr ""
 "Gosod hyn yn WIR i gloi'r sgrin pan fo'r arbedwr sgrin yn cychwyn ar waith."
 
-#: ../data/gnome-screensaver.schemas.in.h:12
+#: ../data/cinnamon-screensaver.schemas.in.h:12
 msgid ""
 "Set this to TRUE to offer an option in the unlock dialog to switch to a "
 "different user account."
@@ -105,7 +105,7 @@ msgstr ""
 "Gosod hyn yn WIR er mwyn cynnig opsiwn yn y ddeialog datgloi i newid i "
 "gyfrif defnyddiwr gwahanol."
 
-#: ../data/gnome-screensaver.schemas.in.h:13
+#: ../data/cinnamon-screensaver.schemas.in.h:13
 msgid ""
 "Set this to TRUE to offer an option in unlock dialog to logging out after a "
 "delay. The Delay is specified in the \"logout_delay\" key."
@@ -113,7 +113,7 @@ msgstr ""
 "Gosod hyn yn WIR er mwyn cynnig opsiwn yn y ddeialog datgloi i allgofnodi ar "
 "ôl saib. Penderfynir y saib gan yr allwedd \"logout_delay\"."
 
-#: ../data/gnome-screensaver.schemas.in.h:14
+#: ../data/cinnamon-screensaver.schemas.in.h:14
 msgid ""
 "The command to invoke when the logout button is clicked. This command should "
 "simply log the user out without any interaction. This key has effect only if "
@@ -124,12 +124,12 @@ msgstr ""
 "ryngweithio. Dim ond os yw'r allwedd \"logout_enable\" yn WIR y daw hwn i "
 "rym."
 
-#: ../data/gnome-screensaver.schemas.in.h:15
+#: ../data/cinnamon-screensaver.schemas.in.h:15
 msgid ""
 "The number of minutes after screensaver activation before locking the screen."
 msgstr "Sawl munud ar ôl cychwyn yr arbedwr sgrin y dylid cloi'r sgrin."
 
-#: ../data/gnome-screensaver.schemas.in.h:16
+#: ../data/cinnamon-screensaver.schemas.in.h:16
 msgid ""
 "The number of minutes after the screensaver activation before a logout "
 "option will appear in unlock dialog. This key has effect only if the "
@@ -139,7 +139,7 @@ msgstr ""
 "allgofnodi yn ymddangos yn y ddeialog ddatgloi. Dim ond os yw'r allwedd "
 "\"logout_enable\" yn WIR y daw hyn i rym."
 
-#: ../data/gnome-screensaver.schemas.in.h:17
+#: ../data/cinnamon-screensaver.schemas.in.h:17
 msgid ""
 "The number of minutes after the screensaver activation until the monitor "
 "goes into standby power mode."
@@ -147,7 +147,7 @@ msgstr ""
 "Y nifer o funudau ar ôl cychwyn yr arbedwr sgrin tan i'r monitor fynd i'r "
 "modd pŵer wrth gefn."
 
-#: ../data/gnome-screensaver.schemas.in.h:18
+#: ../data/cinnamon-screensaver.schemas.in.h:18
 msgid ""
 "The number of minutes after the screensaver activation until the monitor "
 "goes into suspend power mode."
@@ -155,7 +155,7 @@ msgstr ""
 "Y nifer o funudau ar ôl cychwyn yr arbedwr sgrin tan i'r monitor fynd i'r "
 "modd atal pŵer."
 
-#: ../data/gnome-screensaver.schemas.in.h:19
+#: ../data/cinnamon-screensaver.schemas.in.h:19
 msgid ""
 "The number of minutes after the screensaver activation until the monitor "
 "powers off."
@@ -163,18 +163,18 @@ msgstr ""
 "Y nifer o funudau ar ôl cychwyn yr arbedwr sgrin tan i'r monitor bweru i "
 "lawr."
 
-#: ../data/gnome-screensaver.schemas.in.h:20
+#: ../data/cinnamon-screensaver.schemas.in.h:20
 msgid ""
 "The number of minutes of inactivity before the session is considered idle."
 msgstr ""
 "Sawl munud sydd raid bod heb weithredu cyn i'r sesiwn gael ei ystyried yn "
 "segur."
 
-#: ../data/gnome-screensaver.schemas.in.h:21
+#: ../data/cinnamon-screensaver.schemas.in.h:21
 msgid "The number of minutes to run before changing the screensaver theme."
 msgstr "Sawl munud i redeg thema arbedwr sgrin cyn newid i un arall."
 
-#: ../data/gnome-screensaver.schemas.in.h:22
+#: ../data/cinnamon-screensaver.schemas.in.h:22
 msgid ""
 "The selection mode used by screensaver. May be \"blank-only\" to enable the "
 "screensaver without using any theme on activation, \"single\" to enable "
@@ -188,7 +188,7 @@ msgstr ""
 "(penodir hyn yn yr allwedd \"themes\"), a \"random\" i alluogi'r arbedwr "
 "sgrin gyda thema ar hap wrth gychwyn."
 
-#: ../data/gnome-screensaver.schemas.in.h:23
+#: ../data/cinnamon-screensaver.schemas.in.h:23
 msgid ""
 "This key specifies the list of themes to be used by the screensaver. It's "
 "ignored when \"mode\" key is \"blank-only\", should provide the theme name "
@@ -200,31 +200,31 @@ msgstr ""
 "ddylai ddarparu enw'r thema pan fo \"mode\" yn \"single\", ac fe ddylai "
 "ddarparu rhestr o enwau themâu pan fo \"mode\" yn \"random\"."
 
-#: ../data/gnome-screensaver.schemas.in.h:24
+#: ../data/cinnamon-screensaver.schemas.in.h:24
 msgid "Time before activation"
 msgstr "Amser cyn rhoi ar waith"
 
-#: ../data/gnome-screensaver.schemas.in.h:25
+#: ../data/cinnamon-screensaver.schemas.in.h:25
 msgid "Time before locking"
 msgstr "Amser cyn cloi"
 
-#: ../data/gnome-screensaver.schemas.in.h:26
+#: ../data/cinnamon-screensaver.schemas.in.h:26
 msgid "Time before logout option"
 msgstr "Amser cyn opsiwn allgofnodi"
 
-#: ../data/gnome-screensaver.schemas.in.h:27
+#: ../data/cinnamon-screensaver.schemas.in.h:27
 msgid "Time before power off"
 msgstr "Amser cyn pweru i lawr"
 
-#: ../data/gnome-screensaver.schemas.in.h:28
+#: ../data/cinnamon-screensaver.schemas.in.h:28
 msgid "Time before standby"
 msgstr "Amser cyn gorffwys"
 
-#: ../data/gnome-screensaver.schemas.in.h:29
+#: ../data/cinnamon-screensaver.schemas.in.h:29
 msgid "Time before suspend"
 msgstr "Amser cyn crogi"
 
-#: ../data/gnome-screensaver.schemas.in.h:30
+#: ../data/cinnamon-screensaver.schemas.in.h:30
 msgid "Time before theme change"
 msgstr "Amser cyn newid thema"
 
@@ -609,96 +609,96 @@ msgstr "I:"
 msgid "Connecting..."
 msgstr "Wrthi'n cysylltu..."
 
-#: ../src/gnome-screensaver-command.c:59
+#: ../src/cinnamon-screensaver-command.c:59
 msgid "Causes the screensaver to exit gracefully"
 msgstr "Achosi i'r arbedwr sgrin orffen yn daclus"
 
-#: ../src/gnome-screensaver-command.c:61
+#: ../src/cinnamon-screensaver-command.c:61
 msgid "Query the state of the screensaver"
 msgstr "Holi cyflwr yr arbedwr sgrin"
 
-#: ../src/gnome-screensaver-command.c:63
+#: ../src/cinnamon-screensaver-command.c:63
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr "Gorchymyn i'r broses arbedwr sgrin sy'n rhedeg i gloi'r sgrin yn syth"
 
-#: ../src/gnome-screensaver-command.c:65
+#: ../src/cinnamon-screensaver-command.c:65
 msgid "If the screensaver is active then switch to another graphics demo"
 msgstr "Os yw'r arbedwr sgrin ar waith, newid i ddemo graffeg gwahanol"
 
-#: ../src/gnome-screensaver-command.c:67
+#: ../src/cinnamon-screensaver-command.c:67
 msgid "Turn the screensaver on (blank the screen)"
 msgstr "Troi'r arbedwr sgrin ymlaen (clirio'r sgrin)"
 
-#: ../src/gnome-screensaver-command.c:69
+#: ../src/cinnamon-screensaver-command.c:69
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr "Os yw'r arbedwr sgrin ar waith, ei ddi-ysgogi (dad-glirio'r sgrin)"
 
-#: ../src/gnome-screensaver-command.c:71
+#: ../src/cinnamon-screensaver-command.c:71
 msgid "Disable running graphical themes while blanked"
 msgstr ""
 "Pan fo'r sgrin wedi'i chlirio, analluogi'r themâu graffigol sy'n rhedeg"
 
-#: ../src/gnome-screensaver-command.c:73
+#: ../src/cinnamon-screensaver-command.c:73
 msgid "Enable running graphical themes while blanked (if applicable)"
 msgstr ""
 "Pan fo'r sgrin wedi'i chlirio, galluogi'r themâu graffigol sy'n rhedeg (os "
 "yn berthnasol)"
 
-#: ../src/gnome-screensaver-command.c:75
+#: ../src/cinnamon-screensaver-command.c:75
 msgid "Poke the running screensaver to simulate user activity"
 msgstr "Procio'r arbedwr sgrin sy'n rhedeg, i ddynwared gweithred defnyddiwr"
 
-#: ../src/gnome-screensaver-command.c:77 ../src/gnome-screensaver-dialog.c:110
-#: ../src/gnome-screensaver.c:56
+#: ../src/cinnamon-screensaver-command.c:77 ../src/cinnamon-screensaver-dialog.c:110
+#: ../src/cinnamon-screensaver.c:56
 msgid "Version of this application"
 msgstr "Fersiwn y rhaglen"
 
-#: ../src/gnome-screensaver-command.c:202
+#: ../src/cinnamon-screensaver-command.c:202
 #, c-format
 msgid "The screensaver is %s\n"
 msgstr "Yr arbedwr sgrin yw %s\n"
 
-#: ../src/gnome-screensaver-command.c:202
+#: ../src/cinnamon-screensaver-command.c:202
 msgid "active"
 msgstr "ar waith"
 
-#: ../src/gnome-screensaver-command.c:202
+#: ../src/cinnamon-screensaver-command.c:202
 msgid "inactive"
 msgstr "ddim ar waith"
 
-#: ../src/gnome-screensaver-dialog.c:108
+#: ../src/cinnamon-screensaver-dialog.c:108
 msgid "Show debugging output"
 msgstr "Dangos allbwn datnamu"
 
-#: ../src/gnome-screensaver-dialog.c:112
+#: ../src/cinnamon-screensaver-dialog.c:112
 msgid "Show the logout button"
 msgstr "Dangos y botwm allgofnodi"
 
-#: ../src/gnome-screensaver-dialog.c:114
+#: ../src/cinnamon-screensaver-dialog.c:114
 msgid "Command to invoke from the logout button"
 msgstr "Y gorchymyn i'w redeg o'r botwm allgofnodi"
 
-#: ../src/gnome-screensaver-dialog.c:116
+#: ../src/cinnamon-screensaver-dialog.c:116
 msgid "Show the switch user button"
 msgstr "Dangos y botwm i newid defnyddwyr"
 
-#: ../src/gnome-screensaver-preferences.c:427
+#: ../src/cinnamon-screensaver-preferences.c:427
 msgid "Blank screen"
 msgstr "Clirio'r sgrin"
 
-#: ../src/gnome-screensaver-preferences.c:433
+#: ../src/cinnamon-screensaver-preferences.c:433
 msgid "Random"
 msgstr "Ar hap"
 
-#: ../src/gnome-screensaver-preferences.c:723
+#: ../src/cinnamon-screensaver-preferences.c:723
 msgid "Invalid screensaver theme"
 msgstr "Enw thema arbedwr sgrin annilys"
 
-#: ../src/gnome-screensaver-preferences.c:726
+#: ../src/cinnamon-screensaver-preferences.c:726
 msgid "This file does not appear to be a valid screensaver theme."
 msgstr "Mae'n ymddangos nad yw'r ffeil hon yn thema arbedwr sgrin ddilys."
 
-#: ../src/gnome-screensaver-preferences.c:843
+#: ../src/cinnamon-screensaver-preferences.c:843
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
@@ -707,7 +707,7 @@ msgstr[1] "%d awr"
 msgstr[2] "%d awr"
 msgstr[3] "%d awr"
 
-#: ../src/gnome-screensaver-preferences.c:846
+#: ../src/cinnamon-screensaver-preferences.c:846
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -716,7 +716,7 @@ msgstr[1] "%d funud"
 msgstr[2] "%d munud"
 msgstr[3] "%d munud"
 
-#: ../src/gnome-screensaver-preferences.c:849
+#: ../src/cinnamon-screensaver-preferences.c:849
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -726,15 +726,15 @@ msgstr[2] "%d eiliad"
 msgstr[3] "%d eiliad"
 
 #. hour:minutes:seconds
-#: ../src/gnome-screensaver-preferences.c:855
+#: ../src/cinnamon-screensaver-preferences.c:855
 #, c-format
 msgid "%s %s %s"
 msgstr "%s %s %s"
 
 #. hour:minutes
 #. minutes:seconds
-#: ../src/gnome-screensaver-preferences.c:858
-#: ../src/gnome-screensaver-preferences.c:866
+#: ../src/cinnamon-screensaver-preferences.c:858
+#: ../src/cinnamon-screensaver-preferences.c:866
 #, c-format
 msgid "%s %s"
 msgstr "%s %s"
@@ -742,35 +742,35 @@ msgstr "%s %s"
 #. hour
 #. minutes
 #. seconds
-#: ../src/gnome-screensaver-preferences.c:861
-#: ../src/gnome-screensaver-preferences.c:869
-#: ../src/gnome-screensaver-preferences.c:873
+#: ../src/cinnamon-screensaver-preferences.c:861
+#: ../src/cinnamon-screensaver-preferences.c:869
+#: ../src/cinnamon-screensaver-preferences.c:873
 #, c-format
 msgid "%s"
 msgstr "%s"
 
 #. 0 seconds
-#: ../src/gnome-screensaver-preferences.c:876
+#: ../src/cinnamon-screensaver-preferences.c:876
 msgid "0 seconds"
 msgstr "0 eiliad"
 
-#: ../src/gnome-screensaver-preferences.c:891
+#: ../src/cinnamon-screensaver-preferences.c:891
 msgid "Never"
 msgstr "Byth"
 
-#: ../src/gnome-screensaver-preferences.c:1047
+#: ../src/cinnamon-screensaver-preferences.c:1047
 msgid "Could not load the main interface"
 msgstr "Methu llwytho'r prif ryngwyneb"
 
-#: ../src/gnome-screensaver-preferences.c:1049
+#: ../src/cinnamon-screensaver-preferences.c:1049
 msgid "Please make sure that the screensaver is properly installed"
 msgstr "Gwnewch yn siŵr fod yr arbedwr sgrin wedi'i osod yn gywir"
 
-#: ../src/gnome-screensaver.c:57
+#: ../src/cinnamon-screensaver.c:57
 msgid "Don't become a daemon"
 msgstr "Peidio â throi'n ellyll"
 
-#: ../src/gnome-screensaver.c:58
+#: ../src/cinnamon-screensaver.c:58
 msgid "Enable debugging code"
 msgstr "Galluogi cod datnamu"
 

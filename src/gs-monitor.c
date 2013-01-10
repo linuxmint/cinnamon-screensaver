@@ -31,7 +31,7 @@
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
 
-#include "gnome-screensaver.h"
+#include "cinnamon-screensaver.h"
 
 #include "gs-manager.h"
 #include "gs-watcher.h"

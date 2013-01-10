@@ -223,21 +223,21 @@ Version 2.28.0
 Fixed bugs:
 
  - #444927, get idle time from xorg
- - #463010, Port gnome-screensaver from libglade to gtkbuilder
+ - #463010, Port cinnamon-screensaver from libglade to gtkbuilder
  - #564061, Install .desktop file
  - #570402, screensaver crash if number of screens changes
- - #570941, String not marked for translation gnome-screensaver-command.c
+ - #570941, String not marked for translation cinnamon-screensaver-command.c
  - #574896, [Leave message] Cancel button should clean clipboard buffe
  - #576463, can't unlock screen after upgrade until restarting gnome-
             screensaver
  - #581995, Fade out doesn't properly fall back to gamma number if X server
             only supports 0-size ramp
  - #586174, Encoding key in desktop files is deprecated
- - #589728, gnome-screensaver: implicit declaration g_printf
+ - #589728, cinnamon-screensaver: implicit declaration g_printf
  - #590776, screensaver is never activated
  - #591193, Update/Create .gitignore
- - #591194, Add Comment and Icon in gnome-screensaver.desktop
- - #594082, gnome-screensaver ignores input when fading to black
+ - #591194, Add Comment and Icon in cinnamon-screensaver.desktop
+ - #594082, cinnamon-screensaver ignores input when fading to black
 
 Translators:
 
@@ -293,7 +293,7 @@ Translators:
 Version 2.27.0
 ===============
 
-- Add an autostart file for gnome-screensaver (#585485)
+- Add an autostart file for cinnamon-screensaver (#585485)
 
 Updated Translations: Telugu, Catalan, zh_CN, Crimean Tatar
 
@@ -304,7 +304,7 @@ Version 2.26.1
 - Fixed #572955, audit GError usage (William Jon McCann)
 - Fixed #572956, use g_strerror (William Jon McCann)
 - Fixed #573495, logout_command setting may be overwritten with keyboard_command value (William Jon McCann)
-- Fixed #577739, gnome-screensaver-gl-helper calls gdk_x11_visual_get_xvisual with NULL visual (William Jon McCann)
+- Fixed #577739, cinnamon-screensaver-gl-helper calls gdk_x11_visual_get_xvisual with NULL visual (William Jon McCann)
 - Fixed #578669, Screenserver (William Jon McCann)
 
 Translations:
@@ -350,9 +350,9 @@ Version 2.24.1
 - Fixed #451498, Preview of "Blank screen" is not consistent (Neil Patel)
 - Fixed #552119, Add GTK and GNOME to screensaver desktop (William Jon McCann)
 - Fixed #552523, Screensaver suddenly stopped working (William Jon McCann)
-- Fixed #555254, gnome-screensaver-dialog NULL pointer crash (William Jon McCann)
-- Fixed #555491, gnome-screensaver should release mouse/keyboard when failed to grab both of them (Joey Yu Zheng)
-- Fixed #560456, Cleaning up GTK Includes in gnome-screensaver (Maxim Ermilov)
+- Fixed #555254, cinnamon-screensaver-dialog NULL pointer crash (William Jon McCann)
+- Fixed #555491, cinnamon-screensaver should release mouse/keyboard when failed to grab both of them (Joey Yu Zheng)
+- Fixed #560456, Cleaning up GTK Includes in cinnamon-screensaver (Maxim Ermilov)
 
 Translations:
 - Updated ar: Djihed Afifi
@@ -505,9 +505,9 @@ Version 2.21.6
 Version 2.20.0
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
-        * Fixed #442853, Unlock dialog shows Switch User button when /apps/gnome-screensaver/user_switch_enabled is false (William Jon McCann)
+        * Fixed #442853, Unlock dialog shows Switch User button when /apps/cinnamon-screensaver/user_switch_enabled is false (William Jon McCann)
 
   Translators
 
@@ -542,7 +542,7 @@ Version 2.20.0
 Version 2.19.7
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fixed #437225, Solaris needs additional libs linked with to build (William Jon McCann)
         * Fixed #463754, remove last dep on libgnome (Jani Monoses)
@@ -573,9 +573,9 @@ Version 2.19.7
 Version 2.19.6
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
-        * Fixed #327602, gnome-screensaver never propagates the environment to its helper dialog (William Jon McCann)
+        * Fixed #327602, cinnamon-screensaver never propagates the environment to its helper dialog (William Jon McCann)
         * Fixed #456705, useless message on stdout (Bill Nottingham)
         * Fixed #461028, console-kit ActiveChanged (VC switch) does not trigger unlock request (Ian Jackson)
         * Fixed #461722, Add support to disable slideshow randomization (Frederic Crozat)
@@ -611,11 +611,11 @@ Version 2.19.6
 Version 2.19.5
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fixed #331515, No translation for themes in command line help (William Jon McCann)
         * Fixed #354663, lock dialog not visible when using nvidia clone (William Jon McCann)
-        * Fixed #434712, gnome-screensaver crashes without dbus system bus (William Jon McCann)
+        * Fixed #434712, cinnamon-screensaver crashes without dbus system bus (William Jon McCann)
         * Fixed #436818, replace gnome_help_display (William Jon McCann)
         * Fixed #445443, Screensaver deactivation is not correct (William Jon McCann)
 
@@ -640,9 +640,9 @@ Version 2.19.5
 Version 2.19.1
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
-        * Fixed #384509, gnome-screensaver could allow users to leave notes when screen is locked (William Jon McCann)
+        * Fixed #384509, cinnamon-screensaver could allow users to leave notes when screen is locked (William Jon McCann)
         * Fixed #411252, Use xdg-user-dirs to find pictures directory (William Jon McCann)
         * Fixed #428199, Make fast-user-switching work with gdm configurations involving multiple X servers (William Jon McCann)
 
@@ -651,10 +651,10 @@ Version 2.19.1
 Version 2.18.1
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fixed #424165, power management button should reflect g-p-m status (William Jon McCann)
-        * Fixed #425550, gnome-screensaver should probably require mouse grab to lock (Ray Strode)
+        * Fixed #425550, cinnamon-screensaver should probably require mouse grab to lock (Ray Strode)
 
   Translators
 
@@ -671,10 +671,10 @@ Version 2.18.1
 Version 2.18.0
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
-        * Fixed #412486, gnome-screensaver doesn't work with xnest (William Lachance)
-        * Fixed #412492, gnome-screensaver won't build
+        * Fixed #412486, cinnamon-screensaver doesn't work with xnest (William Lachance)
+        * Fixed #412492, cinnamon-screensaver won't build
         * Fixed #417323, build from trunk fails; undefined reference to pango symbols (Elijah Newren)
         * Fixed #417538, unapproved change broke theme management (William Jon McCann)
 
@@ -698,9 +698,9 @@ Version 2.18.0
 Version 2.17.8
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
-        * Fixed #400579, gnome-screensaver fails to compile against openpam (Ray Strode)
+        * Fixed #400579, cinnamon-screensaver fails to compile against openpam (Ray Strode)
         * Fixed #407524, Freeze on unlock screen (William Jon McCann)
         * Fixed #407964, direct fast user switching (William Jon McCann)
         * Fixed #411393, 'switch user' button needs to turn inactive on selection (William Jon McCann)
@@ -724,7 +724,7 @@ Version 2.17.8
 Version 2.17.7
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * #402183, use gdm socket command to start a login procedure when available (Matthias Clasen)
         * #403936, Specifically block shaping the window (William Jon McCann)
@@ -743,7 +743,7 @@ Version 2.17.7
 Version 2.17.6
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Categorize preferences for the control center (Denis Washington)
 
@@ -756,7 +756,7 @@ Version 2.17.6
 Version 2.17.5
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix some PAM threading issues
         * Fixed #387572, auth hangs when password is expired
@@ -775,7 +775,7 @@ Version 2.17.5
 Version 2.17.4
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix non-ramp gamma fading
         * Add script to help debugging
@@ -796,7 +796,7 @@ Version 2.17.4
 Version 2.17.3
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Convert PAM messages to UTF-8 (Ray Strode)
         * Make PAM authentication async (Ray Strode)
@@ -810,7 +810,7 @@ Version 2.17.3
 Version 2.17.2
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Remove the pointer polling
         * Add a keyboard layout indicator (Sergey Udaltsov)
@@ -818,11 +818,11 @@ Version 2.17.2
         * Add SessionPowerManagementIdleChanged D-Bus signal
         * Add GetInhibitors D-Bus method
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Add a button to launch the power management preferences
 
-  gnome-screensaver-command
+  cinnamon-screensaver-command
 
         * Add option to how long screensaver was active (Patrick McLean)
 
@@ -839,11 +839,11 @@ Version 2.17.2
 Version 2.17.1
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Don't poll in dialog
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Don't show expander column
 
@@ -858,12 +858,12 @@ Version 2.17.1
 Version 2.16.1
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Set the correct value of DISPLAY for the gl helper
         * Don't queue keys that may cause focus navigation (Bruno Boaventura)
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Don't explicitly set icon sizes in preview bar (Dimitur Kirov)
 
@@ -929,7 +929,7 @@ Version 2.15.7
 Version 2.15.6
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Support drag-n-drop of themes to preferences dialog
         * Add support for embedding a keyboard in window
@@ -954,7 +954,7 @@ Version 2.15.6
 Version 2.15.5
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Turn off themes when screen is not visible
         * Make the unlock dialog show on correct window under Xinerama
@@ -962,7 +962,7 @@ Version 2.15.5
         * Listen for HAL coffee key events
         * Ignore brightness key events
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Populate themes list in an idle after startup
 
@@ -986,7 +986,7 @@ Version 2.15.5
 Version 2.15.4
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Override gtk+ theme background style
         * Use helper command to get best GL visual
@@ -1019,7 +1019,7 @@ Version 2.15.4
 Version 2.15.3
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fully support PAM driving the unlock dialog
         * Only support one auth backend configured at build time
@@ -1036,7 +1036,7 @@ Version 2.15.3
         * Try to grab keyboard before doing idle notice fade-out
         * Make activation wait for fade to complete.
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Print a warning that locking is disabled when running as root
 
@@ -1057,7 +1057,7 @@ Version 2.15.3
 Version 2.15.2
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Sync with FUSA code (fixes GDM configuration)
         * Make cancel close the unlock dialog
@@ -1084,7 +1084,7 @@ Version 2.15.2
 Version 2.15.1
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Add support for theming the lock dialog
         * Use OpenGL to get the best visual and use it
@@ -1093,7 +1093,7 @@ Version 2.15.1
         * Support themes in all XDG dirs (including $HOME)
         * Make caps-lock warning more accurate
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Add fullscreen preview
         * Update wording
@@ -1110,7 +1110,7 @@ Version 2.15.1
 Version 2.14.1
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Detect button press activity (Ray Strode)
         * Make operation after system suspend (Ray Strode)
@@ -1136,7 +1136,7 @@ Version 2.14.1
 Version 2.14.0
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Removed unused GConf keys from schemas
         * Don't queue keypad enter keypresses
@@ -1167,14 +1167,14 @@ Version 2.14.0
 Version 2.13.92
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix problems when some other program has keyboard grabbed
         * Add a pkg-config file for out of tree themes
         * Use a black bullet character instead of * for password entry
         * Capitalize DBUS method names that weren't already
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Track gconf key changes for themes
 
@@ -1203,7 +1203,7 @@ Version 2.13.92
 Version 2.13.91
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Maintain a pointer grab unless the unlock dialog is up
         * Convert the real and user names to UTF8
@@ -1213,7 +1213,7 @@ Version 2.13.91
         * Don't abort when fade isn't available
         * Display host name in unlock dialog
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Add help
         * Don't make heading bold or indent under it
@@ -1233,7 +1233,7 @@ Version 2.13.91
 Version 2.13.90
 ===============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Ignore our windows when watching for map and configure events
         * Clear window after showing to prevent flashing
@@ -1259,7 +1259,7 @@ Version 2.13.90
 Version 2.13.5
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Move DPMS functionality to gnome-power-manager
         * Rename the DBUS interface from screensaver to ScreenSaver
@@ -1267,7 +1267,7 @@ Version 2.13.5
         * Don't do the slow fade if we are inhibited
         * Fix screen flashing after idle activation
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Rework dialog for setting session idle timeout
         * Remove unused help button
@@ -1289,7 +1289,7 @@ Version 2.13.5
 Version 0.0.24
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Add proper session idle reporting
         * Clear all children of toplevel windows
@@ -1311,7 +1311,7 @@ Version 0.0.24
 Version 0.0.23
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix idle warning cancellation
         * Changes to D-Bus API
@@ -1334,7 +1334,7 @@ Version 0.0.23
 Version 0.0.22
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Don't mess up event mask for root window.
 
@@ -1349,7 +1349,7 @@ Version 0.0.22
 Version 0.0.21
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Try to prevent popups over screensaver window
         * Use an interruptable slow fade before idle activation
@@ -1367,7 +1367,7 @@ Version 0.0.21
 Version 0.0.20
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix blanking when running under Xnest
 
@@ -1375,7 +1375,7 @@ Version 0.0.20
 Version 0.0.19
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Allow trying password after auth failure
         * Allow more space for user list
@@ -1398,7 +1398,7 @@ Version 0.0.19
 Version 0.0.18
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * UI tweaks for unlock dialog
         * Fix Intel compiler warnings (Kjartan Maraas)
@@ -1408,7 +1408,7 @@ Version 0.0.18
         * Redesign the idle watcher and fix leaks
         * Solaris build fixes (Damien Carbery)
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Make lock toggle work again
 
@@ -1426,7 +1426,7 @@ Version 0.0.18
 Version 0.0.17
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Restart idle watch if can't grab keyboard
         * Make timeout in preferences work again
@@ -1444,7 +1444,7 @@ Version 0.0.17
 Version 0.0.16
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Shake the dialog when authentication fails
         * Maintain nicer aspect ratio on unlock dialog
@@ -1471,7 +1471,7 @@ Version 0.0.16
 Version 0.0.15
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * First version with working power management
         * Add Gamma fade out
@@ -1499,7 +1499,7 @@ Version 0.0.15
 Version 0.0.14
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Don't drop keypresses before unlock dialog appears
         * Use .desktop files and menu spec to find themes
@@ -1508,7 +1508,7 @@ Version 0.0.14
         * Make user switching disabled by default
         * Fix a crash due to a missing error handler
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Use new themes API that will theme list to be
           modified by distro/sysadmin/user.
@@ -1525,7 +1525,7 @@ Version 0.0.14
 Version 0.0.13
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix problem when starting GNOME from KDM
         * Only look for theme files that end in .xml
@@ -1535,7 +1535,7 @@ Version 0.0.13
 Version 0.0.12
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix crasher caused by destroying NULL hash table
         * Don't activate after last inhibitor is removed
@@ -1548,13 +1548,13 @@ Version 0.0.12
 Version 0.0.11
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Make unlock dialog show more quickly
         * Support the gconf cycle timeout key
         * Add system name to unlock dialog
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Add random theme (Rodrigo)
 
@@ -1568,13 +1568,13 @@ Version 0.0.11
 Version 0.0.10
 ==============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix hang on system resume
         * Actually use the gconf lock key
         * Add configure option to look for xscreensaver hacks (Rodrigo)
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Add checkbox to enable/disable locking (Rodrigo)
         * Make type ahead find work correctly
@@ -1591,7 +1591,7 @@ Version 0.0.10
 Version 0.0.9
 =============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Added slideshow theme engine
         * Display username if real name is unknown (Rodrigo)
@@ -1611,7 +1611,7 @@ Version 0.0.9
 Version 0.0.8
 =============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Add Dbus API for inhibiting the idle activation
         * Integrate fast-user-switching directly into the unlock dialog.
@@ -1630,7 +1630,7 @@ Version 0.0.8
 Version 0.0.7
 =============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Fix authentication on SuSE/Novell
         * Automatically find the SuSE/Novell gdm.conf file
@@ -1650,7 +1650,7 @@ Version 0.0.7
 Version 0.0.6
 =============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
         * Added Multi-head/Xinerama support
         * Added screensaver throttle capability
@@ -1660,7 +1660,7 @@ Version 0.0.6
         * Install own PAM configuration instead of relying on xscreensaver
         * Add ability to disable 'New Login' button
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Support drag and drop of theme configuration files
         * Display a nicer form of the activation time value
@@ -1679,16 +1679,16 @@ Version 0.0.6
 Version 0.0.5
 =============
 
-  gnome-screensaver
+  cinnamon-screensaver
 
-        * Support user themes in USER_DATA_DIR/gnome-screensaver/themes/
+        * Support user themes in USER_DATA_DIR/cinnamon-screensaver/themes/
         * Send activation/deactivation signals on session message bus
         * Added DPMS support
         * Added xscreensaver compatible XML configuration for themes
         * Add optional logout button after a specified amount of time
         * Fix leaking of file descriptors
 
-  gnome-screensaver-preferences
+  cinnamon-screensaver-preferences
 
         * Added configuration applet
         * Use screensaver icon

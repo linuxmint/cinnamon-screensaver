@@ -1,4 +1,4 @@
-gnome-screensaver (3.4.1-0ubuntu1) precise; urgency=low
+cinnamon-screensaver (3.4.1-0ubuntu1) precise; urgency=low
 
   * New upstream bug fix release:
     - Drop num lock warning
@@ -7,7 +7,7 @@ gnome-screensaver (3.4.1-0ubuntu1) precise; urgency=low
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 16 Apr 2012 09:02:26 +0200
 
-gnome-screensaver (3.4.0-0ubuntu1) precise-proposed; urgency=low
+cinnamon-screensaver (3.4.0-0ubuntu1) precise-proposed; urgency=low
 
   * New upstream release:
     - Fix fade when explicitly locking screen
@@ -15,7 +15,7 @@ gnome-screensaver (3.4.0-0ubuntu1) precise-proposed; urgency=low
 
  -- Didier Roche <didrocks@ubuntu.com>  Tue, 27 Mar 2012 10:57:33 +0200
 
-gnome-screensaver (3.2.2-0ubuntu2) precise; urgency=low
+cinnamon-screensaver (3.2.2-0ubuntu2) precise; urgency=low
 
   * debian/patches/27_lightdm_switch_user.patch: When used under lightdm,
     use dbus to switch to greeter instead of calling gdmflexiserver.
@@ -23,7 +23,7 @@ gnome-screensaver (3.2.2-0ubuntu2) precise; urgency=low
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Mon, 12 Mar 2012 14:38:07 -0400
 
-gnome-screensaver (3.2.2-0ubuntu1) precise; urgency=low
+cinnamon-screensaver (3.2.2-0ubuntu1) precise; urgency=low
 
   * New upstream bug fix release.
   * Drop 23_fix_capslock_warning.patch, applied upstream.
@@ -31,7 +31,7 @@ gnome-screensaver (3.2.2-0ubuntu1) precise; urgency=low
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 07 Mar 2012 15:29:28 +0100
 
-gnome-screensaver (3.2.1-0ubuntu1) precise; urgency=low
+cinnamon-screensaver (3.2.1-0ubuntu1) precise; urgency=low
 
   * New upstream release
   * debian/patches/01_git_background_scaling.patch:
@@ -43,7 +43,7 @@ gnome-screensaver (3.2.1-0ubuntu1) precise; urgency=low
 
  -- Robert Ancell <robert.ancell@canonical.com>  Thu, 16 Feb 2012 12:17:35 +1100
 
-gnome-screensaver (3.2.0-1ubuntu12) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu12) precise; urgency=low
 
   * Disable 26_lightdm_greeter_on_lock.patch for now. VT switches/multiple
     heads are FUBAR on NVidia, and as long as the new greeter X.org
@@ -52,7 +52,7 @@ gnome-screensaver (3.2.0-1ubuntu12) precise; urgency=low
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Feb 2012 11:02:02 +0100
 
-gnome-screensaver (3.2.0-1ubuntu11) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu11) precise; urgency=low
 
   [ Robert Ancell ]
   * debian/patches/26_lightdm_greeter_on_lock.patch:
@@ -64,20 +64,20 @@ gnome-screensaver (3.2.0-1ubuntu11) precise; urgency=low
 
  -- Sebastien Bacher <seb128@ubuntu.com>  Tue, 14 Feb 2012 18:52:50 +0100
 
-gnome-screensaver (3.2.0-1ubuntu10) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu10) precise; urgency=low
 
   * debian/patches/24_use_user_settings.patch: use the user settings, and
     not the default system ones, so we get the user's background when the
     screen is locked.
   * debian/patches/25_fix_lock_command.patch: make --lock expect a reply
-    so the screen gets properly locked when gnome-screensaver needs to be
+    so the screen gets properly locked when cinnamon-screensaver needs to be
     respawned by dbus. This was preventing ctrl-alt-l from locking the
-    screen on the first attempt when the gnome-screensaver process was
+    screen on the first attempt when the cinnamon-screensaver process was
     dead.
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Thu, 09 Feb 2012 21:27:15 -0500
 
-gnome-screensaver (3.2.0-1ubuntu9) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu9) precise; urgency=low
 
   * debian/patches/23_fix_capslock_warning.patch: capslock turns off when
     the key is released, so updating the message on key press events
@@ -85,7 +85,7 @@ gnome-screensaver (3.2.0-1ubuntu9) precise; urgency=low
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Thu, 09 Feb 2012 14:00:43 -0500
 
-gnome-screensaver (3.2.0-1ubuntu8) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu8) precise; urgency=low
 
   * debian/patches/22_dont_show_numlock_warning.patch: Don't show a warning
     for the numlock key, as some hardware tracks numlock status
@@ -95,7 +95,7 @@ gnome-screensaver (3.2.0-1ubuntu8) precise; urgency=low
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Sun, 05 Feb 2012 17:15:02 -0500
 
-gnome-screensaver (3.2.0-1ubuntu7) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu7) precise; urgency=low
 
   * Slightly improve appearance of lock screen until it goes away or gets
     a proper makeover:
@@ -105,7 +105,7 @@ gnome-screensaver (3.2.0-1ubuntu7) precise; urgency=low
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Sat, 04 Feb 2012 01:49:52 -0500
 
-gnome-screensaver (3.2.0-1ubuntu6) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu6) precise; urgency=low
 
   * debian/patches/21_properly_lock_when_activated.patch: If the
     screensaver is already active without a lock, and it got a request to
@@ -114,7 +114,7 @@ gnome-screensaver (3.2.0-1ubuntu6) precise; urgency=low
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Sun, 29 Jan 2012 13:20:33 -0500
 
-gnome-screensaver (3.2.0-1ubuntu5) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu5) precise; urgency=low
 
   * debian/patches/20_remove_wrong_timeout.patch: remove old upper timeout
     limit that was incorrectly calculating minutes instead of seconds. This
@@ -123,14 +123,14 @@ gnome-screensaver (3.2.0-1ubuntu5) precise; urgency=low
 
  -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Sat, 28 Jan 2012 19:04:29 -0500
 
-gnome-screensaver (3.2.0-1ubuntu4) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu4) precise; urgency=low
 
   * Uncomment "no_fade_on_user_switch" from the serie, the bug on user
     switching seems to still be happening without it (lp: #546578)
 
  -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 12 Jan 2012 17:11:28 +0100
 
-gnome-screensaver (3.2.0-1ubuntu3) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu3) precise; urgency=low
 
   * 11_autostart_delay.patch: Bump to 20 seconds to take it out of the
     critical path. g-s has a D-BUS service file, so if settings-daemon or
@@ -139,22 +139,22 @@ gnome-screensaver (3.2.0-1ubuntu3) precise; urgency=low
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jan 2012 12:48:37 +0100
 
-gnome-screensaver (3.2.0-1ubuntu2) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu2) precise; urgency=low
 
   * debian/patches/01_git_background_scaling.patch: git backport, 
     should fix background scaling issues on multimonitor configs (lp: #854800)
 
  -- Sebastien Bacher <seb128@ubuntu.com>  Tue, 06 Dec 2011 15:21:09 +0100
 
-gnome-screensaver (3.2.0-1ubuntu1) precise; urgency=low
+cinnamon-screensaver (3.2.0-1ubuntu1) precise; urgency=low
 
-  * debian/gnome-screensaver.postinst:
+  * debian/cinnamon-screensaver.postinst:
     - dropped, the migration version was before lucid
   * debian/control.in, debian/rules:
     - use dh_apport to install the apport hook
-  * debian/gnome-screensaver.maintscript:
+  * debian/cinnamon-screensaver.maintscript:
     - drop old pre lucid transition, update version for the new conffile one
-  * debian/source_gnome-screensaver.apport:
+  * debian/source_cinnamon-screensaver.apport:
     - updated to get gsettings keys rather than gconf ones
 
   * Resync on Debian, remaining difference:
@@ -193,19 +193,19 @@ gnome-screensaver (3.2.0-1ubuntu1) precise; urgency=low
   * debian/rules:
     - drop debian specific autostart desktop location
     - use dh-autoreconf there
-  * debian/source_gnome-screensaver.py:
+  * debian/source_cinnamon-screensaver.py:
     - ubuntu apport hook
 
  -- Sebastien Bacher <seb128@ubuntu.com>  Tue, 22 Nov 2011 16:19:45 +0100
 
-gnome-screensaver (3.2.0-1) experimental; urgency=low
+cinnamon-screensaver (3.2.0-1) experimental; urgency=low
 
   * New upstream release
   * debian/control.in: Bump libgnome-desktop-3-dev b-d
 
  -- Sjoerd Simons <sjoerd@debian.org>  Sun, 06 Nov 2011 15:06:45 +0000
 
-gnome-screensaver (3.0.1-3) unstable; urgency=low
+cinnamon-screensaver (3.0.1-3) unstable; urgency=low
 
   * Bump dependency on gnome-session-bin to (>= 3.0) to avoid partial upgrades
     which can result in having the screen no longer locked on lid-close.
@@ -213,14 +213,14 @@ gnome-screensaver (3.0.1-3) unstable; urgency=low
 
  -- Michael Biebl <biebl@debian.org>  Thu, 27 Oct 2011 15:34:04 +0200
 
-gnome-screensaver (3.0.1-2) unstable; urgency=low
+cinnamon-screensaver (3.0.1-2) unstable; urgency=low
 
-  * Remove obsolete gnome-screensavers.menu conffile on upgrades.
+  * Remove obsolete cinnamon-screensavers.menu conffile on upgrades.
     Closes: #645448
 
  -- Michael Biebl <biebl@debian.org>  Wed, 19 Oct 2011 10:52:38 +0200
 
-gnome-screensaver (3.0.1-1) unstable; urgency=low
+cinnamon-screensaver (3.0.1-1) unstable; urgency=low
 
   * Upload to unstable.
   * New upstream release.
@@ -234,7 +234,7 @@ gnome-screensaver (3.0.1-1) unstable; urgency=low
 
  -- Michael Biebl <biebl@debian.org>  Fri, 14 Oct 2011 12:52:40 +0200
 
-gnome-screensaver (3.0.0-2) experimental; urgency=low
+cinnamon-screensaver (3.0.0-2) experimental; urgency=low
 
   * Team upload.
   * Bump build-dep on libgnomekbd-dev to ensure we have a version linked with
@@ -242,14 +242,14 @@ gnome-screensaver (3.0.0-2) experimental; urgency=low
 
  -- Raphaël Hertzog <hertzog@debian.org>  Sun, 10 Apr 2011 19:00:51 +0000
 
-gnome-screensaver (3.0.0-1) experimental; urgency=low
+cinnamon-screensaver (3.0.0-1) experimental; urgency=low
 
   * Team upload.
   * New upstream release.
 
  -- Raphaël Hertzog <hertzog@debian.org>  Sun, 10 Apr 2011 18:30:09 +0000
 
-gnome-screensaver (2.91.92-1) experimental; urgency=low
+cinnamon-screensaver (2.91.92-1) experimental; urgency=low
 
   * New upstream release.
   * debian/control.in: bump libgnome-desktop and gsettings-desktop-schemas
@@ -258,11 +258,11 @@ gnome-screensaver (2.91.92-1) experimental; urgency=low
 
  -- Frederic Peters <fpeters@debian.org>  Tue, 22 Mar 2011 14:38:48 +0100
 
-gnome-screensaver (2.91.91-1) experimental; urgency=low
+cinnamon-screensaver (2.91.91-1) experimental; urgency=low
 
   * New upstream release.
   * debian/debian-floaters.desktop.in, debian/debian-swirl-logo.svg,
-    debian/gnome-screensaver.install, debian/rules, debian/po-up:
+    debian/cinnamon-screensaver.install, debian/rules, debian/po-up:
     remove Floating Debian Swirl screensaver, there is no theme support
     anymore.
   * debian/rules: remove xscreensaver hacks configure flag, ditto.
@@ -270,7 +270,7 @@ gnome-screensaver (2.91.91-1) experimental; urgency=low
 
  -- Frederic Peters <fpeters@debian.org>  Tue, 08 Mar 2011 18:04:52 +0100
 
-gnome-screensaver (2.91.90-1) experimental; urgency=low
+cinnamon-screensaver (2.91.90-1) experimental; urgency=low
 
   * New upstream release.
     * debian/control.in, debian/patches/:
@@ -278,7 +278,7 @@ gnome-screensaver (2.91.90-1) experimental; urgency=low
 
  -- Frederic Peters <fpeters@debian.org>  Tue, 22 Feb 2011 21:16:48 +0100
 
-gnome-screensaver (2.91.4-1) experimental; urgency=low
+cinnamon-screensaver (2.91.4-1) experimental; urgency=low
 
   * New upstream release.
     + debian/control.in:
@@ -291,7 +291,7 @@ gnome-screensaver (2.91.4-1) experimental; urgency=low
 
  -- Emilio Pozuelo Monfort <pochu@debian.org>  Sat, 19 Feb 2011 14:34:10 +0000
 
-gnome-screensaver (2.91.3-1) experimental; urgency=low
+cinnamon-screensaver (2.91.3-1) experimental; urgency=low
 
   * New upstream release.
     + debian/control.in:
@@ -312,14 +312,14 @@ gnome-screensaver (2.91.3-1) experimental; urgency=low
 
  -- Emilio Pozuelo Monfort <pochu@debian.org>  Wed, 19 Jan 2011 22:16:20 +0000
 
-gnome-screensaver (2.30.0-3) unstable; urgency=low
+cinnamon-screensaver (2.30.0-3) unstable; urgency=low
 
   * Disable libnotify support, the function simply doesn’t work at all.
     Closes: #606830.
 
  -- Josselin Mouette <joss@debian.org>  Mon, 24 Jan 2011 17:46:22 +0100
 
-gnome-screensaver (2.30.0-2) unstable; urgency=low
+cinnamon-screensaver (2.30.0-2) unstable; urgency=low
 
   * Depend on gnome-session-bin instead of gnome-session.
     Closes: #552436.
@@ -327,7 +327,7 @@ gnome-screensaver (2.30.0-2) unstable; urgency=low
 
  -- Josselin Mouette <joss@debian.org>  Sat, 06 Nov 2010 13:43:45 +0100
 
-gnome-screensaver (2.30.0-1) unstable; urgency=low
+cinnamon-screensaver (2.30.0-1) unstable; urgency=low
 
   * New upstream stable release:
     + debian/control.in:
@@ -335,7 +335,7 @@ gnome-screensaver (2.30.0-1) unstable; urgency=low
 
  -- Sebastian Dröge <slomo@debian.org>  Tue, 04 May 2010 10:01:30 +0200
 
-gnome-screensaver (2.28.3-1) unstable; urgency=high
+cinnamon-screensaver (2.28.3-1) unstable; urgency=high
 
   * New upstream bugfix release.
     - CVE-2010-0422, handle monitor hotplugging more securely.
@@ -343,7 +343,7 @@ gnome-screensaver (2.28.3-1) unstable; urgency=high
 
  -- Emilio Pozuelo Monfort <pochu@debian.org>  Mon, 15 Feb 2010 19:13:51 +0100
 
-gnome-screensaver (2.28.2-1) unstable; urgency=low
+cinnamon-screensaver (2.28.2-1) unstable; urgency=low
 
   * New upstream bugfix release.
     - CVE-2010-0414, handle monitor removal more securely. Closes: #569084.
@@ -353,7 +353,7 @@ gnome-screensaver (2.28.2-1) unstable; urgency=low
 
  -- Emilio Pozuelo Monfort <pochu@debian.org>  Wed, 10 Feb 2010 09:59:34 +0100
 
-gnome-screensaver (2.28.0-2) unstable; urgency=low
+cinnamon-screensaver (2.28.0-2) unstable; urgency=low
 
   * Move the autostart file to /usr/share/gnome/autostart.
   * Remove the old one in the postinst.
@@ -365,7 +365,7 @@ gnome-screensaver (2.28.0-2) unstable; urgency=low
 
  -- Josselin Mouette <joss@debian.org>  Mon, 04 Jan 2010 19:09:35 +0100
 
-gnome-screensaver (2.28.0-1) unstable; urgency=low
+cinnamon-screensaver (2.28.0-1) unstable; urgency=low
 
   * New upstream release.
     - Remove libglade2-dev build dependency, no longer needed.
@@ -373,14 +373,14 @@ gnome-screensaver (2.28.0-1) unstable; urgency=low
 
  -- Emilio Pozuelo Monfort <pochu@debian.org>  Thu, 24 Sep 2009 18:01:13 +0200
 
-gnome-screensaver (2.26.1-2) unstable; urgency=low
+cinnamon-screensaver (2.26.1-2) unstable; urgency=low
 
   * Depend on gnome-session 2.26, it is useless without it.
     Closes: #536381.
 
  -- Josselin Mouette <joss@debian.org>  Sat, 11 Jul 2009 11:34:43 +0200
 
-gnome-screensaver (2.26.1-1) unstable; urgency=low
+cinnamon-screensaver (2.26.1-1) unstable; urgency=low
 
   [ Emilio Pozuelo Monfort ]
   * New upstream release.
@@ -406,19 +406,19 @@ gnome-screensaver (2.26.1-1) unstable; urgency=low
   [ Josselin Mouette ]
   * Add French translation for the desktop file.
   * Enable building of docbook documentation.
-  * rules, gnome-screensaver.docs: install it in a non-Redhatish place.
+  * rules, cinnamon-screensaver.docs: install it in a non-Redhatish place.
   * A bit of cleanup in build-dependencies.
 
  -- Josselin Mouette <joss@debian.org>  Fri, 26 Jun 2009 21:46:05 +0200
 
-gnome-screensaver (2.24.1-2) unstable; urgency=low
+cinnamon-screensaver (2.24.1-2) unstable; urgency=low
 
   * Upload to unstable.
   * Standards version is 3.8.1.
 
  -- Josselin Mouette <joss@debian.org>  Tue, 07 Apr 2009 11:28:17 +0200
 
-gnome-screensaver (2.24.1-1) experimental; urgency=low
+cinnamon-screensaver (2.24.1-1) experimental; urgency=low
 
   [ Emilio Pozuelo Monfort ]
   * New upstream release.
@@ -432,8 +432,8 @@ gnome-screensaver (2.24.1-1) experimental; urgency=low
     - patches/01_compiz_lock_bypass_CVE-2007-3920.patch:
       + Removed, it has been properly fixed in the X server.
         See http://bugzilla.gnome.org/show_bug.cgi?id=488264.
-    - debian/gnome-screensaver.manpages,
-      debian/gnome-screensaver*.1:
+    - debian/cinnamon-screensaver.manpages,
+      debian/cinnamon-screensaver*.1:
       - Removed, the manpages are now shipped and installed upstream.
 
   [ Josselin Mouette ]
@@ -446,14 +446,14 @@ gnome-screensaver (2.24.1-1) experimental; urgency=low
 
  -- Josselin Mouette <joss@debian.org>  Wed, 10 Dec 2008 12:44:24 +0100
 
-gnome-screensaver (2.22.2-2) unstable; urgency=low
+cinnamon-screensaver (2.22.2-2) unstable; urgency=low
 
   * Suggest xscreensaver-data. Closes: #469211.
   * Depend on dbus-x11 instead of dbus.
 
  -- Josselin Mouette <joss@debian.org>  Thu, 18 Sep 2008 15:57:52 +0200
 
-gnome-screensaver (2.22.2-1) unstable; urgency=high
+cinnamon-screensaver (2.22.2-1) unstable; urgency=high
 
   * New upstream bugfix release:
     + SECURITY: CVE-2008-1683 unlocks session if 
@@ -461,7 +461,7 @@ gnome-screensaver (2.22.2-1) unstable; urgency=high
 
  -- Sebastian Dröge <slomo@debian.org>  Wed, 16 Apr 2008 10:50:22 +0200
 
-gnome-screensaver (2.22.1-1) unstable; urgency=low
+cinnamon-screensaver (2.22.1-1) unstable; urgency=low
 
   * New upstream bugfix release.
   * debian/control.in:
@@ -469,7 +469,7 @@ gnome-screensaver (2.22.1-1) unstable; urgency=low
 
  -- Sebastian Dröge <slomo@debian.org>  Wed, 02 Apr 2008 18:54:19 +0200
 
-gnome-screensaver (2.22.0-1) unstable; urgency=medium
+cinnamon-screensaver (2.22.0-1) unstable; urgency=medium
 
   [ Josselin Mouette ]
   * 02_clear_clipboard.patch: clear the clipboard when locking the
@@ -487,7 +487,7 @@ gnome-screensaver (2.22.0-1) unstable; urgency=medium
 
  -- Sebastian Dröge <slomo@debian.org>  Fri, 14 Mar 2008 10:15:47 +0100
 
-gnome-screensaver (2.20.0-2) unstable; urgency=low
+cinnamon-screensaver (2.20.0-2) unstable; urgency=low
 
   [ Loic Minier ]
   * Build-dep on libnotify-dev for "Leave Message" functionality to actually
@@ -499,7 +499,7 @@ gnome-screensaver (2.20.0-2) unstable; urgency=low
   [ Josselin Mouette ]
   * 01_compiz_lock_bypass_CVE-2007-3920.patch: place fix of the
     security upload in a proper separate patch.
-  * gnome-screensaver.pam: add support for pam_gnome_keyring.
+  * cinnamon-screensaver.pam: add support for pam_gnome_keyring.
   * Recommend libpam-gnome-keyring.
 
   [ Loic Minier ]
@@ -513,7 +513,7 @@ gnome-screensaver (2.20.0-2) unstable; urgency=low
 
  -- Sebastian Dröge <slomo@debian.org>  Mon, 10 Dec 2007 07:55:36 +0100
 
-gnome-screensaver (2.20.0-1.1) unstable; urgency=high
+cinnamon-screensaver (2.20.0-1.1) unstable; urgency=high
 
   * Non-maintainer upload by the testing-security team
   * Prevent screen lock bypass via shortcuts when compiz is running
@@ -521,7 +521,7 @@ gnome-screensaver (2.20.0-1.1) unstable; urgency=high
 
  -- Steffen Joeris <white@debian.org>  Wed, 24 Oct 2007 13:08:36 +0000
 
-gnome-screensaver (2.20.0-1) unstable; urgency=low
+cinnamon-screensaver (2.20.0-1) unstable; urgency=low
 
   [ Riccardo Setti ]
   * New upstream release
@@ -533,7 +533,7 @@ gnome-screensaver (2.20.0-1) unstable; urgency=low
 
  -- Josselin Mouette <joss@debian.org>  Sat, 22 Sep 2007 15:07:01 +0200
 
-gnome-screensaver (2.18.2-1) unstable; urgency=low
+cinnamon-screensaver (2.18.2-1) unstable; urgency=low
 
   * New upstream stable release.
   * Wrap build-deps and deps.
@@ -542,7 +542,7 @@ gnome-screensaver (2.18.2-1) unstable; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Tue, 29 May 2007 11:56:21 +0200
 
-gnome-screensaver (2.18.1-1) unstable; urgency=low
+cinnamon-screensaver (2.18.1-1) unstable; urgency=low
 
   [ Riccardo Setti ]
   * New upstream release.
@@ -552,7 +552,7 @@ gnome-screensaver (2.18.1-1) unstable; urgency=low
 
  -- Sebastian Dröge <slomo@debian.org>  Tue,  1 May 2007 20:33:17 +0200
 
-gnome-screensaver (2.18.0-1) experimental; urgency=low
+cinnamon-screensaver (2.18.0-1) experimental; urgency=low
 
   [ Riccardo Setti ]
   * New upstream release
@@ -564,7 +564,7 @@ gnome-screensaver (2.18.0-1) experimental; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Sun, 25 Mar 2007 19:30:28 +0200
 
-gnome-screensaver (2.16.3-2) experimental; urgency=low
+cinnamon-screensaver (2.16.3-2) experimental; urgency=low
 
   * Merge 2.14.3-2 up-to 2.14.3-4; SVN r7317:8959.
     - Drop patch 00_dbus_0.90, obsolete.
@@ -572,7 +572,7 @@ gnome-screensaver (2.16.3-2) experimental; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Sat, 17 Mar 2007 13:26:32 +0100
 
-gnome-screensaver (2.16.3-1) experimental; urgency=low
+cinnamon-screensaver (2.16.3-1) experimental; urgency=low
 
   * Add a get-orig-source target to retrieve the upstream tarball.
   * Include the new check-dist Makefile to prevent accidental uploads to
@@ -581,28 +581,28 @@ gnome-screensaver (2.16.3-1) experimental; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Sat, 17 Mar 2007 11:43:49 +0100
 
-gnome-screensaver (2.16.2-1) experimental; urgency=low
+cinnamon-screensaver (2.16.2-1) experimental; urgency=low
 
   * New upstream release.
   * Remove duplicate build-dependency on libpam0g-dev.
 
  -- Josselin Mouette <joss@debian.org>  Fri,  8 Dec 2006 23:13:56 +0100
 
-gnome-screensaver (2.16.0-1) experimental; urgency=low
+cinnamon-screensaver (2.16.0-1) experimental; urgency=low
 
   * New upstream release.
 
  -- Loic Minier <lool@dooz.org>  Sat, 30 Sep 2006 01:29:27 +0200
 
-gnome-screensaver (2.15.6-1) experimental; urgency=low
+cinnamon-screensaver (2.15.6-1) experimental; urgency=low
 
   * New upstream development releases.
     - Target at experimental.
     - Build-depends on libgl1-mesa-dev, and libpam0g-dev
-    - Install Debian files via debian/gnome-screensaver.install instead of
+    - Install Debian files via debian/cinnamon-screensaver.install instead of
       debian/rules; install debian-floaters in
       /usr/share/applications/screensavers instead of
-      /usr/share/gnome-screensaver/themes.
+      /usr/share/cinnamon-screensaver/themes.
     - Recommend xscreensaver-gl and rss-glx for additional screensavers.
     - Depend on gnome-icon-theme >= 2.15.90, first version providing the
       "preferences-desktop-screensaver" icon instead of "screensaver".
@@ -610,7 +610,7 @@ gnome-screensaver (2.15.6-1) experimental; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Mon, 14 Aug 2006 00:20:19 +0200
 
-gnome-screensaver (2.14.3-4) unstable; urgency=low
+cinnamon-screensaver (2.14.3-4) unstable; urgency=low
 
   [ Sven Arvidsson ]
   * Fix spelling mistake in norwegian translation. (Closes: #402586)
@@ -620,7 +620,7 @@ gnome-screensaver (2.14.3-4) unstable; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Sat, 13 Jan 2007 23:30:43 +0100
 
-gnome-screensaver (2.14.3-3) unstable; urgency=low
+cinnamon-screensaver (2.14.3-3) unstable; urgency=low
 
   * Add a gconf-defaults file.
     + Set the default screensaver to be Debian floaters. (Closes: #367682)
@@ -630,7 +630,7 @@ gnome-screensaver (2.14.3-3) unstable; urgency=low
 
  -- Gustavo Franco <stratus@debian.org>  Fri, 24 Nov 2006 16:58:03 -0200
 
-gnome-screensaver (2.14.3-2) unstable; urgency=low
+cinnamon-screensaver (2.14.3-2) unstable; urgency=low
 
   * debian/patches/00_dbus_0.90.patch
     - Added. Use dbus_connection_close instead of dbus_connection_disconnect,
@@ -638,7 +638,7 @@ gnome-screensaver (2.14.3-2) unstable; urgency=low
 
  -- Sjoerd Simons <sjoerd@debian.org>  Wed, 13 Sep 2006 10:38:38 +0200
 
-gnome-screensaver (2.14.3-1) unstable; urgency=low
+cinnamon-screensaver (2.14.3-1) unstable; urgency=low
 
   [ Loic Minier ]
   * Add watch file.
@@ -651,13 +651,13 @@ gnome-screensaver (2.14.3-1) unstable; urgency=low
 
  -- Loic Minier <lool@dooz.org>  Tue,  8 Aug 2006 11:28:31 +0200
 
-gnome-screensaver (2.14.2-1) unstable; urgency=low
+cinnamon-screensaver (2.14.2-1) unstable; urgency=low
 
   * New upstream release.
 
  -- Loic Minier <lool@dooz.org>  Thu,  1 Jun 2006 12:02:48 +0200
 
-gnome-screensaver (2.14.1-1) unstable; urgency=medium
+cinnamon-screensaver (2.14.1-1) unstable; urgency=medium
 
   * New upstream release.
 
@@ -669,14 +669,14 @@ gnome-screensaver (2.14.1-1) unstable; urgency=medium
 
  -- Guilherme de S. Pastore <gpastore@debian.org>  Sat, 13 May 2006 12:25:18 -0300
 
-gnome-screensaver (2.14.0-1) unstable; urgency=low
+cinnamon-screensaver (2.14.0-1) unstable; urgency=low
 
   * New upstream release 
   * Update description.
 
  -- Sjoerd Simons <sjoerd@debian.org>  Fri, 17 Mar 2006 11:13:32 +0100
 
-gnome-screensaver (2.13.92-1) experimental; urgency=low
+cinnamon-screensaver (2.13.92-1) experimental; urgency=low
 
   * New upstream release
   * debian/patches/02_multiscreen_lifelock.patch
@@ -687,14 +687,14 @@ gnome-screensaver (2.13.92-1) experimental; urgency=low
 
  -- Sjoerd Simons <sjoerd@debian.org>  Wed,  1 Mar 2006 14:00:18 +0100
 
-gnome-screensaver (0.0.24-2) unstable; urgency=low
+cinnamon-screensaver (0.0.24-2) unstable; urgency=low
 
   * debian/patches/02_multiscreen_lifelock.patch 
-    + Added. Prevent gnome-screensaver lifelock when using multiple screen.
+    + Added. Prevent cinnamon-screensaver lifelock when using multiple screen.
 
  -- Sjoerd Simons <sjoerd@debian.org>  Fri, 17 Feb 2006 14:38:17 +0100
 
-gnome-screensaver (0.0.24-1) unstable; urgency=low
+cinnamon-screensaver (0.0.24-1) unstable; urgency=low
 
   [ Guilherme de S. Pastore ]
   * New upstream release
@@ -713,20 +713,20 @@ gnome-screensaver (0.0.24-1) unstable; urgency=low
 
  -- Sjoerd Simons <sjoerd@debian.org>  Mon,  6 Feb 2006 21:39:42 +0100
 
-gnome-screensaver (0.0.23-2) experimental; urgency=low
+cinnamon-screensaver (0.0.23-2) experimental; urgency=low
 
   * Completed copyright and licensing notes. Thanks to Marc 'HE'
     Brockschmidt <he@debian.org>.
 
  -- Guilherme de S. Pastore <guilherme.pastore@terra.com.br>  Mon, 26 Dec 2005 09:57:58 -0200
 
-gnome-screensaver (0.0.23-1) experimental; urgency=low
+cinnamon-screensaver (0.0.23-1) experimental; urgency=low
 
   * New upstream release.
 
  -- Guilherme de S. Pastore <guilherme.pastore@terra.com.br>  Wed, 21 Dec 2005 21:02:45 -0200
 
-gnome-screensaver (0.0.21-1) experimental; urgency=low
+cinnamon-screensaver (0.0.21-1) experimental; urgency=low
 
   * Initial release (Closes: #317448)
 

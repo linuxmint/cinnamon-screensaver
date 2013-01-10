@@ -1,7 +1,7 @@
-gnome-screensaver
+cinnamon-screensaver
 =================
 
-gnome-screensaver is a screen saver and locker that aims to have
+cinnamon-screensaver is a screen saver and locker that aims to have
 simple, sane, secure defaults and be well integrated with the desktop.
 It is designed to support:
 
@@ -25,7 +25,7 @@ How to report bugs
 
 Bugs should be reported to the GNOME bug tracking
 system:
-    http://bugzilla.gnome.org/simple-bug-guide.cgi?product=gnome-screensaver
+    http://bugzilla.gnome.org/simple-bug-guide.cgi?product=cinnamon-screensaver
 
 You will need to create an account if you don't have one already.
 
@@ -40,7 +40,7 @@ In the bug report please include information about your system, if possible:
 
    - What version of gnome-screenaver
 
-        The output of the "gnome-screensaver-command --version" command.
+        The output of the "cinnamon-screensaver-command --version" command.
 
 
 How to submit patches

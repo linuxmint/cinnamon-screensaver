@@ -3,14 +3,14 @@ AUTOMAKE_OPTIONS = 1.7
 
 NULL =
 
-saverdir = $(libexecdir)/gnome-screensaver
+saverdir = $(libexecdir)/cinnamon-screensaver
 
 INCLUDES =							\
 	-I.							\
 	-I$(srcdir)						\
-	$(GNOME_SCREENSAVER_CFLAGS)				\
-	$(GNOME_SCREENSAVER_DIALOG_CFLAGS)			\
-	$(GNOME_SCREENSAVER_CAPPLET_CFLAGS)			\
+	$(CINNAMON_SCREENSAVER_CFLAGS)				\
+	$(CINNAMON_SCREENSAVER_DIALOG_CFLAGS)			\
+	$(CINNAMON_SCREENSAVER_CAPPLET_CFLAGS)			\
 	$(DISABLE_DEPRECATED_CFLAGS)				\
 	-DPREFIX=\""$(prefix)"\" 				\
 	-DBINDIR=\""$(bindir)"\"				\
@@ -21,7 +21,7 @@ INCLUDES =							\
 	-DGNOMELOCALEDIR=\""$(datadir)/locale"\"		\
 	-DSAVERDIR=\""$(saverdir)"\"				\
 	-DGTKBUILDERDIR=\"$(pkgdatadir)\"				\
-	-DPAM_SERVICE_NAME=\""gnome-screensaver"\"		\
+	-DPAM_SERVICE_NAME=\""cinnamon-screensaver"\"		\
 	$(WARN_CFLAGS)						\
 	$(AUTH_CFLAGS)						\
 	$(DEBUG_CFLAGS)						\
@@ -32,12 +32,12 @@ INCLUDES =							\
 	$(NULL)
 
 bin_PROGRAMS = \
-	gnome-screensaver		\
-	gnome-screensaver-command	\
+	cinnamon-screensaver		\
+	cinnamon-screensaver-command	\
 	$(NULL)
 
 libexec_PROGRAMS = \
-	gnome-screensaver-dialog	\
+	cinnamon-screensaver-dialog	\
 	$(NULL)
 
 noinst_PROGRAMS = 	\
@@ -48,17 +48,17 @@ noinst_PROGRAMS = 	\
 	$(NULL)
 
 desktopdir = $(sysconfdir)/xdg/autostart
-desktop_in_files = gnome-screensaver.desktop.in
+desktop_in_files = cinnamon-screensaver.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
 gnome_screensaver_command_SOURCES = 	\
 	bus.h				\
-	gnome-screensaver-command.c	\
+	cinnamon-screensaver-command.c	\
 	$(NULL)
 
 gnome_screensaver_command_LDADD =	\
-	$(GNOME_SCREENSAVER_COMMAND_LIBS)	\
+	$(CINNAMON_SCREENSAVER_COMMAND_LIBS)	\
 	$(NULL)
 
 AUTH_SOURCES =				\
@@ -74,7 +74,7 @@ test_fade_SOURCES = 			\
 	$(NULL)
 
 test_fade_LDADD =			\
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
@@ -89,7 +89,7 @@ test_passwd_SOURCES = 			\
 	$(NULL)
 
 test_passwd_LDADD =			\
-	$(GNOME_SCREENSAVER_DIALOG_LIBS)\
+	$(CINNAMON_SCREENSAVER_DIALOG_LIBS)\
 	$(AUTH_LIBS)			\
 	$(NULL)
 
@@ -105,7 +105,7 @@ test_watcher_SOURCES =			\
 	$(NULL)
 
 test_watcher_LDADD =			\
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
@@ -124,12 +124,12 @@ test_window_SOURCES =			\
 	$(NULL)
 
 test_window_LDADD =			\
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(NULL)
 
 gnome_screensaver_dialog_SOURCES = 	\
-	gnome-screensaver-dialog.c	\
+	cinnamon-screensaver-dialog.c	\
 	gs-lock-plug.c			\
 	gs-lock-plug.h			\
 	gs-debug.c			\
@@ -143,7 +143,7 @@ gnome_screensaver_dialog_SOURCES = 	\
 	$(NULL)
 
 gnome_screensaver_dialog_LDADD =	\
-	$(GNOME_SCREENSAVER_DIALOG_LIBS)\
+	$(CINNAMON_SCREENSAVER_DIALOG_LIBS)\
 	$(SAVER_LIBS)			\
 	$(AUTH_LIBS)			\
 	$(LIBGNOMEKBDUI_LIBS)		\
@@ -164,8 +164,8 @@ gs-marshal.h: gs-marshal.list
 
 gnome_screensaver_SOURCES =	\
 	bus.h			\
-	gnome-screensaver.c	\
-	gnome-screensaver.h	\
+	cinnamon-screensaver.c	\
+	cinnamon-screensaver.h	\
 	gs-monitor.c		\
 	gs-monitor.h		\
 	gs-watcher-x11.c	\
@@ -194,7 +194,7 @@ gnome_screensaver_SOURCES =	\
 	$(NULL)
 
 gnome_screensaver_LDADD =		\
-	$(GNOME_SCREENSAVER_LIBS)	\
+	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
 	$(SYSTEMD_LIBS)                 \
 	$(NULL)
@@ -204,12 +204,12 @@ gnome_screensaver_LDFLAGS = -export-dynamic
 EXTRA_DIST =				\
 	debug-screensaver.sh		\
 	gs-marshal.list			\
-	gnome-screensaver.desktop.in	\
+	cinnamon-screensaver.desktop.in	\
 	$(NULL)
 
 CLEANFILES = 				\
 	$(desktop_DATA) 		\
-	gnome-screensaver.desktop.in	\
+	cinnamon-screensaver.desktop.in	\
 	$(BUILT_SOURCES)
 
 MAINTAINERCLEANFILES =			\
@@ -219,13 +219,13 @@ MAINTAINERCLEANFILES =			\
 install-exec-hook:
 	@if [ "x@NEED_SETUID@" = "xyes" ]; then \
 	    echo "***" ; \
-	    echo "***  Warning: gnome-screensaver has been compiled with support for" ; \
+	    echo "***  Warning: cinnamon-screensaver has been compiled with support for" ; \
 	    echo "***           bsdauth(3) and must be installed as a setuid root" ; \
 	    echo "***           program in order for locking to work.  To do this, you" ; \
 	    echo "***           must run:" ; \
 	    echo "***" ; \
-	    echo "***           chown root $(DESTDIR)$(libexecdir)/gnome-screensaver-dialog" ; \
-	    echo "***           chmod +s $(DESTDIR)$(libexecdir)/gnome-screensaver-dialog" ; \
+	    echo "***           chown root $(DESTDIR)$(libexecdir)/cinnamon-screensaver-dialog" ; \
+	    echo "***           chmod +s $(DESTDIR)$(libexecdir)/cinnamon-screensaver-dialog" ; \
 	    echo "***" ; \
 	    echo "***           For now, it will be installed non-setuid, which" ; \
 	    echo "***           means that locking might not work." ; \

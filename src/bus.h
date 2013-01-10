@@ -46,7 +46,7 @@
 #define DBUS_PATH                       "/org/freedesktop/DBus"
 #define DBUS_INTERFACE                  "org.freedesktop.DBus"
 
-/* Gnome Screensaver */
+/* Cinnamon Screensaver */
 #define GS_SERVICE                      "org.gnome.ScreenSaver"
 #define GS_PATH                         "/org/gnome/ScreenSaver"
 #define GS_INTERFACE                    "org.gnome.ScreenSaver"

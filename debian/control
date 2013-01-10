@@ -2,7 +2,7 @@
 # 
 # Modifications should be made to debian/control.in instead.
 # This file is regenerated automatically in the clean target.
-Source: gnome-screensaver
+Source: cinnamon-screensaver
 Section: gnome
 Priority: optional
 Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
@@ -34,10 +34,10 @@ Build-Depends: cdbs,
                libgl1-mesa-dev | libgl1-mesa-swx11-dev,
                gsettings-desktop-schemas-dev (>= 2.91.91)
 Standards-Version: 3.9.2
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/gnome-screensaver/ubuntu
-Homepage: http://live.gnome.org/GnomeScreensaver
+Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/cinnamon-screensaver/ubuntu
+Homepage: http://live.gnome.org/CinnamonScreensaver
 
-Package: gnome-screensaver
+Package: cinnamon-screensaver
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends},
@@ -47,9 +47,9 @@ Depends: ${shlibs:Depends},
          gsettings-desktop-schemas (>= 2.91.92)
 Recommends: gnome-power-manager | xfce4-power-manager,
             libpam-gnome-keyring
-Description: GNOME screen saver and locker
- gnome-screensaver is a screen saver and locker that aims to have simple,
- sane and secure defaults, and be well integrated with the GNOME desktop.
+Description: Cinnamon screen saver and locker
+ cinnamon-screensaver is a screen saver and locker that aims to have simple,
+ sane and secure defaults, and be well integrated with the Cinnamon desktop.
  .
  It is designed to support, among other things:
  .

@@ -10,11 +10,11 @@
   <sect1 id="gs-intro">
     <title>Introduction</title>
     <para>
-      GNOME Screensaver exposes a DBUS API for programs to obtain information about
+      Cinnamon Screensaver exposes a DBUS API for programs to obtain information about
       the screensaver state and to interact with the screensaver in limited ways.
     </para>
     <para>
-      The following constants are used to uniquely refer to the GnomeScreensaver
+      The following constants are used to uniquely refer to the CinnamonScreensaver
       object when making DBUS method calls:
     </para>
     <informaltable>

@@ -30,13 +30,13 @@ fi
 export G_DEBUG=fatal_criticals
 
 # kill the existing daemon
-gnome-screensaver-command --exit
+cinnamon-screensaver-command --exit
 
 # run the daemon in the debugger
-#gdb --args gnome-screensaver --no-daemon --debug --sync
+#gdb --args cinnamon-screensaver --no-daemon --debug --sync
 
 # or if that isn't helpful just get the debug output
-#gnome-screensaver --no-daemon --debug > /tmp/gs-debug-log.txt 2>&1
+#cinnamon-screensaver --no-daemon --debug > /tmp/gs-debug-log.txt 2>&1
 
 # or just run it with debugging on
-gnome-screensaver --no-daemon --debug
+cinnamon-screensaver --no-daemon --debug
