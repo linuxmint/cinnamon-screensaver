@@ -8,12 +8,12 @@ man_MANS = 				\
 @INTLTOOL_XML_NOMERGE_RULE@
 
 dbussessionservicedir = $(DBUS_SESSION_SERVICE_DIR)
-dbussessionservice_DATA = org.gnome.ScreenSaver.service
+dbussessionservice_DATA = org.cinnamon.ScreenSaver.service
 
 EXTRA_DIST = 				\
 	$(man_MANS)			\
 	cinnamon-screensaver		\
-	org.gnome.ScreenSaver.service.in\
+	org.cinnamon.ScreenSaver.service.in\
 	$(NULL)
 
 DISTCLEANFILES = 			\

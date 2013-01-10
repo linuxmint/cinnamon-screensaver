@@ -767,7 +767,7 @@ po/Makefile.in
 src/Makefile
 src/cinnamon-screensaver.desktop.in
 data/Makefile
-data/org.gnome.ScreenSaver.service
+data/org.cinnamon.ScreenSaver.service
 doc/Makefile
 doc/cinnamon-screensaver.xml
 ])

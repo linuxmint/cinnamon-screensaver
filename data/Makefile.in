@@ -53,14 +53,14 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = data
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/org.gnome.ScreenSaver.service.in
+	$(srcdir)/org.cinnamon.ScreenSaver.service.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = org.gnome.ScreenSaver.service
+CONFIG_CLEAN_FILES = org.cinnamon.ScreenSaver.service
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
@@ -304,11 +304,11 @@ man_MANS = \
 	$(NULL)
 
 dbussessionservicedir = $(DBUS_SESSION_SERVICE_DIR)
-dbussessionservice_DATA = org.gnome.ScreenSaver.service
+dbussessionservice_DATA = org.cinnamon.ScreenSaver.service
 EXTRA_DIST = \
 	$(man_MANS)			\
 	cinnamon-screensaver		\
-	org.gnome.ScreenSaver.service.in\
+	org.cinnamon.ScreenSaver.service.in\
 	$(NULL)
 
 DISTCLEANFILES = \
@@ -352,7 +352,7 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-org.gnome.ScreenSaver.service: $(top_builddir)/config.status $(srcdir)/org.gnome.ScreenSaver.service.in
+org.cinnamon.ScreenSaver.service: $(top_builddir)/config.status $(srcdir)/org.cinnamon.ScreenSaver.service.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 mostlyclean-libtool:
