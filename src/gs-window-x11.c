@@ -1292,7 +1292,7 @@ popdown_dialog (GSWindow *window)
 {
         gs_window_dialog_finish (window);
 
-        gtk_widget_show (window->priv->drawing_area);
+        //gtk_widget_show (window->priv->drawing_area);
 
         gs_window_clear (window);
         set_invisible_cursor (gtk_widget_get_window (GTK_WIDGET (window)), TRUE);
