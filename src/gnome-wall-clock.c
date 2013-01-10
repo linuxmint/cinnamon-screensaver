@@ -168,7 +168,7 @@ update_clock (gpointer data)
 	g_source_unref (source);
 	
     format_string = g_strdup_printf (
-    "<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">Powered by Linux Mint</span></b>",
+    "<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>",
      _("%R"), 
      _("%A, %B %e"));
         

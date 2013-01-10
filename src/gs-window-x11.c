@@ -2140,14 +2140,36 @@ create_info_bar (GSWindow *window)
         gtk_box_pack_end (GTK_BOX (window->priv->vbox), window->priv->info_bar, FALSE, FALSE, 0);
 }
 
+static char *
+get_user_display_name (void)
+{
+        const char *name;
+        char       *utf8_name;
+
+        name = g_get_real_name ();
+
+        if (name == NULL || strcmp (name, "Unknown") == 0) {
+                name = g_get_user_name ();
+        }
+
+        utf8_name = NULL;
+
+        if (name != NULL) {
+                utf8_name = g_locale_to_utf8 (name, -1, NULL, NULL, NULL);
+        }
+
+        return utf8_name;
+}
+
 static void
 update_clock (GSWindow *window)
 {
         char *markup;
-
-        markup = g_strdup_printf ("%s", gnome_wall_clock_get_clock (window->priv->clock_tracker));
+        char *locked_by = g_strdup_printf (_("Locked by %s"), get_user_display_name());
+        markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), locked_by);
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
         g_free (markup);
+        g_free (locked_by);
 }
 
 static void
