@@ -860,11 +860,75 @@ get_pixbuf_of_user_icon (GSLockPlug *plug)
 }
 
 static gboolean
+check_user_file (const gchar *filename,
+                 uid_t        user,
+                 gssize       max_file_size,
+                 gboolean     relax_group,
+                 gboolean     relax_other)
+{
+        struct stat fileinfo;
+
+        if (max_file_size < 0) {
+                max_file_size = G_MAXSIZE;
+        }
+
+        /* Exists/Readable? */
+        if (g_stat (filename, &fileinfo) < 0) {
+                return FALSE;
+        }
+
+        /* Is a regular file */
+        if (G_UNLIKELY (!S_ISREG (fileinfo.st_mode))) {
+                return FALSE;
+        }
+
+        /* Owned by user? */
+        if (G_UNLIKELY (fileinfo.st_uid != user)) {
+                return FALSE;
+        }
+
+        /* Group not writable or relax_group? */
+        if (G_UNLIKELY ((fileinfo.st_mode & S_IWGRP) == S_IWGRP && !relax_group)) {
+                return FALSE;
+        }
+
+        /* Other not writable or relax_other? */
+        if (G_UNLIKELY ((fileinfo.st_mode & S_IWOTH) == S_IWOTH && !relax_other)) {
+                return FALSE;
+        }
+
+        /* Size is ok? */
+        if (G_UNLIKELY (fileinfo.st_size > max_file_size)) {
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+
+static gboolean
 set_face_image (GSLockPlug *plug)
 {
         GdkPixbuf    *pixbuf;
-
-        pixbuf = get_pixbuf_of_user_icon (plug);
+        const char *homedir;
+        char *path;
+        int icon_size = 64;
+        gsize user_max_file = 65536;
+        uid_t uid;
+        
+        homedir = g_get_home_dir ();
+        uid = getuid ();
+        
+        path = g_build_filename (homedir, ".face", NULL);
+        
+        pixbuf = NULL;
+        if (check_user_file (path, uid, user_max_file, 0, 0)) {
+            pixbuf = gdk_pixbuf_new_from_file_at_size (path,
+                                                        icon_size,
+                                                        icon_size,
+                                                        NULL);
+        }
+        g_free (path);
 
         if (pixbuf == NULL) {
                 return FALSE;
@@ -1497,9 +1561,8 @@ update_username_label (GSLockPlug *plug)
 static void
 create_page_one (GSLockPlug *plug)
 {
-        GtkWidget            *align;
-        GtkWidget            *vbox;
-
+        GtkWidget   *align;
+        GtkWidget   *vbox;        
         GtkWidget   *hbox_user;
         GtkWidget   *vbox_user;
         GtkWidget   *hbox_pass;
@@ -1516,7 +1579,7 @@ create_page_one (GSLockPlug *plug)
         hbox_user = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
         gtk_box_pack_start (GTK_BOX (vbox), hbox_user, FALSE, FALSE, 0);
         gtk_misc_set_alignment (GTK_MISC (hbox_user), 0.5, 0.5);
-        
+                       
         plug->priv->auth_face_image = gtk_image_new ();
         gtk_box_pack_start (GTK_BOX (hbox_user), plug->priv->auth_face_image, TRUE, TRUE, 0);
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_face_image), 1, 0.5);
