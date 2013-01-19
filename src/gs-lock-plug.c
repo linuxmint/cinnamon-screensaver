@@ -69,7 +69,6 @@ struct GSLockPlugPrivate
         GtkWidget   *vbox;
         GtkWidget   *auth_action_area;
 
-        GtkWidget   *notebook;
         GtkWidget   *auth_face_image;
         GtkWidget   *auth_realname_label;
         GtkWidget   *auth_username_label;
@@ -953,6 +952,7 @@ gs_lock_plug_show (GtkWidget *widget)
 
         gs_profile_end ("parent");
 
+        gtk_window_set_opacity (GTK_WINDOW (plug), 0.1);
 
         if (plug->priv->auth_face_image) {
                 set_face_image (plug);
@@ -1559,8 +1559,6 @@ update_username_label (GSLockPlug *plug)
 static void
 create_page_one (GSLockPlug *plug)
 {
-        GtkWidget   *align;
-        GtkWidget   *vbox;        
         GtkWidget   *hbox_user;
         GtkWidget   *vbox_user;
         GtkWidget   *hbox_pass;
@@ -1568,14 +1566,8 @@ create_page_one (GSLockPlug *plug)
 
         gs_profile_start ("page one");
 
-        align = gtk_alignment_new (0.5, 0.5, 1, 1);
-        gtk_notebook_append_page (GTK_NOTEBOOK (plug->priv->notebook), align, NULL);
-
-        vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-        gtk_container_add (GTK_CONTAINER (align), vbox);
-
         hbox_user = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-        gtk_box_pack_start (GTK_BOX (vbox), hbox_user, FALSE, FALSE, 0);
+        gtk_box_pack_start (GTK_BOX (plug->priv->vbox), hbox_user, FALSE, FALSE, 0);
         gtk_misc_set_alignment (GTK_MISC (hbox_user), 0.5, 0.5);
                        
         plug->priv->auth_face_image = gtk_image_new ();
@@ -1598,7 +1590,7 @@ create_page_one (GSLockPlug *plug)
         gtk_box_pack_start (GTK_BOX (vbox_user), plug->priv->auth_username_label, TRUE, TRUE, 0);
 
         hbox_pass = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
-        gtk_box_pack_start (GTK_BOX (vbox), hbox_pass, FALSE, FALSE, 0);
+        gtk_box_pack_start (GTK_BOX (plug->priv->vbox), hbox_pass, FALSE, FALSE, 0);
         
         plug->priv->auth_prompt_label = gtk_label_new_with_mnemonic (_("_Password:"));
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_prompt_label), 0.5, 0.5);
@@ -1615,7 +1607,7 @@ create_page_one (GSLockPlug *plug)
 #endif
         
         vbox_status = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-        gtk_box_pack_start (GTK_BOX (vbox), vbox_status, TRUE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (plug->priv->vbox), vbox_status, TRUE, TRUE, 0);
         
         plug->priv->auth_capslock_label = gtk_label_new ("");
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_capslock_label), 0.5, 0.5);
@@ -1634,7 +1626,7 @@ create_page_one (GSLockPlug *plug)
         gtk_button_box_set_layout (GTK_BUTTON_BOX (plug->priv->auth_action_area),
                                    GTK_BUTTONBOX_END);
 
-        gtk_box_pack_end (GTK_BOX (vbox), plug->priv->auth_action_area,
+        gtk_box_pack_end (GTK_BOX (plug->priv->vbox), plug->priv->auth_action_area,
                           FALSE, TRUE, 0);
         gtk_widget_show (plug->priv->auth_action_area);
 
@@ -1690,16 +1682,10 @@ gs_lock_plug_init (GSLockPlug *plug)
         gtk_frame_set_shadow_type (GTK_FRAME (plug->priv->frame), GTK_SHADOW_OUT);
         gtk_container_add (GTK_CONTAINER (plug), plug->priv->frame);
 
-        plug->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+        plug->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
         gtk_container_add (GTK_CONTAINER (plug->priv->frame), plug->priv->vbox);
 
         plug->priv->auth_prompt_kbd_layout_indicator = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-
-        /* Notebook */
-        plug->priv->notebook = gtk_notebook_new ();
-        gtk_notebook_set_show_tabs (GTK_NOTEBOOK (plug->priv->notebook), FALSE);
-        gtk_notebook_set_show_border (GTK_NOTEBOOK (plug->priv->notebook), FALSE);
-        gtk_box_pack_start (GTK_BOX (plug->priv->vbox), plug->priv->notebook, TRUE, TRUE, 0);
 
         /* Page 1 */
 
