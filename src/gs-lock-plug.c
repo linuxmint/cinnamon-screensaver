@@ -77,7 +77,6 @@ struct GSLockPlugPrivate
         GtkWidget   *auth_prompt_box;
         GtkWidget   *auth_capslock_label;
         GtkWidget   *auth_message_label;
-        GtkWidget   *status_message_label;
 
         GtkWidget   *auth_unlock_button;
         GtkWidget   *auth_switch_button;
@@ -89,7 +88,6 @@ struct GSLockPlugPrivate
         gboolean     switch_enabled;
         gboolean     logout_enabled;
         char        *logout_command;
-        char        *status_message;
 
         guint        timeout;
 
@@ -118,8 +116,7 @@ enum {
         PROP_0,
         PROP_LOGOUT_ENABLED,
         PROP_LOGOUT_COMMAND,
-        PROP_SWITCH_ENABLED,
-        PROP_STATUS_MESSAGE
+        PROP_SWITCH_ENABLED
 };
 
 static guint lock_plug_signals [LAST_SIGNAL];
@@ -1052,27 +1049,6 @@ is_program_in_path (const char *program)
 }
 
 static void
-gs_lock_plug_set_status_message (GSLockPlug *plug,
-                                 const char *status_message)
-{
-        g_return_if_fail (GS_LOCK_PLUG (plug));
-
-        g_free (plug->priv->status_message);
-        plug->priv->status_message = g_strdup (status_message);
-
-        if (plug->priv->status_message_label) {
-                if (plug->priv->status_message) {
-                        gtk_label_set_text (GTK_LABEL (plug->priv->status_message_label),
-                                            plug->priv->status_message);
-                        gtk_widget_show (plug->priv->status_message_label);
-                }
-                else {
-                        gtk_widget_hide (plug->priv->status_message_label);
-                }
-        }
-}
-
-static void
 gs_lock_plug_get_property (GObject    *object,
                            guint       prop_id,
                            GValue     *value,
@@ -1091,9 +1067,6 @@ gs_lock_plug_get_property (GObject    *object,
                 break;
         case PROP_SWITCH_ENABLED:
                 g_value_set_boolean (value, self->priv->switch_enabled);
-                break;
-        case PROP_STATUS_MESSAGE:
-                g_value_set_string (value, self->priv->status_message);
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1148,9 +1121,6 @@ gs_lock_plug_set_property (GObject            *object,
                 break;
         case PROP_LOGOUT_COMMAND:
                 gs_lock_plug_set_logout_command (self, g_value_get_string (value));
-                break;
-        case PROP_STATUS_MESSAGE:
-                gs_lock_plug_set_status_message (self, g_value_get_string (value));
                 break;
         case PROP_SWITCH_ENABLED:
                 gs_lock_plug_set_switch_enabled (self, g_value_get_boolean (value));
@@ -1226,13 +1196,7 @@ gs_lock_plug_class_init (GSLockPlugClass *klass)
                                                               NULL,
                                                               NULL,
                                                               G_PARAM_READWRITE));
-        g_object_class_install_property (object_class,
-                                         PROP_STATUS_MESSAGE,
-                                         g_param_spec_string ("status-message",
-                                                              NULL,
-                                                              NULL,
-                                                              NULL,
-                                                              G_PARAM_READWRITE));
+
         g_object_class_install_property (object_class,
                                          PROP_SWITCH_ENABLED,
                                          g_param_spec_boolean ("switch-enabled",
@@ -1749,16 +1713,6 @@ gs_lock_plug_init (GSLockPlug *plug)
 
         g_signal_connect (plug->priv->auth_unlock_button, "clicked",
                           G_CALLBACK (unlock_button_clicked), plug);
-
-        if (plug->priv->status_message_label) {
-                if (plug->priv->status_message) {
-                        gtk_label_set_text (GTK_LABEL (plug->priv->status_message_label),
-                                            plug->priv->status_message);
-                }
-                else {
-                        gtk_widget_hide (plug->priv->status_message_label);
-                }
-        }
 
         if (plug->priv->auth_switch_button != NULL) {
                 g_signal_connect (plug->priv->auth_switch_button, "clicked",

@@ -59,15 +59,13 @@ struct GSWatcherPrivate
         guint           idle_notice : 1;
 
         guint           idle_id;
-        char           *status_message;
 
         DBusGProxy     *presence_proxy;
         guint           watchdog_timer_id;
 };
 
 enum {
-        PROP_0,
-        PROP_STATUS_MESSAGE
+        PROP_0
 };
 
 enum {
@@ -99,71 +97,11 @@ add_watchdog_timer (GSWatcher *watcher,
 }
 
 static void
-gs_watcher_get_property (GObject    *object,
-                         guint       prop_id,
-                         GValue     *value,
-                         GParamSpec *pspec)
-{
-        GSWatcher *self;
-
-        self = GS_WATCHER (object);
-
-        switch (prop_id) {
-        case PROP_STATUS_MESSAGE:
-                g_value_set_string (value, self->priv->status_message);
-                break;
-        default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-                break;
-        }
-}
-
-static void
-set_status_text (GSWatcher  *watcher,
-                 const char *text)
-{
-        g_free (watcher->priv->status_message);
-
-        watcher->priv->status_message = g_strdup (text);
-        g_object_notify (G_OBJECT (watcher), "status-message");
-}
-
-static void
-gs_watcher_set_property (GObject          *object,
-                         guint             prop_id,
-                         const GValue     *value,
-                         GParamSpec       *pspec)
-{
-        GSWatcher *self;
-
-        self = GS_WATCHER (object);
-
-        switch (prop_id) {
-        case PROP_STATUS_MESSAGE:
-                set_status_text (self, g_value_get_string (value));
-                break;
-        default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-                break;
-        }
-}
-
-static void
 gs_watcher_class_init (GSWatcherClass *klass)
 {
         GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
         object_class->finalize = gs_watcher_finalize;
-        object_class->get_property = gs_watcher_get_property;
-        object_class->set_property = gs_watcher_set_property;
-
-        g_object_class_install_property (object_class,
-                                         PROP_STATUS_MESSAGE,
-                                         g_param_spec_string ("status-message",
-                                                              NULL,
-                                                              NULL,
-                                                              NULL,
-                                                              G_PARAM_READWRITE));
 
         signals [IDLE_CHANGED] =
                 g_signal_new ("idle-changed",
@@ -382,21 +320,12 @@ on_presence_status_changed (DBusGProxy    *presence_proxy,
 }
 
 static void
-on_presence_status_text_changed (DBusGProxy    *presence_proxy,
-                                 const char    *status_text,
-                                 GSWatcher     *watcher)
-{
-        set_status_text (watcher, status_text);
-}
-
-static void
 connect_presence_watcher (GSWatcher *watcher)
 {
         DBusGConnection *bus;
         GError          *error;
         DBusGProxy      *proxy;
         guint            status;
-        const char      *status_text;
         GValue           value = { 0, };
 
         error = NULL;
@@ -421,22 +350,12 @@ connect_presence_watcher (GSWatcher *watcher)
                                      G_CALLBACK (on_presence_status_changed),
                                      watcher,
                                      NULL);
-        dbus_g_proxy_add_signal (watcher->priv->presence_proxy,
-                                 "StatusTextChanged",
-                                 G_TYPE_STRING,
-                                 G_TYPE_INVALID);
-        dbus_g_proxy_connect_signal (watcher->priv->presence_proxy,
-                                     "StatusTextChanged",
-                                     G_CALLBACK (on_presence_status_text_changed),
-                                     watcher,
-                                     NULL);
 
         proxy = dbus_g_proxy_new_from_proxy (watcher->priv->presence_proxy,
                                              "org.freedesktop.DBus.Properties",
                                              GSM_PRESENCE_PATH);
 
         status = 0;
-        status_text = NULL;
 
         error = NULL;
         dbus_g_proxy_call (proxy,
@@ -459,24 +378,8 @@ connect_presence_watcher (GSWatcher *watcher)
         g_value_unset (&value);
 
         error = NULL;
-        dbus_g_proxy_call (proxy,
-                           "Get",
-                           &error,
-                           G_TYPE_STRING, GSM_PRESENCE_INTERFACE,
-                           G_TYPE_STRING, "status-text",
-                           G_TYPE_INVALID,
-                           G_TYPE_VALUE, &value,
-                           G_TYPE_INVALID);
-
-        if (error != NULL) {
-                g_warning ("Couldn't get presence status text: %s", error->message);
-                g_error_free (error);
-        } else {
-                status_text = g_value_get_string (&value);
-        }
 
         set_status (watcher, status);
-        set_status_text (watcher, status_text);
 }
 
 static void
@@ -518,8 +421,6 @@ gs_watcher_finalize (GObject *object)
         if (watcher->priv->presence_proxy != NULL) {
                 g_object_unref (watcher->priv->presence_proxy);
         }
-
-        g_free (watcher->priv->status_message);
 
         G_OBJECT_CLASS (gs_watcher_parent_class)->finalize (object);
 }

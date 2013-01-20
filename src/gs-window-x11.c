@@ -77,7 +77,6 @@ struct GSWindowPrivate
         guint64    logout_timeout;
         char      *logout_command;
         char      *keyboard_command;
-        char      *status_message;
 
         GtkWidget *vbox;
         GtkWidget *panel;
@@ -119,6 +118,8 @@ struct GSWindowPrivate
 
         GnomeWallClock *clock_tracker;
 
+        char      *away_message;
+
 #ifdef HAVE_SHAPE_EXT
         int        shape_event_base;
 #endif
@@ -140,8 +141,7 @@ enum {
         PROP_KEYBOARD_COMMAND,
         PROP_LOGOUT_COMMAND,
         PROP_LOGOUT_TIMEOUT,
-        PROP_MONITOR,
-        PROP_STATUS_MESSAGE
+        PROP_MONITOR
 };
 
 static guint           signals [LAST_SIGNAL] = { 0, };
@@ -1437,14 +1437,6 @@ popup_dialog (GSWindow *window)
                 g_string_append_printf (command, " --logout-command='%s'", window->priv->logout_command);
         }
 
-        if (window->priv->status_message) {
-                char *quoted;
-
-                quoted = g_shell_quote (window->priv->status_message);
-                g_string_append_printf (command, " --status-message=%s", quoted);
-                g_free (quoted);
-        }
-
         if (is_user_switch_enabled (window)) {
                 command = g_string_append (command, " --enable-switch");
         }
@@ -1630,16 +1622,6 @@ gs_window_set_logout_command (GSWindow   *window,
 }
 
 void
-gs_window_set_status_message (GSWindow   *window,
-                            const char *status_message)
-{
-        g_return_if_fail (GS_IS_WINDOW (window));
-
-        g_free (window->priv->status_message);
-        window->priv->status_message = g_strdup (status_message);
-}
-
-void
 gs_window_set_monitor (GSWindow *window,
                        int       monitor)
 {
@@ -1690,9 +1672,6 @@ gs_window_set_property (GObject            *object,
         case PROP_LOGOUT_COMMAND:
                 gs_window_set_logout_command (self, g_value_get_string (value));
                 break;
-        case PROP_STATUS_MESSAGE:
-                gs_window_set_status_message (self, g_value_get_string (value));
-                break;
         case PROP_LOGOUT_TIMEOUT:
                 gs_window_set_logout_timeout (self, g_value_get_long (value));
                 break;
@@ -1730,9 +1709,6 @@ gs_window_get_property (GObject    *object,
                 break;
         case PROP_LOGOUT_COMMAND:
                 g_value_set_string (value, self->priv->logout_command);
-                break;
-        case PROP_STATUS_MESSAGE:
-                g_value_set_string (value, self->priv->status_message);
                 break;
         case PROP_LOGOUT_TIMEOUT:
                 g_value_set_long (value, self->priv->logout_timeout);
@@ -2098,13 +2074,7 @@ gs_window_class_init (GSWindowClass *klass)
                                                               NULL,
                                                               NULL,
                                                               G_PARAM_READWRITE));
-        g_object_class_install_property (object_class,
-                                         PROP_STATUS_MESSAGE,
-                                         g_param_spec_string ("status-message",
-                                                              NULL,
-                                                              NULL,
-                                                              NULL,
-                                                              G_PARAM_READWRITE));
+
         g_object_class_install_property (object_class,
                                          PROP_KEYBOARD_ENABLED,
                                          g_param_spec_boolean ("keyboard-enabled",
@@ -2165,11 +2135,11 @@ static void
 update_clock (GSWindow *window)
 {
         char *markup;
-        char *locked_by = g_strdup_printf (_("Locked by %s"), get_user_display_name());
-        markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), locked_by);
+        char *away_message = g_strdup_printf (_("%s: %s"), get_user_display_name(), window->priv->away_message);
+        markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
         g_free (markup);
-        g_free (locked_by);
+        g_free (away_message);
 }
 
 static void
@@ -2179,6 +2149,7 @@ on_clock_changed (GnomeWallClock *clock,
 {
         update_clock (GS_WINDOW (user_data));
 }
+
 
 static gboolean
 shade_background (GtkWidget    *widget,
@@ -2196,6 +2167,14 @@ on_drawing_area_realized (GtkWidget *drawing_area)
 {
     GdkRGBA black = { 0.0, 0.0, 0.0, 1.0 };
     gdk_window_set_background_rgba (gtk_widget_get_window (drawing_area), &black);
+}
+
+void
+gs_window_set_away_message (GSWindow   *window,
+                            const char *message)
+{
+        window->priv->away_message = message;
+        update_clock (window);
 }
 
 static void

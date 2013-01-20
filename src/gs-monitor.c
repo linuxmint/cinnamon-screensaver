@@ -201,9 +201,11 @@ gs_monitor_simulate_user_activity (GSMonitor *monitor)
 
 static void
 listener_lock_cb (GSListener *listener,
+                  const char *message,
                   GSMonitor  *monitor)
 {
         if (! monitor->priv->prefs->lock_disabled) {
+                gs_manager_set_away_message(monitor->priv->manager, g_strdup(message));
                 gs_monitor_lock_screen (monitor);
         } else {
                 gs_debug ("Locking disabled by the administrator");
@@ -313,17 +315,6 @@ _gs_monitor_update_from_prefs (GSMonitor *monitor,
         if (activate_watch) {
                 gs_watcher_set_active (monitor->priv->watcher, TRUE);
         }
-
-        if (monitor->priv->prefs->status_message_enabled) {
-                char *text;
-                g_object_get (monitor->priv->watcher,
-                              "status-message", &text,
-                              NULL);
-                gs_manager_set_status_message (monitor->priv->manager, text);
-                g_free (text);
-        } else {
-                gs_manager_set_status_message (monitor->priv->manager, NULL);
-        }
 }
 
 static void
@@ -352,22 +343,10 @@ connect_listener_signals (GSMonitor *monitor)
 }
 
 static void
-on_watcher_status_message_changed (GSWatcher  *watcher,
-                                   GParamSpec *pspec,
-                                   GSMonitor  *monitor)
-{
-        char *text;
-        g_object_get (watcher, "status-message", &text, NULL);
-        gs_manager_set_status_message (monitor->priv->manager, text);
-        g_free (text);
-}
-
-static void
 disconnect_watcher_signals (GSMonitor *monitor)
 {
         g_signal_handlers_disconnect_by_func (monitor->priv->watcher, watcher_idle_cb, monitor);
         g_signal_handlers_disconnect_by_func (monitor->priv->watcher, watcher_idle_notice_cb, monitor);
-        g_signal_handlers_disconnect_by_func (monitor->priv->watcher, on_watcher_status_message_changed, monitor);
 }
 
 static void
@@ -377,9 +356,6 @@ connect_watcher_signals (GSMonitor *monitor)
                           G_CALLBACK (watcher_idle_cb), monitor);
         g_signal_connect (monitor->priv->watcher, "idle-notice-changed",
                           G_CALLBACK (watcher_idle_notice_cb), monitor);
-        g_signal_connect (monitor->priv->watcher, "notify::status-message",
-                          G_CALLBACK (on_watcher_status_message_changed), monitor);
-
 }
 
 static void

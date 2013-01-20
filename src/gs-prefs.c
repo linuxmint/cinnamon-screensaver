@@ -50,7 +50,6 @@ static void gs_prefs_finalize   (GObject      *object);
 #define KEY_LOGOUT_COMMAND "logout-command"
 #define KEY_KEYBOARD_ENABLED "embedded-keyboard-enabled"
 #define KEY_KEYBOARD_COMMAND "embedded-keyboard-command"
-#define KEY_STATUS_MESSAGE_ENABLED   "status-message-enabled"
 
 #define GS_PREFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GS_TYPE_PREFS, GSPrefsPrivate))
 
@@ -186,13 +185,6 @@ _gs_prefs_set_keyboard_command (GSPrefs    *prefs,
 }
 
 static void
-_gs_prefs_set_status_message_enabled (GSPrefs  *prefs,
-                                      gboolean  enabled)
-{
-        prefs->status_message_enabled = enabled;
-}
-
-static void
 _gs_prefs_set_logout_enabled (GSPrefs *prefs,
                               gboolean value)
 {
@@ -266,9 +258,6 @@ gs_prefs_load_from_settings (GSPrefs *prefs)
         string = g_settings_get_string (prefs->priv->settings, KEY_KEYBOARD_COMMAND);
         _gs_prefs_set_keyboard_command (prefs, string);
         g_free (string);
-
-        bvalue = g_settings_get_boolean (prefs->priv->settings, KEY_STATUS_MESSAGE_ENABLED);
-        _gs_prefs_set_status_message_enabled (prefs, bvalue);
 
         /* Logout options */
 
@@ -350,13 +339,6 @@ key_changed_cb (GSettings   *settings,
 
                 command = g_settings_get_string (settings, key);
                 _gs_prefs_set_keyboard_command (prefs, command);
-
-        } else if (strcmp (key, KEY_STATUS_MESSAGE_ENABLED) == 0) {
-
-                gboolean enabled;
-
-                enabled = g_settings_get_boolean (settings, key);
-                _gs_prefs_set_status_message_enabled (prefs, enabled);
 
         } else if (strcmp (key, KEY_LOGOUT_ENABLED) == 0) {
 
