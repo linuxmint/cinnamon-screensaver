@@ -61,6 +61,8 @@ gboolean    gs_manager_set_active           (GSManager  *manager,
                                              gboolean    active);
 gboolean    gs_manager_get_active           (GSManager  *manager);
 
+void        gs_manager_set_away_message     (GSManager  *manager,
+                                             const char *message);
 void        gs_manager_get_lock_active      (GSManager  *manager,
                                              gboolean   *lock_active);
 void        gs_manager_set_lock_active      (GSManager  *manager,

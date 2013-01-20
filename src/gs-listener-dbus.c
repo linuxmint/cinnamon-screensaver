@@ -43,6 +43,7 @@
 
 #include "bus.h"
 
+
 /* this is for dbus < 0.3 */
 #if ((DBUS_VERSION_MAJOR == 0) && (DBUS_VERSION_MINOR < 30))
 #define dbus_bus_name_has_owner(connection, name, err)      dbus_bus_service_exists(connection, name, err)
@@ -547,6 +548,43 @@ listener_get_active_time (GSListener     *listener,
 }
 
 static DBusHandlerResult
+listener_lock (GSListener     *listener,
+               DBusConnection *connection,
+               DBusMessage    *message)
+{
+        DBusMessageIter iter;
+        DBusMessage    *reply;
+        DBusError       error;
+
+        reply = dbus_message_new_method_return (message);
+
+        dbus_message_iter_init_append (reply, &iter);
+
+        if (reply == NULL) {
+                g_error ("No memory");
+        }
+
+        char *body;
+        
+        dbus_error_init (&error);
+        if (! dbus_message_get_args (message, &error,
+                                     DBUS_TYPE_STRING, &body,
+                                     DBUS_TYPE_INVALID)) {
+                raise_syntax (connection, message, "ShowMessage");
+                return DBUS_HANDLER_RESULT_HANDLED;
+        }
+        
+        g_signal_emit (listener, signals [LOCK], 0, body);
+
+        if (! dbus_connection_send (connection, reply, NULL)) {
+                g_error ("No memory");
+        }
+
+        dbus_message_unref (reply);
+
+        return DBUS_HANDLER_RESULT_HANDLED;
+}
+static DBusHandlerResult
 listener_show_message (GSListener     *listener,
                        DBusConnection *connection,
                        DBusMessage    *message)
@@ -615,6 +653,7 @@ do_introspect (DBusConnection *connection,
         xml = g_string_append (xml,
                                "  <interface name=\""GS_INTERFACE"\">\n"
                                "    <method name=\"Lock\">\n"
+                               "      <arg name=\"body\" direction=\"in\" type=\"s\"/>\n"
                                "    </method>\n"
                                "    <method name=\"SimulateUserActivity\">\n"
                                "    </method>\n"
@@ -705,8 +744,7 @@ listener_dbus_handle_session_message (DBusConnection *connection,
         g_return_val_if_fail (message != NULL, DBUS_HANDLER_RESULT_NOT_YET_HANDLED);
 
         if (dbus_message_is_method_call (message, GS_SERVICE, "Lock")) {
-                g_signal_emit (listener, signals [LOCK], 0);
-                return send_success_reply (connection, message);
+                return listener_lock (listener, connection, message);
         }
         if (dbus_message_is_method_call (message, GS_SERVICE, "Quit")) {
                 g_signal_emit (listener, signals [QUIT], 0);
@@ -868,7 +906,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
                 } else if (dbus_message_is_signal (message, SYSTEMD_LOGIND_SESSION_INTERFACE, "Lock")) {
                         if (_listener_message_path_is_our_session (listener, message)) {
                                 gs_debug ("systemd requested session lock");
-                                g_signal_emit (listener, signals [LOCK], 0);
+                                return listener_lock (listener, connection, message);
                         }
 
                         return DBUS_HANDLER_RESULT_HANDLED;
@@ -910,7 +948,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
         } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Lock")) {
                 if (_listener_message_path_is_our_session (listener, message)) {
                         gs_debug ("ConsoleKit requested session lock");
-                        g_signal_emit (listener, signals [LOCK], 0);
+                        return listener_lock (listener, connection, message);
                 }
 
                 return DBUS_HANDLER_RESULT_HANDLED;
@@ -1183,9 +1221,10 @@ gs_listener_class_init (GSListenerClass *klass)
                               G_STRUCT_OFFSET (GSListenerClass, lock),
                               NULL,
                               NULL,
-                              g_cclosure_marshal_VOID__VOID,
+                              g_cclosure_marshal_VOID__STRING,
                               G_TYPE_NONE,
-                              0);
+                              1,
+                              G_TYPE_STRING);
         signals [QUIT] =
                 g_signal_new ("quit",
                               G_TYPE_FROM_CLASS (object_class),

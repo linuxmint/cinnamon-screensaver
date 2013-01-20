@@ -201,9 +201,11 @@ gs_monitor_simulate_user_activity (GSMonitor *monitor)
 
 static void
 listener_lock_cb (GSListener *listener,
+                  const char *message,
                   GSMonitor  *monitor)
 {
         if (! monitor->priv->prefs->lock_disabled) {
+                gs_manager_set_away_message(monitor->priv->manager, g_strdup(message));
                 gs_monitor_lock_screen (monitor);
         } else {
                 gs_debug ("Locking disabled by the administrator");

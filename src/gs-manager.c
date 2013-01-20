@@ -75,6 +75,8 @@ struct GSManagerPrivate
         GSGrab      *grab;
         GSFade      *fade;
         guint        unfade_idle_id;
+
+        char        *away_message;
 };
 
 enum {
@@ -960,6 +962,7 @@ gs_manager_create_window_for_monitor (GSManager *manager,
         window = gs_window_new (screen, monitor, manager->priv->lock_active);
 
         gs_window_set_user_switch_enabled (window, manager->priv->user_switch_enabled);
+        gs_window_set_away_message (window, manager->priv->away_message);
         gs_window_set_logout_enabled (window, manager->priv->logout_enabled);
         gs_window_set_logout_timeout (window, manager->priv->logout_timeout);
         gs_window_set_logout_command (window, manager->priv->logout_command);
@@ -1266,6 +1269,19 @@ gs_manager_deactivate (GSManager *manager)
         manager->priv->fading = FALSE;
 
         return TRUE;
+}
+
+void
+gs_manager_set_away_message (GSManager   *manager,
+                             const char  *message)
+{
+        g_free (manager->priv->logout_command);
+
+        manager->priv->away_message = g_strdup(message);
+        GSList *l;
+        for (l = manager->priv->windows; l; l = l->next) {
+                gs_window_set_away_message (l->data, manager->priv->away_message);
+        }
 }
 
 gboolean

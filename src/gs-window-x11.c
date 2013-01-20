@@ -118,6 +118,8 @@ struct GSWindowPrivate
 
         GnomeWallClock *clock_tracker;
 
+        char      *away_message;
+
 #ifdef HAVE_SHAPE_EXT
         int        shape_event_base;
 #endif
@@ -2133,11 +2135,11 @@ static void
 update_clock (GSWindow *window)
 {
         char *markup;
-        char *locked_by = g_strdup_printf (_("Locked by %s"), get_user_display_name());
-        markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), locked_by);
+        char *away_message = g_strdup_printf (_("%s: %s"), get_user_display_name(), window->priv->away_message);
+        markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
         g_free (markup);
-        g_free (locked_by);
+        g_free (away_message);
 }
 
 static void
@@ -2147,6 +2149,7 @@ on_clock_changed (GnomeWallClock *clock,
 {
         update_clock (GS_WINDOW (user_data));
 }
+
 
 static gboolean
 shade_background (GtkWidget    *widget,
@@ -2164,6 +2167,14 @@ on_drawing_area_realized (GtkWidget *drawing_area)
 {
     GdkRGBA black = { 0.0, 0.0, 0.0, 1.0 };
     gdk_window_set_background_rgba (gtk_widget_get_window (drawing_area), &black);
+}
+
+void
+gs_window_set_away_message (GSWindow   *window,
+                            const char *message)
+{
+        window->priv->away_message = message;
+        update_clock (window);
 }
 
 static void
