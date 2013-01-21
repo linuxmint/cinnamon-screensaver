@@ -32,6 +32,7 @@
 
 #include "bus.h"
 
+#define DEFAULT_AWAY_MESSAGE "is away"
 static gboolean do_quit       = FALSE;
 static gboolean do_lock       = FALSE;
 static gboolean do_activate   = FALSE;
@@ -40,6 +41,8 @@ static gboolean do_version    = FALSE;
 
 static gboolean do_query      = FALSE;
 static gboolean do_time       = FALSE;
+
+static gchar   *away_message  = DEFAULT_AWAY_MESSAGE;
 
 static GOptionEntry entries [] = {
         { "exit", 0, 0, G_OPTION_ARG_NONE, &do_quit,
@@ -56,6 +59,8 @@ static GOptionEntry entries [] = {
           N_("If the screensaver is active then deactivate it (un-blank the screen)"), NULL },
         { "version", 'V', 0, G_OPTION_ARG_NONE, &do_version,
           N_("Version of this application"), NULL },
+        { "away-message", 'm', 0, G_OPTION_ARG_STRING, &away_message,
+          N_("Message to be displayed in lock screen"), NULL},
         { NULL }
 };
 
@@ -82,6 +87,52 @@ screensaver_send_message_bool (GDBusConnection *connection,
         }
 
         g_dbus_message_set_body (message, g_variant_new ("(b)", value));
+
+        error = NULL;
+        reply = g_dbus_connection_send_message_with_reply_sync (connection,
+                                                                message,
+                                                                G_DBUS_SEND_MESSAGE_FLAGS_NONE,
+                                                                -1,
+                                                                NULL,
+                                                                NULL,
+                                                                &error);
+        if (error != NULL) {
+                g_warning ("unable to send message: %s", error->message);
+                g_clear_error (&error);
+        }
+
+        g_dbus_connection_flush_sync (connection, NULL, &error);
+        if (error != NULL) {
+                g_warning ("unable to flush message queue: %s", error->message);
+                g_clear_error (&error);
+        }
+
+        g_object_unref (message);
+
+        return reply;
+}
+
+static GDBusMessage *
+screensaver_send_message_string (GDBusConnection *connection,
+                                 const char      *name,
+                                 gboolean         value)
+{
+        GDBusMessage *message, *reply;
+        GError       *error;
+
+        g_return_val_if_fail (connection != NULL, NULL);
+        g_return_val_if_fail (name != NULL, NULL);
+
+        message = g_dbus_message_new_method_call (GS_SERVICE,
+                                                  GS_PATH,
+                                                  GS_INTERFACE,
+                                                  name);
+        if (message == NULL) {
+                g_warning ("Couldn't allocate the dbus message");
+                return NULL;
+        }
+
+        g_dbus_message_set_body (message, g_variant_new ("(s)", value));
 
         error = NULL;
         reply = g_dbus_connection_send_message_with_reply_sync (connection,
@@ -260,7 +311,7 @@ do_command (GDBusConnection *connection)
         }
 
         if (do_lock) {
-                reply = screensaver_send_message_void (connection, "Lock", TRUE);
+                reply = screensaver_send_message_string (connection, "Lock", away_message);
                 if (reply == NULL) {
                         g_message ("Did not receive a reply from the screensaver.");
                         goto done;

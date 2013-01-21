@@ -38,6 +38,9 @@ extern void gs_marshal_VOID__STRING_STRING_STRING (GClosure     *closure,
                                                    gpointer      invocation_hint,
                                                    gpointer      marshal_data);
 
+/* VOID:STRING (gs-marshal.list:5) */
+#define gs_marshal_VOID__STRING	g_cclosure_marshal_VOID__STRING
+
 G_END_DECLS
 
 #endif /* __gs_marshal_MARSHAL_H__ */

@@ -61,8 +61,6 @@ struct GSManagerPrivate
         char        *logout_command;
         char        *keyboard_command;
 
-        char        *status_message;
-
         /* State */
         guint        active : 1;
         guint        lock_active : 1;
@@ -77,6 +75,8 @@ struct GSManagerPrivate
         GSGrab      *grab;
         GSFade      *fade;
         guint        unfade_idle_id;
+
+        char        *away_message;
 };
 
 enum {
@@ -97,7 +97,6 @@ enum {
         PROP_LOGOUT_TIMEOUT,
         PROP_LOGOUT_COMMAND,
         PROP_KEYBOARD_COMMAND,
-        PROP_STATUS_MESSAGE,
         PROP_ACTIVE,
 };
 
@@ -326,23 +325,6 @@ gs_manager_set_keyboard_command (GSManager  *manager,
         }
 }
 
-void
-gs_manager_set_status_message (GSManager  *manager,
-                               const char *status_message)
-{
-        GSList *l;
-
-        g_return_if_fail (GS_IS_MANAGER (manager));
-
-        g_free (manager->priv->status_message);
-
-        manager->priv->status_message = g_strdup (status_message);
-
-        for (l = manager->priv->windows; l; l = l->next) {
-                gs_window_set_status_message (l->data, manager->priv->status_message);
-        }
-}
-
 static void
 gs_manager_set_property (GObject            *object,
                          guint               prop_id,
@@ -377,9 +359,6 @@ gs_manager_set_property (GObject            *object,
                 break;
         case PROP_KEYBOARD_COMMAND:
                 gs_manager_set_keyboard_command (self, g_value_get_string (value));
-                break;
-        case PROP_STATUS_MESSAGE:
-                gs_manager_set_status_message (self, g_value_get_string (value));
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -421,9 +400,6 @@ gs_manager_get_property (GObject            *object,
                 break;
         case PROP_KEYBOARD_COMMAND:
                 g_value_set_string (value, self->priv->keyboard_command);
-                break;
-        case PROP_STATUS_MESSAGE:
-                g_value_set_string (value, self->priv->status_message);
                 break;
         case PROP_ACTIVE:
                 g_value_set_boolean (value, self->priv->active);
@@ -986,12 +962,12 @@ gs_manager_create_window_for_monitor (GSManager *manager,
         window = gs_window_new (screen, monitor, manager->priv->lock_active);
 
         gs_window_set_user_switch_enabled (window, manager->priv->user_switch_enabled);
+        gs_window_set_away_message (window, manager->priv->away_message);
         gs_window_set_logout_enabled (window, manager->priv->logout_enabled);
         gs_window_set_logout_timeout (window, manager->priv->logout_timeout);
         gs_window_set_logout_command (window, manager->priv->logout_command);
         gs_window_set_keyboard_enabled (window, manager->priv->keyboard_enabled);
         gs_window_set_keyboard_command (window, manager->priv->keyboard_command);
-        gs_window_set_status_message (window, manager->priv->status_message);
 
         connect_window_signals (manager, window);
 
@@ -1123,7 +1099,6 @@ gs_manager_finalize (GObject *object)
 
         g_free (manager->priv->logout_command);
         g_free (manager->priv->keyboard_command);
-        g_free (manager->priv->status_message);
 
         remove_unfade_idle (manager);
         remove_timers (manager);
@@ -1294,6 +1269,19 @@ gs_manager_deactivate (GSManager *manager)
         manager->priv->fading = FALSE;
 
         return TRUE;
+}
+
+void
+gs_manager_set_away_message (GSManager   *manager,
+                             const char  *message)
+{
+        g_free (manager->priv->logout_command);
+
+        manager->priv->away_message = g_strdup(message);
+        GSList *l;
+        for (l = manager->priv->windows; l; l = l->next) {
+                gs_window_set_away_message (l->data, manager->priv->away_message);
+        }
 }
 
 gboolean

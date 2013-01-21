@@ -204,3 +204,5 @@ gs_marshal_VOID__STRING_STRING_STRING (GClosure     *closure,
             data2);
 }
 
+/* VOID:STRING (gs-marshal.list:5) */
+
