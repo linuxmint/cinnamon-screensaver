@@ -119,6 +119,7 @@ struct GSWindowPrivate
         GnomeWallClock *clock_tracker;
 
         char      *away_message;
+        char      *default_message;
 
 #ifdef HAVE_SHAPE_EXT
         int        shape_event_base;
@@ -2135,7 +2136,13 @@ static void
 update_clock (GSWindow *window)
 {
         char *markup;
-        char *away_message = g_strdup_printf (_("%s: %s"), get_user_display_name(), window->priv->away_message);
+        char *away_message;
+        if (window->priv->away_message == NULL) {
+            away_message = g_strdup_printf (_("%s"), window->priv->default_message);
+        }
+        else {
+            away_message = g_strdup_printf (_("%s: \"%s\""), get_user_display_name(), window->priv->away_message);
+        }
         markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
         g_free (markup);
@@ -2231,6 +2238,9 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_halign (window->priv->vbox, GTK_ALIGN_CENTER);
         gtk_widget_set_size_request(window->priv->vbox,450, -1);
         
+        // Default message        
+        window->priv->default_message = g_settings_get_string(g_settings_new ("org.cinnamon.screensaver"), "default-message");
+                
         // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
         window->priv->clock = gtk_label_new (NULL);
         gtk_widget_show (window->priv->clock);

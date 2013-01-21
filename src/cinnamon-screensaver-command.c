@@ -32,7 +32,6 @@
 
 #include "bus.h"
 
-#define DEFAULT_AWAY_MESSAGE "is away"
 static gboolean do_quit       = FALSE;
 static gboolean do_lock       = FALSE;
 static gboolean do_activate   = FALSE;
@@ -42,7 +41,7 @@ static gboolean do_version    = FALSE;
 static gboolean do_query      = FALSE;
 static gboolean do_time       = FALSE;
 
-static gchar   *away_message  = DEFAULT_AWAY_MESSAGE;
+static gchar   *away_message  = NULL;
 
 static GOptionEntry entries [] = {
         { "exit", 0, 0, G_OPTION_ARG_NONE, &do_quit,

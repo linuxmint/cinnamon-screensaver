@@ -35,7 +35,9 @@ Depends: ${shlibs:Depends},
          ${misc:Depends},
          dbus-x11,
          gnome-icon-theme (>= 2.15.90),
-         gsettings-desktop-schemas (>= 2.91.92)
+         gsettings-desktop-schemas (>= 2.91.92),
+         cinnamon
+Conflicts: gnome-screensaver
 Recommends: gnome-power-manager | xfce4-power-manager,
             libpam-gnome-keyring
 Description: Cinnamon screen saver and locker
