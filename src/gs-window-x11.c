@@ -2137,7 +2137,7 @@ update_clock (GSWindow *window)
 {
         char *markup;
         char *away_message;
-        if (g_strcmp0(window->priv->away_message, "DEFAULT") == 0) {
+        if (g_strcmp0(window->priv->away_message, "DEFAULT") == 0 || g_strcmp0(window->priv->away_message, "") == 0) {
             away_message = g_strdup_printf (_("%s"), window->priv->default_message);
         }
         else {
