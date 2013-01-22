@@ -41,7 +41,7 @@ static gboolean do_version    = FALSE;
 static gboolean do_query      = FALSE;
 static gboolean do_time       = FALSE;
 
-static gchar   *away_message  = NULL;
+static gchar   *away_message  = "DEFAULT";
 
 static GOptionEntry entries [] = {
         { "exit", 0, 0, G_OPTION_ARG_NONE, &do_quit,
