@@ -22,6 +22,9 @@ AC_STDC_HEADERS
 AC_PROG_LIBTOOL
 AC_CANONICAL_HOST
 
+# Check cinnamon instalation prefix and set default prefix
+AC_PREFIX_PROGRAM(cinnamon)
+
 AC_HEADER_STDC
 
 AC_SUBST(VERSION)
