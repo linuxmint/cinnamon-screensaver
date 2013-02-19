@@ -310,7 +310,14 @@ do_command (GDBusConnection *connection)
         }
 
         if (do_lock) {
-                reply = screensaver_send_message_string (connection, "Lock", away_message);
+				if (g_strcmp0 (away_message, "DEFAULT") == 0) {
+					reply = screensaver_send_message_string (connection, "Lock", away_message);
+				}
+				else {
+					gchar * custom_message = g_strdup_printf("CUSTOM###%s", away_message);
+					reply = screensaver_send_message_string (connection, "Lock", custom_message);
+					g_free (custom_message);
+				}
                 if (reply == NULL) {
                         g_message ("Did not receive a reply from the screensaver.");
                         goto done;
