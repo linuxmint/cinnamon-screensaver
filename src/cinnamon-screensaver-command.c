@@ -311,11 +311,11 @@ do_command (GDBusConnection *connection)
 
         if (do_lock) {
 				if (g_strcmp0 (away_message, "DEFAULT") == 0) {
-					reply = screensaver_send_message_string (connection, "Lock", away_message);
+					reply = screensaver_send_message_string (connection, "LockMessage", away_message);
 				}
 				else {
 					gchar * custom_message = g_strdup_printf("CUSTOM###%s", away_message);
-					reply = screensaver_send_message_string (connection, "Lock", custom_message);
+					reply = screensaver_send_message_string (connection, "LockMessage", custom_message);
 					g_free (custom_message);
 				}
                 if (reply == NULL) {
