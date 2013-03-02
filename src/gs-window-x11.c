@@ -2132,38 +2132,21 @@ get_user_display_name (void)
         return utf8_name;
 }
 
-static gchar * 
-str_replace(const char *string, const char *delimiter, const char *replacement)
-{
-	gchar **split;
-	gchar *ret;
-	g_return_val_if_fail(string      != NULL, NULL);
-	g_return_val_if_fail(delimiter   != NULL, NULL);
-	g_return_val_if_fail(replacement != NULL, NULL);
-	split = g_strsplit(string, delimiter, 0);
-	ret = g_strjoinv(replacement, split);
-	g_strfreev(split);
-	return ret;
-}
-
 static void
 update_clock (GSWindow *window)
-{	
-	char *markup;
-	char *away_message;
-			
-	if (window->priv->away_message != NULL && g_str_has_prefix (window->priv->away_message, "CUSTOM###") && g_strcmp0(window->priv->away_message, "") != 0) {		
-		away_message = str_replace(window->priv->away_message, "CUSTOM###", "");		
-		away_message = g_strdup_printf (_("%s: \"%s\""), get_user_display_name(), away_message);
-	}
-	else {
-		away_message = g_strdup_printf (_("%s"), window->priv->default_message);
-	}
-		
-	markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
-	gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
-	g_free (markup);
-	g_free (away_message);
+{
+        char *markup;
+        char *away_message;
+        if (g_strcmp0(window->priv->away_message, "DEFAULT") == 0 || g_strcmp0(window->priv->away_message, "") == 0) {
+            away_message = g_strdup_printf (_("%s"), window->priv->default_message);
+        }
+        else {
+            away_message = g_strdup_printf (_("%s: \"%s\""), get_user_display_name(), window->priv->away_message);
+        }
+        markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
+        gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
+        g_free (markup);
+        g_free (away_message);
 }
 
 static void
