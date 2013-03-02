@@ -2137,11 +2137,10 @@ update_clock (GSWindow *window)
 {
         char *markup;
         char *away_message;
-        if (g_strcmp0(window->priv->away_message, "DEFAULT") == 0 || g_strcmp0(window->priv->away_message, "") == 0) {
-            away_message = g_strdup_printf (_("%s"), window->priv->default_message);
-        }
-        else {
+        if (window->priv->away_message && g_strcmp0(window->priv->away_message, "") != 0) {
             away_message = g_strdup_printf (_("%s: \"%s\""), get_user_display_name(), window->priv->away_message);
+        } else {
+            away_message = g_strdup_printf (_("%s"), window->priv->default_message);
         }
         markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
