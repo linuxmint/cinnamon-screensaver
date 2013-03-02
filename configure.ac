@@ -766,6 +766,7 @@ Makefile
 po/Makefile.in
 src/Makefile
 src/cinnamon-screensaver.desktop.in
+src/cinnamon2d-screensaver.desktop.in
 data/Makefile
 data/org.cinnamon.ScreenSaver.service
 ])

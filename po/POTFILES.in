@@ -4,6 +4,7 @@ src/cinnamon-screensaver-command.c
 src/cinnamon-screensaver-dialog.c
 src/cinnamon-screensaver.c
 src/cinnamon-screensaver.desktop.in.in
+src/cinnamon2d-screensaver.desktop.in.in
 src/gs-auth-pam.c
 src/gs-listener-dbus.c
 src/gs-lock-plug.c
