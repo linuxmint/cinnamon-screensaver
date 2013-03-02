@@ -768,7 +768,6 @@ src/Makefile
 src/cinnamon-screensaver.desktop.in
 data/Makefile
 data/org.cinnamon.ScreenSaver.service
-files/Makefile
 ])
 
 echo "
