@@ -2154,13 +2154,13 @@ update_clock (GSWindow *window)
 			
 	if (window->priv->away_message != NULL && g_str_has_prefix (window->priv->away_message, "CUSTOM###") && g_strcmp0(window->priv->away_message, "") != 0) {		
 		away_message = str_replace(window->priv->away_message, "CUSTOM###", "");		
-		away_message = g_strdup_printf (_("%s: \"%s\""), get_user_display_name(), away_message);
+        markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\"> %s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message, get_user_display_name());
 	}
 	else {
 		away_message = g_strdup_printf (_("%s"), window->priv->default_message);
+        markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
 	}
-		
-	markup = g_strdup_printf ("%s\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#FFFFFF\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
+			
 	gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
 	g_free (markup);
 	g_free (away_message);
