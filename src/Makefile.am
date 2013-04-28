@@ -48,7 +48,9 @@ noinst_PROGRAMS = 	\
 	$(NULL)
 
 desktopdir = $(sysconfdir)/xdg/autostart
-desktop_in_files = cinnamon-screensaver.desktop.in
+desktop_in_files = 				\
+	cinnamon-screensaver.desktop.in		\
+	cinnamon2d-screensaver.desktop.in	
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
