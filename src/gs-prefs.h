@@ -53,6 +53,9 @@ typedef struct
 
         char            *logout_command;        /* command to use to logout */
         char            *keyboard_command;      /* command to use to embed a keyboard */
+
+        char            *time_format;			/* strftime format string for the time */
+        char            *date_format;			/* strftime format string for the date */
 } GSPrefs;
 
 typedef struct
