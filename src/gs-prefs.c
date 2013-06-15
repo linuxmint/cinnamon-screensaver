@@ -40,7 +40,7 @@ static void gs_prefs_finalize   (GObject      *object);
 #define KEY_LOCK_DISABLE          "disable-lock-screen"
 #define KEY_USER_SWITCH_DISABLE   "disable-user-switching"
 
-#define GS_SETTINGS_SCHEMA "org.gnome.desktop.screensaver"
+#define GS_SETTINGS_SCHEMA "org.cinnamon.screensaver"
 #define KEY_IDLE_ACTIVATION_ENABLED         "idle-activation-enabled"
 #define KEY_LOCK_ENABLED   "lock-enabled"
 #define KEY_LOCK_DELAY     "lock-delay"
@@ -50,6 +50,8 @@ static void gs_prefs_finalize   (GObject      *object);
 #define KEY_LOGOUT_COMMAND "logout-command"
 #define KEY_KEYBOARD_ENABLED "embedded-keyboard-enabled"
 #define KEY_KEYBOARD_COMMAND "embedded-keyboard-command"
+#define KEY_TIME_FORMAT "lock-time-format"
+#define KEY_DATE_FORMAT "lock-date-format"
 
 #define GS_PREFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GS_TYPE_PREFS, GSPrefsPrivate))
 
@@ -224,6 +226,30 @@ _gs_prefs_set_user_switch_enabled (GSPrefs *prefs,
         prefs->user_switch_enabled = value;
 }
 
+static void
+_gs_prefs_set_date_format (GSPrefs    *prefs,
+                           const char *value)
+{
+        g_free (prefs->date_format);
+        prefs->date_format = NULL;
+
+        if (value) {
+               prefs->date_format = g_strdup (value);
+        }
+}
+
+static void
+_gs_prefs_set_time_format (GSPrefs    *prefs,
+                           const char *value)
+{
+        g_free (prefs->time_format);
+        prefs->time_format = NULL;
+
+        if (value) {
+               prefs->time_format = g_strdup (value);
+        }
+}
+
 static guint
 _gs_settings_get_uint (GSettings  *settings,
                        const char *key)
@@ -284,6 +310,15 @@ gs_prefs_load_from_settings (GSPrefs *prefs)
         bvalue = g_settings_get_boolean (prefs->priv->lockdown, KEY_USER_SWITCH_DISABLE);
         _gs_prefs_set_user_switch_disabled (prefs, bvalue);
 
+        /* Clock Settings */
+
+        string = g_settings_get_string (prefs->priv->settings, KEY_TIME_FORMAT);
+        _gs_prefs_set_time_format (prefs, string);
+        g_free (string);
+
+        string = g_settings_get_string (prefs->priv->settings, KEY_DATE_FORMAT);
+        _gs_prefs_set_date_format (prefs, string);
+        g_free (string);
 }
 
 static void
@@ -368,6 +403,20 @@ key_changed_cb (GSettings   *settings,
                 enabled = g_settings_get_boolean (settings, key);
                 _gs_prefs_set_user_switch_enabled (prefs, enabled);
 
+        } else if (strcmp (key, KEY_TIME_FORMAT) == 0) {
+
+				const char *command;
+
+				command = g_settings_get_string (settings, key);
+				_gs_prefs_set_time_format (prefs, command);
+
+        } else if (strcmp (key, KEY_DATE_FORMAT) == 0) {
+
+				const char *command;
+
+				command = g_settings_get_string (settings, key);
+				_gs_prefs_set_date_format (prefs, command);
+
         } else {
                 g_warning ("Config key not handled: %s", key);
                 return;
@@ -427,6 +476,9 @@ gs_prefs_finalize (GObject *object)
 
         g_free (prefs->logout_command);
         g_free (prefs->keyboard_command);
+
+        g_free (prefs->time_format);
+        g_free (prefs->date_format);
 
         G_OBJECT_CLASS (gs_prefs_parent_class)->finalize (object);
 }

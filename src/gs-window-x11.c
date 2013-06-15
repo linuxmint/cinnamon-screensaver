@@ -78,6 +78,9 @@ struct GSWindowPrivate
         char      *logout_command;
         char      *keyboard_command;
 
+        char      *time_format;
+        char      *date_format;
+
         GtkWidget *vbox;
         GtkWidget *panel;
         GtkWidget *clock;
@@ -142,7 +145,9 @@ enum {
         PROP_KEYBOARD_COMMAND,
         PROP_LOGOUT_COMMAND,
         PROP_LOGOUT_TIMEOUT,
-        PROP_MONITOR
+        PROP_MONITOR,
+        PROP_TIME_FORMAT,
+        PROP_DATE_FORMAT,
 };
 
 static guint           signals [LAST_SIGNAL] = { 0, };
@@ -1623,6 +1628,40 @@ gs_window_set_logout_command (GSWindow   *window,
 }
 
 void
+gs_window_set_time_format (GSWindow   *window,
+                           const char *format)
+{
+        g_return_if_fail (GS_IS_WINDOW (window));
+
+        g_free (window->priv->time_format);
+
+        if (format) {
+                window->priv->time_format = g_strdup (format);
+        } else {
+                window->priv->time_format = NULL;
+        }
+
+        gnome_wall_clock_set_time_format(window->priv->clock_tracker, window->priv->time_format);
+}
+
+void
+gs_window_set_date_format (GSWindow   *window,
+                           const char *format)
+{
+        g_return_if_fail (GS_IS_WINDOW (window));
+
+        g_free (window->priv->date_format);
+
+        if (format) {
+                window->priv->date_format = g_strdup (format);
+        } else {
+                window->priv->date_format = NULL;
+        }
+
+        gnome_wall_clock_set_date_format(window->priv->clock_tracker, window->priv->date_format);
+}
+
+void
 gs_window_set_monitor (GSWindow *window,
                        int       monitor)
 {
@@ -1679,6 +1718,12 @@ gs_window_set_property (GObject            *object,
         case PROP_MONITOR:
                 gs_window_set_monitor (self, g_value_get_int (value));
                 break;
+        case PROP_TIME_FORMAT:
+                gs_window_set_time_format (self, g_value_get_string (value));
+                break;
+        case PROP_DATE_FORMAT:
+                gs_window_set_date_format (self, g_value_get_string (value));
+                break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
                 break;
@@ -1722,6 +1767,12 @@ gs_window_get_property (GObject    *object,
                 break;
         case PROP_DIALOG_UP:
                 g_value_set_boolean (value, self->priv->dialog_up);
+                break;
+        case PROP_TIME_FORMAT:
+                g_value_set_string (value, self->priv->time_format);
+                break;
+        case PROP_DATE_FORMAT:
+                g_value_set_string (value, self->priv->date_format);
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -2090,6 +2141,20 @@ gs_window_class_init (GSWindowClass *klass)
                                                               NULL,
                                                               NULL,
                                                               G_PARAM_READWRITE));
+        g_object_class_install_property (object_class,
+                                         PROP_TIME_FORMAT,
+                                         g_param_spec_string ("time-format",
+                                                              NULL,
+                                                              NULL,
+                                                              NULL,
+                                                              G_PARAM_READWRITE));
+        g_object_class_install_property (object_class,
+                                         PROP_DATE_FORMAT,
+                                         g_param_spec_string ("date-format",
+                                                              NULL,
+                                                              NULL,
+                                                              NULL,
+                                                              G_PARAM_READWRITE));
 
         g_object_class_install_property (object_class,
                                          PROP_MONITOR,
@@ -2322,6 +2387,8 @@ gs_window_finalize (GObject *object)
 
         g_free (window->priv->logout_command);
         g_free (window->priv->keyboard_command);
+        g_free (window->priv->time_format);
+        g_free (window->priv->date_format);
 
         if (window->priv->clock_tracker) {
                 g_object_unref (window->priv->clock_tracker);

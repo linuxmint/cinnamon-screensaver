@@ -82,6 +82,10 @@ void        gs_window_set_logout_timeout (GSWindow  *window,
                                           glong      timeout);
 void        gs_window_set_logout_command (GSWindow   *window,
                                           const char *command);
+void        gs_window_set_time_format (GSWindow   *window,
+                                       const char *format);
+void        gs_window_set_date_format (GSWindow   *window,
+                                       const char *format);
 void        gs_window_show_message         (GSWindow   *window,
                                             const char *summary,
                                             const char *body,
