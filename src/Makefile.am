@@ -121,6 +121,10 @@ test_window_SOURCES =			\
 	gs-debug.h			\
 	subprocs.c			\
 	subprocs.h			\
+	gnome-datetime-source.c \
+	gnome-datetime-source.h \
+	gnome-wall-clock.c \
+	gnome-wall-clock.h \
 	$(NULL)
 
 test_window_LDADD =			\

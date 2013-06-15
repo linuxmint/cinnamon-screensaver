@@ -57,6 +57,10 @@ GType             gnome_wall_clock_get_type      (void);
 
 const char *      gnome_wall_clock_get_clock     (GnomeWallClock *clock);
 
+void 			  gnome_wall_clock_set_date_format (GnomeWallClock  *clock,
+                            	                    const char *format);
+void 			  gnome_wall_clock_set_time_format (GnomeWallClock  *clock,
+                            	                    const char *format);
 G_END_DECLS
 
 #endif

@@ -61,6 +61,9 @@ struct GSManagerPrivate
         char        *logout_command;
         char        *keyboard_command;
 
+        char        *time_format;
+        char        *date_format;
+
         /* State */
         guint        active : 1;
         guint        lock_active : 1;
@@ -98,6 +101,8 @@ enum {
         PROP_LOGOUT_COMMAND,
         PROP_KEYBOARD_COMMAND,
         PROP_ACTIVE,
+        PROP_TIME_FORMAT,
+        PROP_DATE_FORMAT,
 };
 
 #define FADE_TIMEOUT 250
@@ -325,6 +330,48 @@ gs_manager_set_keyboard_command (GSManager  *manager,
         }
 }
 
+void
+gs_manager_set_time_format (GSManager  *manager,
+                            const char *format)
+{
+        GSList *l;
+
+        g_return_if_fail (GS_IS_MANAGER (manager));
+
+        g_free (manager->priv->time_format);
+
+        if (format) {
+                manager->priv->time_format = g_strdup (format);
+        } else {
+                manager->priv->time_format = NULL;
+        }
+
+        for (l = manager->priv->windows; l; l = l->next) {
+                gs_window_set_time_format (l->data, manager->priv->time_format);
+        }
+}
+
+void
+gs_manager_set_date_format (GSManager  *manager,
+                            const char *format)
+{
+        GSList *l;
+
+        g_return_if_fail (GS_IS_MANAGER (manager));
+
+        g_free (manager->priv->date_format);
+
+        if (format) {
+                manager->priv->date_format = g_strdup (format);
+        } else {
+                manager->priv->date_format = NULL;
+        }
+
+        for (l = manager->priv->windows; l; l = l->next) {
+                gs_window_set_date_format (l->data, manager->priv->date_format);
+        }
+}
+
 static void
 gs_manager_set_property (GObject            *object,
                          guint               prop_id,
@@ -359,6 +406,12 @@ gs_manager_set_property (GObject            *object,
                 break;
         case PROP_KEYBOARD_COMMAND:
                 gs_manager_set_keyboard_command (self, g_value_get_string (value));
+                break;
+        case PROP_TIME_FORMAT:
+                gs_manager_set_time_format (self, g_value_get_string (value));
+                break;
+        case PROP_DATE_FORMAT:
+                gs_manager_set_date_format (self, g_value_get_string (value));
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -403,6 +456,12 @@ gs_manager_get_property (GObject            *object,
                 break;
         case PROP_ACTIVE:
                 g_value_set_boolean (value, self->priv->active);
+                break;
+        case PROP_TIME_FORMAT:
+                g_value_set_string (value, self->priv->time_format);
+                break;
+        case PROP_DATE_FORMAT:
+                g_value_set_string (value, self->priv->date_format);
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -510,6 +569,21 @@ gs_manager_class_init (GSManagerClass *klass)
         g_object_class_install_property (object_class,
                                          PROP_LOGOUT_COMMAND,
                                          g_param_spec_string ("logout-command",
+                                                              NULL,
+                                                              NULL,
+                                                              NULL,
+                                                              G_PARAM_READWRITE));
+
+        g_object_class_install_property (object_class,
+                                         PROP_TIME_FORMAT,
+                                         g_param_spec_string ("time-format",
+                                                              NULL,
+                                                              NULL,
+                                                              NULL,
+                                                              G_PARAM_READWRITE));
+        g_object_class_install_property (object_class,
+                                         PROP_DATE_FORMAT,
+                                         g_param_spec_string ("date-format",
                                                               NULL,
                                                               NULL,
                                                               NULL,
@@ -968,6 +1042,8 @@ gs_manager_create_window_for_monitor (GSManager *manager,
         gs_window_set_logout_command (window, manager->priv->logout_command);
         gs_window_set_keyboard_enabled (window, manager->priv->keyboard_enabled);
         gs_window_set_keyboard_command (window, manager->priv->keyboard_command);
+        gs_window_set_time_format (window, manager->priv->time_format);
+        gs_window_set_date_format (window, manager->priv->date_format);
 
         connect_window_signals (manager, window);
 
@@ -1099,6 +1175,8 @@ gs_manager_finalize (GObject *object)
 
         g_free (manager->priv->logout_command);
         g_free (manager->priv->keyboard_command);
+        g_free (manager->priv->time_format);
+        g_free (manager->priv->date_format);
 
         remove_unfade_idle (manager);
         remove_timers (manager);

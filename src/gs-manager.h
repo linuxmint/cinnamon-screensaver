@@ -85,6 +85,10 @@ void        gs_manager_set_logout_timeout   (GSManager  *manager,
                                              glong       logout_timeout);
 void        gs_manager_set_logout_command   (GSManager  *manager,
                                              const char *command);
+void        gs_manager_set_date_format   (GSManager  *manager,
+                                             const char *format);
+void        gs_manager_set_time_format   (GSManager  *manager,
+                                             const char *format);
 void        gs_manager_set_themes           (GSManager  *manager,
                                              GSList     *themes);
 void        gs_manager_show_message         (GSManager  *manager,

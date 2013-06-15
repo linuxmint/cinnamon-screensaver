@@ -33,15 +33,19 @@
 
 struct _GnomeWallClockPrivate {
 	guint clock_update_id;
-	
+
 	char *clock_string;
+	char *date_format;
+	char *time_format;
 	
 	GFileMonitor *tz_monitor;	
 };
 
 enum {
 	PROP_0,
-	PROP_CLOCK
+	PROP_CLOCK,
+	PROP_TIME_FORMAT,
+	PROP_DATE_FORMAT,
 };
 
 G_DEFINE_TYPE (GnomeWallClock, gnome_wall_clock, G_TYPE_OBJECT);
@@ -97,9 +101,58 @@ gnome_wall_clock_finalize (GObject *object)
 	GnomeWallClock *self = GNOME_WALL_CLOCK (object);
 
 	g_free (self->priv->clock_string);
+	g_free (self->priv->time_format);
+	g_free (self->priv->date_format);
 
 	G_OBJECT_CLASS (gnome_wall_clock_parent_class)->finalize (object);
 }
+
+void
+gnome_wall_clock_set_date_format (GnomeWallClock  *clock,
+                            	  const char *format)
+{
+    g_free (clock->priv->date_format);
+    clock->priv->date_format = NULL;
+
+    if (format) {
+           clock->priv->date_format = g_strdup (format);
+    }
+    update_clock(clock);
+}
+void
+gnome_wall_clock_set_time_format (GnomeWallClock  *clock,
+                            	  const char *format)
+{
+    g_free (clock->priv->time_format);
+    clock->priv->time_format = NULL;
+
+    if (format) {
+           clock->priv->time_format = g_strdup (format);
+    }
+    update_clock(clock);
+}
+
+static void
+gnome_wall_clock_set_property (GObject            *object,
+                               guint               prop_id,
+                               const GValue       *value,
+                               GParamSpec         *pspec)
+{
+	GnomeWallClock *self = GNOME_WALL_CLOCK (object);
+	switch (prop_id)
+	{
+		case PROP_TIME_FORMAT:
+			gnome_wall_clock_set_time_format(self, g_value_get_string(value));
+			break;
+		case PROP_DATE_FORMAT:
+			gnome_wall_clock_set_date_format(self, g_value_get_string(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+			break;
+	}
+}
+
 
 static void
 gnome_wall_clock_get_property (GObject    *gobject,
@@ -111,14 +164,22 @@ gnome_wall_clock_get_property (GObject    *gobject,
 
 	switch (prop_id)
 	{
-	case PROP_CLOCK:
-		g_value_set_string (value, self->priv->clock_string);
-		break;
+		case PROP_CLOCK:
+			g_value_set_string (value, self->priv->clock_string);
+			break;
+		case PROP_TIME_FORMAT:
+			g_value_set_string (value, self->priv->time_format);
+			break;
+		case PROP_DATE_FORMAT:
+			g_value_set_string (value, self->priv->date_format);
+			break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
 		break;
 	}
 }
+
+
 
 static void
 gnome_wall_clock_class_init (GnomeWallClockClass *klass)
@@ -126,6 +187,7 @@ gnome_wall_clock_class_init (GnomeWallClockClass *klass)
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
 	gobject_class->get_property = gnome_wall_clock_get_property;
+	gobject_class->set_property = gnome_wall_clock_set_property;
 	gobject_class->dispose = gnome_wall_clock_dispose;
 	gobject_class->finalize = gnome_wall_clock_finalize;
 
@@ -141,6 +203,20 @@ gnome_wall_clock_class_init (GnomeWallClockClass *klass)
 							      "",
 							      NULL,
 							      G_PARAM_READABLE));
+	g_object_class_install_property (gobject_class,
+					 PROP_TIME_FORMAT,
+					 g_param_spec_string ("time-format",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+	g_object_class_install_property (gobject_class,
+					 PROP_DATE_FORMAT,
+					 g_param_spec_string ("date-format",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
 
 
 	g_type_class_add_private (gobject_class, sizeof (GnomeWallClockPrivate));
@@ -169,8 +245,8 @@ update_clock (gpointer data)
 	
     format_string = g_strdup_printf (
     "<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>",
-     _("%R"), 
-     _("%A, %B %e"));
+     (self->priv->time_format ? self->priv->time_format : _("%R")),
+     (self->priv->date_format ? self->priv->date_format : _("%A, %B %e")));
         
 	g_free (self->priv->clock_string);
 	self->priv->clock_string = g_date_time_format (now, format_string);
