@@ -27,7 +27,7 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <gio/gio.h>
-#include <gdesktop-enums.h>
+#include <libcinnamon-desktop/cdesktop-enums.h>
 
 #include "gs-prefs.h"
 #include "gs-debug.h"
@@ -36,11 +36,11 @@ static void gs_prefs_class_init (GSPrefsClass *klass);
 static void gs_prefs_init       (GSPrefs      *prefs);
 static void gs_prefs_finalize   (GObject      *object);
 
-#define LOCKDOWN_SETTINGS_SCHEMA "org.gnome.desktop.lockdown"
+#define LOCKDOWN_SETTINGS_SCHEMA "org.cinnamon.desktop.lockdown"
 #define KEY_LOCK_DISABLE          "disable-lock-screen"
 #define KEY_USER_SWITCH_DISABLE   "disable-user-switching"
 
-#define GS_SETTINGS_SCHEMA "org.gnome.desktop.screensaver"
+#define GS_SETTINGS_SCHEMA "org.cinnamon.desktop.screensaver"
 #define KEY_IDLE_ACTIVATION_ENABLED         "idle-activation-enabled"
 #define KEY_LOCK_ENABLED   "lock-enabled"
 #define KEY_LOCK_DELAY     "lock-delay"

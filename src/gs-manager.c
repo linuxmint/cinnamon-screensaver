@@ -27,7 +27,7 @@
 #include <gdk/gdkx.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-bg.h>
+#include <libcinnamon-desktop/gnome-bg.h>
 
 #include "gs-prefs.h"        /* for GSSaverMode */
 
@@ -542,7 +542,7 @@ get_system_settings (void)
 {
         GSettings *settings;
 
-        settings = g_settings_new ("org.gnome.desktop.background");
+        settings = g_settings_new ("org.cinnamon.desktop.background");
 
         return settings;
 }
