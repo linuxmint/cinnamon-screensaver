@@ -41,7 +41,6 @@ Depends: ${shlibs:Depends},
          cinnamon-desktop-data (>= 1.0.0),
          cinnamon,
          cinnamon-translations
-Conflicts: gnome-screensaver
 Recommends: gnome-power-manager | xfce4-power-manager,
             libpam-gnome-keyring
 Description: Cinnamon screen saver and locker

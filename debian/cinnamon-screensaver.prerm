@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+if [ -L /usr/bin/gnome-screensaver ]; then
+  echo "Removing link /usr/bin/gnome-screensaver"
+  rm -f /usr/bin/gnome-screensaver
+fi
+
+if [ -L /usr/bin/gnome-screensaver-command ]; then
+  echo "Removing link /usr/bin/gnome-screensaver-command"
+  rm -f /usr/bin/gnome-screensaver-command
+fi
+
+exit 0
