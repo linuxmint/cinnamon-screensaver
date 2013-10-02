@@ -169,7 +169,7 @@ update_clock (gpointer data)
 	
     format_string = g_strdup_printf (
     "<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>",
-     _("%R"), 
+     _("%H:%M"),
      _("%A, %B %e"));
         
 	g_free (self->priv->clock_string);
