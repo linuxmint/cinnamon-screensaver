@@ -653,6 +653,8 @@ do_introspect (DBusConnection *connection,
         xml = g_string_append (xml,
                                "  <interface name=\""GS_INTERFACE"\">\n"
                                "    <method name=\"Lock\">\n"
+                               "    </method>\n"
+                               "    <method name=\"LockMessage\">\n"
                                "      <arg name=\"body\" direction=\"in\" type=\"s\"/>\n"
                                "    </method>\n"
                                "    <method name=\"SimulateUserActivity\">\n"
@@ -744,6 +746,10 @@ listener_dbus_handle_session_message (DBusConnection *connection,
         g_return_val_if_fail (message != NULL, DBUS_HANDLER_RESULT_NOT_YET_HANDLED);
 
         if (dbus_message_is_method_call (message, GS_SERVICE, "Lock")) {
+                g_signal_emit (listener, signals [LOCK], 0);
+                return send_success_reply (connection, message);
+        }
+        if (dbus_message_is_method_call (message, GS_SERVICE, "LockMessage")) {
                 return listener_lock (listener, connection, message);
         }
         if (dbus_message_is_method_call (message, GS_SERVICE, "Quit")) {
@@ -906,7 +912,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
                 } else if (dbus_message_is_signal (message, SYSTEMD_LOGIND_SESSION_INTERFACE, "Lock")) {
                         if (_listener_message_path_is_our_session (listener, message)) {
                                 gs_debug ("systemd requested session lock");
-                                return listener_lock (listener, connection, message);
+                                g_signal_emit (listener, signals [LOCK], 0);
                         }
 
                         return DBUS_HANDLER_RESULT_HANDLED;
@@ -948,7 +954,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
         } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Lock")) {
                 if (_listener_message_path_is_our_session (listener, message)) {
                         gs_debug ("ConsoleKit requested session lock");
-                        return listener_lock (listener, connection, message);
+                        g_signal_emit (listener, signals [LOCK], 0);
                 }
 
                 return DBUS_HANDLER_RESULT_HANDLED;

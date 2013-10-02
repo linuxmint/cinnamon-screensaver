@@ -1275,10 +1275,18 @@ void
 gs_manager_set_away_message (GSManager   *manager,
                              const char  *message)
 {
-        g_free (manager->priv->logout_command);
-
-        manager->priv->away_message = g_strdup(message);
         GSList *l;
+
+        g_return_if_fail (GS_IS_MANAGER (manager));
+
+        g_free (manager->priv->away_message);
+
+        if (message) {
+                manager->priv->away_message = g_strdup (message);
+        } else {
+                manager->priv->away_message = NULL;
+        }
+
         for (l = manager->priv->windows; l; l = l->next) {
                 gs_window_set_away_message (l->data, manager->priv->away_message);
         }
