@@ -64,7 +64,7 @@
     </p><p>
       The following constants are used to uniquely refer to the CinnamonScreensaver
       object when making DBUS method calls:
-    </p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>DBUS Service:</td><td><code class="literal">org.gnome.ScreenSaver</code></td></tr><tr><td>DBUS Object Path:</td><td><code class="literal">/org.gnome.ScreenSaver</code></td></tr><tr><td>DBUS Interface:</td><td><code class="literal">org.gnome.ScreenSaver</code></td></tr></tbody></table></div></div><div class="sect1" title="Methods"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gs-methods"></a>Methods</h2></div></div></div><p>
+    </p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>DBUS Service:</td><td><code class="literal">org.cinnamon.ScreenSaver</code></td></tr><tr><td>DBUS Object Path:</td><td><code class="literal">/org.cinnamon.ScreenSaver</code></td></tr><tr><td>DBUS Interface:</td><td><code class="literal">org.cinnamon.ScreenSaver</code></td></tr></tbody></table></div></div><div class="sect1" title="Methods"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="gs-methods"></a>Methods</h2></div></div></div><p>
       These are the DBUS methods.
     </p><div class="sect2" title="Lock"><div class="titlepage"><div><div><h3 class="title"><a name="gs-method-Lock"></a>
         <code class="literal">Lock</code>
@@ -141,31 +141,31 @@
       running the following:
     </p><pre class="screen">
 dbus-send --session \
-          --dest=org.gnome.ScreenSaver \
+          --dest=org.cinnamon.ScreenSaver \
           --type=method_call \
           --print-reply \
           --reply-timeout=20000 \
-          /org/gnome/ScreenSaver \
-          org.gnome.ScreenSaver.GetSessionIdleTime
+          /org/cinnamon/ScreenSaver \
+          org.cinnamon.ScreenSaver.GetSessionIdleTime
     </pre><p>
       You can activate the screensaver like so:
     </p><pre class="screen">
 dbus-send --session \
-          --dest=org.gnome.ScreenSaver \
+          --dest=org.cinnamon.ScreenSaver \
           --type=method_call \
           --print-reply \
           --reply-timeout=20000 \
-          /org/gnome/ScreenSaver \
-          org.gnome.ScreenSaver.SetActive \
+          /org/cinnamon/ScreenSaver \
+          org.cinnamon.ScreenSaver.SetActive \
           boolean:true
     </pre><p>
       You can monitor screensaver changes:
     </p><pre class="screen">
 dbus-monitor --session \
-          "type='signal',interface='org.gnome.ScreenSaver'"
+          "type='signal',interface='org.cinnamon.ScreenSaver'"
     </pre><p>
       Or watch for a specific screensaver signal:
     </p><pre class="screen">
 dbus-monitor --session \
-          "type='signal',interface='org.gnome.ScreenSaver',member='SessionIdleChanged'"
+          "type='signal',interface='org.cinnamon.ScreenSaver',member='SessionIdleChanged'"
     </pre></div></div></div></body></html>
