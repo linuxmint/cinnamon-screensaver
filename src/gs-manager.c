@@ -1293,6 +1293,7 @@ gs_manager_set_active (GSManager *manager,
         if (active) {
                 res = gs_manager_activate (manager);
         } else {
+                gs_manager_set_away_message(manager, "");
                 res = gs_manager_deactivate (manager);
         }
 
