@@ -150,7 +150,8 @@ static gboolean
 update_clock (gpointer data)
 {
 	GnomeWallClock   *self = data;	
-	const char *format_string;	
+	const char *time_value;
+	const char *date_value;
 	GSource *source;
 	GDateTime *now;
 	GDateTime *expiry;
@@ -158,8 +159,9 @@ update_clock (gpointer data)
 	now = g_date_time_new_now_local ();	
 	expiry = g_date_time_add_seconds (now, 60 - g_date_time_get_second (now));
   
-	if (self->priv->clock_update_id)
+	if (self->priv->clock_update_id) {
 		g_source_remove (self->priv->clock_update_id);
+	}
   
 	source = _gnome_datetime_source_new (now, expiry, TRUE);
 	g_source_set_priority (source, G_PRIORITY_HIGH);
@@ -167,13 +169,11 @@ update_clock (gpointer data)
 	self->priv->clock_update_id = g_source_attach (source, NULL);
 	g_source_unref (source);
 	
-    format_string = g_strdup_printf (
-    "<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>",
-     _("%H:%M"),
-     _("%A, %B %e"));
+    time_value = g_strchug(g_date_time_format(now, _("%l:%M %p")));
+    date_value = g_date_time_format (now, _("%A, %B %e"));
         
 	g_free (self->priv->clock_string);
-	self->priv->clock_string = g_date_time_format (now, format_string);
+	self->priv->clock_string = g_strdup_printf ("<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>", time_value, date_value);
 
 	g_date_time_unref (now);
 	g_date_time_unref (expiry);
