@@ -570,7 +570,7 @@ listener_lock (GSListener     *listener,
         if (! dbus_message_get_args (message, &error,
                                      DBUS_TYPE_STRING, &body,
                                      DBUS_TYPE_INVALID)) {
-                raise_syntax (connection, message, "ShowMessage");
+                raise_syntax (connection, message, "Lock");
                 return DBUS_HANDLER_RESULT_HANDLED;
         }
         
@@ -584,6 +584,7 @@ listener_lock (GSListener     *listener,
 
         return DBUS_HANDLER_RESULT_HANDLED;
 }
+
 static DBusHandlerResult
 listener_show_message (GSListener     *listener,
                        DBusConnection *connection,
@@ -906,7 +907,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
                 } else if (dbus_message_is_signal (message, SYSTEMD_LOGIND_SESSION_INTERFACE, "Lock")) {
                         if (_listener_message_path_is_our_session (listener, message)) {
                                 gs_debug ("systemd requested session lock");
-                                return listener_lock (listener, connection, message);
+                                g_signal_emit (listener, signals [LOCK], 0, "");
                         }
 
                         return DBUS_HANDLER_RESULT_HANDLED;
@@ -948,7 +949,7 @@ listener_dbus_handle_system_message (DBusConnection *connection,
         } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Lock")) {
                 if (_listener_message_path_is_our_session (listener, message)) {
                         gs_debug ("ConsoleKit requested session lock");
-                        return listener_lock (listener, connection, message);
+                        g_signal_emit (listener, signals [LOCK], 0, "");
                 }
 
                 return DBUS_HANDLER_RESULT_HANDLED;

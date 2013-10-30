@@ -1097,6 +1097,7 @@ gs_manager_finalize (GObject *object)
                 g_object_unref (manager->priv->settings);
         }
 
+        g_free (manager->priv->away_message);
         g_free (manager->priv->logout_command);
         g_free (manager->priv->keyboard_command);
 
@@ -1261,6 +1262,8 @@ gs_manager_deactivate (GSManager *manager)
 
         gs_manager_destroy_windows (manager);
 
+        gs_manager_set_away_message (manager, NULL);
+
         /* reset state */
         manager->priv->active = FALSE;
         manager->priv->activate_time = 0;
@@ -1275,10 +1278,18 @@ void
 gs_manager_set_away_message (GSManager   *manager,
                              const char  *message)
 {
-        g_free (manager->priv->logout_command);
-
-        manager->priv->away_message = g_strdup(message);
         GSList *l;
+
+        g_return_if_fail (GS_IS_MANAGER (manager));
+
+        g_free (manager->priv->away_message);
+
+        if (message) {
+                manager->priv->away_message = g_strdup (message);
+        } else {
+                manager->priv->away_message = NULL;
+        }
+
         for (l = manager->priv->windows; l; l = l->next) {
                 gs_window_set_away_message (l->data, manager->priv->away_message);
         }
@@ -1293,7 +1304,6 @@ gs_manager_set_active (GSManager *manager,
         if (active) {
                 res = gs_manager_activate (manager);
         } else {
-                gs_manager_set_away_message(manager, "");
                 res = gs_manager_deactivate (manager);
         }
 
