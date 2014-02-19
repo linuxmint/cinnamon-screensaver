@@ -1119,7 +1119,7 @@ gs_lock_plug_set_switch_enabled (GSLockPlug *plug,
                     g_getenv("XDG_SEAT_PATH")) {
                         gtk_widget_show (plug->priv->auth_switch_button);
                 } else {
-                        gs_debug ("Waring: no compatible display manager found");
+                        gs_debug ("Warning: no compatible display manager found");
                         gtk_widget_hide (plug->priv->auth_switch_button);
                 }
         } else {
