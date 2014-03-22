@@ -161,6 +161,7 @@ update_clock (gpointer data)
   
 	if (self->priv->clock_update_id) {
 		g_source_remove (self->priv->clock_update_id);
+		self->priv->clock_update_id = 0;
 	}
   
 	source = _gnome_datetime_source_new (now, expiry, TRUE);

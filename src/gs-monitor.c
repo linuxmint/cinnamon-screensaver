@@ -152,6 +152,7 @@ watcher_idle_notice_cb (GSWatcher *watcher,
                         /* don't release the grab immediately to prevent typing passwords into windows */
                         if (monitor->priv->release_grab_id != 0) {
                                 g_source_remove (monitor->priv->release_grab_id);
+                                monitor->priv->release_grab_id = 0;
                         }
                         monitor->priv->release_grab_id = g_timeout_add (1000, (GSourceFunc)release_grab_timeout, monitor);
                 } else {

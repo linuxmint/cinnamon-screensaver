@@ -732,6 +732,7 @@ gs_window_show_message (GSWindow   *window,
 
         if (window->priv->info_bar_timer_id > 0) {
                 g_source_remove (window->priv->info_bar_timer_id);
+                window->priv->info_bar_timer_id = 0;
         }
 
         window->priv->info_bar_timer_id = g_timeout_add_seconds (INFO_BAR_SECONDS,
@@ -2328,7 +2329,8 @@ gs_window_finalize (GObject *object)
         }
 
         if (window->priv->info_bar_timer_id > 0) {
-                g_source_remove (window->priv->info_bar_timer_id);
+            g_source_remove (window->priv->info_bar_timer_id);
+            window->priv->info_bar_timer_id = 0;
         }
 
         remove_watchdog_timer (window);
