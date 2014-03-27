@@ -1275,7 +1275,7 @@ void
 gs_manager_set_away_message (GSManager   *manager,
                              const char  *message)
 {
-        g_free (manager->priv->logout_command);
+        g_free (manager->priv->away_message);
 
         manager->priv->away_message = g_strdup(message);
         GSList *l;
