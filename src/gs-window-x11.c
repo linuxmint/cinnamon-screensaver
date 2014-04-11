@@ -82,7 +82,6 @@ struct GSWindowPrivate
         GtkWidget *panel;
         GtkWidget *clock;
         GtkWidget *name_label;
-        GtkWidget *drawing_area;
         GtkWidget *lock_box;
         GtkWidget *lock_socket;
         GtkWidget *keyboard_socket;
@@ -243,15 +242,6 @@ clear_widget (GtkWidget *widget)
 
         gtk_widget_override_background_color (widget, GTK_STATE_FLAG_NORMAL, &rgba);
         gtk_widget_queue_draw (GTK_WIDGET (widget));
-}
-
-void
-gs_window_clear (GSWindow *window)
-{
-        g_return_if_fail (GS_IS_WINDOW (window));
-
-        clear_widget (GTK_WIDGET (window));
-        clear_widget (window->priv->drawing_area);
 }
 
 static cairo_region_t *
@@ -631,8 +621,6 @@ gs_window_real_show (GtkWidget *widget)
                 GTK_WIDGET_CLASS (gs_window_parent_class)->show (widget);
         }
 
-        gs_window_clear (GS_WINDOW (widget));
-
         set_invisible_cursor (gtk_widget_get_window (widget), TRUE);
 
         window = GS_WINDOW (widget);
@@ -732,6 +720,7 @@ gs_window_show_message (GSWindow   *window,
 
         if (window->priv->info_bar_timer_id > 0) {
                 g_source_remove (window->priv->info_bar_timer_id);
+                window->priv->info_bar_timer_id = 0;
         }
 
         window->priv->info_bar_timer_id = g_timeout_add_seconds (INFO_BAR_SECONDS,
@@ -779,14 +768,6 @@ gs_window_get_gdk_window (GSWindow *window)
         g_return_val_if_fail (GS_IS_WINDOW (window), NULL);
 
         return gtk_widget_get_window (GTK_WIDGET (window));
-}
-
-GtkWidget *
-gs_window_get_drawing_area (GSWindow *window)
-{
-        g_return_val_if_fail (GS_IS_WINDOW (window), NULL);
-
-        return window->priv->drawing_area;
 }
 
 /* just for debugging */
@@ -1293,9 +1274,6 @@ popdown_dialog (GSWindow *window)
 {
         gs_window_dialog_finish (window);
 
-        //gtk_widget_show (window->priv->drawing_area);
-
-        gs_window_clear (window);
         set_invisible_cursor (gtk_widget_get_window (GTK_WIDGET (window)), TRUE);
 
         window_set_dialog_up (window, FALSE);
@@ -1445,10 +1423,6 @@ popup_dialog (GSWindow *window)
         if (gs_debug_enabled ()) {
                 command = g_string_append (command, " --verbose");
         }
-
-        gtk_widget_hide (window->priv->drawing_area);
-
-        gs_window_clear_to_background_surface (window);
 
         set_invisible_cursor (gtk_widget_get_window (GTK_WIDGET (window)), FALSE);
 
@@ -2138,12 +2112,15 @@ update_clock (GSWindow *window)
         char *markup;
 
         if (window->priv->away_message != NULL && g_strcmp0(window->priv->away_message, "") != 0) {
-                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\"> %s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->away_message, -1), get_user_display_name());
+                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->away_message, -1), get_user_display_name());
         } else {
                 markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->default_message, -1));
         }
 
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
+        gtk_label_set_line_wrap (GTK_LABEL (window->priv->clock), TRUE);
+        gtk_misc_set_alignment (GTK_MISC (window->priv->clock), 0.5, 0.5);
+
         g_free (markup);
 }
 
@@ -2163,15 +2140,9 @@ shade_background (GtkWidget    *widget,
 {
         cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.7);
         cairo_paint (cr);
+        gs_window_clear_to_background_surface (window);
 
         return FALSE;
-}
-
-static void
-on_drawing_area_realized (GtkWidget *drawing_area)
-{
-    GdkRGBA black = { 0.0, 0.0, 0.0, 1.0 };
-    gdk_window_set_background_rgba (gtk_widget_get_window (drawing_area), &black);
 }
 
 void
@@ -2238,7 +2209,8 @@ gs_window_init (GSWindow *window)
         gtk_container_add (GTK_CONTAINER (window), main_box);                
         
         gtk_box_pack_start (GTK_BOX (main_box), grid, TRUE, TRUE, 0);
-        
+        gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
+
         gtk_widget_show (main_box);
                                 
         gtk_widget_set_valign (window->priv->vbox, GTK_ALIGN_CENTER);
@@ -2263,6 +2235,7 @@ gs_window_init (GSWindow *window)
         gtk_grid_attach(GTK_GRID(grid), right_label, 2, 1, 1, 1); 
                 
         gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
+        gtk_grid_set_column_spacing (GTK_GRID(grid), 6);
         
         gtk_widget_set_valign (grid, GTK_ALIGN_CENTER);
         gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
@@ -2270,16 +2243,7 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_vexpand (grid, TRUE);
         
         g_signal_connect (main_box, "draw", G_CALLBACK (shade_background), window);
-        
-        window->priv->drawing_area = gtk_drawing_area_new ();        
-        gtk_widget_set_app_paintable (window->priv->drawing_area, TRUE);
-        gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->drawing_area, TRUE, TRUE, 0);
-        
-        g_signal_connect (window->priv->drawing_area,
-                            "realize",
-                            G_CALLBACK (on_drawing_area_realized),
-                            NULL);
-        
+               
         create_info_bar (window);       
 }
 
@@ -2319,7 +2283,8 @@ gs_window_finalize (GObject *object)
         }
 
         if (window->priv->info_bar_timer_id > 0) {
-                g_source_remove (window->priv->info_bar_timer_id);
+            g_source_remove (window->priv->info_bar_timer_id);
+            window->priv->info_bar_timer_id = 0;
         }
 
         remove_watchdog_timer (window);

@@ -47,6 +47,9 @@
 #define MDM_FLEXISERVER_COMMAND "mdmflexiserver"
 #define MDM_FLEXISERVER_ARGS    "--startnew Standard"
 
+#define GDM_FLEXISERVER_COMMAND "gdmflexiserver"
+#define GDM_FLEXISERVER_ARGS    "--startnew Standard"
+
 enum {
         AUTH_PAGE = 0,
 };
@@ -139,16 +142,73 @@ gs_lock_plug_style_set (GtkWidget *widget,
         gtk_box_set_spacing (GTK_BOX (plug->priv->vbox), 6);
 
         gtk_container_set_border_width (GTK_CONTAINER (plug->priv->auth_action_area), 0);
-        gtk_box_set_spacing (GTK_BOX (plug->priv->auth_action_area), 0);
+        gtk_box_set_spacing (GTK_BOX (plug->priv->auth_action_area), 6);
+        gtk_box_set_homogeneous (GTK_BOX (plug->priv->auth_action_area), FALSE);
+        gtk_button_box_set_child_non_homogeneous (plug->priv->auth_action_area, plug->priv->auth_switch_button, TRUE);
+}
+
+static gboolean
+process_is_running (const char * name)
+{
+        int num_processes;
+        char * command = g_strdup_printf ("pidof %s | wc -l", name);
+        FILE *fp = popen(command, "r");
+        fscanf(fp, "%d", &num_processes);
+        pclose(fp);
+        if (num_processes > 0) {
+                return TRUE;
+        } else {
+                return FALSE;
+        }
 }
 
 static void
 do_user_switch (GSLockPlug *plug)
 {
         GError  *error = NULL;
+        GAppInfo *app;
+        GAppLaunchContext *context;
+        char    *command;
 
-        /* If running under LightDM switch to the greeter using dbus */
-        if (g_getenv("XDG_SEAT_PATH")) {
+        if (process_is_running ("mdm")) {
+                command = g_strdup_printf ("%s %s",
+                                           MDM_FLEXISERVER_COMMAND,
+                                           MDM_FLEXISERVER_ARGS);
+
+                error = NULL;
+                context = (GAppLaunchContext*)gdk_app_launch_context_new ();
+                app = g_app_info_create_from_commandline (command, MDM_FLEXISERVER_COMMAND, 0, &error);
+                if (app)
+                        g_app_info_launch (app, NULL, context, &error);
+
+                g_free (command);
+                g_object_unref (context);
+                g_object_unref (app);
+
+                if (error != NULL) {
+                        gs_debug ("Unable to start MDM greeter: %s", error->message);
+                        g_error_free (error);
+                }
+        } else if (process_is_running ("gdm")) {
+                command = g_strdup_printf ("%s %s",
+                                           GDM_FLEXISERVER_COMMAND,
+                                           GDM_FLEXISERVER_ARGS);
+
+                error = NULL;
+                context = (GAppLaunchContext*)gdk_app_launch_context_new ();
+                app = g_app_info_create_from_commandline (command, GDM_FLEXISERVER_COMMAND, 0, &error);
+                if (app)
+                        g_app_info_launch (app, NULL, context, &error);
+
+                g_free (command);
+                g_object_unref (context);
+                g_object_unref (app);
+
+                if (error != NULL) {
+                        gs_debug ("Unable to start GDM greeter: %s", error->message);
+                        g_error_free (error);
+                }
+        } else if (g_getenv("XDG_SEAT_PATH")) {
                 GDBusConnection *bus;
                 GVariant *result = NULL;
 
@@ -175,30 +235,6 @@ do_user_switch (GSLockPlug *plug)
 
                 if (result)
                         g_variant_unref (result);
-        } else {
-
-                GAppInfo *app;
-                GAppLaunchContext *context;
-                char    *command;
-
-                command = g_strdup_printf ("%s %s",
-                                           MDM_FLEXISERVER_COMMAND,
-                                           MDM_FLEXISERVER_ARGS);
-
-                error = NULL;
-                context = (GAppLaunchContext*)gdk_app_launch_context_new ();
-                app = g_app_info_create_from_commandline (command, "mdmflexiserver", 0, &error);
-                if (app)
-                        g_app_info_launch (app, NULL, context, &error);
-
-                g_free (command);
-                g_object_unref (context);
-                g_object_unref (app);
-
-                if (error != NULL) {
-                        gs_debug ("Unable to start MDM greeter: %s", error->message);
-                        g_error_free (error);
-                }
         }
 }
 
@@ -1036,18 +1072,6 @@ gs_lock_plug_set_logout_command (GSLockPlug *plug,
         }
 }
 
-static gboolean
-is_program_in_path (const char *program)
-{
-        char *tmp = g_find_program_in_path (program);
-        if (tmp != NULL) {
-                g_free (tmp);
-                return TRUE;
-        } else {
-                return FALSE;
-        }
-}
-
 static void
 gs_lock_plug_get_property (GObject    *object,
                            guint       prop_id,
@@ -1092,12 +1116,12 @@ gs_lock_plug_set_switch_enabled (GSLockPlug *plug,
         }
 
         if (switch_enabled) {
-                gboolean found;
-                found = is_program_in_path (MDM_FLEXISERVER_COMMAND);
-                if (found || g_getenv("XDG_SEAT_PATH")) {
+                if (process_is_running ("mdm") ||
+                    process_is_running ("gdm") ||
+                    g_getenv("XDG_SEAT_PATH")) {
                         gtk_widget_show (plug->priv->auth_switch_button);
                 } else {
-                        gs_debug ("Waring: MDM flexiserver command not found: %s", MDM_FLEXISERVER_COMMAND);
+                        gs_debug ("Warning: no compatible display manager found");
                         gtk_widget_hide (plug->priv->auth_switch_button);
                 }
         } else {
