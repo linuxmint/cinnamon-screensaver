@@ -41,7 +41,7 @@ static gboolean do_version    = FALSE;
 static gboolean do_query      = FALSE;
 static gboolean do_time       = FALSE;
 
-static gchar   *away_message  = "DEFAULT";
+static gchar   *away_message  = "";
 
 static GOptionEntry entries [] = {
         { "exit", 0, 0, G_OPTION_ARG_NONE, &do_quit,
@@ -114,7 +114,7 @@ screensaver_send_message_bool (GDBusConnection *connection,
 static GDBusMessage *
 screensaver_send_message_string (GDBusConnection *connection,
                                  const char      *name,
-                                 gboolean         value)
+                                 gchar           *value)
 {
         GDBusMessage *message, *reply;
         GError       *error;
@@ -310,14 +310,7 @@ do_command (GDBusConnection *connection)
         }
 
         if (do_lock) {
-				if (g_strcmp0 (away_message, "DEFAULT") == 0) {
-					reply = screensaver_send_message_string (connection, "Lock", away_message);
-				}
-				else {
-					gchar * custom_message = g_strdup_printf("CUSTOM###%s", away_message);
-					reply = screensaver_send_message_string (connection, "Lock", custom_message);
-					g_free (custom_message);
-				}
+                reply = screensaver_send_message_string (connection, "Lock", away_message);
                 if (reply == NULL) {
                         g_message ("Did not receive a reply from the screensaver.");
                         goto done;

@@ -2106,41 +2106,22 @@ get_user_display_name (void)
         return utf8_name;
 }
 
-static gchar * 
-str_replace(const char *string, const char *delimiter, const char *replacement)
-{
-	gchar **split;
-	gchar *ret;
-	g_return_val_if_fail(string      != NULL, NULL);
-	g_return_val_if_fail(delimiter   != NULL, NULL);
-	g_return_val_if_fail(replacement != NULL, NULL);
-	split = g_strsplit(string, delimiter, 0);
-	ret = g_strjoinv(replacement, split);
-	g_strfreev(split);
-	return ret;
-}
-
 static void
 update_clock (GSWindow *window)
 {	
-	char *markup;
-	char *away_message;
-			
-	if (window->priv->away_message != NULL && g_str_has_prefix (window->priv->away_message, "CUSTOM###") && g_strcmp0(window->priv->away_message, "") != 0) {		
-		away_message = str_replace(window->priv->away_message, "CUSTOM###", "");		
-        markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message, get_user_display_name());
-	}
-	else {
-		away_message = g_strdup_printf (_("%s"), window->priv->default_message);
-        markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message);
-	}
-			
-	gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
-    gtk_label_set_line_wrap (GTK_LABEL (window->priv->clock), TRUE);
-    gtk_misc_set_alignment (GTK_MISC (window->priv->clock), 0.5, 0.5);
+        char *markup;
 
-	g_free (markup);
-	g_free (away_message);
+        if (window->priv->away_message != NULL && g_strcmp0(window->priv->away_message, "") != 0) {
+                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->away_message, -1), get_user_display_name());
+        } else {
+                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->default_message, -1));
+        }
+
+        gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
+        gtk_label_set_line_wrap (GTK_LABEL (window->priv->clock), TRUE);
+        gtk_misc_set_alignment (GTK_MISC (window->priv->clock), 0.5, 0.5);
+
+        g_free (markup);
 }
 
 static void
@@ -2168,7 +2149,16 @@ void
 gs_window_set_away_message (GSWindow   *window,
                             const char *message)
 {
-        window->priv->away_message = message;
+        g_return_if_fail (GS_IS_WINDOW (window));
+
+        g_free (window->priv->away_message);
+
+        if (message) {
+                window->priv->away_message = g_strdup (message);
+        } else {
+                window->priv->away_message = NULL;
+        }
+
         update_clock (window);
 }
 
@@ -2284,6 +2274,7 @@ gs_window_finalize (GObject *object)
 
         g_return_if_fail (window->priv != NULL);
 
+        g_free (window->priv->away_message);
         g_free (window->priv->logout_command);
         g_free (window->priv->keyboard_command);
 

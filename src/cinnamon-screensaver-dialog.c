@@ -49,7 +49,6 @@ static gboolean show_version   = FALSE;
 static gboolean enable_logout  = FALSE;
 static gboolean enable_switch  = FALSE;
 static char    *logout_command = NULL;
-static char    *away_message     = NULL;
 
 static GOptionEntry entries [] = {
         { "verbose", 0, 0, G_OPTION_ARG_NONE, &verbose,
