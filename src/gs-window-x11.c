@@ -82,7 +82,6 @@ struct GSWindowPrivate
         GtkWidget *panel;
         GtkWidget *clock;
         GtkWidget *name_label;
-        GtkWidget *drawing_area;
         GtkWidget *lock_box;
         GtkWidget *lock_socket;
         GtkWidget *keyboard_socket;
@@ -243,15 +242,6 @@ clear_widget (GtkWidget *widget)
 
         gtk_widget_override_background_color (widget, GTK_STATE_FLAG_NORMAL, &rgba);
         gtk_widget_queue_draw (GTK_WIDGET (widget));
-}
-
-void
-gs_window_clear (GSWindow *window)
-{
-        g_return_if_fail (GS_IS_WINDOW (window));
-
-        clear_widget (GTK_WIDGET (window));
-        clear_widget (window->priv->drawing_area);
 }
 
 static cairo_region_t *
@@ -631,8 +621,6 @@ gs_window_real_show (GtkWidget *widget)
                 GTK_WIDGET_CLASS (gs_window_parent_class)->show (widget);
         }
 
-        gs_window_clear (GS_WINDOW (widget));
-
         set_invisible_cursor (gtk_widget_get_window (widget), TRUE);
 
         window = GS_WINDOW (widget);
@@ -780,14 +768,6 @@ gs_window_get_gdk_window (GSWindow *window)
         g_return_val_if_fail (GS_IS_WINDOW (window), NULL);
 
         return gtk_widget_get_window (GTK_WIDGET (window));
-}
-
-GtkWidget *
-gs_window_get_drawing_area (GSWindow *window)
-{
-        g_return_val_if_fail (GS_IS_WINDOW (window), NULL);
-
-        return window->priv->drawing_area;
 }
 
 /* just for debugging */
@@ -1294,9 +1274,6 @@ popdown_dialog (GSWindow *window)
 {
         gs_window_dialog_finish (window);
 
-        //gtk_widget_show (window->priv->drawing_area);
-
-        gs_window_clear (window);
         set_invisible_cursor (gtk_widget_get_window (GTK_WIDGET (window)), TRUE);
 
         window_set_dialog_up (window, FALSE);
@@ -1446,10 +1423,6 @@ popup_dialog (GSWindow *window)
         if (gs_debug_enabled ()) {
                 command = g_string_append (command, " --verbose");
         }
-
-        gtk_widget_hide (window->priv->drawing_area);
-
-        gs_window_clear_to_background_surface (window);
 
         set_invisible_cursor (gtk_widget_get_window (GTK_WIDGET (window)), FALSE);
 
@@ -2186,15 +2159,9 @@ shade_background (GtkWidget    *widget,
 {
         cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.7);
         cairo_paint (cr);
+        gs_window_clear_to_background_surface (window);
 
         return FALSE;
-}
-
-static void
-on_drawing_area_realized (GtkWidget *drawing_area)
-{
-    GdkRGBA black = { 0.0, 0.0, 0.0, 1.0 };
-    gdk_window_set_background_rgba (gtk_widget_get_window (drawing_area), &black);
 }
 
 void
@@ -2286,16 +2253,7 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_vexpand (grid, TRUE);
         
         g_signal_connect (main_box, "draw", G_CALLBACK (shade_background), window);
-        
-        window->priv->drawing_area = gtk_drawing_area_new ();        
-        gtk_widget_set_app_paintable (window->priv->drawing_area, TRUE);
-        gtk_box_pack_start (GTK_BOX (window->priv->vbox), window->priv->drawing_area, TRUE, TRUE, 0);
-        
-        g_signal_connect (window->priv->drawing_area,
-                            "realize",
-                            G_CALLBACK (on_drawing_area_realized),
-                            NULL);
-        
+               
         create_info_bar (window);       
 }
 
