@@ -2140,7 +2140,6 @@ shade_background (GtkWidget    *widget,
 {
         cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.7);
         cairo_paint (cr);
-        gs_window_clear_to_background_surface (window);
 
         return FALSE;
 }
