@@ -2139,14 +2139,9 @@ shade_background (GtkWidget    *widget,
 {
         cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.7);
         cairo_paint (cr);
+        gs_window_clear_to_background_surface (window);
+        gtk_widget_queue_draw (widget);
         return FALSE;
-}
-
-static void
-on_realized (GtkWidget *widget, GSWindow *window)
-{
-    gs_window_clear_to_background_surface (window);
-    gtk_widget_queue_draw (widget);
 }
 
 void
@@ -2244,12 +2239,7 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_valign (grid, GTK_ALIGN_CENTER);
         gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
         gtk_widget_set_hexpand (grid, TRUE);
-        gtk_widget_set_vexpand (grid, TRUE);
-
-        g_signal_connect (main_box,
-                          "realize",
-                          G_CALLBACK (on_realized),
-                          window);
+        gtk_widget_set_vexpand (grid, TRUE);        
 
         g_signal_connect (main_box, "draw", G_CALLBACK (shade_background), window);
 
