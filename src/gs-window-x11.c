@@ -2163,9 +2163,7 @@ gs_window_set_away_message (GSWindow   *window,
 
 static void
 gs_window_init (GSWindow *window)
-{
-        GdkRGBA black = { 0.0, 0.0, 0.0, 1.0 };
-        
+{       
         window->priv = GS_WINDOW_GET_PRIVATE (window);
 
         window->priv->geometry.x      = -1;
