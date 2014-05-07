@@ -830,11 +830,11 @@ handle_window_dialog_up (GSManager *manager,
 
         manager->priv->dialog_up = TRUE;
         /* Make all other windows insensitive so we don't get events */
-        for (l = manager->priv->windows; l; l = l->next) {
-                if (l->data != window) {
-                        gtk_widget_set_sensitive (GTK_WIDGET (l->data), FALSE);
-                }
-        }
+        //for (l = manager->priv->windows; l; l = l->next) {
+        //        if (l->data != window) {
+        //                gtk_widget_set_sensitive (GTK_WIDGET (l->data), FALSE);
+        //        }
+        // }
 
         /* Move keyboard and mouse grabs so dialog can be used */
         gs_grab_move_to_window (manager->priv->grab,
