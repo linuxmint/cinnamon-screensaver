@@ -1,3 +1,13 @@
+cinnamon-screensaver (2.2.4) qiana; urgency=medium
+
+  [ Andrew Rossignol ]
+  * Fixed a transparency issue with certain themes.
+
+  [ Clement Lefebvre ]
+  * Fixed build issue
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Jun 2014 16:44:50 +0100
+
 cinnamon-screensaver (2.2.3) qiana; urgency=medium
 
   * 2.2.3
