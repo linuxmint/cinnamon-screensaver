@@ -2204,12 +2204,7 @@ gs_window_init (GSWindow *window)
 
         GtkWidget *grid = gtk_grid_new();
 
-        GdkColor transparentColor = {
-            .red = 0,
-            .green = 0,
-            .blue = 0,
-            .alpha = 0
-        };
+        GdkColor transparentColor = { 0, 0, 0, 0 };
 
         gtk_widget_override_background_color(grid, GTK_STATE_NORMAL, &transparentColor);
         gtk_widget_show (grid);
