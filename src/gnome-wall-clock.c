@@ -39,6 +39,9 @@ struct _GnomeWallClockPrivate {
 	GFileMonitor *tz_monitor;	
 
 	GSettings *settings;
+	gboolean use_custom;
+	gchar *custom_time;
+	gchar *custom_date;
 	gboolean use_24h;
 	gboolean show_date;
 };
@@ -63,6 +66,10 @@ static void
 settings_changed_cb (GSettings *settings, const gchar *key, gpointer user_data)
 {
 	GnomeWallClock *self = user_data;
+	self->priv->use_custom = g_settings_get_boolean (self->priv->settings, "use-custom-format");
+	self->priv->custom_time = g_settings_get_string (self->priv->settings, "time-format");
+	self->priv->custom_date = g_settings_get_string (self->priv->settings, "date-format");
+	
     self->priv->show_date = g_settings_get_boolean (settings, "clock-show-date");
     self->priv->use_24h = g_settings_get_boolean (settings, "clock-use-24h");
 }
@@ -80,11 +87,18 @@ gnome_wall_clock_init (GnomeWallClock *self)
 	self->priv->tz_monitor = g_file_monitor_file (tz, 0, NULL, NULL);
 	g_object_unref (tz);
 
-	self->priv->settings = g_settings_new ("org.cinnamon.desktop.interface");
-    self->priv->show_date = g_settings_get_boolean (self->priv->settings, "clock-show-date");
-    self->priv->use_24h = g_settings_get_boolean (self->priv->settings, "clock-use-24h");
+	self->priv->settings = g_settings_new ("org.cinnamon.desktop.screensaver");
+	self->priv->use_custom = g_settings_get_boolean (self->priv->settings, "use-custom-format");
+	self->priv->custom_time = g_settings_get_string (self->priv->settings, "time-format");
+	self->priv->custom_date = g_settings_get_string (self->priv->settings, "date-format");
 
-    g_signal_connect (self->priv->settings, "changed", G_CALLBACK (settings_changed_cb), self);
+	self->priv->settings = g_settings_new ("org.cinnamon.desktop.interface");
+	self->priv->show_date = g_settings_get_boolean (self->priv->settings, "clock-show-date");
+	self->priv->use_24h = g_settings_get_boolean (self->priv->settings, "clock-use-24h");
+
+	g_signal_connect (self->priv->settings, "changed", G_CALLBACK (settings_changed_cb), self);
+
+	g_signal_connect (self->priv->settings, "changed", G_CALLBACK (settings_changed_cb), self);
 	
 	g_signal_connect (self->priv->tz_monitor, "changed", G_CALLBACK (on_tz_changed), self);
 			
@@ -186,33 +200,39 @@ update_clock (gpointer data)
 		g_source_remove (self->priv->clock_update_id);
 		self->priv->clock_update_id = 0;
 	}
-  
+
 	source = _gnome_datetime_source_new (now, expiry, TRUE);
 	g_source_set_priority (source, G_PRIORITY_HIGH);
 	g_source_set_callback (source, update_clock, self, NULL);
 	self->priv->clock_update_id = g_source_attach (source, NULL);
 	g_source_unref (source);
 
-    if (self->priv->show_date) {
-    	date_value = g_date_time_format (now, _("%A, %B %e"));
-    }
-    else {
-		date_value = "";
-    }
+	if (!self->priv->use_custom) {
+		if (self->priv->show_date) {
+			date_value = g_date_time_format (now, _("%A, %B %e"));
+		}
+		else {
+			date_value = "";
+		}
 
-    if (self->priv->use_24h) {
-	    time_value = g_strchug(g_date_time_format(now, "%H:%M"));
+		if (self->priv->use_24h) {
+			time_value = g_strchug(g_date_time_format(now, "%H:%M"));
+		}
+		else {
+			time_value = g_strchug(g_date_time_format(now, "%l:%M %p"));
+		}
 	}
 	else {
-		time_value = g_strchug(g_date_time_format(now, "%l:%M %p"));
+		date_value = g_date_time_format(now, self->priv->custom_date);
+		time_value = g_date_time_format(now, self->priv->custom_time);
 	}
-        
+
 	g_free (self->priv->clock_string);
 	self->priv->clock_string = g_strdup_printf ("<b><span font_desc=\"Ubuntu 64\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"Ubuntu 24\" foreground=\"#FFFFFF\">%s</span></b>", time_value, date_value);
 
 	g_date_time_unref (now);
 	g_date_time_unref (expiry);
-      
+
 	g_object_notify ((GObject*)self, "clock");
 
 	return FALSE;
