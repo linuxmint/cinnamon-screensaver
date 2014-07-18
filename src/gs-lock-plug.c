@@ -189,7 +189,7 @@ do_user_switch (GSLockPlug *plug)
                         gs_debug ("Unable to start MDM greeter: %s", error->message);
                         g_error_free (error);
                 }
-        } else if (process_is_running ("gdm")) {
+        } else if (process_is_running ("gdm") || process_is_running("gdm3")) {
                 command = g_strdup_printf ("%s %s",
                                            GDM_FLEXISERVER_COMMAND,
                                            GDM_FLEXISERVER_ARGS);
@@ -1118,6 +1118,7 @@ gs_lock_plug_set_switch_enabled (GSLockPlug *plug,
         if (switch_enabled) {
                 if (process_is_running ("mdm") ||
                     process_is_running ("gdm") ||
+                    process_is_running ("gdm3") ||
                     g_getenv("XDG_SEAT_PATH")) {
                         gtk_widget_show (plug->priv->auth_switch_button);
                 } else {
