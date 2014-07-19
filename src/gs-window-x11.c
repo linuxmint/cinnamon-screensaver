@@ -103,7 +103,6 @@ struct GSWindowPrivate
         gint       lock_watch_id;
         gint       dialog_response;
         gboolean   dialog_quit_requested;
-        gboolean   dialog_shake_in_progress;
 
         gint       keyboard_pid;
         gint       keyboard_watch_id;
@@ -1211,50 +1210,10 @@ gs_window_dialog_finish (GSWindow *window)
 static void
 maybe_kill_dialog (GSWindow *window)
 {
-        if (!window->priv->dialog_shake_in_progress
-            && window->priv->dialog_quit_requested
+        if (!window->priv->dialog_quit_requested
             && window->priv->lock_pid > 0) {
                 kill (window->priv->lock_pid, SIGTERM);
         }
-}
-
-/* very rudimentary animation for indicating an auth failure */
-static void
-shake_dialog (GSWindow *window)
-{
-        int   i;
-        guint left;
-        guint right;
-
-        window->priv->dialog_shake_in_progress = TRUE;
-
-        for (i = 0; i < 9; i++) {
-                if (i % 2 == 0) {
-                        left = 30;
-                        right = 0;
-                } else {
-                        left = 0;
-                        right = 30;
-                }
-
-                if (! window->priv->lock_box) {
-                        break;
-                }
-
-                gtk_alignment_set_padding (GTK_ALIGNMENT (window->priv->lock_box),
-                                           0, 0,
-                                           left,
-                                           right);
-
-                while (gtk_events_pending ()) {
-                        gtk_main_iteration ();
-                }
-
-                g_usleep (10000);
-        }
-
-        window->priv->dialog_shake_in_progress = FALSE;
-        maybe_kill_dialog (window);
 }
 
 static void
@@ -1320,7 +1279,6 @@ lock_command_watch (GIOChannel   *source,
                                 }
                         } else if (strstr (line, "NOTICE=") != NULL) {
                                 if (strstr (line, "NOTICE=AUTH FAILED") != NULL) {
-                                        shake_dialog (window);
                                 }
                         } else if (strstr (line, "RESPONSE=") != NULL) {
                                 if (strstr (line, "RESPONSE=OK") != NULL) {
@@ -1427,7 +1385,6 @@ popup_dialog (GSWindow *window)
         set_invisible_cursor (gtk_widget_get_window (GTK_WIDGET (window)), FALSE);
 
         window->priv->dialog_quit_requested = FALSE;
-        window->priv->dialog_shake_in_progress = FALSE;
 
         result = spawn_on_window (window,
                                   command->str,
@@ -2132,6 +2089,7 @@ on_clock_changed (GnomeWallClock *clock,
         update_clock (GS_WINDOW (user_data));
 }
 
+//TODO: Gaussian blur?
 static gboolean
 shade_background (GtkWidget    *widget,
                cairo_t      *cr,
@@ -2226,7 +2184,6 @@ gs_window_init (GSWindow *window)
         // Default message        
         window->priv->default_message = g_settings_get_string(g_settings_new ("org.cinnamon.screensaver"), "default-message");
                 
-        // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
         window->priv->clock = gtk_label_new (NULL);
         gtk_widget_show (window->priv->clock);
         window->priv->clock_tracker = g_object_new (GNOME_TYPE_WALL_CLOCK, NULL);
