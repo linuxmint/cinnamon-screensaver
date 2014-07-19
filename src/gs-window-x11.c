@@ -1755,6 +1755,9 @@ gs_window_real_key_press_event (GtkWidget   *widget,
                 gs_debug ("Ignoring brightness keys");
                 return TRUE;
         }
+        if (event->hardware_keycode == 135) {
+            return TRUE;
+        }
 
         maybe_handle_activity (GS_WINDOW (widget));
 
