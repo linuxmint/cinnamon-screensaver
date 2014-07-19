@@ -2132,6 +2132,7 @@ on_clock_changed (GnomeWallClock *clock,
         update_clock (GS_WINDOW (user_data));
 }
 
+//TODO: Gaussian blur?
 static gboolean
 shade_background (GtkWidget    *widget,
                cairo_t      *cr,
@@ -2226,7 +2227,6 @@ gs_window_init (GSWindow *window)
         // Default message        
         window->priv->default_message = g_settings_get_string(g_settings_new ("org.cinnamon.screensaver"), "default-message");
                 
-        // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
         window->priv->clock = gtk_label_new (NULL);
         gtk_widget_show (window->priv->clock);
         window->priv->clock_tracker = g_object_new (GNOME_TYPE_WALL_CLOCK, NULL);
