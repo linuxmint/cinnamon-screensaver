@@ -2224,7 +2224,7 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_size_request(window->priv->vbox,450, -1);
         
         // Default message        
-        window->priv->default_message = g_settings_get_string(g_settings_new ("org.cinnamon.screensaver"), "default-message");
+        window->priv->default_message = g_settings_get_string(g_settings_new ("org.cinnamon.desktop.screensaver"), "default-message");
                 
         // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
         window->priv->clock = gtk_label_new (NULL);

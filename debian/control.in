@@ -35,7 +35,6 @@ Depends: ${shlibs:Depends},
          dbus-x11,
          gnome-icon-theme (>= 2.15.90),
          cinnamon-desktop-data (>= 1.0.0),
-         cinnamon,
          cinnamon-translations
 Recommends: gnome-power-manager | xfce4-power-manager,
             libpam-gnome-keyring
