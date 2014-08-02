@@ -369,7 +369,6 @@ key_changed_cb (GSettings   *settings,
                 _gs_prefs_set_user_switch_enabled (prefs, enabled);
 
         } else {
-                g_warning ("Config key not handled: %s", key);
                 return;
         }
 
