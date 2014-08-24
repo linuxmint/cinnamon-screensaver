@@ -420,7 +420,8 @@ check_gamma_extension (GSFade *fade, int screen_idx)
 
 #ifdef HAVE_XF86VMODE_GAMMA
 	if (g_getenv("LTSP_CLIENT")) {
-		return FADE_TYPE_NONE;  /* We're on an LTSP Client, bad idea to fade at all */
+		/* We're on an LTSP Client, bad idea to fade at all */
+                goto fade_none;
 	}
 
         res = XF86VidModeQueryExtension (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &event, &error);
