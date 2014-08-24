@@ -359,7 +359,10 @@ raise_error (DBusConnection *connection,
 
         va_list args;
         va_start (args, format);
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wformat-nonliteral"
         vsnprintf (buf, sizeof (buf), format, args);
+        #pragma clang diagnostic pop
         va_end (args);
 
         gs_debug (buf);

@@ -57,7 +57,10 @@ gs_debug_real (const char *func,
 
         va_start (args, format);
 
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wformat-nonliteral"
         g_vsnprintf (buffer, 1024, format, args);
+        #pragma clang diagnostic pop
 
         va_end (args);
 
