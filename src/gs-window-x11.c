@@ -65,6 +65,8 @@ struct GSWindowPrivate
 {
         int        monitor;
 
+        GDBusConnection *session_bus;
+
         GdkRectangle geometry;
         guint      obscured : 1;
         guint      dialog_up : 1;
@@ -1744,21 +1746,56 @@ maybe_handle_activity (GSWindow *window)
         return handled;
 }
 
+static void
+change_brightness (GSWindow   *window,
+                   const char *method)
+{
+        GDBusMessage *message;
+
+        if (window->priv->session_bus == NULL) {
+                return;
+        }
+
+        gs_debug ("change_brightness: %s", method);
+
+        message = g_dbus_message_new_method_call ("org.cinnamon.SettingsDaemon",
+                                                  "/org/cinnamon/SettingsDaemon/Power",
+                                                  "org.cinnamon.SettingsDaemon.Power.Screen",
+                                                  method);
+
+        g_dbus_connection_send_message (window->priv->session_bus,
+                                        message,
+                                        G_DBUS_SEND_MESSAGE_FLAGS_NONE,
+                                        NULL,
+                                        NULL);
+
+        g_object_unref (message);
+}
+
 static gboolean
 gs_window_real_key_press_event (GtkWidget   *widget,
                                 GdkEventKey *event)
 {
-        /*g_message ("KEY PRESS state: %u keyval %u", event->state, event->keyval);*/
+        GSWindow *window = GS_WINDOW (widget);
 
-        /* Ignore brightness keys */
-        if (event->hardware_keycode == 101 || event->hardware_keycode == 212) {
-                gs_debug ("Ignoring brightness keys");
+        g_debug ("KEY PRESS state: %u keyval %u; hw keycode: %u", event->state, event->keyval, event->hardware_keycode);
+
+        /* Ignore brightness keys for the purpose of invoking the password
+         * prompt (return TRUE), but do actually forward the brightness
+         * events to the settings daemon.
+         */
+        switch (event->keyval) {
+        case GDK_KEY_MonBrightnessUp:
+                change_brightness (window, "StepUp");
+                return TRUE;
+        case GDK_KEY_MonBrightnessDown:
+                change_brightness (window, "StepDown");
                 return TRUE;
         }
 
-        maybe_handle_activity (GS_WINDOW (widget));
+        maybe_handle_activity (window);
 
-        queue_key_event (GS_WINDOW (widget), event);
+        queue_key_event (window, event);
 
         if (GTK_WIDGET_CLASS (gs_window_parent_class)->key_press_event) {
                 GTK_WIDGET_CLASS (gs_window_parent_class)->key_press_event (widget, event);
@@ -2170,6 +2207,8 @@ static void
 gs_window_init (GSWindow *window)
 {       
         window->priv = GS_WINDOW_GET_PRIVATE (window);
+
+        window->priv->session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
 
         window->priv->geometry.x      = -1;
         window->priv->geometry.y      = -1;
