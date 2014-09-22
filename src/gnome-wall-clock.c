@@ -42,6 +42,7 @@ struct _GnomeWallClockPrivate {
 	gboolean use_custom;
 	gchar *custom_time;
 	gchar *custom_date;
+    gchar *font_time;
 	gchar *font_date;
 	gboolean use_24h;
 	gboolean show_date;
@@ -70,7 +71,9 @@ settings_changed_cb (GSettings *settings, const gchar *key, gpointer user_data)
 	self->priv->use_custom = g_settings_get_boolean (self->priv->settings, "use-custom-format");
 	self->priv->custom_time = g_settings_get_string (self->priv->settings, "time-format");
 	self->priv->custom_date = g_settings_get_string (self->priv->settings, "date-format");
+	self->priv->font_time = g_settings_get_string (self->priv->settings, "font-time");
 	self->priv->font_date = g_settings_get_string (self->priv->settings, "font-date");
+
 	
     self->priv->show_date = g_settings_get_boolean (settings, "clock-show-date");
     self->priv->use_24h = g_settings_get_boolean (settings, "clock-use-24h");
@@ -93,6 +96,7 @@ gnome_wall_clock_init (GnomeWallClock *self)
 	self->priv->use_custom = g_settings_get_boolean (self->priv->settings, "use-custom-format");
 	self->priv->custom_time = g_settings_get_string (self->priv->settings, "time-format");
 	self->priv->custom_date = g_settings_get_string (self->priv->settings, "date-format");
+	self->priv->font_time = g_settings_get_string (self->priv->settings, "font-time");
 	self->priv->font_date = g_settings_get_string (self->priv->settings, "font-date");
 
 	self->priv->settings = g_settings_new ("org.cinnamon.desktop.interface");
@@ -229,7 +233,7 @@ update_clock (gpointer data)
 	}
 
 	g_free (self->priv->clock_string);
-	self->priv->clock_string = g_strdup_printf ("<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>", self->priv->font_date, time_value, self->priv->font_date, date_value);
+	self->priv->clock_string = g_strdup_printf ("<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>", self->priv->font_time, time_value, self->priv->font_date, date_value);
 
 	g_date_time_unref (now);
 	g_date_time_unref (expiry);
