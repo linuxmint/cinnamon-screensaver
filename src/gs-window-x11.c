@@ -116,7 +116,10 @@ struct GSWindowPrivate
         GTimer    *timer;
 
         GnomeWallClock *clock_tracker;
-
+        GSettings *settings;
+        
+        gchar *font_message;
+        
         char      *away_message;
         char      *default_message;
 
@@ -2114,7 +2117,7 @@ update_clock (GSWindow *window)
         if (window->priv->away_message != NULL && g_strcmp0(window->priv->away_message, "") != 0) {
                 markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->away_message, -1), get_user_display_name());
         } else {
-                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->default_message, -1));
+                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), window->priv->font_message, g_markup_escape_text(window->priv->default_message, -1));
         }
 
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
@@ -2164,6 +2167,14 @@ gs_window_set_away_message (GSWindow   *window,
         }
 
         update_clock (window);
+}
+
+static void
+settings_changed_cb (GSettings *settings, const gchar *key, gpointer user_data)
+{
+    GSWindow *window = user_data;
+    
+    window->priv->font_message = g_settings_get_string (window->priv->settings, "font-message");
 }
 
 static void
@@ -2247,6 +2258,11 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
         gtk_widget_set_hexpand (grid, TRUE);
         gtk_widget_set_vexpand (grid, TRUE);
+        
+        window->priv->settings = g_settings_new ("org.cinnamon.desktop.screensaver");
+        window->priv->font_message = g_settings_get_string (window->priv->settings, "font-message");
+        
+        g_signal_connect (window->priv->settings, "changed", G_CALLBACK (settings_changed_cb), window);
 
         g_signal_connect (main_box, "draw", G_CALLBACK (shade_background), window);
 
