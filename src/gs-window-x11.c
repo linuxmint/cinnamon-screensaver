@@ -2155,7 +2155,7 @@ update_clock (GSWindow *window)
 			
 	if (window->priv->away_message != NULL && g_str_has_prefix (window->priv->away_message, "CUSTOM###") && g_strcmp0(window->priv->away_message, "") != 0) {		
 		away_message = str_replace(window->priv->away_message, "CUSTOM###", "");		
-        markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\"> %s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message, get_user_display_name());
+        markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), away_message, get_user_display_name());
 	}
 	else {
 		away_message = g_strdup_printf (_("%s"), window->priv->default_message);
@@ -2163,6 +2163,9 @@ update_clock (GSWindow *window)
 	}
 			
 	gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
+    gtk_label_set_line_wrap (GTK_LABEL (window->priv->clock), TRUE);
+    gtk_misc_set_alignment (GTK_MISC (window->priv->clock), 0.5, 0.5);
+
 	g_free (markup);
 	g_free (away_message);
 }
@@ -2249,7 +2252,8 @@ gs_window_init (GSWindow *window)
         gtk_container_add (GTK_CONTAINER (window), main_box);                
         
         gtk_box_pack_start (GTK_BOX (main_box), grid, TRUE, TRUE, 0);
-        
+        gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
+
         gtk_widget_show (main_box);
                                 
         gtk_widget_set_valign (window->priv->vbox, GTK_ALIGN_CENTER);
@@ -2274,6 +2278,7 @@ gs_window_init (GSWindow *window)
         gtk_grid_attach(GTK_GRID(grid), right_label, 2, 1, 1, 1); 
                 
         gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
+        gtk_grid_set_column_spacing (GTK_GRID(grid), 6);
         
         gtk_widget_set_valign (grid, GTK_ALIGN_CENTER);
         gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
