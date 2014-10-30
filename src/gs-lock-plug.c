@@ -151,10 +151,12 @@ static gboolean
 process_is_running (const char * name)
 {
         int num_processes;
-        char * command = g_strdup_printf ("pidof %s | wc -l", name);
+        gchar *command = g_strdup_printf ("pidof %s | wc -l", name);
         FILE *fp = popen(command, "r");
         fscanf(fp, "%d", &num_processes);
         pclose(fp);
+        g_free (command);
+
         if (num_processes > 0) {
                 return TRUE;
         } else {
