@@ -407,6 +407,8 @@ gs_lock_plug_get_text (GSLockPlug *plug,
 
         if (text != NULL) {
                 *text = local_text;
+        } else {
+                g_free (local_text);
         }
 }
 
