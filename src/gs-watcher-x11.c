@@ -357,8 +357,6 @@ connect_presence_watcher (GSWatcher *watcher)
                                              "org.freedesktop.DBus.Properties",
                                              GSM_PRESENCE_PATH);
 
-        status = 0;
-
         error = NULL;
         dbus_g_proxy_call (proxy,
                            "Get",
@@ -372,16 +370,12 @@ connect_presence_watcher (GSWatcher *watcher)
         if (error != NULL) {
                 g_warning ("Couldn't get presence status: %s", error->message);
                 g_error_free (error);
-                return;
         } else {
                 status = g_value_get_uint (&value);
+                g_value_unset (&value);
+                set_status (watcher, status);
         }
-
-        g_value_unset (&value);
-
-        error = NULL;
-
-        set_status (watcher, status);
+        return;
 }
 
 static void
@@ -446,10 +440,7 @@ disable_builtin_screensaver (GSWatcher *watcher,
                          &current_prefer_blank,
                          &current_allow_exp);
 
-        desired_server_timeout  = current_server_timeout;
-        desired_server_interval = current_server_interval;
         desired_prefer_blank    = current_prefer_blank;
-        desired_allow_exp       = current_allow_exp;
 
         desired_server_interval = 0;
 
