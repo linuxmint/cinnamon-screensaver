@@ -546,12 +546,6 @@ main (int    argc,
         textdomain (GETTEXT_PACKAGE);
 #endif
 
-        if (! g_thread_supported ()) {
-                g_thread_init (NULL);
-        }
-
-        g_type_init ();
-
         gs_profile_start (NULL);
 
         if (! privileged_initialization (&argc, argv, verbose)) {
