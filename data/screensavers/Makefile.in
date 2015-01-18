@@ -1,0 +1,17 @@
+prefix = @prefix@
+datadir = @datadir@
+pkgdatadir = $(datadir)/@PACKAGE@
+all:
+
+clean:
+
+distclean:
+
+install:
+	if [ ! -d $(pkgdatadir)/screensavers/ ]; then \
+           mkdir $(pkgdatadir)/screensavers/; \
+	fi
+	find -mindepth 1 -maxdepth 1 -type d -exec cp -R {} $(pkgdatadir)/screensavers/ \;
+
+uninstall:
+	find -mindepth 1 -type f -exec rm $(pkgdatadir)/screensavers/{} \;

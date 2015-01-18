@@ -57,7 +57,8 @@ PKG_CHECK_MODULES(CINNAMON_SCREENSAVER,
         x11 >= $X11_REQUIRED_VERSION
         gtk+-3.0 >= $GTK_REQUIRED_VERSION
         dbus-glib-1 >= $DBUS_REQUIRED_VERSION
-        cinnamon-desktop >= $CINNAMON_DESKTOP_REQUIRED_VERSION)
+        cinnamon-desktop >= $CINNAMON_DESKTOP_REQUIRED_VERSION
+        webkit2gtk-3.0)
 AC_SUBST(CINNAMON_SCREENSAVER_CFLAGS)
 AC_SUBST(CINNAMON_SCREENSAVER_LIBS)
 
@@ -764,6 +765,7 @@ po/Makefile.in
 src/Makefile
 src/cinnamon-screensaver.desktop.in
 data/Makefile
+data/screensavers/Makefile
 data/org.cinnamon.ScreenSaver.service
 files/Makefile
 ])
