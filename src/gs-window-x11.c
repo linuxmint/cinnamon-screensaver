@@ -65,6 +65,7 @@ enum {
 #define MAX_QUEUED_EVENTS 16
 #define INFO_BAR_SECONDS 30
 #define SCREENSAVER_NAME_KEY "screensaver-name"
+#define SCREENSAVER_ENABLED_KEY "screensaver-enabled"
 
 #define GS_WINDOW_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GS_TYPE_WINDOW, GSWindowPrivate))
 
@@ -721,7 +722,7 @@ gs_window_real_show (GtkWidget *widget)
   window_select_shape_events (window);
   gdk_window_add_filter (NULL, (GdkFilterFunc)xevent_filter, window);
 
-  if (!window->priv->screensaver_pid) {
+  if (g_settings_get_boolean (window->priv->settings, SCREENSAVER_ENABLED_KEY) && !window->priv->screensaver_pid) {
     const char *screensaver_name = g_settings_get_string (window->priv->settings, SCREENSAVER_NAME_KEY);
     const char *screensaver_path = g_build_filename(GTKBUILDERDIR,
                                                    "screensavers",
