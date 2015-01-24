@@ -724,11 +724,11 @@ gs_window_real_show (GtkWidget *widget)
 
   if (g_settings_get_boolean (window->priv->settings, SCREENSAVER_ENABLED_KEY) && !window->priv->screensaver_pid) {
     const char *screensaver_name = g_settings_get_string (window->priv->settings, SCREENSAVER_NAME_KEY);
-    const char *screensaver_path = g_build_filename(GTKBUILDERDIR,
-                                                   "screensavers",
-                                                   screensaver_name,
-                                                   "main",
-                                                   NULL);
+    char *screensaver_path = g_build_filename(GTKBUILDERDIR,
+                                              "screensavers",
+                                              screensaver_name,
+                                              "main",
+                                              NULL);
     gboolean result = spawn_on_window (window,
                                        screensaver_path,
                                        &window->priv->screensaver_pid,
@@ -736,20 +736,21 @@ gs_window_real_show (GtkWidget *widget)
                                        window,
                                        &window->priv->screensaver_watch_id);
     if (!result) {
-      const char *screensaver_home_path = g_build_filename(g_get_home_dir(),
-                                                           ".local/share/cinnamon-screensaver/screensavers",
-                                                           screensaver_name,
-                                                           "main",
-                                                           NULL);
+       screensaver_path = g_build_filename(g_get_home_dir(),
+                                           ".local/share/cinnamon-screensaver/screensavers",
+                                           screensaver_name,
+                                           "main",
+                                           NULL);
 
       spawn_on_window (window,
-                       screensaver_home_path,
+                       screensaver_path,
                        &window->priv->screensaver_pid,
                        (GIOFunc)screensaver_command_watch,
                        window,
                        &window->priv->screensaver_watch_id);
  
     }
+    g_free (screensaver_path);
   }
 }
 

@@ -144,7 +144,7 @@ gs_lock_plug_style_set (GtkWidget *widget,
         gtk_container_set_border_width (GTK_CONTAINER (plug->priv->auth_action_area), 0);
         gtk_box_set_spacing (GTK_BOX (plug->priv->auth_action_area), 6);
         gtk_box_set_homogeneous (GTK_BOX (plug->priv->auth_action_area), FALSE);
-        gtk_button_box_set_child_non_homogeneous (plug->priv->auth_action_area, plug->priv->auth_switch_button, TRUE);
+        gtk_button_box_set_child_non_homogeneous (GTK_BUTTON_BOX (plug->priv->auth_action_area), plug->priv->auth_switch_button, TRUE);
 }
 
 static gboolean
