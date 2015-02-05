@@ -88,7 +88,7 @@ struct GSWindowPrivate
         char      *logout_command;
         char      *keyboard_command;
 
-        GtkWidget *overlay;
+        GtkWidget *stack;
         GtkWidget *vbox;
         GtkWidget *panel;
         GtkWidget *clock;
@@ -638,9 +638,10 @@ create_screensaver_socket (GSWindow *window,
 {
   window->priv->screensaver = gtk_socket_new ();
 
-  gtk_overlay_add_overlay (GTK_OVERLAY (window->priv->overlay), window->priv->screensaver);
+  gtk_stack_add_named (GTK_STACK (window->priv->stack), window->priv->screensaver, "screensaver");
   gtk_widget_show (window->priv->screensaver);
   gtk_socket_add_id (GTK_SOCKET (window->priv->screensaver), id);
+  gs_window_show_screensaver (window);
 }
                            
 
@@ -1178,15 +1179,13 @@ kill_dialog_command (GSWindow *window)
 static void
 gs_window_show_screensaver (GSWindow *window) {
   if (window->priv->screensaver) {
-    gtk_widget_show (window->priv->screensaver);
+    gtk_stack_set_visible_child_name (GTK_STACK (window->priv->stack), "screensaver");
   }
 }
 
 static void
 gs_window_hide_screensaver (GSWindow *window) {
-  if (window->priv->screensaver) {
-    gtk_widget_hide (window->priv->screensaver);
-  }
+  gtk_stack_set_visible_child_name (GTK_STACK (window->priv->stack), "lock_screen");
 }
 
 static void
@@ -2446,14 +2445,14 @@ gs_window_init (GSWindow *window)
                                | GDK_ENTER_NOTIFY_MASK
                                | GDK_LEAVE_NOTIFY_MASK);
 
-        window->priv->overlay = gtk_overlay_new();
+        window->priv->stack = gtk_stack_new();
         window->priv->lock_screen = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-        gtk_container_add (GTK_CONTAINER (window->priv->overlay), window->priv->lock_screen);
+        gtk_stack_add_named (GTK_STACK (window->priv->stack), window->priv->lock_screen, "lock_screen");
 
-        gtk_widget_show (window->priv->overlay);
+        gtk_widget_show (window->priv->stack);
         gtk_widget_show (window->priv->lock_screen);
 
-        gtk_container_add (GTK_CONTAINER (window), window->priv->overlay);
+        gtk_container_add (GTK_CONTAINER (window), window->priv->stack);
 
         GtkWidget *grid = gtk_grid_new();
 
