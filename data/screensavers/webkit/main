@@ -6,6 +6,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="XScreenSaver chainloader")
 parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
+parser.add_argument("--plugin", action="store", help="plugin to load")
 args = parser.parse_args()
 
 hackCalled = False
@@ -23,7 +24,10 @@ if __name__ == "__main__":
 
     webkit = WebKit2.WebView()
     settings = Gio.Settings("org.cinnamon.desktop.screensaver")
-    plugin = settings.get_string("screensaver-webkit-theme")
+    if (args.plugin):
+        plugin = args.plugin
+    else:
+        plugin = settings.get_string("screensaver-webkit-theme")
 
     uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), plugin, "index.html")
 

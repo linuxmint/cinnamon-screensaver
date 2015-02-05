@@ -8,6 +8,7 @@ import argparse
 parser = argparse.ArgumentParser(description="XScreenSaver chainloader")
 parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
 parser.add_argument("--dir", action="store", help="directory to search for xscreensaver hacks")
+parser.add_argument("--hack", action="store", help="xscreensaver hack to load")
 args = parser.parse_args()
 
 hackCalled = False
@@ -26,14 +27,16 @@ def loadHack (plug, data):
     if args.dir:
         directories.append(args.dir)
 
-    settings = Gio.Settings.new("org.cinnamon.desktop.screensaver")
-    hack = settings.get_string("xscreensaver-hack")
+    if (args.hack):
+        hack = args.hack
+    else:
+        settings = Gio.Settings.new("org.cinnamon.desktop.screensaver")
+        hack = settings.get_string("xscreensaver-hack")
    
     success = False
 
     for direc in directories:
         try:
-
             path = shlex.split(direc + hack)
             path.append("-window-id")
             path.append(xid)
