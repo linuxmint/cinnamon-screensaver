@@ -91,7 +91,7 @@ static void
 add_watchdog_timer (GSWatcher *watcher,
                     glong      timeout)
 {
-        watcher->priv->watchdog_timer_id = g_timeout_add (timeout,
+        watcher->priv->watchdog_timer_id = g_timeout_add_seconds (timeout,
                                                           (GSourceFunc)watchdog_timer,
                                                           watcher);
 }
@@ -299,7 +299,7 @@ set_status (GSWatcher *watcher,
                         g_source_remove (watcher->priv->idle_id);
                         watcher->priv->idle_id = 0;
                 }
-                watcher->priv->idle_id = g_timeout_add (watcher->priv->delta_notice_timeout,
+                watcher->priv->idle_id = g_timeout_add_seconds (watcher->priv->delta_notice_timeout,
                                                         (GSourceFunc)on_idle_timeout,
                                                         watcher);
         } else {
@@ -395,9 +395,9 @@ gs_watcher_init (GSWatcher *watcher)
         connect_presence_watcher (watcher);
 
         /* time before idle signal to send notice signal */
-        watcher->priv->delta_notice_timeout = 10000;
+        watcher->priv->delta_notice_timeout = 10;
 
-        add_watchdog_timer (watcher, 600000);
+        add_watchdog_timer (watcher, 600);
 }
 
 static void
