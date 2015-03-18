@@ -2226,9 +2226,9 @@ gs_window_init (GSWindow *window)
 
         GtkWidget *grid = gtk_grid_new();
 
-        GdkColor transparentColor = { 0, 0, 0, 0 };
+        GdkRGBA transparent_color = { 0.0, 0.0, 0.0, 0.0 };
 
-        gtk_widget_override_background_color(grid, GTK_STATE_NORMAL, &transparentColor);
+        gtk_widget_override_background_color(grid, GTK_STATE_NORMAL, &transparent_color);
         gtk_widget_show (grid);
                      
         window->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
