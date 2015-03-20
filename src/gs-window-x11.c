@@ -2112,9 +2112,17 @@ update_clock (GSWindow *window)
         char *markup;
 
         if (window->priv->away_message != NULL && g_strcmp0(window->priv->away_message, "") != 0) {
-                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), g_markup_escape_text(window->priv->away_message, -1), get_user_display_name());
+            gchar *user_name = get_user_display_name ();
+            markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>"
+                                      "\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>",
+                                      gnome_wall_clock_get_clock (window->priv->clock_tracker),
+                                      window->priv->away_message, user_name);
+            g_free (user_name);
         } else {
-                markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>", gnome_wall_clock_get_clock (window->priv->clock_tracker), window->priv->font_message, g_markup_escape_text(window->priv->default_message, -1));
+            markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>",
+                                      gnome_wall_clock_get_clock (window->priv->clock_tracker),
+                                      window->priv->font_message,
+                                      window->priv->default_message);
         }
 
         gtk_label_set_markup (GTK_LABEL (window->priv->clock), markup);
@@ -2158,7 +2166,7 @@ gs_window_set_away_message (GSWindow   *window,
         g_free (window->priv->away_message);
 
         if (message) {
-                window->priv->away_message = g_strdup (message);
+                window->priv->away_message = g_markup_escape_text (message, -1);
         } else {
                 window->priv->away_message = NULL;
         }
@@ -2171,6 +2179,7 @@ settings_changed_cb (GSettings *settings, const gchar *key, gpointer user_data)
 {
     GSWindow *window = user_data;
     
+    g_clear_pointer (&window->priv->font_message, g_free);
     window->priv->font_message = g_settings_get_string (window->priv->settings, "font-message");
 }
 
@@ -2186,6 +2195,8 @@ gs_window_init (GSWindow *window)
 
         window->priv->last_x = -1;
         window->priv->last_y = -1;
+
+        window->priv->settings = g_settings_new ("org.cinnamon.desktop.screensaver");
 
         gtk_window_set_decorated (GTK_WINDOW (window), FALSE);
 
@@ -2212,9 +2223,9 @@ gs_window_init (GSWindow *window)
 
         GtkWidget *grid = gtk_grid_new();
 
-        GdkColor transparentColor = { 0, 0, 0, 0 };
+        GdkRGBA transparent_color = { 0.0, 0.0, 0.0, 0.0 };
 
-        gtk_widget_override_background_color(grid, GTK_STATE_NORMAL, &transparentColor);
+        gtk_widget_override_background_color(grid, GTK_STATE_NORMAL, &transparent_color);
         gtk_widget_show (grid);
                      
         window->priv->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -2232,7 +2243,9 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_size_request(window->priv->vbox,450, -1);
         
         // Default message        
-        window->priv->default_message = g_settings_get_string(g_settings_new ("org.cinnamon.desktop.screensaver"), "default-message");
+        gchar *unesc = g_settings_get_string(window->priv->settings, "default-message");
+        window->priv->default_message = g_markup_escape_text (unesc, -1);
+        g_free (unesc); 
                 
         // Clock -- need to find a way to make it appear on the bottom-left side of the background without shifting the position of the main dialog box
         window->priv->clock = gtk_label_new (NULL);
@@ -2256,7 +2269,6 @@ gs_window_init (GSWindow *window)
         gtk_widget_set_hexpand (grid, TRUE);
         gtk_widget_set_vexpand (grid, TRUE);
         
-        window->priv->settings = g_settings_new ("org.cinnamon.desktop.screensaver");
         window->priv->font_message = g_settings_get_string (window->priv->settings, "font-message");
         
         g_signal_connect (window->priv->settings, "changed", G_CALLBACK (settings_changed_cb), window);
@@ -2296,6 +2308,7 @@ gs_window_finalize (GObject *object)
         g_free (window->priv->away_message);
         g_free (window->priv->logout_command);
         g_free (window->priv->keyboard_command);
+        g_free (window->priv->font_message);
 
         if (window->priv->clock_tracker) {
                 g_object_unref (window->priv->clock_tracker);
@@ -2322,6 +2335,8 @@ gs_window_finalize (GObject *object)
         if (window->priv->background_surface) {
                cairo_surface_destroy (window->priv->background_surface);
         }
+
+        g_clear_object (&window->priv->settings);
 
         G_OBJECT_CLASS (gs_window_parent_class)->finalize (object);
 }

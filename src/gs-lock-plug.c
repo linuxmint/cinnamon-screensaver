@@ -328,7 +328,7 @@ dialog_timed_out (GSLockPlug *plug)
 
         remove_response_idle (plug);
 
-        plug->priv->response_idle_id = g_timeout_add (2000,
+        plug->priv->response_idle_id = g_timeout_add_seconds (2,
                                                       (GSourceFunc)response_cancel_idle_cb,
                                                       plug);
         return FALSE;
@@ -1642,7 +1642,7 @@ switch_user_button_clicked (GtkButton  *button,
 
         gs_lock_plug_set_sensitive (plug, FALSE);
 
-        plug->priv->response_idle_id = g_timeout_add (2000,
+        plug->priv->response_idle_id = g_timeout_add_seconds (2,
                                                       (GSourceFunc)response_cancel_idle_cb,
                                                       plug);
 
