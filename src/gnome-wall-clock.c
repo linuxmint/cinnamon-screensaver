@@ -38,7 +38,8 @@ struct _GnomeWallClockPrivate {
 	
 	GFileMonitor *tz_monitor;	
 
-	GSettings *settings;
+	GSettings *desktop_settings;
+    GSettings *screensaver_settings;
 	gboolean use_custom;
 	gchar *custom_time;
 	gchar *custom_date;
@@ -68,15 +69,14 @@ static void
 settings_changed_cb (GSettings *settings, const gchar *key, gpointer user_data)
 {
 	GnomeWallClock *self = user_data;
-	self->priv->use_custom = g_settings_get_boolean (self->priv->settings, "use-custom-format");
-	self->priv->custom_time = g_settings_get_string (self->priv->settings, "time-format");
-	self->priv->custom_date = g_settings_get_string (self->priv->settings, "date-format");
-	self->priv->font_time = g_settings_get_string (self->priv->settings, "font-time");
-	self->priv->font_date = g_settings_get_string (self->priv->settings, "font-date");
+	self->priv->use_custom = g_settings_get_boolean (self->priv->screensaver_settings, "use-custom-format");
+	self->priv->custom_time = g_settings_get_string (self->priv->screensaver_settings, "time-format");
+	self->priv->custom_date = g_settings_get_string (self->priv->screensaver_settings, "date-format");
+	self->priv->font_time = g_settings_get_string (self->priv->screensaver_settings, "font-time");
+	self->priv->font_date = g_settings_get_string (self->priv->screensaver_settings, "font-date");
 
-	
-    self->priv->show_date = g_settings_get_boolean (settings, "clock-show-date");
-    self->priv->use_24h = g_settings_get_boolean (settings, "clock-use-24h");
+    self->priv->show_date = g_settings_get_boolean (self->priv->desktop_settings, "clock-show-date");
+    self->priv->use_24h = g_settings_get_boolean (self->priv->desktop_settings, "clock-use-24h");
 }
 
 static void
@@ -92,19 +92,20 @@ gnome_wall_clock_init (GnomeWallClock *self)
 	self->priv->tz_monitor = g_file_monitor_file (tz, 0, NULL, NULL);
 	g_object_unref (tz);
 
-	self->priv->settings = g_settings_new ("org.cinnamon.desktop.screensaver");
-	self->priv->use_custom = g_settings_get_boolean (self->priv->settings, "use-custom-format");
-	self->priv->custom_time = g_settings_get_string (self->priv->settings, "time-format");
-	self->priv->custom_date = g_settings_get_string (self->priv->settings, "date-format");
-	self->priv->font_time = g_settings_get_string (self->priv->settings, "font-time");
-	self->priv->font_date = g_settings_get_string (self->priv->settings, "font-date");
+    self->priv->screensaver_settings = g_settings_new ("org.cinnamon.desktop.screensaver");
+    self->priv->use_custom = g_settings_get_boolean (self->priv->screensaver_settings, "use-custom-format");
+    self->priv->custom_time = g_settings_get_string (self->priv->screensaver_settings, "time-format");
+    self->priv->custom_date = g_settings_get_string (self->priv->screensaver_settings, "date-format");
+    self->priv->font_time = g_settings_get_string (self->priv->screensaver_settings, "font-time");
+    self->priv->font_date = g_settings_get_string (self->priv->screensaver_settings, "font-date");
 
-	self->priv->settings = g_settings_new ("org.cinnamon.desktop.interface");
-	self->priv->show_date = g_settings_get_boolean (self->priv->settings, "clock-show-date");
-	self->priv->use_24h = g_settings_get_boolean (self->priv->settings, "clock-use-24h");
+    self->priv->desktop_settings = g_settings_new ("org.cinnamon.desktop.interface");
+    self->priv->show_date = g_settings_get_boolean (self->priv->desktop_settings, "clock-show-date");
+    self->priv->use_24h = g_settings_get_boolean (self->priv->desktop_settings, "clock-use-24h");
 
-	g_signal_connect (self->priv->settings, "changed", G_CALLBACK (settings_changed_cb), self);
-	
+    g_signal_connect (self->priv->screensaver_settings, "changed", G_CALLBACK (settings_changed_cb), self);
+    g_signal_connect (self->priv->desktop_settings, "changed", G_CALLBACK (settings_changed_cb), self);
+
 	g_signal_connect (self->priv->tz_monitor, "changed", G_CALLBACK (on_tz_changed), self);
 			
 	update_clock (self);
@@ -125,11 +126,16 @@ gnome_wall_clock_dispose (GObject *object)
 		self->priv->tz_monitor = NULL;
 	}
 
-	if (self->priv->settings != NULL) {
-		g_object_unref (self->priv->settings);
-		self->priv->settings = NULL;
+	if (self->priv->desktop_settings != NULL) {
+		g_object_unref (self->priv->desktop_settings);
+		self->priv->desktop_settings = NULL;
 	}
-	
+
+    if (self->priv->screensaver_settings != NULL) {
+        g_object_unref (self->priv->screensaver_settings);
+        self->priv->screensaver_settings = NULL;
+    }
+
 	G_OBJECT_CLASS (gnome_wall_clock_parent_class)->dispose (object);
 }
 
