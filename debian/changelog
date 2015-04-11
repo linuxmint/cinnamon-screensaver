@@ -1,3 +1,9 @@
+cinnamon-screensaver (2.5.0) unstable; urgency=medium
+
+  * bump for development
+
+ -- Michael Webster <miketwebster@gmail.com>  Sat, 11 Apr 2015 09:09:01 -0400
+
 cinnamon-screensaver (2.4.2) betsy; urgency=medium
 
   [ Michael Webster ]

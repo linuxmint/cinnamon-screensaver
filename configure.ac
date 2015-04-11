@@ -2,8 +2,8 @@ dnl -*- mode: m4 -*-
 
 AC_PREREQ(2.60)
 AC_INIT([cinnamon-screensaver],
-        [2.4.2],
-        [http://bugzilla.gnome.org/enter_bug.cgi?product=cinnamon-screensaver])
+        [2.5.0],
+        [https://github.com/linuxmint/cinnamon-screensaver/issues])
 
 AC_CONFIG_SRCDIR(src/cinnamon-screensaver.c)
 
