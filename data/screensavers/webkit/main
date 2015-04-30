@@ -19,7 +19,7 @@ if __name__ == "__main__":
     plug.show_all()
     plug.connect("delete-event", Gtk.main_quit)
     xid = str(plug.get_window().get_xid())
-    print "WINDOW ID=" + xid
+    print("WINDOW ID=" + xid)
     sys.stdout.flush()
 
     webkit = WebKit2.WebView()
