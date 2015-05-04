@@ -1750,7 +1750,7 @@ maybe_handle_activity (GSWindow *window)
 }
 
 static void
-change_brightness (GSWindow   *window,
+change_screen_brightness (GSWindow   *window,
                    const char *method)
 {
         GDBusMessage *message;
@@ -1759,11 +1759,37 @@ change_brightness (GSWindow   *window,
                 return;
         }
 
-        gs_debug ("change_brightness: %s", method);
+        gs_debug ("change_screen_brightness: %s", method);
 
         message = g_dbus_message_new_method_call ("org.cinnamon.SettingsDaemon",
                                                   "/org/cinnamon/SettingsDaemon/Power",
                                                   "org.cinnamon.SettingsDaemon.Power.Screen",
+                                                  method);
+
+        g_dbus_connection_send_message (window->priv->session_bus,
+                                        message,
+                                        G_DBUS_SEND_MESSAGE_FLAGS_NONE,
+                                        NULL,
+                                        NULL);
+
+        g_object_unref (message);
+}
+
+static void
+change_keyboard_brightness (GSWindow   *window,
+                   const char *method)
+{
+        GDBusMessage *message;
+
+        if (window->priv->session_bus == NULL) {
+                return;
+        }
+
+        gs_debug ("change_keyboard_brightness: %s", method);
+
+        message = g_dbus_message_new_method_call ("org.cinnamon.SettingsDaemon",
+                                                  "/org/cinnamon/SettingsDaemon/Power",
+                                                  "org.cinnamon.SettingsDaemon.Power.Keyboard",
                                                   method);
 
         g_dbus_connection_send_message (window->priv->session_bus,
@@ -1788,11 +1814,17 @@ gs_window_real_key_press_event (GtkWidget   *widget,
          * events to the settings daemon.
          */
         switch (event->keyval) {
-        case GDK_KEY_MonBrightnessUp:
-                change_brightness (window, "StepUp");
+        	case GDK_KEY_MonBrightnessUp:
+                change_screen_brightness (window, "StepUp");
                 return TRUE;
-        case GDK_KEY_MonBrightnessDown:
-                change_brightness (window, "StepDown");
+        	case GDK_KEY_MonBrightnessDown:
+                change_screen_brightness (window, "StepDown");
+                return TRUE;
+            case GDK_KEY_KbdBrightnessUp:
+                change_keyboard_brightness (window, "StepUp");
+                return TRUE;
+        	case GDK_KEY_KbdBrightnessDown:
+                change_keyboard_brightness (window, "StepDown");
                 return TRUE;
         }
 
