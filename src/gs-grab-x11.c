@@ -408,7 +408,7 @@ gs_grab_release (GSGrab *grab)
         gdk_flush ();
 }
 
-/* The GNOME 3 Shell holds an X grab when we're in the overview;
+/* The Cinnamon Shell holds an X grab when we're in the overview;
  * ask it to bounce out before we try locking the screen.
  */
 static void
@@ -428,6 +428,25 @@ request_shell_exit_overview (GSGrab *grab)
                                  g_variant_new ("(ssv)",
                                                 "org.Cinnamon",
                                                 "OverviewActive",
+                                                g_variant_new ("b",
+                                                               FALSE)));
+
+        g_dbus_connection_send_message (grab->priv->session_bus,
+                                        message,
+                                        G_DBUS_SEND_MESSAGE_FLAGS_NONE,
+                                        NULL,
+                                        NULL);
+        g_object_unref (message);
+
+
+        message = g_dbus_message_new_method_call ("org.Cinnamon",
+                                                  "/org/Cinnamon",
+                                                  "org.freedesktop.DBus.Properties",
+                                                  "Set");
+        g_dbus_message_set_body (message,
+                                 g_variant_new ("(ssv)",
+                                                "org.Cinnamon",
+                                                "ExpoActive",
                                                 g_variant_new ("b",
                                                                FALSE)));
 
