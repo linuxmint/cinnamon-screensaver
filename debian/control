@@ -38,9 +38,10 @@ Depends: ${shlibs:Depends},
          dbus-x11,
          gnome-icon-theme (>= 2.15.90),
          cinnamon-desktop-data (>= 2.4.0),
+         cinnamon-translations,
          gir1.2-webkit2-3.0
 Recommends: gnome-power-manager | xfce4-power-manager,
-            libpam-gnome-keyring, xscreensaver, xscreensaver-data-extra, xscreensaver-gl, xscreensaver-gl-extra
+            libpam-gnome-keyring, xscreensaver-data, xscreensaver-data-extra, xscreensaver-gl, xscreensaver-gl-extra
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
