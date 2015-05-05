@@ -4,6 +4,7 @@ import sys
 import subprocess
 import shlex
 import argparse
+import syslog
 
 parser = argparse.ArgumentParser(description="XScreenSaver chainloader")
 parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
@@ -19,7 +20,7 @@ def loadHack (plug, data):
     if hackCalled:
         return
     xid = str(plug.get_window().get_xid())
-    
+
     directories = ["/usr/lib/xscreensaver/",
                    "/usr/libexec/xscreensaver/",
                    "/usr/local/lib/xscreensaver/",
@@ -32,7 +33,7 @@ def loadHack (plug, data):
     else:
         settings = Gio.Settings.new("org.cinnamon.desktop.screensaver")
         hack = settings.get_string("xscreensaver-hack")
-   
+
     success = False
 
     for direc in directories:
@@ -48,14 +49,13 @@ def loadHack (plug, data):
             pass
 
     if not success:
+        syslog.syslog("cinnamon-screensaver: Screensaver '%s' not found" % hack)
         color = Gdk.RGBA()
         color.red = 0
         color.green = 0
         color.blue = 0
         color.alpha = 1
-
         label = Gtk.Label()
-        label.set_markup("<span size=\"x-large\" color=\"white\"> XScreensaver hack \"" + hack + "\" not found </span>")
         label.override_background_color(Gtk.StateFlags.NORMAL, color)
         label.show()
         plug.add(label)
