@@ -10,6 +10,8 @@ man_MANS = 				\
 dbussessionservicedir = $(DBUS_SESSION_SERVICE_DIR)
 dbussessionservice_DATA = org.cinnamon.ScreenSaver.service
 
+SUBDIRS = screensavers
+
 EXTRA_DIST = 				\
 	$(man_MANS)			\
 	cinnamon-screensaver		\
