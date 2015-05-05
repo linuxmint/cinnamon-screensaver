@@ -178,7 +178,13 @@ do_user_switch (GSLockPlug *plug)
                                            MDM_FLEXISERVER_ARGS);
 
                 error = NULL;
+#if GTK_CHECK_VERSION(3, 0, 0)
+        GdkDisplay *display = gdk_display_get_default ();
+        context = (GAppLaunchContext*)gdk_display_get_app_launch_context (display);
+#else
                 context = (GAppLaunchContext*)gdk_app_launch_context_new ();
+#endif
+
                 app = g_app_info_create_from_commandline (command, MDM_FLEXISERVER_COMMAND, 0, &error);
                 if (app)
                         g_app_info_launch (app, NULL, context, &error);
@@ -197,7 +203,12 @@ do_user_switch (GSLockPlug *plug)
                                            GDM_FLEXISERVER_ARGS);
 
                 error = NULL;
+#if GTK_CHECK_VERSION(3, 0, 0)
+        GdkDisplay *display = gdk_display_get_default ();
+        context = (GAppLaunchContext*)gdk_display_get_app_launch_context (display);
+#else
                 context = (GAppLaunchContext*)gdk_app_launch_context_new ();
+#endif
                 app = g_app_info_create_from_commandline (command, GDM_FLEXISERVER_COMMAND, 0, &error);
                 if (app)
                         g_app_info_launch (app, NULL, context, &error);
@@ -1298,7 +1309,7 @@ gs_lock_plug_set_busy (GSLockPlug *plug)
 
         cursor = gdk_cursor_new (GDK_WATCH);
         gdk_window_set_cursor (gtk_widget_get_window (top_level), cursor);
-        gdk_cursor_unref (cursor);
+        g_object_unref (cursor);
 }
 
 void
@@ -1311,7 +1322,7 @@ gs_lock_plug_set_ready (GSLockPlug *plug)
 
         cursor = gdk_cursor_new (GDK_LEFT_PTR);
         gdk_window_set_cursor (gtk_widget_get_window (top_level), cursor);
-        gdk_cursor_unref (cursor);
+        g_object_unref (cursor);
 }
 
 void
