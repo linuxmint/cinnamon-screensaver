@@ -101,7 +101,7 @@ AC_SUBST(CINNAMON_SCREENSAVER_SAVER_LIBS)
 
 # Find out the version of DBUS we're using
 
-dbus_version=`pkg-config --modversion dbus-1`
+dbus_version=`$PKG_CONFIG --modversion dbus-1`
 DBUS_VERSION_MAJOR=`echo $dbus_version | awk -F. '{print $1}'`
 DBUS_VERSION_MINOR=`echo $dbus_version | awk -F. '{print $2}'`
 DBUS_VERSION_MICRO=`echo $dbus_version | awk -F. '{print $3}'`
@@ -135,7 +135,7 @@ fi
 
 # Find out where the session service file goes
 # The sad sed hack is recomended by section 27.10 of the automake manual.
-DBUS_SESSION_SERVICE_DIR=`pkg-config --variable session_bus_services_dir dbus-1 | sed -e 's,/usr/share,${datarootdir},g'`
+DBUS_SESSION_SERVICE_DIR=`$PKG_CONFIG --variable session_bus_services_dir dbus-1 | sed -e 's,/usr/share,${datarootdir},g'`
 AC_SUBST(DBUS_SESSION_SERVICE_DIR)
 
 dnl ---------------------------------------------------------------------------
