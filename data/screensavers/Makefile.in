@@ -8,7 +8,7 @@ clean:
 distclean:
 
 install:
-	mkdir -p $(DISTDIR)$(pkgdatadir)/screensavers/; \
+	mkdir -p $(DESTDIR)$(pkgdatadir)/screensavers/; \
 	find -mindepth 1 -maxdepth 1 -type d -exec cp -R {} $(DESTDIR)$(pkgdatadir)/screensavers/ \;
 
 uninstall:
