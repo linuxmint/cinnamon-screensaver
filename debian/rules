@@ -8,8 +8,7 @@ include /usr/share/gnome-pkg-tools/1/rules/uploaders.mk
 include /usr/share/gnome-pkg-tools/1/rules/gnome-get-source.mk
 
 DEB_CONFIGURE_EXTRA_FLAGS += \
-			--enable-locking \
-			--without-systemd
+			--enable-locking
 
 LDFLAGS += -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 

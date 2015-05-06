@@ -28,12 +28,13 @@
 #include <unistd.h>
 
 #include <glib/gi18n.h>
+#include <gio/gio.h>
 
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
-#ifdef WITH_SYSTEMD
+#ifdef HAVE_LOGIND
 #include <systemd/sd-login.h>
 #endif
 
@@ -76,10 +77,7 @@ struct GSListenerPrivate
         time_t          active_start;
         time_t          session_idle_start;
         char           *session_id;
-
-#ifdef WITH_SYSTEMD
-        gboolean        have_systemd;
-#endif
+        gboolean        use_logind;
 };
 
 enum {
@@ -796,7 +794,6 @@ _listener_message_path_is_our_session (GSListener  *listener,
         return FALSE;
 }
 
-#ifdef WITH_SYSTEMD
 static gboolean
 properties_changed_match (DBusMessage *message,
                           const char  *property)
@@ -864,7 +861,6 @@ failure:
         gs_debug ("Failed to decode PropertiesChanged message.");
         return FALSE;
 }
-#endif
 
 static DBusHandlerResult
 listener_dbus_handle_system_message (DBusConnection *connection,
@@ -885,99 +881,88 @@ listener_dbus_handle_system_message (DBusConnection *connection,
                   dbus_message_get_destination (message));
 #endif
 
-#ifdef WITH_SYSTEMD
-
-        if (listener->priv->have_systemd) {
-
-                if (dbus_message_is_signal (message, SYSTEMD_LOGIND_SESSION_INTERFACE, "Unlock")) {
+        if (listener->priv->use_logind) {
+                // Use logind
+                if (dbus_message_is_signal (message, LOGIND_SESSION_INTERFACE, "Unlock")) {
                         if (_listener_message_path_is_our_session (listener, message)) {
-                                gs_debug ("systemd requested session unlock");
+                                gs_debug ("logind requested session unlock");
                                 gs_listener_set_active (listener, FALSE);
                         }
-
                         return DBUS_HANDLER_RESULT_HANDLED;
-                } else if (dbus_message_is_signal (message, SYSTEMD_LOGIND_SESSION_INTERFACE, "Lock")) {
+                } else if (dbus_message_is_signal (message, LOGIND_SESSION_INTERFACE, "Lock")) {
                         if (_listener_message_path_is_our_session (listener, message)) {
-                                gs_debug ("systemd requested session lock");
+                                gs_debug ("logind requested session lock");
                                 g_signal_emit (listener, signals [LOCK], 0, "");
                         }
-
                         return DBUS_HANDLER_RESULT_HANDLED;
-                } else if (dbus_message_is_signal (message, DBUS_INTERFACE_PROPERTIES, "PropertiesChanged")) {
-
+                }
+#ifdef HAVE_LOGIND
+                // @TODO: Replace sd_session_is_active() with a DBUS query. This is the only call requiring a dependency on libsystem-logind
+                else if (dbus_message_is_signal (message, DBUS_INTERFACE_PROPERTIES, "PropertiesChanged")) {
                         if (_listener_message_path_is_our_session (listener, message)) {
-
                                 if (properties_changed_match (message, "Active")) {
                                         gboolean new_active;
-
-                                        /* Instead of going via the
-                                         * bus to read the new
-                                         * property state, let's
-                                         * shortcut this and ask
-                                         * directly the low-level
-                                         * information */
+                                        /* Instead of going via the bus to read the new property state, let's
+                                         * shortcut this and ask directly the low-level information */
 
                                         new_active = sd_session_is_active (listener->priv->session_id) != 0;
                                         if (new_active)
                                                 g_signal_emit (listener, signals [SIMULATE_USER_ACTIVITY], 0);
                                 }
                         }
-
                         return DBUS_HANDLER_RESULT_HANDLED;
                 }
-
-                return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-        }
 #endif
+        }
+        else {
+                // Use consolekit
+                if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Unlock")) {
+                        if (_listener_message_path_is_our_session (listener, message)) {
+                                gs_debug ("Console kit requested session unlock");
+                                gs_listener_set_active (listener, FALSE);
+                        }
 
-#ifdef WITH_CONSOLE_KIT
-        if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Unlock")) {
-                if (_listener_message_path_is_our_session (listener, message)) {
-                        gs_debug ("Console kit requested session unlock");
-                        gs_listener_set_active (listener, FALSE);
-                }
+                        return DBUS_HANDLER_RESULT_HANDLED;
+                } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Lock")) {
+                        if (_listener_message_path_is_our_session (listener, message)) {
+                                gs_debug ("ConsoleKit requested session lock");
+                                g_signal_emit (listener, signals [LOCK], 0, "");
+                        }
 
-                return DBUS_HANDLER_RESULT_HANDLED;
-        } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "Lock")) {
-                if (_listener_message_path_is_our_session (listener, message)) {
-                        gs_debug ("ConsoleKit requested session lock");
-                        g_signal_emit (listener, signals [LOCK], 0, "");
-                }
+                        return DBUS_HANDLER_RESULT_HANDLED;
+                } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "ActiveChanged")) {
+                        /* NB that `ActiveChanged' refers to the active
+                         * session in ConsoleKit terminology - ie which
+                         * session is currently displayed on the screen.
+                         * cinnamon-screensaver uses `active' to mean `is the
+                         * screensaver active' (ie, is the screen locked) but
+                         * that's not what we're referring to here.
+                         */
 
-                return DBUS_HANDLER_RESULT_HANDLED;
-        } else if (dbus_message_is_signal (message, CK_SESSION_INTERFACE, "ActiveChanged")) {
-                /* NB that `ActiveChanged' refers to the active
-                 * session in ConsoleKit terminology - ie which
-                 * session is currently displayed on the screen.
-                 * cinnamon-screensaver uses `active' to mean `is the
-                 * screensaver active' (ie, is the screen locked) but
-                 * that's not what we're referring to here.
-                 */
+                        if (_listener_message_path_is_our_session (listener, message)) {
+                                DBusError   error;
+                                dbus_bool_t new_active;
 
-                if (_listener_message_path_is_our_session (listener, message)) {
-                        DBusError   error;
-                        dbus_bool_t new_active;
+                                dbus_error_init (&error);
+                                if (dbus_message_get_args (message, &error,
+                                                           DBUS_TYPE_BOOLEAN, &new_active,
+                                                           DBUS_TYPE_INVALID)) {
+                                        gs_debug ("ConsoleKit notified ActiveChanged %d", new_active);
 
-                        dbus_error_init (&error);
-                        if (dbus_message_get_args (message, &error,
-                                                   DBUS_TYPE_BOOLEAN, &new_active,
-                                                   DBUS_TYPE_INVALID)) {
-                                gs_debug ("ConsoleKit notified ActiveChanged %d", new_active);
+                                        /* when we become active poke the lock */
+                                        if (new_active) {
+                                                g_signal_emit (listener, signals [SIMULATE_USER_ACTIVITY], 0);
+                                        }
+                                }
 
-                                /* when we become active poke the lock */
-                                if (new_active) {
-                                        g_signal_emit (listener, signals [SIMULATE_USER_ACTIVITY], 0);
+                                if (dbus_error_is_set (&error)) {
+                                        dbus_error_free (&error);
                                 }
                         }
 
-                        if (dbus_error_is_set (&error)) {
-                                dbus_error_free (&error);
-                        }
+                        return DBUS_HANDLER_RESULT_HANDLED;
                 }
-
-                return DBUS_HANDLER_RESULT_HANDLED;
         }
-#endif
 
        return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
@@ -1383,48 +1368,48 @@ gs_listener_acquire (GSListener *listener,
                                             listener_dbus_system_filter_function,
                                             listener,
                                             NULL);
-#ifdef WITH_SYSTEMD
-                if (listener->priv->have_systemd) {
+
+                if (listener->priv->use_logind) {
+                        // Use logind
                         dbus_bus_add_match (listener->priv->system_connection,
                                             "type='signal'"
-                                            ",sender='"SYSTEMD_LOGIND_SERVICE"'"
-                                            ",interface='"SYSTEMD_LOGIND_SESSION_INTERFACE"'"
+                                            ",sender='"LOGIND_SERVICE"'"
+                                            ",interface='"LOGIND_SESSION_INTERFACE"'"
                                             ",member='Unlock'",
                                             NULL);
                         dbus_bus_add_match (listener->priv->system_connection,
                                             "type='signal'"
-                                            ",sender='"SYSTEMD_LOGIND_SERVICE"'"
-                                            ",interface='"SYSTEMD_LOGIND_SESSION_INTERFACE"'"
+                                            ",sender='"LOGIND_SERVICE"'"
+                                            ",interface='"LOGIND_SESSION_INTERFACE"'"
                                             ",member='Lock'",
                                             NULL);
                         dbus_bus_add_match (listener->priv->system_connection,
                                             "type='signal'"
-                                            ",sender='"SYSTEMD_LOGIND_SERVICE"'"
+                                            ",sender='"LOGIND_SERVICE"'"
                                             ",interface='"DBUS_INTERFACE_PROPERTIES"'"
                                             ",member='PropertiesChanged'",
                                             NULL);
 
                         return (res != -1);
                 }
-#endif
-
-#ifdef WITH_CONSOLE_KIT
-                dbus_bus_add_match (listener->priv->system_connection,
-                                    "type='signal'"
-                                    ",interface='"CK_SESSION_INTERFACE"'"
-                                    ",member='Unlock'",
-                                    NULL);
-                dbus_bus_add_match (listener->priv->system_connection,
-                                    "type='signal'"
-                                    ",interface='"CK_SESSION_INTERFACE"'"
-                                    ",member='Lock'",
-                                    NULL);
-                dbus_bus_add_match (listener->priv->system_connection,
-                                    "type='signal'"
-                                    ",interface='"CK_SESSION_INTERFACE"'"
-                                    ",member='ActiveChanged'",
-                                    NULL);
-#endif
+                else {
+                        // Use consolekit
+                        dbus_bus_add_match (listener->priv->system_connection,
+                                            "type='signal'"
+                                            ",interface='"CK_SESSION_INTERFACE"'"
+                                            ",member='Unlock'",
+                                            NULL);
+                        dbus_bus_add_match (listener->priv->system_connection,
+                                            "type='signal'"
+                                            ",interface='"CK_SESSION_INTERFACE"'"
+                                            ",member='Lock'",
+                                            NULL);
+                        dbus_bus_add_match (listener->priv->system_connection,
+                                            "type='signal'"
+                                            ",interface='"CK_SESSION_INTERFACE"'"
+                                            ",member='ActiveChanged'",
+                                            NULL);
+                }
         }
 
         return (res != -1);
@@ -1448,11 +1433,11 @@ query_session_id (GSListener *listener)
 
         dbus_error_init (&error);
 
-#ifdef WITH_SYSTEMD
-        if (listener->priv->have_systemd) {
+        if (listener->priv->use_logind) {
+                // Use logind
                 dbus_uint32_t pid = getpid();
 
-                message = dbus_message_new_method_call (SYSTEMD_LOGIND_SERVICE, SYSTEMD_LOGIND_PATH, SYSTEMD_LOGIND_INTERFACE, "GetSessionByPID");
+                message = dbus_message_new_method_call (LOGIND_SERVICE, LOGIND_PATH, LOGIND_INTERFACE, "GetSessionByPID");
                 if (message == NULL) {
                         gs_debug ("Couldn't allocate the dbus message");
                         return NULL;
@@ -1464,9 +1449,7 @@ query_session_id (GSListener *listener)
                 }
 
                 /* FIXME: use async? */
-                reply = dbus_connection_send_with_reply_and_block (listener->priv->system_connection,
-                                                                   message,
-                                                                   -1, &error);
+                reply = dbus_connection_send_with_reply_and_block (listener->priv->system_connection, message, -1, &error);
                 dbus_message_unref (message);
 
                 if (dbus_error_is_set (&error)) {
@@ -1482,36 +1465,31 @@ query_session_id (GSListener *listener)
 
                 return g_strdup (ssid);
         }
-#endif
+        else {
+            // Use consolekit
+            message = dbus_message_new_method_call (CK_SERVICE, CK_MANAGER_PATH, CK_MANAGER_INTERFACE, "GetCurrentSession");
+            if (message == NULL) {
+                    gs_debug ("Couldn't allocate the dbus message");
+                    return NULL;
+            }
 
-#ifdef WITH_CONSOLE_KIT
-        message = dbus_message_new_method_call (CK_SERVICE, CK_MANAGER_PATH, CK_MANAGER_INTERFACE, "GetCurrentSession");
-        if (message == NULL) {
-                gs_debug ("Couldn't allocate the dbus message");
-                return NULL;
+            /* FIXME: use async? */
+            reply = dbus_connection_send_with_reply_and_block (listener->priv->system_connection, message, -1, &error);
+            dbus_message_unref (message);
+
+            if (dbus_error_is_set (&error)) {
+                    gs_debug ("%s raised:\n %s\n\n", error.name, error.message);
+                    dbus_error_free (&error);
+                    return NULL;
+            }
+
+            dbus_message_iter_init (reply, &reply_iter);
+            dbus_message_iter_get_basic (&reply_iter, &ssid);
+
+            dbus_message_unref (reply);
+
+            return g_strdup (ssid);
         }
-
-        /* FIXME: use async? */
-        reply = dbus_connection_send_with_reply_and_block (listener->priv->system_connection,
-                                                           message,
-                                                           -1, &error);
-        dbus_message_unref (message);
-
-        if (dbus_error_is_set (&error)) {
-                gs_debug ("%s raised:\n %s\n\n", error.name, error.message);
-                dbus_error_free (&error);
-                return NULL;
-        }
-
-        dbus_message_iter_init (reply, &reply_iter);
-        dbus_message_iter_get_basic (&reply_iter, &ssid);
-
-        dbus_message_unref (reply);
-
-        return g_strdup (ssid);
-#else
-        return NULL;
-#endif
 }
 
 static void
@@ -1527,10 +1505,9 @@ gs_listener_init (GSListener *listener)
 {
         listener->priv = GS_LISTENER_GET_PRIVATE (listener);
 
-#ifdef WITH_SYSTEMD
-        /* check if logind is running */
-        listener->priv->have_systemd = (access("/run/systemd/seats/", F_OK) >= 0);
-#endif
+        GSettings *session_settings = g_settings_new ("org.cinnamon.desktop.session");
+        listener->priv->use_logind = g_settings_get_boolean (session_settings, "use-systemd");
+        g_object_unref (session_settings);
 
         gs_listener_dbus_init (listener);
 

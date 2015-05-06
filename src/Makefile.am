@@ -28,7 +28,7 @@ INCLUDES =							\
 	$(DBUS_CFLAGS)						\
 	$(LIBGNOMEKBDUI_CFLAGS)					\
 	$(LIBNOTIFY_CFLAGS)					\
-	$(SYSTEMD_CFLAGS)					\
+	$(LOGIND_CFLAGS)					\
 	$(NULL)
 
 bin_PROGRAMS = \
@@ -196,7 +196,7 @@ cinnamon_screensaver_SOURCES =	\
 cinnamon_screensaver_LDADD =		\
 	$(CINNAMON_SCREENSAVER_LIBS)	\
 	$(SAVER_LIBS)			\
-	$(SYSTEMD_LIBS)                 \
+	$(LOGIND_LIBS)                 \
 	$(NULL)
 
 cinnamon_screensaver_LDFLAGS = -export-dynamic
