@@ -578,54 +578,17 @@ if test "x$have_pam" = "xyes"; then
 fi
 
 dnl ---------------------------------------------------------------------------
-dnl ConsoleKit
+dnl logind support
 dnl ---------------------------------------------------------------------------
 
-AC_ARG_WITH(console-kit,
-            AS_HELP_STRING([--with-console-kit],
-                           [Add ConsoleKit support]),,
-            with_console_kit=auto)
+PKG_CHECK_MODULES(LOGIND, [libsystemd-login], [have_logind=yes], [have_logind=no])
 
-use_console_kit=no
-if test "x$with_console_kit" != "xno" ; then
-        use_console_kit=yes
-        AC_DEFINE(WITH_CONSOLE_KIT, 1, [ConsoleKit support])
-fi
-AM_CONDITIONAL(WITH_CONSOLE_KIT, test x$use_console_kit = xyes)
-AC_SUBST(WITH_CONSOLE_KIT)
-
-dnl ---------------------------------------------------------------------------
-dnl systemd
-dnl ---------------------------------------------------------------------------
-
-AC_ARG_WITH(systemd,
-            AS_HELP_STRING([--with-systemd],
-                           [Add systemd support]),
-            [with_systemd=$withval], [with_systemd=auto])
-
-PKG_CHECK_MODULES(SYSTEMD,
-                  [libsystemd-login],
-                  [have_systemd=yes], [have_systemd=no])
-
-if test "x$with_systemd" = "xauto" ; then
-        if test x$have_systemd = xno ; then
-                use_systemd=no
-        else
-                use_systemd=yes
-        fi
-else
-	use_systemd=$with_systemd
+if test x$have_logind = xyes ; then
+        AC_DEFINE(HAVE_LOGIND, 1, [logind support])
 fi
 
-if test "x$use_systemd" = "xyes"; then
-        if test "x$have_systemd" = "xno"; then
-                AC_MSG_ERROR([Systemd support explicitly required, but systemd not found])
-        fi
-
-        AC_DEFINE(WITH_SYSTEMD, 1, [systemd support])
-fi
-AC_SUBST(SYSTEMD_CFLAGS)
-AC_SUBST(SYSTEMD_LIBS)
+AC_SUBST(LOGIND_CFLAGS)
+AC_SUBST(LOGIND_LIBS)
 
 dnl ---------------------------------------------------------------------------
 dnl libgnomekbd
@@ -792,8 +755,7 @@ echo "
         Screen locking enabled:   ${enable_locking}
         Show keyboard indicator:  ${with_kbd_layout_indicator}
 
-        systemd:                  ${use_systemd}
-        ConsoleKit:               ${use_console_kit}
+        logind supported:         ${have_logind}
 "
 
 if test "x$have_pam" = "xyes" ; then
