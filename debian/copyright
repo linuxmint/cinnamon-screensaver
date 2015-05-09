@@ -1,105 +1,86 @@
-This package was debianized by Guilherme de S. Pastore <guilherme.pastore@terra.com.br> on
-Sat,  9 Jul 2005 18:16:18 -0300.
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: cinnamon-screensaver
+Upstream-Contact: Linux Mint Project <root@linuxmint.com>
+Source: https://github.com/linuxmint/cinnamon-screensaver.git
 
-It was downloaded from http://ftp.gnome.org/pub/GNOME/sources/cinnamon-screensaver
+Files: *
+Copyright: 2003, Bill Nottingham <notting@redhat.com>
+           1989-1991, Free Software Foundation, Inc
+           1991-2004, Jamie Zawinski <jwz@jwz.org>
+           2005-2006, Ray Strode <rstrode@redhat.com>
+           2008-2011, Red Hat, Inc
+           2010, Saleem Abdulrasool <compnerd@compnerd.org>
+           2004-2009, William Jon McCann <mccann@jhu.edu>
+License: GPL-2+
 
-Upstream Author: William Jon McCann <mccann@jhu.edu>
+Files: COPYING.LIB
+       src/gnome-datetime-source.c
+       src/gnome-datetime-source.h
+       src/gnome-wall-clock.c
+       src/gnome-wall-clock.h
+Copyright: 2008,2010,2011, Red Hat, Inc
+License: LGPL-2+
 
-xscreensaver
-      Copyright (C) 1991-2004 Jamie Zawinski <jwz@jwz.org>
+Files: src/setuid.c
+       src/setuid.h
+       src/subprocs.c
+       src/subprocs.h
+Copyright: 1993-2004 Jamie Zawinski <jwz@jwz.org>
+           2004 William Jon McCann <mccann@jhu.edu>
+License: MIT/X11
+ Permission to use, copy, modify, distribute, and sell this software and its
+ documentation for any purpose is hereby granted without fee, provided that
+ the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation.  No representations are made about the suitability of this
+ software for any purpose.  It is provided "as is" without express or
+ implied warranty.
 
-      Permission to use, copy, modify, distribute, and sell this software and its
-      documentation for any purpose is hereby granted without fee, provided that
-      the above copyright notice appear in all copies and that both that
-      copyright notice and this permission notice appear in supporting
-      documentation.  No representations are made about the suitability of this
-      software for any purpose.  It is provided "as is" without express or
-      implied warranty.
+Files: po/Makefile.in.in
+Copyright: 2004-2008, Rodney Dawes <dobey.pwns@gmail.com>
+           1995-1997, Ulrich Drepper <drepper@gnu.ai.mit.edu>
+License: Permissive
+ This file may be copied and used freely without restrictions.  It may
+ be used in projects which are not available under a GNU Public License,
+ but which still want to provide support for the GNU gettext functionality.
 
+Files: debian/*
+Copyright: 2014, Maximiliano Curia <maxy@debian.org>
+License: LGPL-2+
 
-Cinnamon Screensaver
-      Copyright (C) 2004-2008 William Jon McCann <mccann@jhu.edu>
+License: GPL-2+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2 of the
+ License, or (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street - Suite 500, Boston, MA
+ 02110-1335, USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in `/usr/share/common-licenses/GPL-2'.
 
-      This program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2 of the License, or
-      (at your option) any later version.
-
-Floater saver
-      Copyright (C) 2005 Ray Strode <rstrode@redhat.com>,
-      Copyright (C) 2005 Matthias Clasen <mclasen@redhat.com>,
-      Copyright (C) 2005 Søren Sandmann <sandmann@redhat.com>
-
-      This program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2 of the License, or
-      (at your option) any later version.
-
-Cinnamon Screensaver Theme Window
-      Copyright (C) 2005 Ray Strode <rstrode@redhat.com>
-
-      This program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2 of the License, or
-      (at your option) any later version.
-
-The translations into Dutch, Finnish, French, Japanese, Lithuanian, Brazilian
-Portuguese, Slovak, Swedish, Thai, Ukrainian and traditional Chinese are
-copyrighted by the Free Software Foundation, Inc.
-
-The Vietnamese translation is copyrighted by the GNOME i18n Project for
-Vietnamese.
-
-The Hungarian translation is copyrighted by Canonical Ltd. and Rosetta
-Contributors 2005.
-
-They are all licensed under the GNU General Public License as published by the
-Free Software Foundation, either version 2 or any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-
-On Debian Systems, the full text of the license can be found on
-/usr/share/common-licenses/GPL-2
-
-Some files are licensed under the following terms:
-
-   This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2, or (at your option) any later version.
-
-   This program is distributed in the hope that it will be
-   useful, but WITHOUT ANY WARRANTY; without even the implied
-   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-   PURPOSE.  See the GNU Lesser General Public License for more
-   details.
-
-On Debian Systems, the full text of the license can be found on
-/usr/share/common-licenses/LGPL-2
-
-
-savers/xdg-user-dir-lookup.[ch] are licensed under the following terms:
-
-  Copyright (c) 2007 Red Hat, inc
-
-  Permission is hereby granted, free of charge, to any person
-  obtaining a copy of this software and associated documentation files
-  (the "Software"), to deal in the Software without restriction,
-  including without limitation the rights to use, copy, modify, merge,
-  publish, distribute, sublicense, and/or sell copies of the Software,
-  and to permit persons to whom the Software is furnished to do so,
-  subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be
-  included in all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
+License: LGPL-2+
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU Library General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU Library General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU Library General Public License
+ along with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street - Suite 500, Boston, MA 02110-1335, USA.
+ .
+ On Debian systems, the complete text of the GNU Library General Public License
+ version 2 can be found in `/usr/share/common-licenses/LGPL-2'.
