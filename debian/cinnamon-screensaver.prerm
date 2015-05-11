@@ -12,4 +12,6 @@ if [ -L /usr/bin/gnome-screensaver-command ]; then
   rm -f /usr/bin/gnome-screensaver-command
 fi
 
+#DEBHELPER#
+
 exit 0

@@ -12,4 +12,6 @@ if [ ! -e /usr/bin/gnome-screensaver-command ]; then
   ln -s /usr/bin/cinnamon-screensaver-command /usr/bin/gnome-screensaver-command
 fi
 
+#DEBHELPER#
+
 exit 0
