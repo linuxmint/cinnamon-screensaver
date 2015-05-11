@@ -265,7 +265,6 @@ pam_conversation (int                        nmsgs,
                 return PAM_CONV_ERR;
         }
 
-        res = TRUE;
         ret = PAM_SUCCESS;
 
         for (replies = 0; replies < nmsgs && ret == PAM_SUCCESS; replies++) {
@@ -387,9 +386,7 @@ create_pam_handle (const char      *username,
 
 	/* init things */
 	pam_handle = NULL;
-        status = -1;
         disp = NULL;
-        ret = TRUE;
 
 	/* Initialize a PAM session for the user */
 	if ((status = pam_start (service, username, conv, &pam_handle)) != PAM_SUCCESS) {
@@ -652,7 +649,6 @@ gs_auth_pam_verify_user (pam_handle_t *handle,
  out:
         if (watch_id != 0) {
                 g_source_remove (watch_id);
-                watch_id = 0;
         }
 
         if (channel != NULL) {
