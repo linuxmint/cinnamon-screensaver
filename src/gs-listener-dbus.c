@@ -1506,7 +1506,7 @@ gs_listener_init (GSListener *listener)
         listener->priv = GS_LISTENER_GET_PRIVATE (listener);
 
         GSettings *session_settings = g_settings_new ("org.cinnamon.desktop.session");
-        listener->priv->use_logind = g_settings_get_boolean (session_settings, "use-systemd");
+        listener->priv->use_logind = g_settings_get_boolean (session_settings, "screensaver-uses-logind");
         g_object_unref (session_settings);
 
         gs_listener_dbus_init (listener);
