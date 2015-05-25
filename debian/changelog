@@ -1,3 +1,9 @@
+cinnamon-screensaver (2.6.1) rafaela; urgency=medium
+
+  * Replaced "use-systemd" with "screensaver-uses-logind" gsettings key
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 25 May 2015 10:35:11 +0200
+
 cinnamon-screensaver (2.6.0) rafaela; urgency=medium
 
   * 2.6.0
