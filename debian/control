@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9),
                dh-python,
                gnome-common,
                gnome-pkg-tools (>= 0.10),
-               libcinnamon-desktop-dev (>= 2.5.0),
+               libcinnamon-desktop-dev (>= 2.6.3),
                libdbus-glib-1-dev (>= 0.78),
                libglib2.0-dev (>= 2.37.3),
                libgnomekbd-dev (>= 3.6.0),
@@ -28,7 +28,7 @@ Standards-Version: 3.9.6
 Package: cinnamon-screensaver
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
-Depends: cinnamon-desktop-data (>= 2.5.0),
+Depends: cinnamon-desktop-data (>= 2.6.3),
          dbus-x11,
          gir1.2-webkit2-3.0,
          gnome-icon-theme (>= 2.15.90),
