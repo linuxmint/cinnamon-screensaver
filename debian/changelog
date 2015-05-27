@@ -1,3 +1,10 @@
+cinnamon-screensaver (2.6.2) rafaela; urgency=medium
+
+  [ leigh123linux ]
+  * bump version to account for cinnamon-desktop systemd schema change
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 27 May 2015 10:01:57 +0200
+
 cinnamon-screensaver (2.6.1) rafaela; urgency=medium
 
   * Replaced "use-systemd" with "screensaver-uses-logind" gsettings key
