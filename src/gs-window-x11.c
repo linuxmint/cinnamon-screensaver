@@ -53,7 +53,7 @@ static void remove_command_watches (GSWindow *window);
 
 static void gs_window_show_screensaver (GSWindow *window);
 static void gs_window_hide_screensaver (GSWindow *window);
-static void gs_window_kill_screensaver (GSWindow *window);
+static void screensaver_command_finish (GSWindow *window);
 
 static gboolean spawn_on_window (GSWindow *window, char *command, int *pid, GIOFunc watch_func, gpointer user_data, gint *watch_id);
 
@@ -642,7 +642,26 @@ create_screensaver_socket (GSWindow *window,
   gtk_socket_add_id (GTK_SOCKET (window->priv->screensaver), id);
   gs_window_show_screensaver (window);
 }
-                           
+
+/* adapted from gspawn.c */
+static int
+wait_on_child (int pid)
+{
+        int status;
+
+ wait_again:
+        if (waitpid (pid, &status, 0) < 0) {
+                if (errno == EINTR) {
+                        goto wait_again;
+                } else if (errno == ECHILD) {
+                        ; /* do nothing, child already reaped */
+                } else {
+                        gs_debug ("waitpid () should not fail in 'GSWindow'");
+                }
+        }
+
+        return status;
+}
 
 static gboolean
 screensaver_command_watch (GIOChannel   *source,
@@ -690,13 +709,13 @@ screensaver_command_watch (GIOChannel   *source,
 
   if (finished) {
     window->priv->screensaver_watch_id = 0;
-    gs_window_kill_screensaver (window);
+    screensaver_command_finish (window);
+
     return FALSE;
   }
 
   return TRUE;
 }
-
 
 static void
 gs_window_real_show (GtkWidget *widget)
@@ -1138,25 +1157,6 @@ create_keyboard_socket (GSWindow *window,
         gtk_socket_add_id (GTK_SOCKET (window->priv->keyboard_socket), id);
 }
 
-/* adapted from gspawn.c */
-static int
-wait_on_child (int pid)
-{
-        int status;
-
- wait_again:
-        if (waitpid (pid, &status, 0) < 0) {
-                if (errno == EINTR) {
-                        goto wait_again;
-                } else if (errno == ECHILD) {
-                        ; /* do nothing, child already reaped */
-                } else {
-                        gs_debug ("waitpid () should not fail in 'GSWindow'");
-                }
-        }
-
-        return status;
-}
 
 static void
 kill_keyboard_command (GSWindow *window)
@@ -1189,20 +1189,36 @@ gs_window_hide_screensaver (GSWindow *window) {
 }
 
 static void
-gs_window_kill_screensaver (GSWindow *window)
+kill_screensaver_command (GSWindow *window)
 {
+  if (window->priv->screensaver_pid > 0) {
+    signal_pid (window->priv->screensaver_pid, SIGTERM);
+  }
+}
+
+static void
+screensaver_command_finish (GSWindow *window)
+{
+  g_return_if_fail (GS_IS_WINDOW (window));
+
+  gs_debug ("Screensaver finished");
+
   gs_window_hide_screensaver (window);
+
   if (window->priv->screensaver) {
     gtk_widget_destroy (window->priv->screensaver);
     window->priv->screensaver = NULL;
   }
+
+  kill_screensaver_command (window);
+
   if (window->priv->screensaver_pid > 0) {
     window->priv->screensaver_watch_id = 0;
-    signal_pid (window->priv->screensaver_pid, SIGTERM);
-    wait_on_child (window->priv->lock_pid);
 
-    g_spawn_close_pid (window->priv->lock_pid);
-    window->priv->lock_pid = 0;
+    wait_on_child (window->priv->screensaver_pid);
+    g_spawn_close_pid (window->priv->screensaver_pid);
+
+    window->priv->screensaver_pid = 0;
   }
 }
 
@@ -1340,7 +1356,7 @@ gs_window_dialog_finish (GSWindow *window)
 
         gs_debug ("Dialog finished");
 
-        /* make sure we finish the keyboard thing too */
+        /* make sure we finish the keyboard and screensaver thing too */
         keyboard_command_finish (window);
 
         /* send a signal just in case */
@@ -1512,7 +1528,7 @@ lock_command_watch (GIOChannel   *source,
                 popdown_dialog (window);
 
                 if (window->priv->dialog_response == DIALOG_RESPONSE_OK) {  
-                        gs_window_kill_screensaver (window);
+                        kill_screensaver_command (window);
                         add_emit_deactivated_idle (window);
                 }
 
@@ -1523,7 +1539,6 @@ lock_command_watch (GIOChannel   *source,
 
         return TRUE;
 }
-
 
 static gboolean
 is_logout_enabled (GSWindow *window)
@@ -2562,6 +2577,7 @@ gs_window_finalize (GObject *object)
 
         remove_command_watches (window);
 
+        screensaver_command_finish (window);
         gs_window_dialog_finish (window);
 
         if (window->priv->background_surface) {
