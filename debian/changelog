@@ -1,3 +1,13 @@
+cinnamon-screensaver (2.6.3) rafaela; urgency=medium
+
+  [ Dexter Chua ]
+  * Fix zombie screensavers
+
+  [ Clement Lefebvre ]
+  * Removed Tower of Hanoi Webkit screensaver (takes too much CPU to be part of the default selection)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 02 Jun 2015 11:15:53 +0200
+
 cinnamon-screensaver (2.6.2) rafaela; urgency=medium
 
   [ leigh123linux ]
