@@ -215,6 +215,19 @@ listener_lock_cb (GSListener *listener,
 }
 
 static void
+listener_config_lock_cb (GSListener *listener,
+                         GSMonitor  *monitor)
+{
+        if (! monitor->priv->prefs->lock_disabled) {
+		gs_debug ("Locking the screen suspend");
+		gs_monitor_lock_screen (monitor);
+        } else {
+                gs_debug ("Locking disabled by the administrator");
+        }
+
+}
+
+static void
 listener_quit_cb (GSListener *listener,
                   GSMonitor  *monitor)
 {
@@ -322,6 +335,7 @@ static void
 disconnect_listener_signals (GSMonitor *monitor)
 {
         g_signal_handlers_disconnect_by_func (monitor->priv->listener, listener_lock_cb, monitor);
+        g_signal_handlers_disconnect_by_func (monitor->priv->listener, listener_config_lock_cb, monitor);
         g_signal_handlers_disconnect_by_func (monitor->priv->listener, listener_quit_cb, monitor);
         g_signal_handlers_disconnect_by_func (monitor->priv->listener, listener_active_changed_cb, monitor);
         g_signal_handlers_disconnect_by_func (monitor->priv->listener, listener_simulate_user_activity_cb, monitor);
@@ -333,6 +347,8 @@ connect_listener_signals (GSMonitor *monitor)
 {
         g_signal_connect (monitor->priv->listener, "lock",
                           G_CALLBACK (listener_lock_cb), monitor);
+        g_signal_connect (monitor->priv->listener, "config-lock",
+                          G_CALLBACK (listener_config_lock_cb), monitor);
         g_signal_connect (monitor->priv->listener, "quit",
                           G_CALLBACK (listener_quit_cb), monitor);
         g_signal_connect (monitor->priv->listener, "active-changed",
