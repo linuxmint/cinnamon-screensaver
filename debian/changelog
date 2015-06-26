@@ -1,3 +1,10 @@
+cinnamon-screensaver (2.6.4) rafaela; urgency=medium
+
+  [ Joseph C Wang ]
+  * fix segfault due to wrong object being destroyed
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 26 Jun 2015 14:15:15 +0200
+
 cinnamon-screensaver (2.6.3) rafaela; urgency=medium
 
   [ Dexter Chua ]
