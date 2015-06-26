@@ -554,7 +554,7 @@ gs_lock_plug_run (GSLockPlug *plug)
                 g_signal_handler_disconnect (plug, unmap_handler);
                 g_signal_handler_disconnect (plug, delete_handler);
                 g_signal_handler_disconnect (plug, destroy_handler);
-                g_signal_handler_disconnect (plug, keymap_handler);
+                g_signal_handler_disconnect (keymap, keymap_handler);
         }
 
         g_object_unref (plug);
