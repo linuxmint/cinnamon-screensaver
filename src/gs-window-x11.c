@@ -896,6 +896,8 @@ gs_window_destroy (GSWindow *window)
 
         gs_window_cancel_unlock_request (window);
 
+        screensaver_command_finish (window);
+
         gtk_widget_destroy (GTK_WIDGET (window));
 }
 
@@ -2577,7 +2579,6 @@ gs_window_finalize (GObject *object)
 
         remove_command_watches (window);
 
-        screensaver_command_finish (window);
         gs_window_dialog_finish (window);
 
         if (window->priv->background_surface) {
