@@ -1561,8 +1561,7 @@ create_page_one (GSLockPlug *plug)
 
         hbox_user = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
         gtk_box_pack_start (GTK_BOX (plug->priv->vbox), hbox_user, FALSE, FALSE, 0);
-        gtk_misc_set_alignment (GTK_MISC (hbox_user), 0.5, 0.5);
-                       
+
         plug->priv->auth_face_image = gtk_image_new ();
         gtk_box_pack_start (GTK_BOX (hbox_user), plug->priv->auth_face_image, TRUE, TRUE, 0);
         gtk_misc_set_alignment (GTK_MISC (plug->priv->auth_face_image), 1, 0.5);
