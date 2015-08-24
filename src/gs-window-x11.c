@@ -631,6 +631,14 @@ window_select_shape_events (GSWindow *window)
 #endif
 }
 
+static gboolean
+on_screensaver_plug_removed (GtkSocket *socket, GSWindow *window)
+{
+    gtk_widget_hide (GTK_WIDGET (socket));
+    window->priv->screensaver = NULL;
+    return FALSE;
+}
+
 static void
 create_screensaver_socket (GSWindow *window,
                            guint32   id)
@@ -639,6 +647,10 @@ create_screensaver_socket (GSWindow *window,
 
   gtk_stack_add_named (GTK_STACK (window->priv->stack), window->priv->screensaver, "screensaver");
   gtk_widget_show (window->priv->screensaver);
+
+  g_signal_connect (window->priv->screensaver, "plug-removed",
+                    G_CALLBACK (on_screensaver_plug_removed), window);
+
   gtk_socket_add_id (GTK_SOCKET (window->priv->screensaver), id);
   gs_window_show_screensaver (window);
 }
