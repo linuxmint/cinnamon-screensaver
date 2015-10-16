@@ -1,3 +1,16 @@
+cinnamon-screensaver (2.8.0) rosa; urgency=medium
+
+  [ JosephMcc ]
+  * cleanup: replace deprecated gdk_cursor_unref() with g_object_unref()
+  * cleanup an unused variable
+
+  [ Michael Webster ]
+  * gs-window-x11.c: Fix random crashing due to accessing invalid pointers when cleaning up the GSWindow instance.
+  * gs-window-x11.c: Fix trying to control the screensaver socket after the plug has been removed (race condition) - by default the socket is destroyed when this happens.
+  * gs-lock-plug.c: fix runtime warning
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 16 Oct 2015 16:06:16 +0100
+
 cinnamon-screensaver (2.6.4) rafaela; urgency=medium
 
   [ Joseph C Wang ]
