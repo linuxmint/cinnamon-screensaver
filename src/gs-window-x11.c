@@ -2372,6 +2372,11 @@ update_clock (GSWindow *window)
                                       window->priv->away_message, user_name);
             g_free (user_name);
         } else {
+            // Add steps to refresh local copy of default message from gsettings 
+            gchar *unesc = g_settings_get_string(window->priv->settings, "default-message");
+            window->priv->default_message = g_markup_escape_text (unesc, -1);
+            g_free (unesc);
+            
             markup = g_strdup_printf ("%s\n\n<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>",
                                       gnome_wall_clock_get_clock (window->priv->clock_tracker),
                                       window->priv->font_message,
