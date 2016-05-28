@@ -1527,7 +1527,7 @@ update_realname_label (GSLockPlug *plug)
         char *name;
         char *markup;
         name = get_user_display_name ();
-        markup = g_strdup_printf ("<span foreground=\"#3F3F3F\" font_desc=\"Ubuntu 14\"><b>%s</b></span>", name);
+        markup = g_strdup_printf ("<span font_desc=\"Ubuntu 14\"><b>%s</b></span>", name);
         gtk_label_set_markup (GTK_LABEL (plug->priv->auth_realname_label), markup);
         g_free (markup);
         g_free (name);
@@ -1541,7 +1541,7 @@ update_username_label (GSLockPlug *plug)
         char *markup;
         name = get_user_name ();
         hostname = get_host_name ();
-        markup = g_strdup_printf ("<span foreground=\"#3F3F3F\" font_desc=\"Ubuntu 10\"><i>%s @ %s</i></span>", name, hostname);
+        markup = g_strdup_printf ("<span font_desc=\"Ubuntu 10\"><i>%s @ %s</i></span>", name, hostname);
         gtk_label_set_markup (GTK_LABEL (plug->priv->auth_username_label), markup);
         g_free (markup);
         g_free (name);
