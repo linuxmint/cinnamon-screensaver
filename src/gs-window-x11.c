@@ -34,6 +34,7 @@
 
 #include "gnome-wall-clock.h"
 
+#include "gs-lock-socket.h"
 #include "gs-window.h"
 #include "gs-marshal.h"
 #include "subprocs.h"
@@ -1339,7 +1340,7 @@ static void
 create_lock_socket (GSWindow *window,
                     guint32   id)
 {
-        window->priv->lock_socket = gtk_socket_new ();
+        window->priv->lock_socket = gs_lock_socket_new ();
         window->priv->lock_box = gtk_alignment_new (0.5, 0.5, 0, 0);
         gtk_widget_show (window->priv->lock_box);
 

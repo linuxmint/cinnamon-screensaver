@@ -111,6 +111,8 @@ test_watcher_LDADD =			\
 
 test_window_SOURCES =			\
 	test-window.c			\
+    gs-lock-socket.c \
+    gs-lock-socket.h \
 	gs-window.h			\
 	gs-window-x11.c			\
 	gs-grab-x11.c			\
@@ -172,6 +174,8 @@ cinnamon_screensaver_SOURCES =	\
 	gs-watcher.h		\
 	gs-listener-dbus.c	\
 	gs-listener-dbus.h	\
+    gs-lock-socket.c \
+    gs-lock-socket.h \
 	gs-manager.c		\
 	gs-manager.h		\
 	gs-window-x11.c		\
