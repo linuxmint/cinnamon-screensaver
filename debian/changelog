@@ -1,3 +1,15 @@
+cinnamon-screensaver (3.0.1) sarah; urgency=medium
+
+  [ JosephMcc ]
+  * gs-lock-plug: Remove the hardcoded text colors
+
+  [ Michael Webster ]
+  * Fix unlock dialog display in hidpi.
+  * gs-window-x11.c: fix a couple compiler warnings, clean up.
+  * gs-lock-plug.c: look at AccountsService for user pic if .face is not found.  Simplify some of the code - pixbuf loaders have built-in file checking.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 30 May 2016 16:08:20 +0100
+
 cinnamon-screensaver (3.0.0) sarah; urgency=medium
 
   [ monsta ]
