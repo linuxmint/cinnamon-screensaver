@@ -829,7 +829,7 @@ get_pixbuf_of_user_icon (GSLockPlug *plug)
                                                                               g_get_user_name ()),
                                                                G_VARIANT_TYPE ("(o)"),
                                                                G_DBUS_CALL_FLAGS_NONE,
-                                                               -1,
+                                                               1,
                                                                NULL,
                                                                &error);
         if (error != NULL) {
@@ -852,7 +852,7 @@ get_pixbuf_of_user_icon (GSLockPlug *plug)
                                                                           "IconFile"),
                                                            G_VARIANT_TYPE ("(v)"),
                                                            G_DBUS_CALL_FLAGS_NONE,
-                                                           -1,
+                                                           1,
                                                            NULL,
                                                            &error);
         g_variant_unref (find_user_by_name_reply);
@@ -893,86 +893,29 @@ get_pixbuf_of_user_icon (GSLockPlug *plug)
         return pixbuf;
 }
 
-static gboolean
-check_user_file (const gchar *filename,
-                 uid_t        user,
-                 gssize       max_file_size,
-                 gboolean     relax_group,
-                 gboolean     relax_other)
-{
-        struct stat fileinfo;
-
-        if (max_file_size < 0) {
-                max_file_size = G_MAXSIZE;
-        }
-
-        /* Exists/Readable? */
-        if (g_stat (filename, &fileinfo) < 0) {
-                return FALSE;
-        }
-
-        /* Is a regular file */
-        if (G_UNLIKELY (!S_ISREG (fileinfo.st_mode))) {
-                return FALSE;
-        }
-
-        /* Owned by user? */
-        if (G_UNLIKELY (fileinfo.st_uid != user)) {
-                return FALSE;
-        }
-
-        /* Group not writable or relax_group? */
-        if (G_UNLIKELY ((fileinfo.st_mode & S_IWGRP) == S_IWGRP && !relax_group)) {
-                return FALSE;
-        }
-
-        /* Other not writable or relax_other? */
-        if (G_UNLIKELY ((fileinfo.st_mode & S_IWOTH) == S_IWOTH && !relax_other)) {
-                return FALSE;
-        }
-
-        /* Size is ok? */
-        if (G_UNLIKELY (fileinfo.st_size > max_file_size)) {
-                return FALSE;
-        }
-
-        return TRUE;
-}
-
-
-static gboolean
+static void
 set_face_image (GSLockPlug *plug)
 {
-        GdkPixbuf    *pixbuf;
-        const char *homedir;
+        GdkPixbuf *pixbuf = NULL;
         char *path;
-        int icon_size = 64;
-        gsize user_max_file = 65536;
-        uid_t uid;
-        
-        homedir = g_get_home_dir ();
-        uid = getuid ();
-        
-        path = g_build_filename (homedir, ".face", NULL);
-        
-        pixbuf = NULL;
-        if (check_user_file (path, uid, user_max_file, 0, 0)) {
-            pixbuf = gdk_pixbuf_new_from_file_at_size (path,
-                                                        icon_size,
-                                                        icon_size,
-                                                        NULL);
-        }
+
+        path = g_build_filename (g_get_home_dir (), ".face", NULL);
+
+        pixbuf = gdk_pixbuf_new_from_file_at_size (path, 64, 64, NULL);
+
         g_free (path);
 
-        if (pixbuf == NULL) {
-                return FALSE;
-        }
+        if (pixbuf == NULL)
+            pixbuf = get_pixbuf_of_user_icon (plug);
+
+        if (pixbuf == NULL)
+            return;
 
         image_set_from_pixbuf (GTK_IMAGE (plug->priv->auth_face_image), pixbuf);
 
         g_object_unref (pixbuf);
 
-        return TRUE;
+        return;
 }
 
 static void
@@ -991,9 +934,7 @@ gs_lock_plug_show (GtkWidget *widget)
 
         gtk_window_set_opacity (GTK_WINDOW (plug), 0.1);
 
-        if (plug->priv->auth_face_image) {
-                set_face_image (plug);
-        }
+        set_face_image (plug);
 
         kbd_lock_mode_update (plug, get_kbd_lock_mode ());
 
