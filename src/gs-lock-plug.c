@@ -1287,7 +1287,7 @@ gs_lock_plug_enable_prompt (GSLockPlug *plug,
         }
 
         /* were there any key events sent to the plug while the
-         * entry wasnt ready? If so, forward them along
+         * entry wasn't ready? If so, forward them along
          */
         forward_key_events (plug);
 

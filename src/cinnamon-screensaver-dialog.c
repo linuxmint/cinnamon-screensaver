@@ -413,7 +413,7 @@ popup_dialog_idle (void)
  * Copyright (c) 1991-2004 Jamie Zawinski <jwz@jwz.org>
  * Copyright (c) 2005 William Jon McCann <mccann@jhu.edu>
  *
- * Initializations that potentially take place as a priveleged user:
+ * Initializations that potentially take place as a privileged user:
    If the executable is setuid root, then these initializations
    are run as root, before discarding privileges.
 */
