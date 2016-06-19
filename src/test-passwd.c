@@ -36,7 +36,7 @@
 #include "gs-auth.h"
 #include "setuid.h"
 
-/* Initializations that potentially take place as a priveleged user:
+/* Initializations that potentially take place as a privileged user:
    If the executable is setuid root, then these initializations
    are run as root, before discarding privileges.
 */
