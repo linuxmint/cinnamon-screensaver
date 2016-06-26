@@ -54,11 +54,6 @@ enum {
         AUTH_PAGE = 0,
 };
 
-enum {
-        LOCK_NONE = 0,
-        LOCK_CAPS = 1 << 0,
-};
-
 #define FACE_ICON_SIZE 48
 #define DIALOG_TIMEOUT_MSEC 60000
 
@@ -87,7 +82,7 @@ struct GSLockPlugPrivate
 
         GtkWidget   *auth_prompt_kbd_layout_indicator;
 
-        int          kbd_lock_mode;
+        gboolean     kbd_caps_locked;
         gboolean     switch_enabled;
         gboolean     logout_enabled;
         char        *logout_command;
@@ -334,49 +329,35 @@ dialog_timed_out (GSLockPlug *plug)
         return FALSE;
 }
 
+static gboolean
+get_kbd_lock_mode (void)
+{
+        GdkKeymap *keymap;
+
+        keymap = gdk_keymap_get_default ();
+
+        if (keymap != NULL)
+            return gdk_keymap_get_caps_lock_state (keymap);
+
+        return FALSE;
+}
 
 static void
-kbd_lock_mode_update (GSLockPlug *plug,
-                      int         mode)
+kbd_lock_mode_update (GSLockPlug *plug)
 {
-        if (plug->priv->kbd_lock_mode == mode) {
-                return;
-        }
-
-        plug->priv->kbd_lock_mode = mode;
+        plug->priv->kbd_caps_locked = get_kbd_lock_mode ();
 
         if (plug->priv->auth_capslock_label == NULL) {
                 return;
         }
 
-        if ((mode & LOCK_CAPS) != 0) {
+        if (plug->priv->kbd_caps_locked) {
                 gtk_label_set_text (GTK_LABEL (plug->priv->auth_capslock_label),
                                     _("You have the Caps Lock key on."));
         } else {
                 gtk_label_set_text (GTK_LABEL (plug->priv->auth_capslock_label),
                                     "");
         }
-}
-
-static int
-get_kbd_lock_mode (void)
-{
-        GdkKeymap *keymap;
-        int        mode;
-
-        mode = LOCK_NONE;
-
-        keymap = gdk_keymap_get_default ();
-        if (keymap != NULL) {
-                gboolean res;
-
-                res = gdk_keymap_get_caps_lock_state (keymap);
-                if (res) {
-                        mode |= LOCK_CAPS;
-                }
-        }
-
-        return mode;
 }
 
 static void
@@ -476,7 +457,7 @@ static void
 run_keymap_handler (GdkKeymap *keymap,
                     GSLockPlug *plug)
 {
-        kbd_lock_mode_update (plug, get_kbd_lock_mode ());
+        kbd_lock_mode_update (plug);
 }
 
 /* adapted from GTK+ gtkdialog.c */
@@ -936,7 +917,7 @@ gs_lock_plug_show (GtkWidget *widget)
 
         set_face_image (plug);
 
-        kbd_lock_mode_update (plug, get_kbd_lock_mode ());
+        kbd_lock_mode_update (plug);
 
         restart_cancel_timeout (plug);
 
