@@ -57,7 +57,7 @@ PKG_CHECK_MODULES(CINNAMON_SCREENSAVER,
         gtk+-3.0 >= $GTK_REQUIRED_VERSION
         dbus-glib-1 >= $DBUS_REQUIRED_VERSION
         cinnamon-desktop >= $CINNAMON_DESKTOP_REQUIRED_VERSION)
-PKG_CHECK_MODULES([WEBKIT], [webkit2gtk-3.0],, [PKG_CHECK_MODULES([WEBKIT], [webkit2gtk-4.0])])
+
 AC_SUBST(CINNAMON_SCREENSAVER_CFLAGS)
 AC_SUBST(CINNAMON_SCREENSAVER_LIBS)
 
@@ -421,6 +421,22 @@ if test "$have_xf86gamma" = yes -o "$have_xf86vmode" = yes; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl - Optional webkit support
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(webkit,[
+GTK Webkit support:
+
+  --enable-webkit         Enable support for GTK webkit screensavers.
+  --disable-webkit        Disable support for GTK webkit screensavers.],
+[enable_webkit="$enableval"],[enable_webkit=yes])
+
+if test "x$enable_webkit" = xyes; then
+    PKG_CHECK_MODULES([WEBKIT], [webkit2gtk-3.0],, [PKG_CHECK_MODULES([WEBKIT], [webkit2gtk-4.0])])
+fi
+AM_CONDITIONAL([HAS_WEBKIT], [test "x$enable_webkit" = xyes])
+
+dnl ---------------------------------------------------------------------------
 dnl - The --enable-locking option
 dnl ---------------------------------------------------------------------------
 
@@ -753,6 +769,7 @@ echo "
         Maintainer mode:          ${USE_MAINTAINER_MODE}
         Docs enabled:             ${enable_docbook_docs}
 
+        GTK WebKit screensavers:  ${enable_webkit}
         Screen locking enabled:   ${enable_locking}
         Show keyboard indicator:  ${with_kbd_layout_indicator}
 
