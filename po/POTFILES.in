@@ -1,10 +1,4 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-src/cinnamon-screensaver-command.c
-src/cinnamon-screensaver-dialog.c
-src/cinnamon-screensaver.c
-src/cinnamon-screensaver.desktop.in.in
-src/gs-auth-pam.c
-src/gs-listener-dbus.c
-src/gs-lock-plug.c
-src/gs-window-x11.c
+src/clock.py
+src/lock.py

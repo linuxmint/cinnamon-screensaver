@@ -1,2 +1,2 @@
 #!/bin/bash
-xgettext --language=C --from-code=UTF-8 --keyword=_ --output=cinnamon-screensaver.pot src/*.c 
+xgettext --language=Python --from-code=UTF-8 --keyword=_ --output=cinnamon-screensaver.pot src/*.py 

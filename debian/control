@@ -6,39 +6,21 @@ Build-Depends: debhelper (>= 9),
                dh-autoreconf,
                dh-python,
                gnome-common,
-               gnome-pkg-tools (>= 0.10),
-               libcinnamon-desktop-dev (>= 2.6.3),
-               libdbus-glib-1-dev (>= 0.78),
-               libglib2.0-dev (>= 2.37.3),
-               libgnomekbd-dev (>= 3.6.0),
-               libgtk-3-dev (>= 3.1.4),
-               libpam0g-dev,
-               libsystemd-login-dev [linux-any] | libsystemd-dev [linux-any],
-               libwebkit2gtk-3.0-dev,
-               libx11-dev,
-               libxext-dev,
-               libxklavier-dev,
-               libxss-dev,
-               libxxf86vm-dev,
-               x11proto-scrnsaver-dev,
-               x11proto-xext-dev,
-               x11proto-xf86vidmode-dev
+               gnome-pkg-tools (>= 0.10)
 Standards-Version: 3.9.6
 
 Package: cinnamon-screensaver
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
-Depends: cinnamon-desktop-data (>= 2.6.3),
+Depends: cinnamon-desktop-data (>= 3.0.0),
          dbus-x11,
          gir1.2-webkit2-3.0,
          gnome-icon-theme (>= 2.15.90),
-         python,
+         python3,
          ${misc:Depends},
          ${python:Depends},
          ${shlibs:Depends}
-Recommends: cinnamon-common,
-            gnome-power-manager | xfce4-power-manager,
-            libpam-gnome-keyring,
+Recommends: libpam-gnome-keyring,
             xscreensaver-data,
             xscreensaver-data-extra,
             xscreensaver-gl,
@@ -46,9 +28,3 @@ Recommends: cinnamon-common,
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
- .
- It is designed to support, among other things:
- .
-  * the ability to lock down configuration settings
-  * translation into other languages
-  * user switching
