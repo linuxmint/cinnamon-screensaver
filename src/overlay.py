@@ -50,7 +50,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
     def focus_and_present(self):
         utils.override_user_time(self.get_window())
-        self.overlay.present()
+        self.present()
 
     def add_child(self, widget):
         self.overlay.add_overlay(widget)

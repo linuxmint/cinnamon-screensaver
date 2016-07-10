@@ -8,6 +8,9 @@ import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 from manager import ScreensaverManager
+from sessionProxy import SessionProxy
+
+import trackers
 import constants as c
 
 class ScreensaverService(dbus.service.Object):
@@ -16,6 +19,14 @@ class ScreensaverService(dbus.service.Object):
         dbus.service.Object.__init__(self, bus_name, c.SS_PATH)
 
         self.screen_manager = ScreensaverManager()
+
+        self.session_watcher = SessionProxy()
+        trackers.con_tracker_get().connect(self.session_watcher,
+                                           "idle-changed", 
+                                           self.on_session_idle_changed)
+        trackers.con_tracker_get().connect(self.session_watcher,
+                                           "idle-notice-changed", 
+                                           self.on_session_idle_notice_changed)
 
     @dbus.service.method(c.SS_SERVICE, in_signature='s', out_signature='')
     def Lock(self, msg):
@@ -46,5 +57,13 @@ class ScreensaverService(dbus.service.Object):
         if self.GetActive():
             self.screen_manager.simulate_user_activity()
 
+    def on_session_idle_changed(self, proxy, idle):
+        if idle:
+            self.Lock("")
+        else:
+            pass
+
+    def on_session_idle_notice_changed(self, proxy, idle):
+        pass
 
 
