@@ -2,60 +2,58 @@
 
 import PAM
 
-from gi.repository import Gio, GObject
+from gi.repository import Gio, GObject, GLib
 import threading
 import dbus
 import constants as c
 
 class PAMServiceProxy:
     def __init__(self):
-        self.callback = None
         self.proxy = None
 
         try:
             Gio.DBusProxy.new_for_bus(Gio.BusType.SESSION, Gio.DBusProxyFlags.NONE, None,
                                       c.PAM_SERVICE, c.PAM_PATH, c.PAM_SERVICE,
-                                      None, self._onProxyReady, None)
+                                      None, self.on_proxy_ready, None)
         except dbus.exceptions.DBusException as e:
             print(e)
             self.proxy = None
 
-    def _onProxyReady(self, object, result, data=None):
+    def on_proxy_ready(self, object, result, data=None):
         self.proxy = Gio.DBusProxy.new_for_bus_finish(result)
 
-    def check_password(self, username, password, callback):
-        self.callback = callback
-
-        if self.proxy:
-            thread = threading.Thread(target=self.check_password_thread, args=(username, password, callback))
-            thread.start()
-        else:
-            success, msg = self.check_password_fallback(username, password)
-            GObject.idle_add(self.idle_callback_and_clear, success, msg)
-
-    def check_password_thread(self, username, password, callback):
+    def check_password(self, username, password, client_callback):
         if self.proxy:
             try:
-                success, msg = self.proxy.authenticate('(ss)', username, password)
+                # FIXME: There is a way to call self.proxy.authenticate() with callbacks
+                #        I couldn't get it to work though
+                self.proxy.call("authenticate",
+                                GLib.Variant("(ss)", (username, password)),
+                                Gio.DBusCallFlags.NONE, -1, None,
+                                self.async_callback_handler, client_callback)
             except Exception as e:
-                print(str(e))
-                success, msg = self.check_password_fallback(username, password)
+                print("PAM Helper method failed, go to fallback")
+                self.do_fallback_password_check(username, password, client_callback)
         else:
+            self.do_fallback_password_check(username, password, client_callback)
+
+    def async_callback_handler(self, proxy, res, client_callback):
+        ret = proxy.call_finish(res)
+
+        success, msg = ret
+
+        client_callback(success, msg)
+
+    def do_fallback_password_check(self, username, password, callback):
             success, msg = self.check_password_fallback(username, password)
 
-        GObject.idle_add(self.idle_callback_and_clear, success, msg)
+            callback(success, msg)
 
     def check_password_fallback(self, username, password):
         print("PAM Helper service unavailable, using sync method")
         success, msg = real_check_password(username, password)
 
         return (success, msg)
-
-    def idle_callback_and_clear(self, success, msg):
-        self.callback(success, msg)
-        self.callback = None
-
-        return False
 
 def real_check_password(username, password):
     ret = None
