@@ -11,6 +11,8 @@ from authenticator import PAMServiceProxy
 import utils
 import os
 import trackers
+from eventHandler import GrabHelper
+
 
 from baseWindow import BaseWindow
 
@@ -18,7 +20,7 @@ from baseWindow import BaseWindow
 kbd_config = None
 acc_service = None
 
-class LockDialog(BaseWindow):
+class UnlockDialog(BaseWindow):
     __gsignals__ = {
         'inhibit-timeout': (GObject.SignalFlags.RUN_LAST, None, ()),
         'uninhibit-timeout': (GObject.SignalFlags.RUN_LAST, None, ()),
@@ -27,7 +29,9 @@ class LockDialog(BaseWindow):
     }
 
     def __init__(self):
-        super(LockDialog, self).__init__()
+        super(UnlockDialog, self).__init__()
+
+        self.grab_helper = GrabHelper()
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
@@ -89,7 +93,7 @@ class LockDialog(BaseWindow):
         self.auth_prompt_label.set_alignment(0.5, 0.5)
         hbox_pass.pack_start(self.auth_prompt_label, False, False, 6)
 
-        self.auth_prompt_entry = Gtk.Entry(activates_default=True)
+        self.auth_prompt_entry = Gtk.Entry()
         self.auth_prompt_entry.set_input_purpose(Gtk.InputPurpose.PASSWORD)
         self.auth_prompt_entry.set_visibility(False)
         hbox_pass.pack_start(self.auth_prompt_entry, True, True, 0)
@@ -196,9 +200,15 @@ class LockDialog(BaseWindow):
 
         self.show_all()
 
+    def cancel(self):
+        self.unreveal()
+        self.auth_message_label.set_text("")
+
     def on_revealed(self, widget, child):
         if self.get_child_revealed():
             self.keymap_handler(self.keymap)
+            self.grab_helper.release()
+            self.grab_helper.grab_window(self.get_window(), False)
             self.auth_prompt_entry.grab_focus_without_selecting()
         else:
             self.auth_prompt_entry.set_text("")
@@ -325,5 +335,3 @@ class LockDialog(BaseWindow):
         self.auth_prompt_entry.grab_focus()
 
         self.emit("uninhibit-timeout")
-
-

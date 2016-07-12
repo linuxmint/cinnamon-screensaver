@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop
 import utils
 import trackers
+import eventHandler
 
 class ScreensaverOverlayWindow(Gtk.Window):
     def __init__(self, screen):
@@ -10,6 +11,8 @@ class ScreensaverOverlayWindow(Gtk.Window):
                                                        decorated=False,
                                                        skip_taskbar_hint=True,
                                                        skip_pager_hint=True)
+
+        self.eh = eventHandler.get_ev_handler()
 
         self.screen = screen
 
@@ -63,6 +66,13 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.overlay.reorder_overlay(widget, 0)
         self.overlay.queue_draw()
 
+    def update_geometry(self):
+        self.rect = Gdk.Rectangle()
+        self.rect.x = 0
+        self.rect.y = 0
+        self.rect.width = self.screen.get_width()
+        self.rect.height = self.screen.get_height()
+
     def do_get_preferred_height(self):
         if self.get_realized():
             self.get_window().move(0, 0)
@@ -77,9 +87,14 @@ class ScreensaverOverlayWindow(Gtk.Window):
         else:
             return 0, 0
 
-    def update_geometry(self):
-        self.rect = Gdk.Rectangle()
-        self.rect.x = 0
-        self.rect.y = 0
-        self.rect.width = self.screen.get_width()
-        self.rect.height = self.screen.get_height()
+    def do_motion_notify_event(self, event):
+        # print("OverlayWindow: do_motion_notify_event")
+        return self.eh.on_motion_event(event)
+
+    def do_key_press_event(self, event):
+        # print("OverlayWindow: do_key_press_event")
+        return self.eh.on_key_press_event(event)
+
+    def do_button_press_event(self, event):
+        # print("OverlayWindow: do_button_press_event")
+        return self.eh.on_button_press_event(event)

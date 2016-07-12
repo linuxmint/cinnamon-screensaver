@@ -17,7 +17,9 @@ app_PYTHON = \
         config.py \
         clock.py \
         constants.py \
-        lock.py \
+        eventHandler.py \
+        keybindings.py \
+        unlock.py \
         manager.py \
         overlay.py \
         service.py \

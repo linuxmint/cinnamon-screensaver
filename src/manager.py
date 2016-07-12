@@ -7,17 +7,30 @@ import random
 
 from overlay import ScreensaverOverlayWindow
 from window import ScreensaverWindow
-from lock import LockDialog
+from unlock import UnlockDialog
 from clock import ClockWidget
+import constants as c
+
+from keybindings import KeyBindings
 import trackers
 import utils
 import time
+from eventHandler import GrabHelper
 
-UNLOCK_TIMEOUT = 5
+manager_singleton = None
+
+def get_manager():
+    return manager_singleton
 
 class ScreensaverManager:
     def __init__(self):
+        global manager_singleton
+
+        manager_singleton = self
+
         self.bg = CinnamonDesktop.BG()
+
+        self.grab_helper = GrabHelper()
 
         trackers.con_tracker_get().connect(self.bg,
                                            "changed", 
@@ -41,34 +54,39 @@ class ScreensaverManager:
 
         self.overlay = None
         self.clock_widget = None
-        self.lock_dialog = None
+        self.unlock_dialog = None
 
         self.activated_timestamp = 0
 
         self.focus_monitor = self.get_monitor_at_pointer_position()
 
-        self.lock_raised = False
+        self.unlock_raised = False
+
+##### Service handlers (from service.py)
 
     def is_locked(self):
         return self.activated_timestamp != 0
 
     def lock(self, msg):
-        self.away_message = msg
-        self.setup_overlay()
-        self.activated_timestamp = time.time()
+        if self.grab_helper.grab_offscreen(True):
+            self.away_message = msg
+            self.setup_overlay()
+            self.activated_timestamp = time.time()
+        else:
+            print("Could not acquire grabs.  Screensaver not activated")
 
     def unlock(self):
         if self.activated_timestamp != 0:
             self.set_timeout_active(None, False)
-            self.disconnect_events()
             self.overlay.destroy()
             self.overlay = None
-            self.lock_dialog = None
+            self.unlock_dialog = None
             self.clock_widget = None
             self.away_message = None
             self.activated_timestamp = 0
             self.windows = []
-            self.lock_raised = False
+            self.unlock_raised = False
+            self.grab_helper.release()
 
     def get_active_time(self):
         if self.activated_timestamp != 0:
@@ -77,9 +95,10 @@ class ScreensaverManager:
             return 0
 
     def simulate_user_activity(self):
-        self.on_event(self, self.overlay, None)
+        self.raise_unlock_widget()
+        self.reset_timeout()
 
-# Setup the stuff #
+# Create all the widgets, connections when the screensaver is activated #
 
     def setup_overlay(self):
         self.overlay = ScreensaverOverlayWindow(self.screen)
@@ -97,8 +116,7 @@ class ScreensaverManager:
     def on_overlay_realized(self, widget):
         self.setup_windows()
         self.setup_clock()
-        self.setup_lock()
-        self.setup_events()
+        self.setup_unlock()
 
     def setup_windows(self):
         n = self.screen.get_n_monitors()
@@ -140,62 +158,33 @@ class ScreensaverManager:
         self.clock_widget.reveal()
         self.clock_widget.start_positioning()
 
-    def setup_events(self):
-        trackers.con_tracker_get().connect(self.overlay,
-                                           "button-press-event",
-                                           self.on_event)
-        trackers.con_tracker_get().connect(self.overlay,
-                                           "button-release-event",
-                                           self.on_event)
-        trackers.con_tracker_get().connect(self.overlay,
-                                           "key-press-event",
-                                           self.on_key_press)
-        trackers.con_tracker_get().connect(self.overlay,
-                                           "key-release-event",
-                                           self.on_event)
-        trackers.con_tracker_get().connect(self.overlay,
-                                           "motion-notify-event",
-                                           self.on_event)
+    def setup_unlock(self):
+        self.unlock_dialog = UnlockDialog()
+        self.overlay.add_child(self.unlock_dialog)
 
-    def disconnect_events(self):
-        trackers.con_tracker_get().disconnect(self.overlay,
-                                              "button-press-event",
-                                              self.on_event)
-        trackers.con_tracker_get().disconnect(self.overlay,
-                                              "button-release-event",
-                                              self.on_event)
-        trackers.con_tracker_get().disconnect(self.overlay,
-                                              "key-press-event",
-                                              self.on_key_press)
-        trackers.con_tracker_get().disconnect(self.overlay,
-                                              "key-release-event",
-                                              self.on_event)
-        trackers.con_tracker_get().disconnect(self.overlay,
-                                              "motion-notify-event",
-                                              self.on_event)
-
-    def setup_lock(self):
-        self.lock_dialog = LockDialog()
-        self.overlay.add_child(self.lock_dialog)
-        self.overlay.set_default(self.lock_dialog.auth_unlock_button)
-
-        trackers.con_tracker_get().connect(self.lock_dialog,
+        trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "inhibit-timeout",
                                            self.set_timeout_active, False)
-        trackers.con_tracker_get().connect(self.lock_dialog,
+        trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "uninhibit-timeout",
                                            self.set_timeout_active, True)
-        trackers.con_tracker_get().connect(self.lock_dialog,
+        trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "auth-success",
                                            self.authentication_result_callback, True)
-        trackers.con_tracker_get().connect(self.lock_dialog,
+        trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "auth-failure",
                                            self.authentication_result_callback, False)
+
+# Timer stuff - after a certain time, the unlock dialog will cancel itself.
+# This timer is suspended during authentication, and any time a new user event is received
+
+    def reset_timeout(self):
+        self.set_timeout_active(None, True)
 
     def set_timeout_active(self, dialog, active):
         if active:
             trackers.timer_tracker_get().start("wake-timeout",
-                                               UNLOCK_TIMEOUT * 1000,
+                                               c.UNLOCK_TIMEOUT * 1000,
                                                self.on_wake_timeout)
         else:
             trackers.timer_tracker_get().cancel("wake-timeout")
@@ -204,33 +193,7 @@ class ScreensaverManager:
         if success:
             self.unlock()
         else:
-            self.lock_dialog.blink()
-
-# Event Handling #
-
-    def on_event(self, widget, event):
-        cont = Gdk.EVENT_PROPAGATE
-
-        self.focus_monitor = self.get_monitor_at_pointer_position()
-
-        if not self.lock_raised:
-            self.raise_lock_widget()
-            cont = Gdk.EVENT_STOP
-
-        if self.lock_raised:
-            self.overlay.put_on_top(self.clock_widget)
-            self.overlay.put_on_top(self.lock_dialog)
-            # cont = self.handle_event_with_lock(event)
-
-        self.set_timeout_active(None, True)
-
-        return cont
-
-    def on_key_press(self, widget, event):
-        if not self.lock_dialog.entry_is_focus() and event.string != "":
-            self.lock_dialog.queue_key_event(event)
-
-        return self.on_event(widget, event)
+            self.unlock_dialog.blink()
 
     def on_wake_timeout(self):
         self.set_timeout_active(None, False)
@@ -238,18 +201,26 @@ class ScreensaverManager:
 
         return False
 
-    def raise_lock_widget(self):
-        self.clock_widget.stop_positioning()
-        self.lock_raised = True
+# Methods that manipulate the unlock dialog
 
-        self.lock_dialog.reveal()
+    def raise_unlock_widget(self):
+        if self.unlock_raised:
+            return
+
+        self.clock_widget.stop_positioning()
+        self.unlock_raised = True
+
+        self.unlock_dialog.reveal()
         self.clock_widget.reveal()
 
-        self.overlay.focus_and_present()
-
     def cancel_lock_widget(self):
-        self.lock_dialog.unreveal()
-        self.lock_raised = False
+        if not self.unlock_raised:
+            return
+
+        self.set_timeout_active(None, False)
+
+        self.unlock_dialog.cancel()
+        self.unlock_raised = False
 
         self.clock_widget.start_positioning()
 
@@ -273,7 +244,7 @@ class ScreensaverManager:
 
             return True
 
-        if isinstance(child, LockDialog):
+        if isinstance(child, UnlockDialog):
             monitor = self.get_monitor_at_pointer_position()
             monitor_rect = self.screen.get_monitor_geometry(monitor)
 
@@ -290,7 +261,7 @@ class ScreensaverManager:
         if isinstance(child, ClockWidget):
             min_rect, nat_rect = child.get_preferred_size()
 
-            if self.lock_raised:
+            if self.unlock_raised:
                 monitor_rect = self.screen.get_monitor_geometry(self.focus_monitor)
 
                 allocation.width = nat_rect.width
