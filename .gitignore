@@ -14,6 +14,7 @@ configure
 data/Makefile
 data/Makefile.in
 data/org.cinnamon.ScreenSaver.service
+data/org.cinnamon.ScreenSaver.PAMHelper.service
 data/screensavers/Makefile
 depcomp
 files/Makefile
@@ -33,15 +34,10 @@ po/stamp-it
 src/.deps/
 src/Makefile
 src/Makefile.in
-src/*.o
 src/cinnamon-screensaver
-src/cinnamon-screensaver-command
 src/cinnamon-screensaver-dialog
 src/cinnamon-screensaver.desktop
 src/cinnamon-screensaver.desktop.in
-src/test-fade
-src/test-passwd
-src/test-watcher
-src/test-window
+src/__pycache__
 stamp-h1
 xmldocs.make

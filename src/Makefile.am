@@ -28,13 +28,21 @@ app_PYTHON = \
         utils.py \
         window.py
 
-app_SCRIPTS = cinnamon-screensaver-main.py pam-helper-service.py
+app_SCRIPTS = cinnamon-screensaver-main.py \
+              cinnamon-screensaver-command.py \
+              pam-helper-service.py
 
 cinnamon-screensaver: cinnamon-screensaver.in
 	$(AM_V_GEN)sed                  \
         -e s!\@datadir\@!$(datadir)!        \
         < $< > $@
 cinnamon-screensaver: Makefile
+
+cinnamon-screensaver-command: cinnamon-screensaver-command.in
+	$(AM_V_GEN)sed                  \
+        -e s!\@datadir\@!$(datadir)!        \
+        < $< > $@
+cinnamon-screensaver-command: Makefile
 
 cinnamon-screensaver-pam-helper: cinnamon-screensaver-pam-helper.in
 	$(AM_V_GEN)sed                  \
@@ -55,9 +63,9 @@ config.py: config.py.in
         < $< > $@
 config.py: Makefile
 
-all-local: config.py cinnamon-screensaver cinnamon-screensaver-pam-helper
+all-local: config.py cinnamon-screensaver cinnamon-screensaver-pam-helper cinnamon-screensaver-command
 
-bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-pam-helper
+bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-pam-helper cinnamon-screensaver-command
 
 EXTRA_DIST =                \
     debug-screensaver.sh        \
