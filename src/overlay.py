@@ -1,9 +1,17 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop
+from gi.repository import Gtk, Gdk
 import utils
 import trackers
+
 import eventHandler
+import manager
+
+from window import ScreensaverWindow
+from unlock import UnlockDialog
+from clock import ClockWidget
+
+import random
 
 class ScreensaverOverlayWindow(Gtk.Window):
     def __init__(self, screen):
@@ -12,7 +20,8 @@ class ScreensaverOverlayWindow(Gtk.Window):
                                                        skip_taskbar_hint=True,
                                                        skip_pager_hint=True)
 
-        self.eh = eventHandler.get_ev_handler()
+        self.eh = eventHandler.EventHandler.get()
+        self.manager = manager.ScreensaverManager.get()
 
         self.screen = screen
 
@@ -40,6 +49,10 @@ class ScreensaverOverlayWindow(Gtk.Window):
         trackers.con_tracker_get().connect(self.overlay,
                                            "realize",
                                            self.on_realized)
+
+        trackers.con_tracker_get().connect(self.overlay,
+                                           "get-child-position",
+                                           self.position_overlay_child)
 
         self.overlay.show_all()
         self.add(self.overlay)
@@ -98,3 +111,79 @@ class ScreensaverOverlayWindow(Gtk.Window):
     def do_button_press_event(self, event):
         # print("OverlayWindow: do_button_press_event")
         return self.eh.on_button_press_event(event)
+
+
+# Overlay window management #
+
+    def position_overlay_child(self, overlay, child, allocation):
+        if isinstance(child, ScreensaverWindow):
+            allocation.x = child.rect.x
+            allocation.y = child.rect.y
+            allocation.width = child.rect.width
+            allocation.height = child.rect.height
+
+            return True
+
+        if isinstance(child, UnlockDialog):
+            monitor = utils.get_mouse_monitor()
+            monitor_rect = self.screen.get_monitor_geometry(monitor)
+
+            min_rect, nat_rect = child.get_preferred_size()
+
+            allocation.width = nat_rect.width
+            allocation.height = nat_rect.height
+
+            allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
+            allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
+
+            return True
+
+        if isinstance(child, ClockWidget):
+            min_rect, nat_rect = child.get_preferred_size()
+
+            if self.manager.unlock_raised:
+                monitor_rect = self.screen.get_monitor_geometry(utils.get_mouse_monitor())
+
+                allocation.width = nat_rect.width
+                allocation.height = nat_rect.height
+
+                allocation.x = monitor_rect.x
+                allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
+
+                return True
+            else:
+                current_monitor = child.current_monitor
+
+                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+
+                allocation.width = nat_rect.width
+                allocation.height = nat_rect.height
+
+                halign = child.get_halign()
+                valign = child.get_valign()
+
+                if halign == Gtk.Align.START:
+                    allocation.x = monitor_rect.x
+                elif halign == Gtk.Align.CENTER:
+                    allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
+                elif halign == Gtk.Align.END:
+                    allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
+
+                if valign == Gtk.Align.START:
+                    allocation.y = monitor_rect.y
+                elif valign == Gtk.Align.CENTER:
+                    allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
+                elif valign == Gtk.Align.END:
+                    allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
+
+                if self.screen.get_n_monitors() > 1:
+                    new_monitor = current_monitor
+                    while new_monitor == current_monitor:
+                        new_monitor = random.randint(0, self.screen.get_n_monitors() - 1)
+                    child.current_monitor = new_monitor
+
+                # utils.debug_allocation(allocation)
+
+                return True
+
+        return False

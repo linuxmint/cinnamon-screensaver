@@ -1,14 +1,13 @@
 #! /usr/bin/python3
 
 import gi
-import dbus
 gi.require_version('CDesktopEnums', '3.0')
-from gi.repository import Gtk, GObject, Gdk, Gio, CinnamonDesktop, GLib
+from gi.repository import Gtk, GObject, Gdk, Gio, CinnamonDesktop
+import dbus
 
 from gi.repository.CDesktopEnums import MediaKeyType as MK
 
 import constants as c
-
 
 class ShortcutAction(GObject.GObject):
     def __init__(self, action, bindings):

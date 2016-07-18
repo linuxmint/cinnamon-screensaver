@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import CinnamonDesktop, GLib, Gtk, Gio, GObject
+from gi.repository import CinnamonDesktop, GLib, Gtk, Gio
 import utils
 import random
 from baseWindow import BaseWindow

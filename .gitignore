@@ -35,7 +35,8 @@ src/.deps/
 src/Makefile
 src/Makefile.in
 src/cinnamon-screensaver
-src/cinnamon-screensaver-dialog
+src/cinnamon-screensaver-command
+src/cinnamon-screensaver-pam-helper
 src/cinnamon-screensaver.desktop
 src/cinnamon-screensaver.desktop.in
 src/__pycache__

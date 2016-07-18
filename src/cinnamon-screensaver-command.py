@@ -2,9 +2,11 @@
 
 from gi.repository import Gio, GLib
 import dbus
-from dbus.mainloop.glib import DBusGMainLoop
 import constants as c
 import config
+
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 import argparse
 import gettext

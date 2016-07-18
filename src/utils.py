@@ -1,4 +1,4 @@
-#! /usr/bin/python2
+#! /usr/bin/python3
 
 from gi.repository import GLib, Gio, Gdk, Gtk
 import subprocess
@@ -75,10 +75,16 @@ def override_user_time(window):
 def debug_allocation(alloc):
     print("x:%d, y:%d, width:%d, height:%d" % (alloc.x, alloc.y, alloc.width, alloc.height))
 
+def get_mouse_monitor():
+    manager = Gdk.Display.get_default().get_device_manager()
+    pointer = manager.get_client_pointer()
+
+    screen, x, y = pointer.get_position()
+
+    return Gdk.Screen.get_default().get_monitor_at_point(x, y)
+
 def do_quit():
     Gtk.main_quit()
-
-
 
 class Settings:
     def __init__(self):

@@ -20,6 +20,7 @@ app_PYTHON = \
         eventHandler.py \
         keybindings.py \
         unlock.py \
+        grabHelper.py \
         manager.py \
         overlay.py \
         service.py \
@@ -32,25 +33,12 @@ app_SCRIPTS = cinnamon-screensaver-main.py \
               cinnamon-screensaver-command.py \
               pam-helper-service.py
 
-cinnamon-screensaver: cinnamon-screensaver.in
+%:%.in Makefile
 	$(AM_V_GEN)sed                  \
         -e s!\@datadir\@!$(datadir)!        \
         < $< > $@
-cinnamon-screensaver: Makefile
 
-cinnamon-screensaver-command: cinnamon-screensaver-command.in
-	$(AM_V_GEN)sed                  \
-        -e s!\@datadir\@!$(datadir)!        \
-        < $< > $@
-cinnamon-screensaver-command: Makefile
-
-cinnamon-screensaver-pam-helper: cinnamon-screensaver-pam-helper.in
-	$(AM_V_GEN)sed                  \
-        -e s!\@datadir\@!$(datadir)!        \
-        < $< > $@
-cinnamon-screensaver-pam-helper: Makefile
-
-config.py: config.py.in
+config.py: config.py.in Makefile
 	$(AM_V_GEN)sed                  \
         -e s!\@prefix\@!$(prefix)!      \
         -e s!\@datadir\@!$(datadir)!        \
@@ -61,7 +49,6 @@ config.py: config.py.in
         -e s!\@VERSION\@!$(VERSION)!        \
         -e s!\@GETTEXT_PACKAGE\@!$(GETTEXT_PACKAGE)!    \
         < $< > $@
-config.py: Makefile
 
 all-local: config.py cinnamon-screensaver cinnamon-screensaver-pam-helper cinnamon-screensaver-command
 

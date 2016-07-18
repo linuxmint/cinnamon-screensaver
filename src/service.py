@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio, GLib, Gtk, GObject
+from gi.repository import Gtk
 
 import dbus, dbus.service, dbus.glib
 
@@ -18,7 +18,7 @@ class ScreensaverService(dbus.service.Object):
         bus_name = dbus.service.BusName(c.SS_SERVICE, bus=dbus.SessionBus())
         dbus.service.Object.__init__(self, bus_name, c.SS_PATH)
 
-        self.screen_manager = ScreensaverManager()
+        self.screen_manager = ScreensaverManager.get()
 
         self.session_watcher = SessionProxy()
         trackers.con_tracker_get().connect(self.session_watcher,

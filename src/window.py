@@ -33,5 +33,5 @@ class ScreensaverWindow(BaseWindow):
         return False
 
     def update_geometry(self):
-        self.rect = rect = self.screen.get_monitor_geometry(self.monitor_index)
+        self.rect = self.screen.get_monitor_geometry(self.monitor_index)
 

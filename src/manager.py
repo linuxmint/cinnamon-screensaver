@@ -2,8 +2,7 @@
 
 import gi
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, CinnamonDesktop, Gdk, Gio
-import random
+from gi.repository import CinnamonDesktop, Gdk, Gio
 
 from overlay import ScreensaverOverlayWindow
 from window import ScreensaverWindow
@@ -11,22 +10,21 @@ from unlock import UnlockDialog
 from clock import ClockWidget
 import constants as c
 
-from keybindings import KeyBindings
 import trackers
 import utils
 import time
-from eventHandler import GrabHelper
-
-manager_singleton = None
-
-def get_manager():
-    return manager_singleton
+from grabHelper import GrabHelper
 
 class ScreensaverManager:
-    def __init__(self):
-        global manager_singleton
+    __singleton = None
 
-        manager_singleton = self
+    def get():
+        if ScreensaverManager.__singleton == None:
+            ScreensaverManager()
+        return ScreensaverManager.__singleton
+
+    def __init__(self):
+        ScreensaverManager.__singleton = self
 
         self.bg = CinnamonDesktop.BG()
 
@@ -57,8 +55,6 @@ class ScreensaverManager:
         self.unlock_dialog = None
 
         self.activated_timestamp = 0
-
-        self.focus_monitor = self.get_monitor_at_pointer_position()
 
         self.unlock_raised = False
 
@@ -103,10 +99,6 @@ class ScreensaverManager:
     def setup_overlay(self):
         self.overlay = ScreensaverOverlayWindow(self.screen)
 
-        trackers.con_tracker_get().connect(self.overlay.overlay,
-                                           "get-child-position",
-                                           self.position_overlay_child)
-
         trackers.con_tracker_get().connect(self.overlay,
                                            "realize",
                                            self.on_overlay_realized)
@@ -148,8 +140,7 @@ class ScreensaverManager:
         widget.queue_draw()
 
     def setup_clock(self):
-        self.clock_widget = ClockWidget(self.away_message, self.focus_monitor)
-
+        self.clock_widget = ClockWidget(self.away_message, utils.get_mouse_monitor())
         self.overlay.add_child(self.clock_widget)
         self.overlay.put_on_top(self.clock_widget)
 
@@ -233,90 +224,3 @@ class ScreensaverManager:
         self.bg.load_from_preferences(self.bg_settings)
         self.refresh_backgrounds()
 
-# Overlay window management #
-
-    def position_overlay_child(self, overlay, child, allocation):
-        if isinstance(child, ScreensaverWindow):
-            allocation.x = child.rect.x
-            allocation.y = child.rect.y
-            allocation.width = child.rect.width
-            allocation.height = child.rect.height
-
-            return True
-
-        if isinstance(child, UnlockDialog):
-            monitor = self.get_monitor_at_pointer_position()
-            monitor_rect = self.screen.get_monitor_geometry(monitor)
-
-            min_rect, nat_rect = child.get_preferred_size()
-
-            allocation.width = nat_rect.width
-            allocation.height = nat_rect.height
-
-            allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
-            allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
-
-            return True
-
-        if isinstance(child, ClockWidget):
-            min_rect, nat_rect = child.get_preferred_size()
-
-            if self.unlock_raised:
-                monitor_rect = self.screen.get_monitor_geometry(self.focus_monitor)
-
-                allocation.width = nat_rect.width
-                allocation.height = nat_rect.height
-
-                allocation.x = monitor_rect.x
-                allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
-
-                return True
-            else:
-                current_monitor = child.current_monitor
-
-                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
-
-                allocation.width = nat_rect.width
-                allocation.height = nat_rect.height
-
-                halign = child.get_halign()
-                valign = child.get_valign()
-
-                if halign == Gtk.Align.START:
-                    allocation.x = monitor_rect.x
-                elif halign == Gtk.Align.CENTER:
-                    allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
-                elif halign == Gtk.Align.END:
-                    allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
-
-                if valign == Gtk.Align.START:
-                    allocation.y = monitor_rect.y
-                elif valign == Gtk.Align.CENTER:
-                    allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
-                elif valign == Gtk.Align.END:
-                    allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
-
-                if self.screen.get_n_monitors() > 1:
-                    new_monitor = current_monitor
-                    while new_monitor == current_monitor:
-                        new_monitor = random.randint(0, self.screen.get_n_monitors() - 1)
-                    child.current_monitor = new_monitor
-
-                # utils.debug_allocation(allocation)
-
-                return True
-
-        return False
-
-# Utilities #
-
-    def get_monitor_at_pointer_position(self):
-        if self.overlay == None:
-            return 0
-
-        manager = Gdk.Display.get_default().get_device_manager()
-        pointer = manager.get_client_pointer()
-
-        window, x, y, mask = self.overlay.get_window().get_device_position(pointer)
-
-        return self.screen.get_monitor_at_point(x, y)

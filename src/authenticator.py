@@ -2,8 +2,7 @@
 
 import PAM
 
-from gi.repository import Gio, GObject, GLib
-import threading
+from gi.repository import Gio, GLib
 import dbus
 import constants as c
 
@@ -32,7 +31,7 @@ class PAMServiceProxy:
                                 Gio.DBusCallFlags.NONE, -1, None,
                                 self.async_callback_handler, client_callback)
             except Exception as e:
-                print("PAM Helper method failed, go to fallback")
+                print("PAM Helper method failed, go to fallback", str(e))
                 self.do_fallback_password_check(username, password, client_callback)
         else:
             self.do_fallback_password_check(username, password, client_callback)
@@ -45,9 +44,9 @@ class PAMServiceProxy:
         client_callback(success, msg)
 
     def do_fallback_password_check(self, username, password, callback):
-            success, msg = self.check_password_fallback(username, password)
+        success, msg = self.check_password_fallback(username, password)
 
-            callback(success, msg)
+        callback(success, msg)
 
     def check_password_fallback(self, username, password):
         print("PAM Helper service unavailable, using sync method")
@@ -63,7 +62,7 @@ def real_check_password(username, password):
     pam_auth.start("cinnamon-screensaver")
     pam_auth.set_item(PAM.PAM_USER, username)
 
-    def _pam_conv(auth, query_list, user_data = None):
+    def _pam_conv(auth, query_list, user_data=None):
         resp = []
         for i in range(len(query_list)):
             query, qtype = query_list[i]
@@ -76,14 +75,14 @@ def real_check_password(username, password):
         return resp
 
     pam_auth.set_item(PAM.PAM_CONV, _pam_conv)
-    
+
     try:
         pam_auth.authenticate()
         pam_auth.acct_mgmt()
     except PAM.error as res:
         ret = (False, res.args[0])
     except Exception as e:
-        log.warn("Error with PAM: %s" % str(e))
+        print("Error with PAM: %s" % str(e))
         ret = (False, e)
     else:
         ret = (True, "")

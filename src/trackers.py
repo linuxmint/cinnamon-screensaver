@@ -87,7 +87,7 @@ class ConnectionTracker:
                 del self.connections[name]
 
         except KeyError as e:
-            debug_sigs("_disconnect_by_name failed (not being tracked or already disco'd) for", name)
+            debug_sigs("_disconnect_by_name failed (not being tracked or already disco'd) for", name, str(e))
 
     def _connect_to_dispose(self, name, instance, callback):
         callback_instance = None

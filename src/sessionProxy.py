@@ -1,7 +1,5 @@
 #! /usr/bin/python3
 
-import PAM
-
 from gi.repository import Gio, GObject
 import dbus
 import constants as c

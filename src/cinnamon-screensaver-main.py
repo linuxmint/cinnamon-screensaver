@@ -4,15 +4,12 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
-import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 
 import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 import gettext
-import os
-import sys
 import argparse
 
 import config
@@ -37,7 +34,7 @@ class Main:
             print("FIX ME no daemon")
             quit()
 
-        service = ScreensaverService()
+        ScreensaverService()
         Gtk.main()
 
 

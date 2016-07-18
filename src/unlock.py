@@ -5,15 +5,13 @@
 import gi
 gi.require_version('Gkbd', '3.0')
 gi.require_version('AccountsService', '1.0')
-from gi.repository import Gtk, Gdk, Gkbd, AccountsService, GLib, GObject
+from gi.repository import Gtk, Gdk, Gkbd, AccountsService, GObject
 
 from authenticator import PAMServiceProxy
 import utils
 import os
 import trackers
-from eventHandler import GrabHelper
-
-
+from grabHelper import GrabHelper
 from baseWindow import BaseWindow
 
 # This segfaults if called more than once??
