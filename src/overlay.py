@@ -15,7 +15,7 @@ import random
 
 class ScreensaverOverlayWindow(Gtk.Window):
     def __init__(self, screen):
-        super(ScreensaverOverlayWindow, self).__init__(type=Gtk.WindowType.TOPLEVEL,
+        super(ScreensaverOverlayWindow, self).__init__(type=Gtk.WindowType.POPUP,
                                                        decorated=False,
                                                        skip_taskbar_hint=True,
                                                        skip_pager_hint=True)
