@@ -4,26 +4,27 @@ from gi.repository import Gtk, Gdk
 import utils
 import trackers
 
-import eventHandler
-import manager
+from eventHandler import EventHandler
 
 from window import ScreensaverWindow
 from unlock import UnlockDialog
 from clock import ClockWidget
 
+import status
+from status import Status
+
 import random
 
 class ScreensaverOverlayWindow(Gtk.Window):
-    def __init__(self, screen):
+    def __init__(self, screen, manager):
         super(ScreensaverOverlayWindow, self).__init__(type=Gtk.WindowType.POPUP,
                                                        decorated=False,
                                                        skip_taskbar_hint=True,
                                                        skip_pager_hint=True)
 
-        self.eh = eventHandler.EventHandler.get()
-        self.manager = manager.ScreensaverManager.get()
-
         self.screen = screen
+
+        self.event_handler = EventHandler(manager)
 
         self.get_style_context().remove_class("background")
 
@@ -102,15 +103,15 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
     def do_motion_notify_event(self, event):
         # print("OverlayWindow: do_motion_notify_event")
-        return self.eh.on_motion_event(event)
+        return self.event_handler.on_motion_event(event)
 
     def do_key_press_event(self, event):
         # print("OverlayWindow: do_key_press_event")
-        return self.eh.on_key_press_event(event)
+        return self.event_handler.on_key_press_event(event)
 
     def do_button_press_event(self, event):
         # print("OverlayWindow: do_button_press_event")
-        return self.eh.on_button_press_event(event)
+        return self.event_handler.on_button_press_event(event)
 
 
 # Overlay window management #
@@ -141,7 +142,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
         if isinstance(child, ClockWidget):
             min_rect, nat_rect = child.get_preferred_size()
 
-            if self.manager.unlock_raised:
+            if status.ScreensaverStatus == Status.LOCKED_AWAKE:
                 monitor_rect = self.screen.get_monitor_geometry(utils.get_mouse_monitor())
 
                 allocation.width = nat_rect.width

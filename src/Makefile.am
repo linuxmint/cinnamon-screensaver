@@ -25,6 +25,7 @@ app_PYTHON = \
         overlay.py \
         service.py \
         sessionProxy.py \
+        status.py \
         trackers.py \
         utils.py \
         window.py \

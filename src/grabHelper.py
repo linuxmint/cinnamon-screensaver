@@ -7,10 +7,13 @@ import x11
 import time
 
 class GrabHelper:
-    def __init__(self):
+    def __init__(self, manager = None):
 
-        self.offscreen = OffscreenWindow()
-        self.offscreen.show()
+        if manager:
+            self.offscreen = OffscreenWindow(manager)
+            self.offscreen.show()
+        else:
+            self.offscreen = None
 
         self.screen = Gdk.Screen.get_default()
 
@@ -24,6 +27,10 @@ class GrabHelper:
         return self.grab_window(root, hide_cursor)
 
     def grab_offscreen(self, hide_cursor):
+        if self.offscreen == None:
+            print("can't grab offscreen without an offscreen widget")
+            return False
+
         window = self.offscreen.get_window()
 
         return self.grab_window(window, hide_cursor)
@@ -34,7 +41,7 @@ class GrabHelper:
 
         def try_grab(grab_func, *args):
             retries = 0
-            while retries < 1:
+            while retries < 4:
                 got = grab_func(*args)
                 if got:
                     return True
@@ -111,11 +118,9 @@ class GrabHelper:
         return status == Gdk.GrabStatus.SUCCESS
 
 class OffscreenWindow(Gtk.Invisible):
-    def __init__(self):
+    def __init__(self, manager):
         super(OffscreenWindow, self).__init__()
-
-        self.eh = EventHandler.get()
+        self.event_handler = EventHandler(manager)
 
     def do_key_press_event(self, event):
-        # print("OffscreenWindow: do_key_press_event")
-        return self.eh.on_key_press_event(event)
+        return self.event_handler.on_key_press_event(event)

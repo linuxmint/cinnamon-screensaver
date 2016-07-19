@@ -15,20 +15,14 @@ import utils
 import time
 from grabHelper import GrabHelper
 
+import status
+from status import Status
+
 class ScreensaverManager:
-    __singleton = None
-
-    def get():
-        if ScreensaverManager.__singleton == None:
-            ScreensaverManager()
-        return ScreensaverManager.__singleton
-
     def __init__(self):
-        ScreensaverManager.__singleton = self
-
         self.bg = CinnamonDesktop.BG()
 
-        self.grab_helper = GrabHelper()
+        self.grab_helper = GrabHelper(self)
 
         trackers.con_tracker_get().connect(self.bg,
                                            "changed", 
@@ -56,17 +50,18 @@ class ScreensaverManager:
 
         self.activated_timestamp = 0
 
-        self.unlock_raised = False
+        status.ScreensaverStatus = Status.UNLOCKED
 
 ##### Service handlers (from service.py)
 
     def is_locked(self):
-        return self.activated_timestamp != 0
+        return status.ScreensaverStatus > Status.UNLOCKED
 
     def lock(self, msg):
         if self.grab_helper.grab_offscreen(True):
             self.away_message = msg
             self.setup_overlay()
+            status.ScreensaverStatus = Status.LOCKED_IDLE
             self.activated_timestamp = time.time()
         else:
             print("Could not acquire grabs.  Screensaver not activated")
@@ -81,7 +76,7 @@ class ScreensaverManager:
             self.away_message = None
             self.activated_timestamp = 0
             self.windows = []
-            self.unlock_raised = False
+            status.ScreensaverStatus = Status.UNLOCKED
             self.grab_helper.release()
 
     def get_active_time(self):
@@ -97,7 +92,7 @@ class ScreensaverManager:
 # Create all the widgets, connections when the screensaver is activated #
 
     def setup_overlay(self):
-        self.overlay = ScreensaverOverlayWindow(self.screen)
+        self.overlay = ScreensaverOverlayWindow(self.screen, self)
 
         trackers.con_tracker_get().connect(self.overlay,
                                            "realize",
@@ -195,23 +190,23 @@ class ScreensaverManager:
 # Methods that manipulate the unlock dialog
 
     def raise_unlock_widget(self):
-        if self.unlock_raised:
+        if status.ScreensaverStatus == Status.LOCKED_AWAKE:
             return
 
         self.clock_widget.stop_positioning()
-        self.unlock_raised = True
+        status.ScreensaverStatus = Status.LOCKED_AWAKE
 
         self.unlock_dialog.reveal()
         self.clock_widget.reveal()
 
     def cancel_lock_widget(self):
-        if not self.unlock_raised:
+        if status.ScreensaverStatus != Status.LOCKED_AWAKE:
             return
 
         self.set_timeout_active(None, False)
 
         self.unlock_dialog.cancel()
-        self.unlock_raised = False
+        status.ScreensaverStatus = Status.LOCKED_IDLE
 
         self.clock_widget.start_positioning()
 

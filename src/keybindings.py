@@ -3,11 +3,12 @@
 import gi
 gi.require_version('CDesktopEnums', '3.0')
 from gi.repository import Gtk, GObject, Gdk, Gio, CinnamonDesktop
+from gi.repository.CDesktopEnums import MediaKeyType as MK
 import dbus
 
-from gi.repository.CDesktopEnums import MediaKeyType as MK
-
 import constants as c
+import status
+from status import Status
 
 class ShortcutAction(GObject.GObject):
     def __init__(self, action, bindings):
@@ -34,14 +35,14 @@ class KeyBindings(GObject.GObject):
     def __init__(self, manager):
         super(KeyBindings, self).__init__()
 
+        self.manager = manager
+
         self.proxy = None
         self.keymap = Gdk.Keymap.get_default()
 
         Gio.bus_watch_name(Gio.BusType.SESSION, c.CSD_MEDIAKEY_HANDLER_SERVICE,
                            Gio.BusNameWatcherFlags.NONE,
                            self.on_csd_appeared, self.on_csd_disappeared)
-
-        self.manager = manager
 
         self.media_key_settings = Gio.Settings(schema_id="org.cinnamon.desktop.keybindings.media-keys")
         self.shortcut_actions = []
@@ -84,7 +85,7 @@ class KeyBindings(GObject.GObject):
         filtered_state = Gdk.ModifierType(event.state & ~(Gdk.ModifierType.MOD2_MASK | Gdk.ModifierType.LOCK_MASK))
 
         if filtered_state == 0 and event.keyval == Gdk.KEY_Escape:
-            if self.manager.unlock_raised:
+            if status.ScreensaverStatus == Status.LOCKED_AWAKE:
                 self.manager.cancel_lock_widget()
                 return True
 

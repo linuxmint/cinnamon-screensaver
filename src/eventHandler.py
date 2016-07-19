@@ -2,21 +2,14 @@
 
 from gi.repository import Gdk
 from keybindings import KeyBindings
-import manager
+
+import status
+from status import Status
 
 class EventHandler:
-    __singleton = None
-
-    def get():
-        if EventHandler.__singleton == None:
-            EventHandler()
-        return EventHandler.__singleton
-
-    def __init__(self):
-        EventHandler.__singleton = self
-
-        self.manager = manager.ScreensaverManager.get()
-        self.keybindings_handler = KeyBindings(self.manager)
+    def __init__(self, manager):
+        self.manager = manager
+        self.keybindings_handler = KeyBindings(manager)
 
     def on_user_activity(self):
         self.manager.simulate_user_activity()
@@ -35,13 +28,11 @@ class EventHandler:
         if self.keybindings_handler.maybe_handle_event(event):
             return Gdk.EVENT_STOP
 
-        if not self.manager.unlock_raised and event.string != "":
+        if status.ScreensaverStatus == Status.LOCKED_IDLE and event.string != "":
             self.manager.unlock_dialog.queue_key_event(event)
-
-        if self.manager.unlock_raised:
+        elif status.ScreensaverStatus == Status.LOCKED_AWAKE:
             self.on_user_activity()
             return self.manager.unlock_dialog.auth_prompt_entry.event(event)
 
         self.on_user_activity()
-
         return Gdk.EVENT_STOP
