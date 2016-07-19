@@ -215,9 +215,10 @@ class UnlockDialog(BaseWindow):
         return self.auth_prompt_entry.is_focus()
 
     def queue_key_event(self, event):
-        current = self.auth_prompt_entry.get_text()
-        current += event.string
-        self.auth_prompt_entry.set_text(current)
+        if not self.auth_prompt_entry.get_realized():
+            self.auth_prompt_entry.realize()
+
+        self.auth_prompt_entry.event(event)
         self.auth_prompt_entry.set_position(-1)
 
     def keymap_handler(self, keymap):
