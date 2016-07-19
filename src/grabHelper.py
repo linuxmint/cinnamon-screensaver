@@ -3,7 +3,7 @@
 from gi.repository import Gdk, Gtk
 
 from eventHandler import EventHandler
-from Xlib import display, X
+import x11
 import time
 
 class GrabHelper:
@@ -34,7 +34,7 @@ class GrabHelper:
 
         def try_grab(grab_func, *args):
             retries = 0
-            while retries < 4:
+            while retries < 1:
                 got = grab_func(*args)
                 if got:
                     return True
@@ -46,7 +46,7 @@ class GrabHelper:
         got_keyboard = try_grab(self.grab_keyboard, window)
 
         if not got_keyboard:
-            self.nuke_focus()
+            x11.nuke_focus()
             got_keyboard = try_grab(self.grab_keyboard, window)
 
         got_mouse = try_grab(self.grab_mouse, window, hide_cursor)
@@ -109,13 +109,6 @@ class GrabHelper:
             print("couldn't grab keyboard")
 
         return status == Gdk.GrabStatus.SUCCESS
-
-    def nuke_focus(self):
-        print("screensaver having trouble with grabs, nuking focus")
-        xdisplay = display.Display()
-        ret = xdisplay.get_input_focus()
-
-        xdisplay.set_input_focus(X.NONE, X.RevertToNone, X.CurrentTime, None)
 
 class OffscreenWindow(Gtk.Invisible):
     def __init__(self):

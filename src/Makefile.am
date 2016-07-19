@@ -27,7 +27,8 @@ app_PYTHON = \
         sessionProxy.py \
         trackers.py \
         utils.py \
-        window.py
+        window.py \
+        x11.py
 
 app_SCRIPTS = cinnamon-screensaver-main.py \
               cinnamon-screensaver-command.py \
