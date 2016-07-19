@@ -3,6 +3,8 @@
 from gi.repository import Gdk, Gtk
 
 from eventHandler import EventHandler
+from Xlib import display, X
+import time
 
 class GrabHelper:
     def __init__(self):
@@ -27,12 +29,33 @@ class GrabHelper:
         return self.grab_window(window, hide_cursor)
 
     def grab_window(self, window, hide_cursor):
-        got_mouse = self.grab_mouse(window, hide_cursor)
-        got_keyboard = self.grab_keyboard(window)
+        got_keyboard = False
+        got_mouse = False
 
-        if got_mouse != Gdk.GrabStatus.SUCCESS and got_keyboard != Gdk.GrabStatus.SUCCESS:
-            self.release_keyboard()
-            self.release_mouse()
+        def try_grab(grab_func, *args):
+            retries = 0
+            while retries < 4:
+                got = grab_func(*args)
+                if got:
+                    return True
+
+                retries = retries + 1
+                time.sleep(1)
+            return False
+
+        got_keyboard = try_grab(self.grab_keyboard, window)
+
+        if not got_keyboard:
+            self.nuke_focus()
+            got_keyboard = try_grab(self.grab_keyboard, window)
+
+        got_mouse = try_grab(self.grab_mouse, window, hide_cursor)
+
+        if not got_mouse or not got_keyboard:
+            if got_keyboard:
+                self.release_keyboard()
+            if got_mouse:
+                self.release_mouse()
             return False
 
         return True
@@ -61,14 +84,12 @@ class GrabHelper:
 
         if status == Gdk.GrabStatus.SUCCESS:
             self.reset_mouse()
-
             self.mouse_grab_window = window
-            self.mouse_grab_window.weak_ref(self.on_window_finalize, "mouse")
             self.mouse_hide_cursor = hide_cursor
         else:
             print("couldn't grab mouse")
 
-        return status
+        return status == Gdk.GrabStatus.SUCCESS
 
     def reset_keyboard(self):
         if self.keyboard_grab_window is not None:
@@ -83,20 +104,18 @@ class GrabHelper:
 
         if status == Gdk.GrabStatus.SUCCESS:
             self.reset_keyboard()
-
             self.keyboard_grab_window = window
-            self.keyboard_grab_window.weak_ref(self.on_window_finalize, "keyboard")
         else:
             print("couldn't grab keyboard")
 
-        return status
+        return status == Gdk.GrabStatus.SUCCESS
 
-    def on_window_finalize(self, grab_type):
-        if grab_type == "mouse":
-            self.mouse_grab_window = None
-            self.mouse_hide_cursor = False
-        else:
-            self.keyboard_grab_window = None
+    def nuke_focus(self):
+        print("screensaver having trouble with grabs, nuking focus")
+        xdisplay = display.Display()
+        ret = xdisplay.get_input_focus()
+
+        xdisplay.set_input_focus(X.NONE, X.RevertToNone, X.CurrentTime, None)
 
 class OffscreenWindow(Gtk.Invisible):
     def __init__(self):
