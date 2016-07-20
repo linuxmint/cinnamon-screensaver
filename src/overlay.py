@@ -6,7 +6,8 @@ import trackers
 
 from eventHandler import EventHandler
 
-from window import ScreensaverWindow
+from wallpaperWindow import WallpaperWindow
+from pluginWindow import PluginWindow
 from unlock import UnlockDialog
 from clock import ClockWidget
 
@@ -117,7 +118,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
 # Overlay window management #
 
     def position_overlay_child(self, overlay, child, allocation):
-        if isinstance(child, ScreensaverWindow):
+        if isinstance(child, WallpaperWindow) or isinstance(child, PluginWindow):
             allocation.x = child.rect.x
             allocation.y = child.rect.y
             allocation.width = child.rect.width

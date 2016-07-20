@@ -1,7 +1,9 @@
 #! /usr/bin/python3
 
-from gi.repository import GLib, Gio, Gdk, Gtk
+from gi.repository import GLib, Gio, Gdk, Gtk, GLib
+import os
 import subprocess
+import config
 
 def get_user_display_name():
     name = GLib.get_real_name()
@@ -82,6 +84,23 @@ def get_mouse_monitor():
     screen, x, y = pointer.get_position()
 
     return Gdk.Screen.get_default().get_monitor_at_point(x, y)
+
+def lookup_plugin_path(name):
+    try_path = os.path.join(config.pkgdatadir,
+                                "screensavers",
+                                name,
+                                "main")
+
+    if not os.path.exists(try_path):
+        try_path = os.path.join(GLib.get_user_data_dir(),
+                                "cinnamon-screensaver",
+                                "screensavers",
+                                name,
+                                "main")
+        if not os.path.exists(try_path):
+            return None
+
+    return try_path
 
 def do_quit():
     Gtk.main_quit()

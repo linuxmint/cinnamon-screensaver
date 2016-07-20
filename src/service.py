@@ -57,6 +57,10 @@ class ScreensaverService(dbus.service.Object):
         if self.GetActive():
             self.screen_manager.simulate_user_activity()
 
+    @dbus.service.method(c.SS_SERVICE, in_signature='u', out_signature='')
+    def SetPlugID(self, plug_id):
+        self.screen_manager.set_plug_id(plug_id)
+
     def on_session_idle_changed(self, proxy, idle):
         if idle:
             self.Lock("")

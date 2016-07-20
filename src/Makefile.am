@@ -3,6 +3,8 @@ AUTOMAKE_OPTIONS = 1.7
 
 NULL =
 
+SUBDIRS = screensavers
+
 desktopdir = $(datadir)/applications
 desktop_in_files = cinnamon-screensaver.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
@@ -23,12 +25,13 @@ app_PYTHON = \
         grabHelper.py \
         manager.py \
         overlay.py \
+        pluginWindow.py \
         service.py \
         sessionProxy.py \
         status.py \
         trackers.py \
         utils.py \
-        window.py \
+        wallpaperWindow.py \
         x11.py
 
 app_SCRIPTS = cinnamon-screensaver-main.py \

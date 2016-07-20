@@ -29,3 +29,6 @@ GSM_PRESENCE_INTERFACE          = GSM_INTERFACE + ".Presence"
 CSD_MEDIAKEY_HANDLER_SERVICE    = "org.cinnamon.SettingsDaemon"
 CSD_MEDIAKEY_HANDLER_PATH       = "/org/cinnamon/SettingsDaemon/KeybindingHandler"
 CSD_MEDIAKEY_HANDLER_INTERFACE  = "org.cinnamon.SettingsDaemon.KeybindingHandler"
+
+
+SCREENSAVER_NAME_KEY = "screensaver-name"

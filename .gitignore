@@ -1,6 +1,6 @@
 INSTALL
-Makefile
-Makefile.in
+./Makefile
+./Makefile.in
 aclocal.m4
 autom4te.cache/
 compile
@@ -15,7 +15,6 @@ data/Makefile
 data/Makefile.in
 data/org.cinnamon.ScreenSaver.service
 data/org.cinnamon.ScreenSaver.PAMHelper.service
-data/screensavers/Makefile
 depcomp
 files/Makefile
 install-sh
@@ -40,5 +39,6 @@ src/cinnamon-screensaver-pam-helper
 src/cinnamon-screensaver.desktop
 src/cinnamon-screensaver.desktop.in
 src/__pycache__
+src/screensavers/Makefile
 stamp-h1
 xmldocs.make

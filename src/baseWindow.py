@@ -40,3 +40,6 @@ class BaseWindow(Gtk.Revealer):
                                               self.destroy_after_hiding)
 
         self.destroy()
+
+    def update_geometry(self):
+        self.rect = self.screen.get_monitor_geometry(self.monitor_index)

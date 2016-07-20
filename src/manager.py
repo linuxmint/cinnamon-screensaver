@@ -5,7 +5,8 @@ gi.require_version('CinnamonDesktop', '3.0')
 from gi.repository import CinnamonDesktop, Gdk, Gio
 
 from overlay import ScreensaverOverlayWindow
-from window import ScreensaverWindow
+from wallpaperWindow import WallpaperWindow
+from pluginWindow import PluginWindow
 from unlock import UnlockDialog
 from clock import ClockWidget
 import constants as c
@@ -29,6 +30,7 @@ class ScreensaverManager:
                                            self.on_bg_changed)
 
         self.bg_settings = Gio.Settings(schema_id="org.cinnamon.desktop.background")
+        self.ss_settings = Gio.Settings(schema_id="org.cinnamon.desktop.screensaver")
 
         trackers.con_tracker_get().connect(self.bg_settings,
                                            "change-event",
@@ -89,6 +91,13 @@ class ScreensaverManager:
         self.raise_unlock_widget()
         self.reset_timeout()
 
+    def set_plug_id(self, plug_id):
+        for window in self.windows:
+            if window.has_plug():
+                continue
+            window.set_plug_id(plug_id)
+            break
+
 # Create all the widgets, connections when the screensaver is activated #
 
     def setup_overlay(self):
@@ -111,12 +120,16 @@ class ScreensaverManager:
         for index in range(n):
             primary = self.screen.get_primary_monitor() == index
 
-            window = ScreensaverWindow(self.screen, index, primary)
-
-            trackers.con_tracker_get().connect(window.bg_image,
-                                               "realize",
-                                               self.on_window_bg_image_realized,
-                                               window)
+            name = self.ss_settings.get_string(c.SCREENSAVER_NAME_KEY)
+            path = utils.lookup_plugin_path(name)
+            if path is not None:
+                window = PluginWindow(self.screen, index, path)
+            else:
+                window = WallpaperWindow(self.screen, index)
+                trackers.con_tracker_get().connect(window.bg_image,
+                                                   "realize",
+                                                   self.on_window_bg_image_realized,
+                                                   window)
 
             self.windows.append(window)
 

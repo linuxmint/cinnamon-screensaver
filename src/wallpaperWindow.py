@@ -4,13 +4,12 @@ from gi.repository import Gtk
 from baseWindow import BaseWindow
 import trackers
 
-class ScreensaverWindow(BaseWindow):
-    def __init__(self, screen, index, primary):
-        super(ScreensaverWindow, self).__init__()
+class WallpaperWindow(BaseWindow):
+    def __init__(self, screen, index):
+        super(WallpaperWindow, self).__init__()
 
         self.screen = screen
         self.monitor_index = index
-        self.primary = primary
 
         self.update_geometry()
 
@@ -32,6 +31,4 @@ class ScreensaverWindow(BaseWindow):
         cr.paint()
         return False
 
-    def update_geometry(self):
-        self.rect = self.screen.get_monitor_geometry(self.monitor_index)
 
