@@ -39,10 +39,7 @@ class ScreensaverService(dbus.service.Object):
 
     @dbus.service.method(c.SS_SERVICE, in_signature='b', out_signature='')
     def SetActive(self, active):
-        if active:
-            self.screen_manager.lock()
-        else:
-            self.screen_manager.unlock()
+        self.screen_manager.set_active(active)
 
     @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='b')
     def GetActive(self):
@@ -54,7 +51,7 @@ class ScreensaverService(dbus.service.Object):
 
     @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='')
     def SimulateUserActivity(self):
-        if self.GetActive():
+        if self.screen_manager.is_locked():
             self.screen_manager.simulate_user_activity()
 
     @dbus.service.method(c.SS_SERVICE, in_signature='u', out_signature='')
@@ -63,9 +60,9 @@ class ScreensaverService(dbus.service.Object):
 
     def on_session_idle_changed(self, proxy, idle):
         if idle:
-            self.Lock("")
+            self.screen_manager.set_active(True)
         else:
-            pass
+            self.screen_manager.simulate_user_activity()
 
     def on_session_idle_notice_changed(self, proxy, idle):
         pass

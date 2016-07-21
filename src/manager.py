@@ -1,8 +1,7 @@
 #! /usr/bin/python3
 
 import gi
-gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import CinnamonDesktop, Gdk, Gio
+from gi.repository import Gdk, Gio
 
 from overlay import ScreensaverOverlayWindow
 from wallpaperWindow import WallpaperWindow
@@ -14,6 +13,7 @@ import constants as c
 import trackers
 import utils
 import time
+import settings
 from grabHelper import GrabHelper
 
 import status
@@ -21,34 +21,9 @@ from status import Status
 
 class ScreensaverManager:
     def __init__(self):
-        self.bg = CinnamonDesktop.BG()
-
         self.grab_helper = GrabHelper(self)
 
-        trackers.con_tracker_get().connect(self.bg,
-                                           "changed", 
-                                           self.on_bg_changed)
-
-        self.bg_settings = Gio.Settings(schema_id="org.cinnamon.desktop.background")
-        self.ss_settings = Gio.Settings(schema_id="org.cinnamon.desktop.screensaver")
-
-        trackers.con_tracker_get().connect(self.bg_settings,
-                                           "change-event",
-                                           self.on_bg_settings_changed)
-
-        self.bg.load_from_preferences(self.bg_settings)
-
-        self.windows = []
-
         self.screen = Gdk.Screen.get_default()
-
-        self.saved_key_events = []
-
-        self.away_message = None
-
-        self.overlay = None
-        self.clock_widget = None
-        self.unlock_dialog = None
 
         self.activated_timestamp = 0
 
@@ -60,26 +35,10 @@ class ScreensaverManager:
         return status.ScreensaverStatus > Status.UNLOCKED
 
     def lock(self, msg):
-        if self.grab_helper.grab_offscreen(True):
-            self.away_message = msg
-            self.setup_overlay()
-            status.ScreensaverStatus = Status.LOCKED_IDLE
-            self.activated_timestamp = time.time()
-        else:
-            print("Could not acquire grabs.  Screensaver not activated")
+        self.show_screensaver(msg)
 
     def unlock(self):
-        if self.activated_timestamp != 0:
-            self.set_timeout_active(None, False)
-            self.overlay.destroy()
-            self.overlay = None
-            self.unlock_dialog = None
-            self.clock_widget = None
-            self.away_message = None
-            self.activated_timestamp = 0
-            self.windows = []
-            status.ScreensaverStatus = Status.UNLOCKED
-            self.grab_helper.release()
+        self.kill_screensaver()
 
     def get_active_time(self):
         if self.activated_timestamp != 0:
@@ -87,141 +46,63 @@ class ScreensaverManager:
         else:
             return 0
 
+    def set_active(self, active):
+        if active:
+            self.show_screensaver("")
+        else:
+            self.kill_screensaver()
+
     def simulate_user_activity(self):
         self.raise_unlock_widget()
         self.reset_timeout()
 
     def set_plug_id(self, plug_id):
-        for window in self.windows:
-            if window.has_plug():
-                continue
-            window.set_plug_id(plug_id)
-            break
+        self.overlay.set_plug_id(plug_id)
 
-# Create all the widgets, connections when the screensaver is activated #
+#####
 
-    def setup_overlay(self):
-        self.overlay = ScreensaverOverlayWindow(self.screen, self)
-
-        trackers.con_tracker_get().connect(self.overlay,
-                                           "realize",
-                                           self.on_overlay_realized)
-
-        self.overlay.show_all()
-
-    def on_overlay_realized(self, widget):
-        self.setup_windows()
-        self.setup_clock()
-        self.setup_unlock()
-
-    def setup_windows(self):
-        n = self.screen.get_n_monitors()
-
-        for index in range(n):
-            primary = self.screen.get_primary_monitor() == index
-
-            name = self.ss_settings.get_string(c.SCREENSAVER_NAME_KEY)
-            path = utils.lookup_plugin_path(name)
-            if path is not None:
-                window = PluginWindow(self.screen, index, path)
-            else:
-                window = WallpaperWindow(self.screen, index)
-                trackers.con_tracker_get().connect(window.bg_image,
-                                                   "realize",
-                                                   self.on_window_bg_image_realized,
-                                                   window)
-
-            self.windows.append(window)
-
-            window.reveal()
-
-            self.overlay.add_child(window)
-            self.overlay.put_on_bottom(window)
-
-            window.queue_draw()
-
-    def on_window_bg_image_realized(self, widget, window):
-        trackers.con_tracker_get().disconnect(window.bg_image,
-                                              "realize",
-                                              self.on_window_bg_image_realized)
-        self.bg.create_and_set_gtk_image (widget, window.rect.width, window.rect.height)
-        widget.queue_draw()
-
-    def setup_clock(self):
-        self.clock_widget = ClockWidget(self.away_message, utils.get_mouse_monitor())
-        self.overlay.add_child(self.clock_widget)
-        self.overlay.put_on_top(self.clock_widget)
-
-        self.clock_widget.show_all()
-
-        self.clock_widget.reveal()
-        self.clock_widget.start_positioning()
-
-    def setup_unlock(self):
-        self.unlock_dialog = UnlockDialog()
-        self.overlay.add_child(self.unlock_dialog)
-
-        trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "inhibit-timeout",
-                                           self.set_timeout_active, False)
-        trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "uninhibit-timeout",
-                                           self.set_timeout_active, True)
-        trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "auth-success",
-                                           self.authentication_result_callback, True)
-        trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "auth-failure",
-                                           self.authentication_result_callback, False)
-
-# Timer stuff - after a certain time, the unlock dialog will cancel itself.
-# This timer is suspended during authentication, and any time a new user event is received
-
-    def reset_timeout(self):
-        self.set_timeout_active(None, True)
-
-    def set_timeout_active(self, dialog, active):
-        if active:
-            trackers.timer_tracker_get().start("wake-timeout",
-                                               c.UNLOCK_TIMEOUT * 1000,
-                                               self.on_wake_timeout)
+    def show_screensaver(self, away_message):
+        if self.grab_helper.grab_offscreen(True):
+            self.overlay = ScreensaverOverlayWindow(self.screen, self, away_message)
+            self.overlay.show_all()
+            status.ScreensaverStatus = Status.LOCKED_IDLE
+            self.activated_timestamp = time.time()
         else:
-            trackers.timer_tracker_get().cancel("wake-timeout")
+            print("Could not acquire grabs.  Screensaver not activated")
 
-    def authentication_result_callback(self, dialog, success):
-        if success:
-            self.unlock()
-        else:
-            self.unlock_dialog.blink()
+    def kill_screensaver(self):
+        if self.activated_timestamp != 0:
+            self.set_timeout_active(None, False)
 
-    def on_wake_timeout(self):
-        self.set_timeout_active(None, False)
-        self.cancel_lock_widget()
+            self.overlay.destroy()
+            self.overlay = None
 
-        return False
+            self.grab_helper.release()
 
-# Methods that manipulate the unlock dialog
+            status.ScreensaverStatus = Status.UNLOCKED
+            self.activated_timestamp = 0
 
-    def raise_unlock_widget(self):
-        if status.ScreensaverStatus == Status.LOCKED_AWAKE:
-            return
 
-        self.clock_widget.stop_positioning()
-        status.ScreensaverStatus = Status.LOCKED_AWAKE
 
-        self.unlock_dialog.reveal()
-        self.clock_widget.reveal()
 
-    def cancel_lock_widget(self):
-        if status.ScreensaverStatus != Status.LOCKED_AWAKE:
-            return
 
-        self.set_timeout_active(None, False)
 
-        self.unlock_dialog.cancel()
-        status.ScreensaverStatus = Status.LOCKED_IDLE
 
-        self.clock_widget.start_positioning()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # GnomeBG stuff #
 

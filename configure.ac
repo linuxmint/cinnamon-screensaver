@@ -70,7 +70,9 @@ po/Makefile.in
 src/Makefile
 src/cinnamon-screensaver.desktop.in
 data/Makefile
-src/screensavers/Makefile
+screensavers/Makefile
+screensavers/webkit@cinnamon.org/Makefile
+screensavers/xscreensaver@cinnamon.org/Makefile
 data/org.cinnamon.ScreenSaver.service
 data/org.cinnamon.ScreenSaver.PAMHelper.service
 files/Makefile

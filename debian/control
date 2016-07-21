@@ -3,6 +3,7 @@ Section: x11
 Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends: debhelper (>= 9),
+               devscripts,
                dh-autoreconf,
                dh-python,
                gnome-common,
@@ -10,21 +11,39 @@ Build-Depends: debhelper (>= 9),
 Standards-Version: 3.9.6
 
 Package: cinnamon-screensaver
-Architecture: any
+Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: cinnamon-desktop-data (>= 3.0.0),
-         dbus-x11,
-         gir1.2-webkit2-3.0,
-         gnome-icon-theme (>= 2.15.90),
          python3,
+         python3-xlib,
+         python3-pam,
+         python3-gi,
+         python3-dbus,
+         gir1.2-cinnamondesktop-3.0,
+         gir1.2-gkbd-3.0,
+         gir1.2-glib-2.0,
+         gir1.2-gtk-3.0,
+         gir1.2-accountsservice-1.0,
          ${misc:Depends},
          ${python:Depends},
          ${shlibs:Depends}
-Recommends: libpam-gnome-keyring,
-            xscreensaver-data,
-            xscreensaver-data-extra,
-            xscreensaver-gl,
-            xscreensaver-gl-extra
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
+
+Package: cinnamon-screensaver-x-plugin
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: cinnamon-screensaver (>= 3.0.0),
+         xscreensaver-data
+Recommends: xscreensaver-data-extra,
+            xscreensaver-gl,
+            xscreensaver-gl-extra
+Description: XScreensaver plugin for cinnamon-screensaver
+
+Package: cinnamon-screensaver-webkit-plugin
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: cinnamon-screensaver (>= 3.0.0),
+         gir1.2-webkit2-3.0
+Description: Webkit plugin for cinnamon-screensaver

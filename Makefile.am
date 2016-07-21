@@ -9,6 +9,7 @@ SUBDIRS =			\
 	po 			\
 	data			\
     files       \
+    screensavers \
 	$(NULL)
 
 EXTRA_DIST =			\

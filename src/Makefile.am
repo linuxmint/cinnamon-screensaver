@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = 1.7
 
 NULL =
 
-SUBDIRS = screensavers
+SUBDIRS =
 
 desktopdir = $(datadir)/applications
 desktop_in_files = cinnamon-screensaver.desktop.in
@@ -28,6 +28,7 @@ app_PYTHON = \
         pluginWindow.py \
         service.py \
         sessionProxy.py \
+        settings.py \
         status.py \
         trackers.py \
         utils.py \
