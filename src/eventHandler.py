@@ -29,10 +29,10 @@ class EventHandler:
             return Gdk.EVENT_STOP
 
         if status.ScreensaverStatus == Status.LOCKED_IDLE and event.string != "":
-            self.manager.unlock_dialog.queue_key_event(event)
+            self.manager.queue_dialog_key_event(event)
         elif status.ScreensaverStatus == Status.LOCKED_AWAKE:
             self.on_user_activity()
-            return self.manager.unlock_dialog.auth_prompt_entry.event(event)
+            return self.manager.overlay.unlock_dialog.auth_prompt_entry.event(event)
 
         self.on_user_activity()
         return Gdk.EVENT_STOP

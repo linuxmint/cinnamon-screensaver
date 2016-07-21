@@ -86,7 +86,7 @@ class KeyBindings(GObject.GObject):
 
         if filtered_state == 0 and event.keyval == Gdk.KEY_Escape:
             if status.ScreensaverStatus == Status.LOCKED_AWAKE:
-                self.manager.cancel_lock_widget()
+                self.manager.cancel_unlock_widget()
                 return True
 
         for entry in self.shortcut_actions:

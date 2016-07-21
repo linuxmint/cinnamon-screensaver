@@ -53,8 +53,8 @@ class ScreensaverManager:
             self.kill_screensaver()
 
     def simulate_user_activity(self):
-        self.raise_unlock_widget()
-        self.reset_timeout()
+        self.overlay.raise_unlock_widget()
+        self.overlay.reset_timeout()
 
     def set_plug_id(self, plug_id):
         self.overlay.set_plug_id(plug_id)
@@ -72,9 +72,7 @@ class ScreensaverManager:
 
     def kill_screensaver(self):
         if self.activated_timestamp != 0:
-            self.set_timeout_active(None, False)
-
-            self.overlay.destroy()
+            self.overlay.destroy_overlay()
             self.overlay = None
 
             self.grab_helper.release()
@@ -82,6 +80,13 @@ class ScreensaverManager:
             status.ScreensaverStatus = Status.UNLOCKED
             self.activated_timestamp = 0
 
+    def cancel_unlock_widget(self):
+        self.overlay.cancel_unlock_widget();
+
+##### EventHandler calls
+
+    def queue_dialog_key_event(self, event):
+        self.overlay.queue_dialog_key_event(event)
 
 
 
@@ -104,10 +109,6 @@ class ScreensaverManager:
 
 
 
-# GnomeBG stuff #
-
-    def on_bg_changed(self, bg):
-        pass
 
     def on_bg_settings_changed(self, settings, keys, n_keys):
         self.bg.load_from_preferences(self.bg_settings)

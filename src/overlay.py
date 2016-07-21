@@ -14,26 +14,27 @@ from wallpaperWindow import WallpaperWindow
 from pluginWindow import PluginWindow
 from unlock import UnlockDialog
 from clock import ClockWidget
+import constants as c
 
 import status
 from status import Status
+import settings
 
 import random
 
-class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
+class ScreensaverOverlayWindow(Gtk.Window):
     def __init__(self, screen, manager, away_message):
         Gtk.Window.__init__(self,
                             type=Gtk.WindowType.POPUP,
                             decorated=False,
                             skip_taskbar_hint=True,
                             skip_pager_hint=True)
-        BaseWindow.__init__(self)
 
         self.bg = CinnamonDesktop.BG()
         trackers.con_tracker_get().connect(self.bg,
                                            "changed", 
                                            self.on_bg_changed)
-        self.bg.load_from_preferences(self.bg_settings)
+        self.bg.load_from_preferences(settings.bg_settings)
 
         self.manager = manager
         self.screen = screen
@@ -97,16 +98,17 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
         self.setup_clock()
         self.setup_unlock()
 
-    def do_destroy(self):
-        for window in windows:
+    def destroy_overlay(self):
+        self.set_timeout_active(None, False)
+
+        for window in self.windows:
             window.destroy()
 
         self.unlock_dialog = None
         self.clock_widget = None
         self.away_message = None
         self.windows = []
-
-        Gtk.Window.do_destroy(self)
+        self.destroy()
 
     def set_plug_id(self, plug_id):
         for window in self.windows:
@@ -136,22 +138,25 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
 
             window.reveal()
 
-            self.overlay.add_child(window)
-            self.overlay.put_on_bottom(window)
+            self.add_child_widget(window)
+            self.put_on_bottom(window)
 
             window.queue_draw()
 
     def on_wallpaper_window_bg_image_realized(self, widget, window):
         trackers.con_tracker_get().disconnect(window.bg_image,
                                               "realize",
-                                              self.on_window_bg_image_realized)
+                                              self.on_wallpaper_window_bg_image_realized)
         self.bg.create_and_set_gtk_image (widget, window.rect.width, window.rect.height)
         widget.queue_draw()
 
+    def on_bg_changed(self, bg):
+        pass
+
     def setup_clock(self):
         self.clock_widget = ClockWidget(self.away_message, utils.get_mouse_monitor())
-        self.overlay.add_child(self.clock_widget)
-        self.overlay.put_on_top(self.clock_widget)
+        self.add_child_widget(self.clock_widget)
+        self.put_on_top(self.clock_widget)
 
         self.clock_widget.show_all()
 
@@ -160,7 +165,7 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
 
     def setup_unlock(self):
         self.unlock_dialog = UnlockDialog()
-        self.overlay.add_child(self.unlock_dialog)
+        self.add_child_widget(self.unlock_dialog)
 
         # Prevent a dialog timeout during authentication
         trackers.con_tracker_get().connect(self.unlock_dialog,
@@ -177,6 +182,9 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
         trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "auth-failure",
                                            self.authentication_result_callback, False)
+
+    def queue_dialog_key_event(self, event):
+        self.unlock_dialog.queue_key_event(event)
 
 # Timer stuff - after a certain time, the unlock dialog will cancel itself.
 # This timer is suspended during authentication, and any time a new user event is received
@@ -200,7 +208,7 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
 
     def authentication_result_callback(self, dialog, success):
         if success:
-            self.unlock()
+            self.manager.unlock()
         else:
             self.unlock_dialog.blink()
 
@@ -216,7 +224,7 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
         self.unlock_dialog.reveal()
         self.clock_widget.reveal()
 
-    def cancel_lock_widget(self):
+    def cancel_unlock_widget(self):
         if status.ScreensaverStatus != Status.LOCKED_AWAKE:
             return
 
@@ -226,27 +234,6 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
         status.ScreensaverStatus = Status.LOCKED_IDLE
 
         self.clock_widget.start_positioning()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def do_get_preferred_height(self):
         if self.get_realized():
@@ -281,7 +268,7 @@ class ScreensaverOverlayWindow(Gtk.Window, BaseWindow):
 
 # Overlay window management #
 
-    def add_child(self, widget):
+    def add_child_widget(self, widget):
         self.overlay.add_overlay(widget)
 
     def put_on_top(self, widget):

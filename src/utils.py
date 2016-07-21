@@ -86,6 +86,9 @@ def get_mouse_monitor():
     return Gdk.Screen.get_default().get_monitor_at_point(x, y)
 
 def lookup_plugin_path(name):
+    if name is None:
+        return None
+
     try_path = os.path.join(config.pkgdatadir,
                                 "screensavers",
                                 name,
