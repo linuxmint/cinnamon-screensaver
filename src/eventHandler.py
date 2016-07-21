@@ -4,7 +4,6 @@ from gi.repository import Gdk
 from keybindings import KeyBindings
 
 import status
-from status import Status
 
 class EventHandler:
     def __init__(self, manager):
@@ -28,11 +27,10 @@ class EventHandler:
         if self.keybindings_handler.maybe_handle_event(event):
             return Gdk.EVENT_STOP
 
-        if status.ScreensaverStatus == Status.LOCKED_IDLE and event.string != "":
-            self.manager.queue_dialog_key_event(event)
-        elif status.ScreensaverStatus == Status.LOCKED_AWAKE:
-            self.on_user_activity()
-            return self.manager.overlay.unlock_dialog.auth_prompt_entry.event(event)
+        if status.Active:
+            if status.Locked:
+                self.manager.queue_dialog_key_event(event)
 
         self.on_user_activity()
+
         return Gdk.EVENT_STOP

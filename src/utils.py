@@ -1,9 +1,10 @@
 #! /usr/bin/python3
 
-from gi.repository import GLib, Gio, Gdk, Gtk, GLib
+from gi.repository import GLib, Gio, Gdk, Gtk
 import os
 import subprocess
 import config
+import settings
 
 def get_user_display_name():
     name = GLib.get_real_name()
@@ -59,11 +60,40 @@ def do_user_switch():
         if app:
             app.launch(None, ctx)
 
+def session_is_cinnamon():
+    if "cinnamon" in GLib.getenv("DESKTOP_SESSION"):
+        if GLib.find_program_in_path("cinnamon-session-quit"):
+            return True
+
+    return False
+
+def should_show_logout():
+    if not settings.get_logout_enabled():
+        return False
+
+    if settings.get_logout_command() != "" or session_is_cinnamon():
+        return True
+
+    return False
+
 def do_logout():
-    command = "%s %s" % ("cinnamon-session-quit", "--logout --no-prompt")
+    custom_command = settings.get_logout_command()
+
+    if custom_command != "":
+        command = custom_command
+    else:
+        if session_is_cinnamon():
+            command = "%s %s" % ("cinnamon-session-quit", "--logout --no-prompt")
+        else:
+            command = None
+
+    if not command:
+        return
+
     ctx = Gdk.Display.get_default().get_app_launch_context()
 
-    app = Gio.AppInfo.create_from_commandline(command, "cinnamon-session-quit", 0)
+    app = Gio.AppInfo.create_from_commandline(command, None, 0)
+
     if app:
         app.launch(None, ctx)
 
@@ -86,7 +116,7 @@ def get_mouse_monitor():
     return Gdk.Screen.get_default().get_monitor_at_point(x, y)
 
 def lookup_plugin_path(name):
-    if name is None:
+    if name == "":
         return None
 
     try_path = os.path.join(config.pkgdatadir,
@@ -107,7 +137,3 @@ def lookup_plugin_path(name):
 
 def do_quit():
     Gtk.main_quit()
-
-class Settings:
-    def __init__(self):
-        pass

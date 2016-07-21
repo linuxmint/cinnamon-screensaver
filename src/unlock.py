@@ -13,6 +13,8 @@ import os
 import trackers
 from grabHelper import GrabHelper
 from baseWindow import BaseWindow
+import settings
+import status
 
 # This segfaults if called more than once??
 kbd_config = None
@@ -142,28 +144,24 @@ class UnlockDialog(BaseWindow):
         self.action_area.show()
 
         self.auth_switch_button = self.add_button(_("S_witch User…"))
-        self.auth_switch_button.set_focus_on_click(False)
-        self.auth_switch_button.set_no_show_all(True)
-
         trackers.con_tracker_get().connect(self.auth_switch_button,
                                            "clicked",
                                            self.on_switch_user_clicked)
+        self.auth_switch_button.set_visible(settings.get_user_switch_enabled())
 
         self.auth_logout_button = self.add_button(_("Log _Out"))
-        self.auth_logout_button.set_focus_on_click(False)
-        self.auth_logout_button.set_no_show_all(True)
-
         trackers.con_tracker_get().connect(self.auth_logout_button,
                                            "clicked",
                                            self.on_logout_clicked)
+        self.auth_logout_button.set_visible(settings.get_logout_enabled())
+
 
         self.auth_unlock_button = self.add_button(_("_Unlock"))
-        self.auth_unlock_button.set_focus_on_click(False)
         self.auth_unlock_button.set_sensitive(False)
-
         trackers.con_tracker_get().connect(self.auth_unlock_button,
                                            "clicked",
                                            self.on_unlock_clicked)
+        self.auth_unlock_button.set_visible(True)
 
         self.real_name = utils.get_user_display_name()
         self.user_name = utils.get_user_name()
@@ -229,8 +227,9 @@ class UnlockDialog(BaseWindow):
 
     def add_button(self, text):
         button = Gtk.Button.new_from_stock(text)
+        button.set_focus_on_click(False)
         button.set_can_default(True)
-        button.show()
+        button.set_no_show_all(True)
         self.action_area.pack_end(button, False, True, 0)
         return button
 
@@ -334,3 +333,6 @@ class UnlockDialog(BaseWindow):
         self.auth_prompt_entry.grab_focus()
 
         self.emit("uninhibit-timeout")
+
+    def update_logout_button(self):
+        self.auth_logout_button.set_visible(status.LogoutEnabled)

@@ -1,11 +1,7 @@
 #! /usr/bin/python3
 
-from enum import IntEnum
+Active = False
+Locked = False
+Awake = False
 
-class Status(IntEnum):
-    UNLOCKED = 0
-    LOCKED_IDLE = 1
-    LOCKED_AWAKE = 2
-    AUTHENTICATING = 3
-
-ScreensaverStatus = Status.UNLOCKED
+LogoutEnabled = False

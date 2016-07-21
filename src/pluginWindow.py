@@ -2,9 +2,6 @@
 
 from gi.repository import Gtk, GLib
 from baseWindow import BaseWindow
-import trackers
-import config
-import os
 
 class PluginWindow(BaseWindow):
     def __init__(self, screen, index, path):

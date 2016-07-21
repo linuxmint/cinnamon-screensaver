@@ -5,6 +5,7 @@ import utils
 import random
 from baseWindow import BaseWindow
 import trackers
+import settings
 
 CLOCK_POSITIONING_TIMEOUT = 5
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
@@ -30,18 +31,10 @@ class ClockWidget(BaseWindow):
         self.add(self.label)
 
         self.clock_tracker = CinnamonDesktop.WallClock()
-        self.ss_settings = Gio.Settings("org.cinnamon.desktop.screensaver")
-        self.iface_settings = Gio.Settings("org.cinnamon.desktop.interface")
 
         trackers.con_tracker_get().connect(self.clock_tracker,
                                            "notify::clock",
                                            self.on_clock_changed)
-        trackers.con_tracker_get().connect(self.ss_settings,
-                                           "changed",
-                                           self.on_settings_changed)
-        trackers.con_tracker_get().connect(self.iface_settings,
-                                           "changed",
-                                           self.on_settings_changed)
 
         tz = Gio.File.new_for_path(path="/etc/localtime")
         self.tz_monitor = tz.monitor_file(0, None)
@@ -50,14 +43,9 @@ class ClockWidget(BaseWindow):
                                            "changed",
                                            self.on_tz_changed)
 
-        self.settings = utils.Settings()
-        self.fetch_settings()
         self.update_clock()
 
     def on_clock_changed(self, clock, pspec):
-        self.update_clock()
-
-    def on_settings_changed(self, settings, key):
         self.update_clock()
 
     def on_tz_changed(self, monitor, file, other, event):
@@ -69,29 +57,29 @@ class ClockWidget(BaseWindow):
 
         now = GLib.DateTime.new_now_local()
 
-        if not self.settings.use_custom_format:
-            if self.settings.show_date:
+        if not settings.get_use_custom_format():
+            if settings.get_clock_should_show_date():
                 date_value = now.format(_("%A, %B %e"))
             else:
                 date_value = ""
 
-            if self.settings.use_24h:
+            if settings.get_clock_should_use_24h():
                 time_value = now.format("%H:%M").lstrip()
             else:
                 time_value = now.format("%l:%M %p").lstrip()
         else:
-            date_value = now.format(self.settings.custom_date)
-            time_value = now.format(self.settings.custom_time)
+            date_value = now.format(settings.get_custom_date_format())
+            time_value = now.format(settings.get_custom_time_format())
 
         clock_string = ('<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n' +\
                        '<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>')\
-                        % (self.settings.font_time, time_value, self.settings.font_date, date_value)
+                        % (settings.get_time_font(), time_value, settings.get_date_font(), date_value)
 
         return clock_string
 
     def update_clock(self):
-        default_message = GLib.markup_escape_text (self.settings.default_message, -1)
-        font_message = self.settings.font_message
+        default_message = GLib.markup_escape_text (settings.get_default_away_message(), -1)
+        font_message = settings.get_message_font()
 
         if self.away_message and self.away_message != "":
             user_name = utils.get_user_display_name()
@@ -105,19 +93,6 @@ class ClockWidget(BaseWindow):
         self.label.set_markup(markup)
         self.label.set_line_wrap(True)
         self.label.set_alignment(0.5, 0.5)
-
-    def fetch_settings(self):
-        self.settings.default_message = self.ss_settings.get_string("default-message")
-        self.settings.font_message = self.ss_settings.get_string("font-message")
-
-        self.settings.use_custom_format = self.ss_settings.get_boolean("use-custom-format")
-        self.settings.custom_time = self.ss_settings.get_string("time-format")
-        self.settings.custom_date = self.ss_settings.get_string("date-format")
-        self.settings.font_time = self.ss_settings.get_string("font-time")
-        self.settings.font_date = self.ss_settings.get_string("font-date")
-
-        self.settings.show_date = self.iface_settings.get_boolean("clock-show-date")
-        self.settings.use_24h = self.iface_settings.get_boolean("clock-use-24h")
 
     def start_positioning(self):
         trackers.timer_tracker_get().cancel("clock-positioning")
@@ -160,6 +135,10 @@ class ClockWidget(BaseWindow):
         trackers.timer_tracker_get().cancel("align-clock-timeout")
 
         return False
+
+    def set_message(self, msg=""):
+        self.away_message = msg
+        self.update_clock()
 
 
 

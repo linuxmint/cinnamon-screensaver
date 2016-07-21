@@ -9,7 +9,6 @@ import settings
 
 from eventHandler import EventHandler
 
-from baseWindow import BaseWindow
 from wallpaperWindow import WallpaperWindow
 from pluginWindow import PluginWindow
 from unlock import UnlockDialog
@@ -17,8 +16,6 @@ from clock import ClockWidget
 import constants as c
 
 import status
-from status import Status
-import settings
 
 import random
 
@@ -121,8 +118,6 @@ class ScreensaverOverlayWindow(Gtk.Window):
         n = self.screen.get_n_monitors()
 
         for index in range(n):
-            primary = self.screen.get_primary_monitor() == index
-
             name = settings.get_screensaver_name()
             path = utils.lookup_plugin_path(name)
             if path is not None:
@@ -212,26 +207,43 @@ class ScreensaverOverlayWindow(Gtk.Window):
         else:
             self.unlock_dialog.blink()
 
+    def simulate_user_activity(self):
+        if not status.Active:
+            return
+
+        if status.Locked:
+            self.raise_unlock_widget()
+            self.reset_timeout()
+        else:
+            self.manager.set_active(False)
+
+    def set_message(self, msg):
+        self.clock_widget.set_message(msg)
+
+    def update_logout_button(self):
+        self.unlock_dialog.update_logout_button()
+
 # Methods that manipulate the unlock dialog
 
     def raise_unlock_widget(self):
-        if status.ScreensaverStatus == Status.LOCKED_AWAKE:
+        if status.Awake:
             return
 
         self.clock_widget.stop_positioning()
-        status.ScreensaverStatus = Status.LOCKED_AWAKE
 
         self.unlock_dialog.reveal()
         self.clock_widget.reveal()
 
+        status.Awake = True
+
     def cancel_unlock_widget(self):
-        if status.ScreensaverStatus != Status.LOCKED_AWAKE:
+        if not status.Awake:
             return
 
         self.set_timeout_active(None, False)
 
         self.unlock_dialog.cancel()
-        status.ScreensaverStatus = Status.LOCKED_IDLE
+        status.Awake = False
 
         self.clock_widget.start_positioning()
 
@@ -305,7 +317,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
         if isinstance(child, ClockWidget):
             min_rect, nat_rect = child.get_preferred_size()
 
-            if status.ScreensaverStatus == Status.LOCKED_AWAKE:
+            if status.Awake:
                 monitor_rect = self.screen.get_monitor_geometry(utils.get_mouse_monitor())
 
                 allocation.width = nat_rect.width

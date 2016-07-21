@@ -8,7 +8,6 @@ import dbus
 
 import constants as c
 import status
-from status import Status
 
 class ShortcutAction(GObject.GObject):
     def __init__(self, action, bindings):
@@ -85,7 +84,7 @@ class KeyBindings(GObject.GObject):
         filtered_state = Gdk.ModifierType(event.state & ~(Gdk.ModifierType.MOD2_MASK | Gdk.ModifierType.LOCK_MASK))
 
         if filtered_state == 0 and event.keyval == Gdk.KEY_Escape:
-            if status.ScreensaverStatus == Status.LOCKED_AWAKE:
+            if status.Awake:
                 self.manager.cancel_unlock_widget()
                 return True
 

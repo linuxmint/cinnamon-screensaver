@@ -9,7 +9,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 from manager import ScreensaverManager
 from sessionProxy import SessionProxy
-
+import settings
 import trackers
 import constants as c
 
@@ -43,7 +43,7 @@ class ScreensaverService(dbus.service.Object):
 
     @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='b')
     def GetActive(self):
-        return self.screen_manager.is_locked()
+        return self.screen_manager.get_active()
 
     @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='u')
     def GetActiveTime(self):
@@ -59,7 +59,7 @@ class ScreensaverService(dbus.service.Object):
         self.screen_manager.set_plug_id(plug_id)
 
     def on_session_idle_changed(self, proxy, idle):
-        if idle:
+        if idle and settings.get_idle_activate():
             self.screen_manager.set_active(True)
         else:
             self.screen_manager.simulate_user_activity()

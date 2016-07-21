@@ -30,16 +30,25 @@ class TimerTracker:
     def __init__(self):
         self.timers = {}
 
-    def start(self, name, duration, callback):
+    def do_callback(self, callback, name, *args):
+        ret = callback(*args)
+
+        if ret:
+            return True
+
         self.cancel(name)
-        timeout_id = GObject.timeout_add(duration, callback)
+        return False
+
+    def start(self, name, duration, callback, *args):
+        self.cancel(name)
+        timeout_id = GObject.timeout_add(duration, self.do_callback, callback, name, *args)
         debug_timers("adding timer of name", name, "duration (sec)", duration / 1000.0, "callback", str(callback), "id", timeout_id)
 
         self.timers[name] = timeout_id
 
-    def start_seconds(self, name, duration, callback):
+    def start_seconds(self, name, duration, callback, *args):
         self.cancel(name)
-        timeout_id = GObject.timeout_add_seconds(duration, callback)
+        timeout_id = GObject.timeout_add_seconds(duration, self.do_callback, callback, name, *args)
         debug_timers("adding timer of name", name, "duration (sec)", duration, "callback", str(callback), "id", timeout_id)
 
         self.timers[name] = timeout_id
