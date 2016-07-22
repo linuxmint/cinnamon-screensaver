@@ -2,6 +2,9 @@
 
 UNLOCK_TIMEOUT = 30
 
+IDLE_FADE_IN_TIME = 10
+LOCK_FADE_IN_TIME = 1
+
 # /* DBus */
 DBUS_SERVICE                    = "org.freedesktop.DBus"
 DBUS_PATH                       = "/org/freedesktop/DBus"

@@ -11,7 +11,7 @@ import utils
 import trackers
 import settings
 import status
-from grabHelper import GrabHelper
+# from grabHelper import GrabHelper
 from baseWindow import BaseWindow
 from authenticator import PAMServiceProxy
 
@@ -29,8 +29,6 @@ class UnlockDialog(BaseWindow):
 
     def __init__(self):
         super(UnlockDialog, self).__init__()
-
-        self.grab_helper = GrabHelper()
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
@@ -196,14 +194,11 @@ class UnlockDialog(BaseWindow):
         self.show_all()
 
     def cancel(self):
-        self.unreveal()
         self.auth_message_label.set_text("")
 
     def on_revealed(self, widget, child):
         if self.get_child_revealed():
             self.keymap_handler(self.keymap)
-            self.grab_helper.release()
-            self.grab_helper.grab_window(self.get_window(), False)
             self.auth_prompt_entry.grab_focus_without_selecting()
         else:
             self.auth_prompt_entry.set_text("")

@@ -16,23 +16,23 @@ app_PYTHON = \
         __init__.py \
         authenticator.py \
         baseWindow.py \
-        config.py \
         clock.py \
+        config.py \
         constants.py \
         eventHandler.py \
-        keybindings.py \
-        unlock.py \
+        fader.py \
         grabHelper.py \
+        keybindings.py \
         manager.py \
+        monitorView.py \
         overlay.py \
-        pluginWindow.py \
         service.py \
         sessionProxy.py \
         settings.py \
         status.py \
         trackers.py \
+        unlock.py \
         utils.py \
-        wallpaperWindow.py \
         x11.py
 
 app_SCRIPTS = cinnamon-screensaver-main.py \
@@ -61,11 +61,11 @@ all-local: config.py cinnamon-screensaver cinnamon-screensaver-pam-helper cinnam
 bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-pam-helper cinnamon-screensaver-command
 
 EXTRA_DIST =                \
-    debug-screensaver.sh        \
-    cinnamon-screensaver.desktop.in \
-    config.py.in \
-    cinnamon-screensaver.in \
     cinnamon-screensaver-pam-helper.in \
+    cinnamon-screensaver.desktop.in \
+    cinnamon-screensaver.in \
+    config.py.in \
+    debug-screensaver.sh        \
     $(NULL)
 
 CLEANFILES =                \

@@ -2,7 +2,7 @@ NULL =
 SUBDIRS = 
 
 xscreensaversdir = $(pkgdatadir)/screensavers/xscreensaver@cinnamon.org
-xscreensavers_DATA = main
+xscreensavers_SCRIPTS = main
 
 MAINTAINERCLEANFILES = Makefile.in
 

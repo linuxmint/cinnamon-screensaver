@@ -8,6 +8,9 @@ import subprocess
 import shlex
 import argparse
 import syslog
+import signal
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 parser = argparse.ArgumentParser(description="XScreenSaver chainloader")
 parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
@@ -73,13 +76,8 @@ if __name__ == "__main__":
     plug.connect("delete-event", Gtk.main_quit)
     xid = plug.get_window().get_xid()
 
-    proxy = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.NONE, None,
-                                           "org.cinnamon.ScreenSaver",
-                                           "/org/cinnamon/ScreenSaver",
-                                           "org.cinnamon.ScreenSaver",
-                                           None)
-
-    proxy.SetPlugID("(u)", xid)
+    print("WINDOW ID=" + str(xid))
+    sys.stdout.flush()
 
     plug.connect("draw", loadHack)
     Gtk.main()

@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, Gtk, GdkX11
 import time
 
 import x11
@@ -67,6 +67,17 @@ class GrabHelper:
 
         return True
 
+    def move_to_window(self, window, hide_cursor):
+        result = False
+        while not result:
+            result = self.move_keyboard(window)
+            Gdk.flush()
+
+        result = False
+        while not result:
+            result = self.move_mouse(window, hide_cursor)
+            Gdk.flush()
+
     def release(self):
         self.release_mouse()
         self.release_keyboard()
@@ -98,6 +109,26 @@ class GrabHelper:
 
         return status == Gdk.GrabStatus.SUCCESS
 
+    def move_mouse(self, window, hide_cursor):
+        GdkX11.x11_grab_server()
+
+        old_window = self.mouse_grab_window
+
+        if old_window:
+            self.release_mouse()
+
+        res = self.grab_mouse(window, hide_cursor)
+        if not res:
+            time.sleep(1)
+            res = self.grab_mouse(window, hide_cursor)
+
+        if not res and old_window:
+            self.grab_mouse(old_window)
+
+        GdkX11.x11_ungrab_server()
+
+        return res
+
     def reset_keyboard(self):
         if self.keyboard_grab_window is not None:
             self.keyboard_grab_window = None
@@ -116,6 +147,26 @@ class GrabHelper:
             print("couldn't grab keyboard")
 
         return status == Gdk.GrabStatus.SUCCESS
+
+    def move_keyboard(self, window):
+        GdkX11.x11_grab_server()
+
+        old_window = self.keyboard_grab_window
+
+        if old_window:
+            self.release_keyboard()
+
+        res = self.grab_keyboard(window)
+        if not res:
+            time.sleep(1)
+            res = self.grab_keyboard(window)
+
+        if not res and old_window:
+            self.grab_keyboard(old_window)
+
+        GdkX11.x11_ungrab_server()
+
+        return res
 
 class OffscreenWindow(Gtk.Invisible):
     def __init__(self, manager):

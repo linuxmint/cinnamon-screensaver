@@ -1,8 +1,15 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio
+import gi
+gi.require_version('CinnamonDesktop', '3.0')
+from gi.repository import Gio, CinnamonDesktop
 
 bg_settings = Gio.Settings(schema_id="org.cinnamon.desktop.background")
+
+bg = CinnamonDesktop.BG()
+bg.load_from_preferences(bg_settings)
+bg_settings.connect("changed", lambda s,k: bg.load_from_preferences(bg_settings))
+
 ####
 ss_settings = Gio.Settings(schema_id="org.cinnamon.desktop.screensaver")
 DEFAULT_MESSAGE_KEY = "default-message"

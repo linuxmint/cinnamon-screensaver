@@ -2,7 +2,7 @@ NULL =
 SUBDIRS = 
 
 webkitscreensaversdir = $(pkgdatadir)/screensavers/webkit@cinnamon.org
-webkitscreensavers_DATA = main
+webkitscreensavers_SCRIPTS = main
 
 webkitexampledir = $(webkitscreensaversdir)/webkit-stars@cinnamon.org
 webkitexample_DATA = $(webkitexampledir)/index.html \

@@ -5,10 +5,7 @@ import dbus, dbus.service, dbus.glib
 import signal
 
 import constants as c
-import settings
-import trackers
 from manager import ScreensaverManager
-from sessionProxy import SessionProxy
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -18,15 +15,7 @@ class ScreensaverService(dbus.service.Object):
         bus_name = dbus.service.BusName(c.SS_SERVICE, bus=dbus.SessionBus())
         dbus.service.Object.__init__(self, bus_name, c.SS_PATH)
 
-        self.screen_manager = ScreensaverManager()
-        self.session_watcher = SessionProxy()
-
-        trackers.con_tracker_get().connect(self.session_watcher,
-                                           "idle-changed", 
-                                           self.on_session_idle_changed)
-        trackers.con_tracker_get().connect(self.session_watcher,
-                                           "idle-notice-changed", 
-                                           self.on_session_idle_notice_changed)
+        self.screen_manager = ScreensaverManager(self.on_manager_message)
 
     @dbus.service.method(c.SS_SERVICE, in_signature='s', out_signature='')
     def Lock(self, msg):
@@ -54,17 +43,11 @@ class ScreensaverService(dbus.service.Object):
         if self.screen_manager.is_locked():
             self.screen_manager.simulate_user_activity()
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='u', out_signature='')
-    def SetPlugID(self, plug_id):
-        self.screen_manager.set_plug_id(plug_id)
+    @dbus.service.signal(c.SS_SERVICE, signature='b')
+    def ActiveChanged(self, state):
+        print("Emitting ActiveChanged", state)
 
-    def on_session_idle_changed(self, proxy, idle):
-        if idle and settings.get_idle_activate():
-            self.screen_manager.set_active(True)
-        else:
-            self.screen_manager.simulate_user_activity()
-
-    def on_session_idle_notice_changed(self, proxy, idle):
-        pass
-
+    def on_manager_message(self, name, data):
+        if name == "ActiveChanged":
+            self.ActiveChanged(data)
 
