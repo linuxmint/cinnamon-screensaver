@@ -1,15 +1,14 @@
 #! /usr/bin/python3
 
 from gi.repository import GLib, GObject
-
 import dbus, dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
-
 import signal
-signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-import authenticator
 import constants as c
+import authenticator
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class PAMHelperService(dbus.service.Object):
     def __init__(self, ml):

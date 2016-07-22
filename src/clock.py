@@ -1,11 +1,12 @@
 #! /usr/bin/python3
 
 from gi.repository import CinnamonDesktop, GLib, Gtk, Gio
-import utils
 import random
-from baseWindow import BaseWindow
+
+import utils
 import trackers
 import settings
+from baseWindow import BaseWindow
 
 CLOCK_POSITIONING_TIMEOUT = 5
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]

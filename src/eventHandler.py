@@ -1,9 +1,9 @@
 #! /usr/bin/python3
 
 from gi.repository import Gdk
-from keybindings import KeyBindings
 
 import status
+from keybindings import KeyBindings
 
 class EventHandler:
     def __init__(self, manager):

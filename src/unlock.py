@@ -1,20 +1,19 @@
 #! /usr/bin/python3
 # coding: utf-8
 
-
 import gi
 gi.require_version('Gkbd', '3.0')
 gi.require_version('AccountsService', '1.0')
 from gi.repository import Gtk, Gdk, Gkbd, AccountsService, GObject
-
-from authenticator import PAMServiceProxy
-import utils
 import os
+
+import utils
 import trackers
-from grabHelper import GrabHelper
-from baseWindow import BaseWindow
 import settings
 import status
+from grabHelper import GrabHelper
+from baseWindow import BaseWindow
+from authenticator import PAMServiceProxy
 
 # This segfaults if called more than once??
 kbd_config = None

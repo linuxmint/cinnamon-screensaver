@@ -2,15 +2,14 @@
 
 from gi.repository import Gio, GLib
 import dbus
-import constants as c
-import config
-
 import signal
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-
 import argparse
 import gettext
 
+import constants as c
+import config
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
 
 EXIT_ACTION = 0

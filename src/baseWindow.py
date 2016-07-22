@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk, GObject
+
 import trackers
 
 class BaseWindow(Gtk.Revealer):

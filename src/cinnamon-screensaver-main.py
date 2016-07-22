@@ -2,19 +2,17 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
+
 from gi.repository import Gtk
-
 from dbus.mainloop.glib import DBusGMainLoop
-
 import signal
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-
 import gettext
 import argparse
 
 import config
 from service import ScreensaverService
 
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
 
 class Main:

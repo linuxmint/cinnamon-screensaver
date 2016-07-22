@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk, GLib
+
 from baseWindow import BaseWindow
 
 class PluginWindow(BaseWindow):

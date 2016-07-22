@@ -1,17 +1,17 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk
-
 import dbus, dbus.service, dbus.glib
-
 import signal
-signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-from manager import ScreensaverManager
-from sessionProxy import SessionProxy
+import constants as c
 import settings
 import trackers
-import constants as c
+from manager import ScreensaverManager
+from sessionProxy import SessionProxy
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 
 class ScreensaverService(dbus.service.Object):
     def __init__(self):

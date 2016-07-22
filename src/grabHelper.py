@@ -1,10 +1,10 @@
 #! /usr/bin/python3
 
 from gi.repository import Gdk, Gtk
-
-from eventHandler import EventHandler
-import x11
 import time
+
+import x11
+from eventHandler import EventHandler
 
 class GrabHelper:
     def __init__(self, manager = None):

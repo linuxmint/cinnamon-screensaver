@@ -6,8 +6,8 @@ from gi.repository import Gtk, GObject, Gdk, Gio, CinnamonDesktop
 from gi.repository.CDesktopEnums import MediaKeyType as MK
 import dbus
 
-import constants as c
 import status
+import constants as c
 
 class ShortcutAction(GObject.GObject):
     def __init__(self, action, bindings):

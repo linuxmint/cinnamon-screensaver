@@ -2,6 +2,7 @@
 
 from gi.repository import Gio, GObject
 import dbus
+
 import constants as c
 import trackers
 

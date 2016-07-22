@@ -1,9 +1,9 @@
 #! /usr/bin/python3
 
-import PAM
-
 from gi.repository import Gio, GLib
+import PAM
 import dbus
+
 import constants as c
 
 class PAMServiceProxy:

@@ -3,6 +3,7 @@
 from gi.repository import GLib, Gio, Gdk, Gtk
 import os
 import subprocess
+
 import config
 import settings
 

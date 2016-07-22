@@ -3,21 +3,18 @@
 import gi
 gi.require_version('CinnamonDesktop', '3.0')
 from gi.repository import Gtk, Gdk, CinnamonDesktop
+import random
+
 import utils
 import trackers
 import settings
-
+import status
+import constants as c
 from eventHandler import EventHandler
-
 from wallpaperWindow import WallpaperWindow
 from pluginWindow import PluginWindow
 from unlock import UnlockDialog
 from clock import ClockWidget
-import constants as c
-
-import status
-
-import random
 
 class ScreensaverOverlayWindow(Gtk.Window):
     def __init__(self, screen, manager, away_message):

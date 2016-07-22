@@ -1,16 +1,14 @@
 #! /usr/bin/python3
 
 from gi.repository import Gdk
-
-from overlay import ScreensaverOverlayWindow
+import time
 
 import trackers
 import utils
-import time
 import settings
-from grabHelper import GrabHelper
-
 import status
+from overlay import ScreensaverOverlayWindow
+from grabHelper import GrabHelper
 
 class ScreensaverManager:
     def __init__(self):

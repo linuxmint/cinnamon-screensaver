@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk
-from baseWindow import BaseWindow
+
 import trackers
+from baseWindow import BaseWindow
 
 class WallpaperWindow(BaseWindow):
     def __init__(self, screen, index):
