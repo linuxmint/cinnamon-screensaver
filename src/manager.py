@@ -145,7 +145,7 @@ class ScreensaverManager:
         logout_delay = settings.get_logout_delay()
 
         if logout_delay == 0:
-            status.LogoutEnabled = True
+            self.on_logout_delay_timeout()
         else:
             trackers.timer_tracker_get().start_seconds("logout-button-delay",
                                                        logout_delay,

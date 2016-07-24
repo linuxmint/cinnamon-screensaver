@@ -150,7 +150,7 @@ class UnlockDialog(BaseWindow):
         trackers.con_tracker_get().connect(self.auth_logout_button,
                                            "clicked",
                                            self.on_logout_clicked)
-        self.auth_logout_button.set_visible(settings.get_logout_enabled())
+        self.auth_logout_button.set_visible(False)
 
 
         self.auth_unlock_button = self.add_button(_("_Unlock"))
