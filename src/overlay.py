@@ -84,7 +84,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
         # self.focus_and_present()
 
     def setup_children(self):
-        self.setup_windows()
+        self.setup_monitors()
         self.setup_clock()
         self.setup_unlock()
 
@@ -105,7 +105,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
         self.destroy()
 
-    def setup_windows(self):
+    def setup_monitors(self):
         n = self.screen.get_n_monitors()
 
         for index in range(n):

@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk
-import subprocess
+from gi.repository import Gtk, Gio, GLib
 import re
 
 import settings
@@ -63,19 +62,26 @@ class MonitorView(BaseWindow):
 
     def spawn_plugin(self):
         try:
-            self.proc = subprocess.Popen(self.path, stdout=subprocess.PIPE)
+            self.proc = Gio.Subprocess.new((self.path, None),
+                                           Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
+
+            pipe = self.proc.get_stdout_pipe()
+            pipe.read_bytes_async(4096, GLib.PRIORITY_DEFAULT, None, self.on_bytes_read)
+
         except Exception as e:
             print(e)
             return
 
-        line = self.proc.stdout.readline()
+    def on_bytes_read(self, obj, res):
+        bytes_read = obj.read_bytes_finish(res)
 
-        while line:
-            match = re.match('^\s*WINDOW ID=(\d+)\s*$', line.decode())
-            if match:
-                self.socket.add_id(int(match.group(1)))
-                break
-            line = self.proc.stdout.readline()
+        if bytes_read:
+            output = bytes_read.get_data().decode()
+
+            if output:
+                match = re.match('^\s*WINDOW ID=(\d+)\s*$', output)
+                if match:
+                    self.socket.add_id(int(match.group(1)))
 
     def show_plugin(self):
         if self.socket:
