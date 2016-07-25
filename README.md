@@ -51,4 +51,5 @@ to the idle listening state.
 - security testing... try to break it
 - ~~re-add xscreensaver stuff~~
 - ~~fix some spaghetti~~
+- more compatible authentication?
 
