@@ -1,12 +1,8 @@
 NULL =
-SUBDIRS = 
+SUBDIRS = webkit-stars@cinnamon.org
 
 webkitscreensaversdir = $(pkgdatadir)/screensavers/webkit@cinnamon.org
 webkitscreensavers_SCRIPTS = main
-
-webkitexampledir = $(webkitscreensaversdir)/webkit-stars@cinnamon.org
-webkitexample_DATA = $(webkitexampledir)/index.html \
-                     $(webkitexampledir)/metadata.json
 
 
 MAINTAINERCLEANFILES = Makefile.in
