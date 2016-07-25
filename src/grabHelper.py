@@ -89,8 +89,9 @@ class GrabHelper:
             self.mouse_hide_cursor = False
 
     def release_mouse(self):
-        Gdk.pointer_ungrab(Gdk.CURRENT_TIME)
-        self.reset_mouse()
+        if self.mouse_grab_window is not None:
+            Gdk.pointer_ungrab(Gdk.CURRENT_TIME)
+            self.reset_mouse()
 
     def grab_mouse(self, window, hide_cursor = False):
         if hide_cursor:
@@ -134,8 +135,9 @@ class GrabHelper:
             self.keyboard_grab_window = None
 
     def release_keyboard(self):
-        Gdk.keyboard_ungrab(Gdk.CURRENT_TIME)
-        self.reset_keyboard()
+        if self.keyboard_grab_window is not None:
+            Gdk.keyboard_ungrab(Gdk.CURRENT_TIME)
+            self.reset_keyboard()
 
     def grab_keyboard(self, window):
         status = Gdk.keyboard_grab(window, False, Gdk.CURRENT_TIME)

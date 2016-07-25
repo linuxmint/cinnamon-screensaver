@@ -106,6 +106,7 @@ class ScreensaverManager:
 
         if status.Locked:
             self.overlay.raise_unlock_widget()
+            self.grab_helper.release_mouse()
         else:
             self.set_active(False)
 
@@ -163,6 +164,7 @@ class ScreensaverManager:
         self.overlay = None
 
     def cancel_unlock_widget(self):
+        self.grab_overlay()
         self.overlay.cancel_unlock_widget();
 
 ##### EventHandler calls
