@@ -19,7 +19,7 @@ class MonitorView(BaseWindow):
 
         self.stack = Gtk.Stack()
         self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
-        self.stack.set_transition_duration(500)
+        self.stack.set_transition_duration(250)
         self.add(self.stack)
 
         self.wallpaper = Gtk.Image()

@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 import random
 
 import utils
@@ -140,14 +140,10 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.add_child_widget(self.clock_widget)
 
         if settings.get_screensaver_name() == "":
+            self.clock_widget.show_all()
+            self.clock_widget.reveal()
+            self.clock_widget.start_positioning()
             self.put_on_top(self.clock_widget)
-        else:
-            self.put_on_bottom(self.clock_widget)
-
-        self.clock_widget.show_all()
-
-        self.clock_widget.reveal()
-        self.clock_widget.start_positioning()
 
     def setup_unlock(self):
         self.unlock_dialog = UnlockDialog()
@@ -220,10 +216,18 @@ class ScreensaverOverlayWindow(Gtk.Window):
         for monitor in self.monitors:
             monitor.show_wallpaper()
 
+        #FIXME - wrong way to do this, it should start exactly after the stack animation
+        #        completes in monitor.show_wallpaper()
+        GObject.timeout_add(260, self.after_wallpaper_shown_for_unlock)
+
+    def after_wallpaper_shown_for_unlock(self):
         self.put_on_top(self.clock_widget)
         self.put_on_top(self.unlock_dialog)
 
+        self.clock_widget.show()
         self.clock_widget.reveal()
+
+        self.unlock_dialog.show()
         self.unlock_dialog.reveal()
 
         status.Awake = True
@@ -234,18 +238,21 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
+        if settings.get_screensaver_name() != "":
+            self.clock_widget.unreveal()
+            self.clock_widget.hide()
+
         self.unlock_dialog.unreveal()
+        self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
 
+        #FIXME - see above, same thing but with revealer animations
+        GObject.timeout_add(260, self.after_unlock_hidden)
+
+    def after_unlock_hidden(self):
         for monitor in self.monitors:
             monitor.show_plugin()
 
-        if settings.get_screensaver_name() == "":
-            self.put_on_top(self.clock_widget)
-        else:
-            self.put_on_bottom(self.clock_widget)
-
-        self.put_on_bottom(self.unlock_dialog)
         status.Awake = False
 
         self.clock_widget.start_positioning()
