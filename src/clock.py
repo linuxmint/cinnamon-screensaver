@@ -12,8 +12,9 @@ CLOCK_POSITIONING_TIMEOUT = 5
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
 
 class ClockWidget(BaseWindow):
-    def __init__(self, away_message=None, initial_monitor=0):
+    def __init__(self, screen, away_message=None, initial_monitor=0):
         super(ClockWidget, self).__init__()
+        self.screen = screen
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
@@ -128,6 +129,15 @@ class ClockWidget(BaseWindow):
 
         self.set_halign(Gtk.Align(horizontal))
         self.set_valign(Gtk.Align(vertical))
+
+        if self.screen.get_n_monitors() > 1:
+            new_monitor = self.current_monitor
+            n = self.screen.get_n_monitors()
+
+            while new_monitor == self.current_monitor:
+                new_monitor = random.randint(0, n - 1)
+
+            self.current_monitor = new_monitor
 
         self.queue_draw()
 

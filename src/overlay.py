@@ -140,7 +140,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
             monitor.set_next_wallpaper_image(image)
 
     def setup_clock(self):
-        self.clock_widget = ClockWidget(self.away_message, utils.get_mouse_monitor())
+        self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
         if settings.get_screensaver_name() == "":
@@ -365,12 +365,6 @@ class ScreensaverOverlayWindow(Gtk.Window):
                     allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
                 elif valign == Gtk.Align.END:
                     allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
-
-                if self.screen.get_n_monitors() > 1:
-                    new_monitor = current_monitor
-                    while new_monitor == current_monitor:
-                        new_monitor = random.randint(0, self.screen.get_n_monitors() - 1)
-                    child.current_monitor = new_monitor
 
                 # utils.debug_allocation(allocation)
 
