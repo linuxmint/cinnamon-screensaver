@@ -21,20 +21,15 @@ class Main:
         parser.add_argument('--version', dest='version', action='store_true',
                             help='Display the current version')
         parser.add_argument('--no-daemon', dest='no_daemon', action='store_true',
-                            help="Don't become a daemon")
+                            help="Deprecated: left for compatibility only - we never become a daemon")
         args = parser.parse_args()
 
         if args.version:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
 
-        if args.no_daemon:
-            print("FIX ME no daemon")
-            quit()
-
         ScreensaverService()
         Gtk.main()
-
 
 if __name__ == "__main__":
     DBusGMainLoop(set_as_default=True)
