@@ -52,5 +52,5 @@ to the idle listening state.
 - ~~re-add xscreensaver stuff~~
 - ~~fix some spaghetti~~
 - more compatible authentication? - fine for mint, but python3-pam doesn't exist in arch, for instance.
-- handle hidpi
+- ~~handle hidpi~~
 
