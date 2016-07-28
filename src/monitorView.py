@@ -1,12 +1,43 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gio, GLib
+from gi.repository import Gtk, Gio, GLib, GObject
 import re
 
 import settings
 import utils
 import trackers
 from baseWindow import BaseWindow
+
+class WallpaperStack(Gtk.Stack):
+    def __init__(self):
+        super(WallpaperStack, self).__init__()
+
+        self.set_transition_type(Gtk.StackTransitionType.NONE)
+        self.set_transition_duration(1000)
+
+        self.current = None
+
+    def set_initial_image(self, image):
+        self.current = image
+        self.current.set_visible(True)
+
+        self.add(self.current)
+        self.set_visible_child(self.current)
+
+        self.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+
+    def transition_to_image(self, image):
+        self.queued = image
+        self.queued.set_visible(True)
+
+        self.add(self.queued)
+        self.set_visible_child(self.queued)
+
+        tmp = self.current
+        self.current = self.queued
+        self.queued = None
+
+        GObject.idle_add(tmp.destroy)
 
 class MonitorView(BaseWindow):
     def __init__(self, screen, index):
@@ -22,14 +53,14 @@ class MonitorView(BaseWindow):
         self.stack.set_transition_duration(250)
         self.add(self.stack)
 
-        self.wallpaper = Gtk.Image()
-        self.wallpaper.show()
-        self.wallpaper.set_halign(Gtk.Align.FILL)
-        self.wallpaper.set_valign(Gtk.Align.FILL)
+        self.wallpaper_stack = WallpaperStack()
+        self.wallpaper_stack.show()
+        self.wallpaper_stack.set_halign(Gtk.Align.FILL)
+        self.wallpaper_stack.set_valign(Gtk.Align.FILL)
 
-        self.stack.add_named(self.wallpaper, "wallpaper")
+        self.stack.add_named(self.wallpaper_stack, "wallpaper")
 
-        trackers.con_tracker_get().connect_after(self.wallpaper,
+        trackers.con_tracker_get().connect_after(self.wallpaper_stack,
                                                  "draw",
                                                  self.on_wallpaper_drawn)
 
@@ -51,6 +82,12 @@ class MonitorView(BaseWindow):
             self.socket = None
 
         self.show_all()
+
+    def set_initial_wallpaper_image(self, image):
+        self.wallpaper_stack.set_initial_image(image)
+
+    def set_next_wallpaper_image(self, image):
+        self.wallpaper_stack.transition_to_image(image)
 
     def on_wallpaper_drawn(self, widget, cr):
         cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
