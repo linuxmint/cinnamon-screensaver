@@ -110,10 +110,10 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
         for index in range(n):
             monitor = MonitorView(self.screen, index)
-            trackers.con_tracker_get().connect(monitor.wallpaper,
-                                               "realize",
-                                               self.on_monitor_window_wallpaper_realized,
-                                               monitor)
+
+            settings.bg.create_and_set_gtk_image (monitor.wallpaper,
+                                                  monitor.rect.width,
+                                                  monitor.rect.height)
 
             self.monitors.append(monitor)
 
@@ -125,15 +125,11 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
             monitor.queue_draw()
 
-    def on_monitor_window_wallpaper_realized(self, widget, monitor):
-        trackers.con_tracker_get().disconnect(monitor.wallpaper,
-                                              "realize",
-                                              self.on_monitor_window_wallpaper_realized)
-        settings.bg.create_and_set_gtk_image (widget, monitor.rect.width, monitor.rect.height)
-        widget.queue_draw()
-
     def on_bg_changed(self, bg):
-        pass
+        for monitor in self.monitors:
+            settings.bg.create_and_set_gtk_image (monitor.wallpaper,
+                                                  monitor.rect.width,
+                                                  monitor.rect.height)
 
     def setup_clock(self):
         self.clock_widget = ClockWidget(self.away_message, utils.get_mouse_monitor())
