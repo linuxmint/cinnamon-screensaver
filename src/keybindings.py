@@ -9,6 +9,32 @@ import dbus
 import status
 import constants as c
 
+ALLOWED_ACTIONS = [MK.MUTE,
+                   MK.VOLUME_UP,
+                   MK.VOLUME_UP_QUIET,
+                   MK.VOLUME_DOWN,
+                   MK.VOLUME_DOWN_QUIET,
+                   MK.MIC_MUTE,
+                   MK.EJECT,
+                   MK.SCREENSHOT,
+                   MK.PLAY,
+                   MK.PAUSE,
+                   MK.STOP,
+                   MK.PREVIOUS,
+                   MK.NEXT,
+                   MK.REWIND,
+                   MK.FORWARD,
+                   MK.REPEAT,
+                   MK.RANDOM,
+                   MK.TOUCHPAD,
+                   MK.TOUCHPAD_ON,
+                   MK.TOUCHPAD_OFF,
+                   MK.SCREEN_BRIGHTNESS_UP,
+                   MK.SCREEN_BRIGHTNESS_DOWN,
+                   MK.KEYBOARD_BRIGHTNESS_UP,
+                   MK.KEYBOARD_BRIGHTNESS_DOWN,
+                   MK.KEYBOARD_BRIGHTNESS_TOGGLE]
+
 class ShortcutAction(GObject.GObject):
     def __init__(self, action, bindings):
         super(ShortcutAction, self).__init__()
@@ -70,10 +96,10 @@ class KeyBindings(GObject.GObject):
 
         i = 0
 
-        for i in range(0, MK.SEPARATOR):
-            bindings = self.media_key_settings.get_strv(CinnamonDesktop.desktop_get_media_key_string(i))
+        for action_id in ALLOWED_ACTIONS:
+            bindings = self.media_key_settings.get_strv(CinnamonDesktop.desktop_get_media_key_string(action_id))
 
-            action = ShortcutAction(MK(i), bindings)
+            action = ShortcutAction(action_id, bindings)
 
             self.shortcut_actions.append(action)
 
