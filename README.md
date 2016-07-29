@@ -42,15 +42,15 @@ If the authentication is successful, all widgets are destroyed, all grabs releas
 to the idle listening state.
 
 ### To do
-- ~~gsettings, use existing settings where applicable,~~
 - consider refactoring of how screensaver/power stuff is presented to the user
-- ~~notifications need tested - do they appear over the screensaver?~~
 - add music player widget?  Show album art, etc..?
 - make switch user/logout more robust
-- ~~implement motion event threshold - don't wake unless mouse has been moved XX pixels~~
 - security testing... try to break it
-- ~~re-add xscreensaver stuff~~
-- ~~fix some spaghetti~~
 - more compatible authentication? - fine for mint, but python3-pam doesn't exist in arch, for instance.
-- ~~handle hidpi~~
+
+#### logind vs consolekit
+- what what what?  what exactly is required here?  we want to lock the desktop prior to
+  suspend/hibernate?  Unlock/deactivate when coming back from mdm as an already-logged-in-session?  what else??
+  I look at d-feet, I see CK *and* logind running, do we need a gsettings key?  Shouldn't there be something that
+  can tell us what to be using if both exist?
 
