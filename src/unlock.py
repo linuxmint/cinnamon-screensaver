@@ -308,21 +308,21 @@ class UnlockDialog(BaseWindow):
         self.username_label.set_markup(markup)
 
     def authenticate(self, password):
-        self.auth_proxy.check_password(self.user_name,
-                                       password,
-                                       self.authenticate_callback)
+        CinnamonDesktop.desktop_check_user_password(self.username,
+                                                    password,
+                                                    self.authenticate_callback)
 
-    def authenticate_callback(self, success, msg):
+    def authenticate_callback(self, success, data=None):
         if success:
             self.clear_entry()
             self.emit("auth-success")
         else:
-            self.authentication_failed(msg)
+            self.authentication_failed()
             self.emit("auth-failure")
 
-    def authentication_failed(self, msg):
+    def authentication_failed(self):
         self.show_entry()
-        self.auth_message_label.set_text(msg)
+        self.auth_message_label.set_text(_("Password incorrect - try again."))
 
         self.auth_prompt_entry.grab_focus()
 

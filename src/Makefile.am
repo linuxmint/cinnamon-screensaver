@@ -14,7 +14,6 @@ appdir = $(datadir)/cinnamon-screensaver
 
 app_PYTHON = \
         __init__.py \
-        authenticator.py \
         baseWindow.py \
         clock.py \
         config.py \
@@ -36,8 +35,7 @@ app_PYTHON = \
         x11.py
 
 app_SCRIPTS = cinnamon-screensaver-main.py \
-              cinnamon-screensaver-command.py \
-              pam-helper-service.py
+              cinnamon-screensaver-command.py
 
 %:%.in Makefile
 	$(AM_V_GEN)sed                  \
@@ -56,12 +54,11 @@ config.py: config.py.in Makefile
         -e s!\@GETTEXT_PACKAGE\@!$(GETTEXT_PACKAGE)!    \
         < $< > $@
 
-all-local: config.py cinnamon-screensaver cinnamon-screensaver-pam-helper cinnamon-screensaver-command
+all-local: config.py cinnamon-screensaver cinnamon-screensaver-command
 
-bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-pam-helper cinnamon-screensaver-command
+bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-command
 
 EXTRA_DIST =                \
-    cinnamon-screensaver-pam-helper.in \
     cinnamon-screensaver.desktop.in \
     cinnamon-screensaver.in \
     config.py.in \

@@ -189,7 +189,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
     def on_wake_timeout(self):
         self.set_timeout_active(None, False)
-        self.cancel_lock_widget()
+        self.cancel_unlock_widget()
 
         return False
 
