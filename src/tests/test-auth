@@ -1,0 +1,25 @@
+#! /usr/bin/python3
+
+import gi
+gi.require_version('CinnamonDesktop', '3.0')
+
+from gi.repository import CinnamonDesktop, GLib
+import getpass
+
+name = input("Username: ")
+password = getpass.getpass()
+
+def callback(success):
+    if success:
+        print("\n\nAccepted!")
+    else:
+        print("\n\nFailed!")
+
+    ml.quit()
+
+CinnamonDesktop.desktop_check_user_password(name, password, callback)
+
+ml = GLib.MainLoop.new(None, True)
+ml.run()
+
+
