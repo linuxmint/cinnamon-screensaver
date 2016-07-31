@@ -31,6 +31,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.away_message = away_message
 
         self.monitors = []
+        self.last_focus_monitor = -1
         self.overlay = None
         self.clock_widget = None
         self.unlock_dialog = None
@@ -261,20 +262,6 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
         self.clock_widget.start_positioning()
 
-    def do_get_preferred_height(self):
-        if self.get_realized():
-            self.get_window().move(0, 0)
-            return self.rect.height, self.rect.height
-        else:
-            return 0, 0
-
-    def do_get_preferred_width(self):
-        if self.get_realized():
-            self.get_window().move(0, 0)
-            return self.rect.width, self.rect.width
-        else:
-            return 0, 0
-
     def do_motion_notify_event(self, event):
         return self.event_handler.on_motion_event(event)
 
@@ -293,6 +280,17 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.rect.height = self.screen.get_height()
 
 # Overlay window management #
+
+    def maybe_update_layout(self):
+        current_focus_monitor = utils.get_mouse_monitor()
+
+        if self.last_focus_monitor == -1:
+            self.last_focus_monitor = current_focus_monitor
+            return
+
+        if self.unlock_dialog and current_focus_monitor != self.last_focus_monitor:
+            self.last_focus_monitor = current_focus_monitor
+            self.overlay.queue_resize()
 
     def add_child_widget(self, widget):
         self.overlay.add_overlay(widget)

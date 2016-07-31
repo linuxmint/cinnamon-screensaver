@@ -110,6 +110,8 @@ class ScreensaverManager:
         else:
             self.set_active(False)
 
+        self.overlay.maybe_update_layout()
+
 #####
 
     def on_lock_delay_timeout(self):
