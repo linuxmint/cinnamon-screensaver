@@ -160,7 +160,6 @@ class UnlockDialog(BaseWindow):
         self.auth_unlock_button.set_visible(True)
 
         self.real_name = utils.get_user_display_name()
-        print("name: ", self.real_name)
         self.user_name = utils.get_user_name()
 
         self.update_realname_label()
