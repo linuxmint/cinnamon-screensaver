@@ -34,6 +34,8 @@ app_PYTHON = \
         utils.py \
         x11.py
 
+app_DATA = application.css
+
 app_SCRIPTS = cinnamon-screensaver-main.py \
               cinnamon-screensaver-command.py
 
