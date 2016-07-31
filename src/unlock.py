@@ -34,6 +34,7 @@ class UnlockDialog(BaseWindow):
         self.set_size_request(400, -1)
 
         self.frame = Gtk.Frame()
+        self.frame.set_shadow_type(Gtk.ShadowType.NONE)
         self.frame.set_name("unlock-frame")
 
         self.real_name = None
@@ -159,6 +160,7 @@ class UnlockDialog(BaseWindow):
         self.auth_unlock_button.set_visible(True)
 
         self.real_name = utils.get_user_display_name()
+        print("name: ", self.real_name)
         self.user_name = utils.get_user_name()
 
         self.update_realname_label()
@@ -292,14 +294,14 @@ class UnlockDialog(BaseWindow):
         self.auth_prompt_entry.set_text("")
 
     def update_realname_label(self):
-        markup = "<span foreground=\"#3F3F3F\" font_desc=\"Ubuntu 14\"><b>%s</b></span>" % (self.real_name)
+        markup = "<span font_desc=\"Ubuntu 14\"><b>%s</b></span>" % (self.real_name)
 
         self.realname_label.set_markup(markup)
 
     def update_username_label(self):
         hostname = utils.get_host_name()
 
-        markup = "<span foreground=\"#3F3F3F\" font_desc=\"Ubuntu 10\"><i>%s @ %s</i></span>" % (self.user_name, hostname)
+        markup = "<span font_desc=\"Ubuntu 10\"><i>%s @ %s</i></span>" % (self.user_name, hostname)
 
         self.username_label.set_markup(markup)
 
