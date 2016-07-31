@@ -307,6 +307,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
     def position_overlay_child(self, overlay, child, allocation):
         if isinstance(child, MonitorView):
+            w, h = child.get_preferred_size()
             allocation.x = child.rect.x
             allocation.y = child.rect.y
             allocation.width = child.rect.width

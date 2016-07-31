@@ -16,7 +16,6 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends: cinnamon-desktop-data (>= 3.0.0),
          python3,
          python3-xlib,
-         python3-pam,
          python3-gi,
          python3-dbus,
          gir1.2-cinnamondesktop-3.0,

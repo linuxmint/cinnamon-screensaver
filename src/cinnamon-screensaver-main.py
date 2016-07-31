@@ -3,11 +3,12 @@
 import gi
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from dbus.mainloop.glib import DBusGMainLoop
 import signal
 import gettext
 import argparse
+import os
 
 import config
 from service import ScreensaverService
@@ -28,8 +29,17 @@ class Main:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
 
+        self.init_style_overrides()
+
         ScreensaverService()
         Gtk.main()
+
+    def init_style_overrides(self):
+        path = os.path.join(config.pkgdatadir, "application.css")
+        prov = Gtk.CssProvider()
+
+        if prov.load_from_path(path):
+            Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), prov, 600)
 
 if __name__ == "__main__":
     DBusGMainLoop(set_as_default=True)
