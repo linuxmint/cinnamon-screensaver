@@ -105,7 +105,7 @@ class UnlockDialog(BaseWindow):
         # Keyboard layout button
 
         self.kbd_layout_indicator = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        hbox_pass.pack_start(self.kbd_layout_indicator, False, False, 0)
+        hbox_pass.pack_start(self.kbd_layout_indicator, False, False, 6)
 
         # Status
 
@@ -130,7 +130,7 @@ class UnlockDialog(BaseWindow):
         self.action_area.set_layout(Gtk.ButtonBoxStyle.SPREAD)
         self.action_area.show()
 
-        self.box.pack_start(self.action_area, False, True, 0)
+        self.box.pack_start(self.action_area, False, True, 10)
         self.action_area.show()
 
         self.auth_switch_button = self.add_button(_("S_witch User…"))
