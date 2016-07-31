@@ -4,7 +4,7 @@
 import gi
 gi.require_version('Gkbd', '3.0')
 gi.require_version('AccountsService', '1.0')
-from gi.repository import Gtk, Gdk, Gkbd, AccountsService, GObject
+from gi.repository import Gtk, Gdk, Gkbd, AccountsService, GObject, CinnamonDesktop
 import os
 
 import utils
@@ -13,7 +13,6 @@ import settings
 import status
 # from grabHelper import GrabHelper
 from baseWindow import BaseWindow
-from authenticator import PAMServiceProxy
 
 # This segfaults if called more than once??
 kbd_config = None
@@ -189,8 +188,6 @@ class UnlockDialog(BaseWindow):
                                                  "notify::child-revealed",
                                                  self.on_revealed)
 
-        self.auth_proxy = PAMServiceProxy()
-
         self.show_all()
 
     def cancel(self):
@@ -308,7 +305,7 @@ class UnlockDialog(BaseWindow):
         self.username_label.set_markup(markup)
 
     def authenticate(self, password):
-        CinnamonDesktop.desktop_check_user_password(self.username,
+        CinnamonDesktop.desktop_check_user_password(self.user_name,
                                                     password,
                                                     self.authenticate_callback)
 
