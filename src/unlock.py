@@ -33,22 +33,16 @@ class UnlockDialog(BaseWindow):
         self.set_valign(Gtk.Align.CENTER)
         self.set_size_request(400, -1)
 
-        self.frame = Gtk.Frame()
-        self.frame.set_shadow_type(Gtk.ShadowType.NONE)
-        self.frame.set_name("unlock-frame")
-
         self.real_name = None
         self.user_name = None
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.frame.add(self.box)
+        self.box.set_name("unlockbox")
 
-        self.add(self.frame)
+        self.add(self.box)
 
-        self.box.set_margin_start(6)
-        self.box.set_margin_end(6)
-        self.box.set_margin_top(6)
-        self.box.set_margin_bottom(6)
+        c = self.box.get_style_context()
+        c.add_class("background")
 
         hbox_user = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         self.box.pack_start(hbox_user, False, False, 6)
