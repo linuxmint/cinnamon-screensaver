@@ -34,7 +34,7 @@ class UnlockDialog(BaseWindow):
         self.set_size_request(400, -1)
 
         self.frame = Gtk.Frame()
-        self.frame.set_name("unlockframe")
+        self.frame.set_name("unlock-frame")
 
         self.real_name = None
         self.user_name = None
