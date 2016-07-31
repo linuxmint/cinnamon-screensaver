@@ -7,6 +7,17 @@ import subprocess
 import config
 import settings
 
+def nofail_locale_to_utf8(string):
+    try:
+        ret = GLib.locale_to_utf8(string, -1, 0, 0)
+    except:
+        try:
+            ret, br, bw = GLib.locale_to_utf8(string, -1)
+        except:
+            ret = string
+
+    return ret
+
 def get_user_display_name():
     name = GLib.get_real_name()
 
@@ -16,7 +27,7 @@ def get_user_display_name():
     utf8_name = None
 
     if name:
-        utf8_name = GLib.locale_to_utf8(name, -1, 0, 0)
+        utf8_name = nofail_locale_to_utf8(name)
 
     return utf8_name
 
@@ -26,7 +37,7 @@ def get_user_name():
     utf8_name = None
 
     if name:
-        utf8_name = GLib.locale_to_utf8(name, -1, 0, 0)
+        utf8_name = nofail_locale_to_utf8(name)
 
     return utf8_name
 
@@ -36,7 +47,7 @@ def get_host_name():
     utf8_name = None
 
     if name:
-        utf8_name = GLib.locale_to_utf8(name, -1, 0, 0)
+        utf8_name = nofail_locale_to_utf8(name)
 
     return utf8_name
 

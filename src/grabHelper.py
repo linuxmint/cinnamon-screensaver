@@ -3,7 +3,6 @@
 from gi.repository import Gdk, Gtk, GdkX11
 import time
 
-import x11
 from eventHandler import EventHandler
 
 class GrabHelper:
@@ -53,7 +52,11 @@ class GrabHelper:
         got_keyboard = try_grab(self.grab_keyboard, window)
 
         if not got_keyboard:
-            x11.nuke_focus()
+            try:
+                import x11
+                x11.nuke_focus()
+            except:
+                pass
             got_keyboard = try_grab(self.grab_keyboard, window)
 
         got_mouse = try_grab(self.grab_mouse, window, hide_cursor)
