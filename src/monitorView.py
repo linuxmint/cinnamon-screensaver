@@ -21,6 +21,10 @@ class WallpaperStack(Gtk.Stack):
         self.current = image
         self.current.set_visible(True)
 
+        trackers.con_tracker_get().connect_after(image,
+                                                 "draw",
+                                                 self.shade_wallpaper)
+
         self.add(self.current)
         self.set_visible_child(self.current)
 
@@ -30,6 +34,10 @@ class WallpaperStack(Gtk.Stack):
         self.queued = image
         self.queued.set_visible(True)
 
+        trackers.con_tracker_get().connect_after(image,
+                                                 "draw",
+                                                 self.shade_wallpaper)
+
         self.add(self.queued)
         self.set_visible_child(self.queued)
 
@@ -37,7 +45,15 @@ class WallpaperStack(Gtk.Stack):
         self.current = self.queued
         self.queued = None
 
+        # No need to disconnect the draw handler, it'll be disco'd by the con_tracker's
+        # weak_ref callback.
+
         GObject.idle_add(tmp.destroy)
+
+    def shade_wallpaper(self, widget, cr):
+        cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
+        cr.paint()
+        return False
 
 class MonitorView(BaseWindow):
     def __init__(self, screen, index):
@@ -59,10 +75,6 @@ class MonitorView(BaseWindow):
         self.wallpaper_stack.set_valign(Gtk.Align.FILL)
 
         self.stack.add_named(self.wallpaper_stack, "wallpaper")
-
-        trackers.con_tracker_get().connect_after(self.wallpaper_stack,
-                                                 "draw",
-                                                 self.on_wallpaper_drawn)
 
         name = settings.get_screensaver_name()
         path = utils.lookup_plugin_path(name)
@@ -88,11 +100,6 @@ class MonitorView(BaseWindow):
 
     def set_next_wallpaper_image(self, image):
         self.wallpaper_stack.transition_to_image(image)
-
-    def on_wallpaper_drawn(self, widget, cr):
-        cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
-        cr.paint()
-        return False
 
     def on_socket_realized(self, widget):
         self.spawn_plugin()
