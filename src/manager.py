@@ -8,6 +8,8 @@ import utils
 import settings
 import status
 from sessionProxy import SessionProxy
+from logindProxy import LogindProxy, LogindConnectionError
+from consoleKitProxy import ConsoleKitProxy, ConsoleKitConnectionError
 from fader import Fader
 from overlay import ScreensaverOverlayWindow
 from grabHelper import GrabHelper
@@ -30,11 +32,38 @@ class ScreensaverManager:
         status.LogoutEnabled = False
 
         self.grab_helper = GrabHelper(self)
-        self.session_watcher = SessionProxy()
 
+        self.session_watcher = SessionProxy()
         trackers.con_tracker_get().connect(self.session_watcher,
                                            "idle-changed", 
                                            self.on_session_idle_changed)
+
+        try:
+            self.logind_watcher = LogindProxy()
+            trackers.con_tracker_get().connect(self.logind_watcher,
+                                               "lock",
+                                               lambda proxy: self.lock())
+            trackers.con_tracker_get().connect(self.logind_watcher,
+                                               "unlock",
+                                               lambda proxy: self.unlock())
+            trackers.con_tracker_get().connect(self.logind_watcher,
+                                               "active",
+                                               lambda proxy: self.simulate_user_activity())
+        except LogindConnectionError:
+            print("no logind, trying ConsoleKit")
+            try:
+                self.ck_watcher = ConsoleKitProxy()
+                trackers.con_tracker_get().connect(self.ck_watcher,
+                                                   "lock",
+                                                   lambda proxy: self.lock())
+                trackers.con_tracker_get().connect(self.ck_watcher,
+                                                   "unlock",
+                                                   lambda proxy: self.unlock())
+                trackers.con_tracker_get().connect(self.ck_watcher,
+                                                   "active",
+                                                   lambda proxy: self.simulate_user_activity())
+            except ConsoleKitConnectionError:
+                print("ConsoleKit failed, continuing, but certain functionality will be limited")
 
 ##### Service handlers (from service.py)
 

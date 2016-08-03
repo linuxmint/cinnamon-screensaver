@@ -15,8 +15,6 @@ class SessionProxy(GObject.GObject):
         super(SessionProxy, self).__init__()
 
         self.proxy = None
-        self.idle = False
-        self.idle_notice = False
 
         Gio.bus_watch_name(Gio.BusType.SESSION, c.GSM_SERVICE, Gio.BusNameWatcherFlags.NONE,
                            self.on_appeared, self.on_disappeared)

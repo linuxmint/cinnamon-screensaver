@@ -17,11 +17,13 @@ app_PYTHON = \
         baseWindow.py \
         clock.py \
         config.py \
+        consoleKitProxy.py \
         constants.py \
         eventHandler.py \
         fader.py \
         grabHelper.py \
         keybindings.py \
+        logindProxy.py \
         manager.py \
         monitorView.py \
         overlay.py \
