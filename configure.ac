@@ -5,6 +5,11 @@ AC_INIT([cinnamon-screensaver],
         [3.0.1],
         [https://github.com/linuxmint/cinnamon-screensaver/issues])
 
+AC_CONFIG_MACRO_DIR([m4])
+AC_SUBST([ACLOCAL_AMFLAGS], ["-I $ac_macro_dir \${ACLOCAL_FLAGS}"])
+
+AX_IS_RELEASE([git-directory])
+
 AC_CONFIG_SRCDIR(src/cinnamon-screensaver.c)
 
 AM_INIT_AUTOMAKE([1.10 no-dist-gzip dist-xz tar-ustar])
@@ -87,7 +92,7 @@ SAVER_LIBS="$ALL_X_LIBS"
 
 AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
 
-GNOME_COMPILE_WARNINGS(yes)
+AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS])
 
 # Optional dependencies for the theme engines
 

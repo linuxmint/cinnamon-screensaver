@@ -5,7 +5,7 @@ NULL =
 
 saverdir = $(libexecdir)/cinnamon-screensaver
 
-INCLUDES =							\
+AM_CPPFLAGS =							\
 	-I.							\
 	-I$(srcdir)						\
 	$(CINNAMON_SCREENSAVER_CFLAGS)				\
@@ -20,7 +20,7 @@ INCLUDES =							\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DGNOMELOCALEDIR=\""$(datadir)/locale"\"		\
 	-DSAVERDIR=\""$(saverdir)"\"				\
-	-DGTKBUILDERDIR=\"$(pkgdatadir)\"				\
+	-DGTKBUILDERDIR=\"$(pkgdatadir)\"			\
 	-DPAM_SERVICE_NAME=\""cinnamon-screensaver"\"		\
 	$(WARN_CFLAGS)						\
 	$(AUTH_CFLAGS)						\
@@ -203,7 +203,7 @@ cinnamon_screensaver_LDADD =		\
 	$(LOGIND_LIBS)                 \
 	$(NULL)
 
-cinnamon_screensaver_LDFLAGS = -export-dynamic
+cinnamon_screensaver_LDFLAGS = $(WARN_LDFLAGS) -export-dynamic
 
 EXTRA_DIST =				\
 	debug-screensaver.sh		\
