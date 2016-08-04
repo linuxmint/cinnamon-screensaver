@@ -8,6 +8,7 @@ import trackers
 import settings
 import status
 import constants as c
+from fader import Fader
 from eventHandler import EventHandler
 from monitorView import MonitorView
 from unlock import UnlockDialog
@@ -19,12 +20,13 @@ class ScreensaverOverlayWindow(Gtk.Window):
                             type=Gtk.WindowType.POPUP,
                             decorated=False,
                             skip_taskbar_hint=True,
-                            skip_pager_hint=True,
-                            opacity=0.0)
+                            skip_pager_hint=True)
 
         trackers.con_tracker_get().connect(settings.bg,
                                            "changed", 
                                            self.on_bg_changed)
+
+        self.destroying = False
 
         self.manager = manager
         self.screen = screen
@@ -58,6 +60,8 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.fullscreen()
 
         self.overlay = Gtk.Overlay()
+        # self.overlay.set_opacity(0.0)
+        self.fader = Fader(self)
 
         trackers.con_tracker_get().connect(self.overlay,
                                            "realize",
@@ -69,6 +73,20 @@ class ScreensaverOverlayWindow(Gtk.Window):
 
         self.overlay.show_all()
         self.add(self.overlay)
+
+    def transition_in(self, effect_time, callback):
+        self.show()
+        self.fader.fade_in(effect_time, callback)
+
+    def transition_out(self, effect_time, callback):
+        if self.destroying:
+            return
+
+        self.destroying = True
+
+        self.fader.cancel()
+
+        self.fader.fade_out(effect_time, callback)
 
     def focus_and_present(self):
         utils.override_user_time(self.get_window())
@@ -99,6 +117,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
         for monitor in self.monitors:
             monitor.destroy()
 
+        self.fader = None
         self.unlock_dialog = None
         self.clock_widget = None
         self.away_message = None

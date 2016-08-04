@@ -3,6 +3,7 @@
 from gi.repository import Gdk
 import time
 
+import constants as c
 import trackers
 import utils
 import settings
@@ -10,7 +11,6 @@ import status
 from sessionProxy import SessionProxy
 from logindProxy import LogindProxy, LogindConnectionError
 from consoleKitProxy import ConsoleKitProxy, ConsoleKitConnectionError
-from fader import Fader
 from overlay import ScreensaverOverlayWindow
 from grabHelper import GrabHelper
 
@@ -89,15 +89,7 @@ class ScreensaverManager:
             if not status.Active:
                 if self.grab_helper.grab_root(False):
                     if not self.overlay:
-                        self.create_overlay(msg)
-                        self.overlay_fader = Fader(self.overlay)
-                        self.overlay_fader.fade_in(300, self.grab_overlay)
-                    status.Active = True
-                    self.service_message_cb("ActiveChanged", True)
-
-                    self.activated_timestamp = time.time()
-                    self.start_lock_delay()
-                    self.start_logout_delay()
+                        self.spawn_overlay(msg, c.OVERLAY_SPAWN_TRANSITION, self.on_spawn_overlay_complete)
                     return True
                 else:
                     status.Active = False
@@ -106,18 +98,10 @@ class ScreensaverManager:
                 self.overlay.set_message(msg)
                 return True
         else:
-            if status.Active:
-                status.Active = False
-                self.service_message_cb("ActiveChanged", False)
-
-                self.overlay_fader.fade_out(300, self.destroy_overlay)
-                self.activated_timestamp = 0
-                self.stop_lock_delay()
-                self.stop_logout_delay()
-
+            if self.overlay:
+                self.despawn_overlay(c.OVERLAY_DESPAWN_TRANSITION, self.on_despawn_overlay_complete)
             self.grab_helper.release()
             return True
-
         return False
 
     def get_active(self):
@@ -142,6 +126,45 @@ class ScreensaverManager:
         self.overlay.maybe_update_layout()
 
 #####
+
+    def spawn_overlay(self, away_message, effect_time=c.OVERLAY_SPAWN_TRANSITION, callback=None):
+        self.overlay = ScreensaverOverlayWindow(self.screen, self, away_message)
+        self.overlay.transition_in(effect_time, callback)
+
+    def despawn_overlay(self, effect_time=c.OVERLAY_DESPAWN_TRANSITION, callback=None):
+        self.overlay.transition_out(effect_time, callback)
+
+    def on_spawn_overlay_complete(self):
+        self.grab_overlay()
+
+        status.Active = True
+
+        self.service_message_cb("ActiveChanged", True)
+
+        self.activated_timestamp = time.time()
+        self.start_lock_delay()
+        self.start_logout_delay()
+
+    def on_despawn_overlay_complete(self):
+        was_active = status.Active == True
+        status.Active = False
+
+        if was_active:
+            self.service_message_cb("ActiveChanged", False)
+
+        self.activated_timestamp = 0
+        self.stop_lock_delay()
+        self.stop_logout_delay()
+
+        self.overlay.destroy_overlay()
+        self.overlay = None
+
+    def grab_overlay(self):
+        self.grab_helper.move_to_window(self.overlay.get_window(), True)
+
+    def cancel_unlock_widget(self):
+        self.grab_overlay()
+        self.overlay.cancel_unlock_widget();
 
     def on_lock_delay_timeout(self):
         status.Locked = True
@@ -186,48 +209,27 @@ class ScreensaverManager:
     def stop_logout_delay(self):
         trackers.timer_tracker_get().cancel("logout-button-delay")
 
-    def create_overlay(self, away_message):
-        self.overlay = ScreensaverOverlayWindow(self.screen, self, away_message)
-        self.overlay.show_all()
-
-    def destroy_overlay(self):
-        self.overlay.destroy_overlay()
-        self.overlay = None
-
-    def cancel_unlock_widget(self):
-        self.grab_overlay()
-        self.overlay.cancel_unlock_widget();
-
-##### EventHandler calls
+##### EventHandler call
 
     def queue_dialog_key_event(self, event):
         self.overlay.queue_dialog_key_event(event)
 
+# Session watcher handler:
+
     def on_session_idle_changed(self, proxy, idle):
         if idle and not status.Active:
             if self.grab_helper.grab_offscreen(False):
-                self.create_overlay("")
-                self.overlay_fader = Fader(self.overlay)
-                self.overlay_fader.fade_in(10 * 1000, self.session_idle_fade_in_complete)
+                self.spawn_overlay("", c.OVERLAY_IDLE_SPAWN_TRANSITION, self.on_spawn_overlay_complete)
             else:
                 print("Can't fade in screensaver, unable to grab the keyboard")
         else:
             if not status.Active:
-                if self.overlay_fader:
-                    self.overlay_fader.cancel()
-                    self.overlay_fader = None
                 if self.overlay:
-                    self.destroy_overlay()
-                trackers.timer_tracker_get().start_seconds("release-grab-timeout",
-                                                           1,
-                                                           self.on_release_grab_timeout)
+                    self.despawn_overlay(c.OVERLAY_IDLE_CANCEL_SPAWN_TRANSITION, self.on_despawn_overlay_complete)
 
-    def session_idle_fade_in_complete(self):
-        self.set_active(True)
-        self.grab_overlay()
-
-    def grab_overlay(self):
-        self.grab_helper.move_to_window(self.overlay.get_window(), True)
+                trackers.timer_tracker_get().start("release-grab-timeout",
+                                                   c.GRAB_RELEASE_TIMEOUT,
+                                                   self.on_release_grab_timeout)
 
     def on_release_grab_timeout(self):
         if not status.Active:
