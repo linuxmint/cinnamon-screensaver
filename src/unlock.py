@@ -202,7 +202,6 @@ class UnlockDialog(BaseWindow):
             self.auth_prompt_entry.realize()
 
         self.auth_prompt_entry.event(event)
-        self.auth_prompt_entry.set_position(-1)
 
     def keymap_handler(self, keymap):
         if keymap.get_caps_lock_state():
