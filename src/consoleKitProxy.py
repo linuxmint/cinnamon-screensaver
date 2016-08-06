@@ -29,8 +29,8 @@ class ConsoleKitProxy(GObject.GObject):
 
             # GetCurrentSession returns something like "/org/freedesktop/ConsoleKit/Session1" 
             self.session_id = ck_manager_proxy.GetCurrentSession()
-        except dbus.exceptions.DBusException:
-            print("Could not acquire ConsoleKit Manager proxy", e)
+        except GLib.Error as e:
+            print("Could not acquire ConsoleKit Manager proxy:", e)
             raise ConsoleKitConnectionError
 
         # Now, make a proxy for our CK session, so we can listen to Lock/Unlock/ActiveChanged signals
@@ -39,8 +39,8 @@ class ConsoleKitProxy(GObject.GObject):
             Gio.DBusProxy.new_for_bus(Gio.BusType.SYSTEM, Gio.DBusProxyFlags.NONE, None,
                                       c.CK_SERVICE, self.session_id, c.CK_SESSION_INTERFACE,
                                       None, self.on_proxy_ready, None)
-        except dbus.exceptions.DBusException as e:
-            print("Could not acquire ConsoleKit Session proxy", e)
+        except GLib.Error as e:
+            print("Could not acquire ConsoleKit Session proxy:", e)
             raise ConsoleKitConnectionError
 
     def on_proxy_ready(self, object, result, data=None):

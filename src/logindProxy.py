@@ -32,8 +32,8 @@ class LogindProxy(GObject.GObject):
 
             # GetSessionByPID returns something like "/org/freedesktop/login1/session/c1" 
             self.session_id = logind_manager_proxy.GetSessionByPID("(u)", pid)
-        except dbus.exceptions.DBusException:
-            print("Could not acquire logind Manager proxy", e)
+        except GLib.Error as e:
+            print("Could not acquire logind Manager proxy: ", e)
             raise LogindConnectionError
 
         # Now, make a proxy for our logind session, so we can listen to lock/unlock signals
@@ -43,7 +43,7 @@ class LogindProxy(GObject.GObject):
             Gio.DBusProxy.new_for_bus(Gio.BusType.SYSTEM, Gio.DBusProxyFlags.NONE, None,
                                       c.LOGIND_SERVICE, self.session_id, c.LOGIND_SESSION_INTERFACE,
                                       None, self.on_proxy_ready, None)
-        except dbus.exceptions.DBusException as e:
+        except GLib.Error as e:
             print("Could not acquire logind Session proxy", e)
             raise LogindConnectionError
 
