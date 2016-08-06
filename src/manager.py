@@ -2,6 +2,8 @@
 
 from gi.repository import Gdk
 import time
+import sys
+import traceback
 
 import constants as c
 import trackers
@@ -128,8 +130,16 @@ class ScreensaverManager:
 #####
 
     def spawn_overlay(self, away_message, effect_time=c.OVERLAY_SPAWN_TRANSITION, callback=None):
-        self.overlay = ScreensaverOverlayWindow(self.screen, self, away_message)
-        self.overlay.transition_in(effect_time, callback)
+        try:
+            self.overlay = ScreensaverOverlayWindow(self.screen, self, away_message)
+            self.overlay.transition_in(effect_time, callback)
+        except Exception:
+            print("Could not spawn screensaver overlay:\n")
+            traceback.print_exc()
+            self.grab_helper.release()
+            status.Active = False
+            self.cancel_timers()
+            raise e
 
     def despawn_overlay(self, effect_time=c.OVERLAY_DESPAWN_TRANSITION, callback=None):
         self.overlay.transition_out(effect_time, callback)
@@ -141,9 +151,7 @@ class ScreensaverManager:
 
         self.service_message_cb("ActiveChanged", True)
 
-        self.activated_timestamp = time.time()
-        self.start_lock_delay()
-        self.start_logout_delay()
+        self.start_timers()
 
     def on_despawn_overlay_complete(self):
         was_active = status.Active == True
@@ -152,15 +160,23 @@ class ScreensaverManager:
         if was_active:
             self.service_message_cb("ActiveChanged", False)
 
-        self.activated_timestamp = 0
-        self.stop_lock_delay()
-        self.stop_logout_delay()
+        self.cancel_timers()
 
         self.overlay.destroy_overlay()
         self.overlay = None
 
     def grab_overlay(self):
         self.grab_helper.move_to_window(self.overlay.get_window(), True)
+
+    def start_timers(self):
+        self.activated_timestamp = time.time()
+        self.start_lock_delay()
+        self.start_logout_delay()
+
+    def cancel_timers(self):
+        self.activated_timestamp = 0
+        self.stop_lock_delay()
+        self.stop_logout_delay()
 
     def cancel_unlock_widget(self):
         self.grab_overlay()
