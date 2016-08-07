@@ -14,7 +14,7 @@ from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
 
-class ScreensaverOverlayWindow(Gtk.Window):
+class Stage(Gtk.Window):
     def __init__(self, screen, manager, away_message):
         Gtk.Window.__init__(self,
                             type=Gtk.WindowType.POPUP,
@@ -60,7 +60,6 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.fullscreen()
 
         self.overlay = Gtk.Overlay()
-        # self.overlay.set_opacity(0.0)
         self.fader = Fader(self)
 
         trackers.con_tracker_get().connect(self.overlay,
@@ -107,7 +106,7 @@ class ScreensaverOverlayWindow(Gtk.Window):
         self.setup_clock()
         self.setup_unlock()
 
-    def destroy_overlay(self):
+    def destroy_stage(self):
         trackers.con_tracker_get().disconnect(settings.bg,
                                               "changed",
                                               self.on_bg_changed)

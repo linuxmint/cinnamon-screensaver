@@ -26,10 +26,10 @@ app_PYTHON = \
         logindProxy.py \
         manager.py \
         monitorView.py \
-        overlay.py \
         service.py \
         sessionProxy.py \
         settings.py \
+        stage.py \
         status.py \
         trackers.py \
         unlock.py \
