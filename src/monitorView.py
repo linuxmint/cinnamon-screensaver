@@ -2,7 +2,9 @@
 
 from gi.repository import Gtk, Gio, GLib, GObject
 import re
+import cairo
 
+import status
 import settings
 import utils
 import trackers
@@ -51,8 +53,21 @@ class WallpaperStack(Gtk.Stack):
         GObject.idle_add(tmp.destroy)
 
     def shade_wallpaper(self, widget, cr):
-        cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
+        if not status.Awake:
+            cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
+            cr.paint()
+            return False
+
+        r = widget.get_allocation()
+
+        pattern = cairo.LinearGradient(0, 0, 0, r.height)
+        pattern.add_color_stop_rgba (0, 0, 0, 0, .75);
+        pattern.add_color_stop_rgba (.35, 0, 0, 0, .9);
+        pattern.add_color_stop_rgba (.65, 0, 0, 0, .9);
+        pattern.add_color_stop_rgba (1, 0, 0, 0, .75);
+        cr.set_source(pattern)
         cr.paint()
+
         return False
 
 class MonitorView(BaseWindow):

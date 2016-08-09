@@ -1,3 +1,5 @@
+# Generated file - DO NOT EDIT.  Edit config.py.in instead.
+
 prefix="@prefix@"
 datadir="@datadir@"
 localedir=datadir+"/locale"

@@ -4,19 +4,113 @@
 import gi
 gi.require_version('Gkbd', '3.0')
 gi.require_version('AccountsService', '1.0')
-from gi.repository import Gtk, Gdk, Gkbd, AccountsService, GObject, CinnamonDesktop
+from gi.repository import Gtk, Gdk, AccountsService, GObject, CinnamonDesktop, GdkPixbuf
 import os
+import math
+import cairo
 
 import utils
 import trackers
 import settings
 import status
-# from grabHelper import GrabHelper
+import config
 from baseWindow import BaseWindow
 
-# This segfaults if called more than once??
-kbd_config = None
 acc_service = None
+
+class FramedImage(Gtk.Image):
+    def __init__(self):
+        super(FramedImage, self).__init__()
+        self.get_style_context().add_class("framedimage")
+        self.min_height = 150
+
+        self.set_size_request(-1, self.min_height)
+
+    def set_from_file(self, path):
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, -1, self.min_height, True)
+        self.set_from_pixbuf(pixbuf)
+
+class TransparentButton(Gtk.Button):
+    def __init__(self, name, size):
+        super(TransparentButton, self).__init__()
+        self.get_style_context().add_class("transparentbutton")
+        image = Gtk.Image.new_from_icon_name(name, size)
+
+        self.set_can_default(True)
+        self.set_can_focus(True)
+        self.set_image(image)
+
+class PasswordEntry(Gtk.Entry):
+    def __init__(self):
+        super(PasswordEntry, self).__init__()
+        self.get_style_context().add_class("passwordentry")
+
+        self.set_halign(Gtk.Align.FILL)
+        self.set_has_frame(True)
+        self.set_input_purpose(Gtk.InputPurpose.PASSWORD)
+        self.set_visibility(False)
+        self.set_property("caps-lock-warning", False)
+        self.set_placeholder_text (_("Enter password..."))
+        self.set_can_default(True)
+
+        trackers.con_tracker_get().connect(settings.kbd_config,
+                                           "group-changed",
+                                           self.on_group_changed)
+
+        trackers.con_tracker_get().connect(self,
+                                           "icon-press",
+                                           self.on_icon_pressed)
+
+        self.current_pixbuf = None
+
+        self.update_layout_icon()
+
+    def update_layout_icon(self):
+        pixbuf = None
+
+        if len(settings.kbd_config.get_group_names()) > 1:
+            group = settings.kbd_config.get_current_group()
+            name = settings.kbd_config.get_group_name(group)
+
+            if settings.get_show_flags():
+                path = os.path.join(config.pkgdatadir, "flags", "%s.png" % name)
+                if os.path.exists(path):
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+
+            if pixbuf == None:
+                pixbuf = self.get_text_pixbuf(name)
+
+        self.set_icon_from_pixbuf(Gtk.EntryIconPosition.PRIMARY, pixbuf)
+
+    def on_icon_pressed(self, entry, icon_pos, event):
+        if icon_pos == Gtk.EntryIconPosition.PRIMARY:
+            settings.kbd_config.lock_next_group()
+
+    def on_group_changed(self, config, group):
+        self.grab_focus_without_selecting()
+        self.update_layout_icon()
+
+    def get_text_pixbuf(self, text):
+        v, w, h = Gtk.icon_size_lookup(Gtk.IconSize.MENU)
+
+        surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+        cr = cairo.Context(surf)
+
+        cr.set_source_rgba(0, 0, 0, 0)
+        cr.fill()
+
+        font_size = 10.0
+
+        cr.move_to(0, h - ((h - font_size) / 2))
+        cr.set_source_rgb(0, 0, 0)
+        cr.show_text(text.upper()[:2])
+
+        final_surf = cr.get_target()
+
+        return Gdk.pixbuf_get_from_surface(final_surf, 0, 0, w, h)
+
+    def grab_focus(self):
+        Gtk.Entry.grab_focus_without_selecting(self)
 
 class UnlockDialog(BaseWindow):
     __gsignals__ = {
@@ -31,135 +125,86 @@ class UnlockDialog(BaseWindow):
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
-        self.set_size_request(400, -1)
+        self.set_size_request(350, -1)
 
         self.real_name = None
         self.user_name = None
 
-        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.box.set_name("unlockbox")
-
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.box.get_style_context().add_class("unlockbox")
         self.add(self.box)
 
-        c = self.box.get_style_context()
-        c.add_class("background")
-
-        hbox_user = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        self.box.pack_start(hbox_user, False, False, 6)
-
-        self.face_image = Gtk.Image()
-        hbox_user.pack_start(self.face_image, True, True, 0)
-        self.face_image.set_alignment(1.0, 0.5)
-
-        vbox_user = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        hbox_user.pack_start(vbox_user, True, True, 0)
-        vbox_user.set_border_width(6)
+        self.face_image = FramedImage()
+        self.face_image.set_halign(Gtk.Align.CENTER)
+        self.box.pack_start(self.face_image, False, False, 10)
 
         self.realname_label = Gtk.Label(None)
         self.realname_label.set_alignment(0, 0.5)
-        vbox_user.pack_start(self.realname_label, True, True, 0)
+        self.realname_label.set_halign(Gtk.Align.CENTER)
 
-        self.username_label = Gtk.Label(None)
-        self.username_label.set_alignment(0, 0)
-        vbox_user.pack_start(self.username_label, True, True, 0)
+        self.box.pack_start(self.realname_label, False, False, 10)
 
-        self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
-                               transition_duration=100)
-        self.stack.show()
+        self.entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
 
-        self.box.pack_start(self.stack, False, False, 6)
+        self.box.pack_start(self.entry_box, True, True, 2)
 
-        hbox_pass = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        self.stack.add_named(hbox_pass, "entry")
+        self.password_entry = PasswordEntry()
 
-        self.spinner = Gtk.Spinner()
-        self.stack.add_named(self.spinner, "spinner")
-
-        self.stack.set_visible_child(hbox_pass)
-
-        # Password prompt
-
-        self.auth_prompt_label = Gtk.Label.new_with_mnemonic(_("_Password:"))
-        self.auth_prompt_label.set_alignment(0.5, 0.5)
-        hbox_pass.pack_start(self.auth_prompt_label, False, False, 6)
-
-        self.auth_prompt_entry = Gtk.Entry()
-        self.auth_prompt_entry.set_input_purpose(Gtk.InputPurpose.PASSWORD)
-        self.auth_prompt_entry.set_visibility(False)
-        hbox_pass.pack_start(self.auth_prompt_entry, True, True, 0)
-        self.auth_prompt_entry.set_can_default(True)
-        self.auth_prompt_label.set_mnemonic_widget(self.auth_prompt_entry)
-
-        trackers.con_tracker_get().connect(self.auth_prompt_entry,
+        trackers.con_tracker_get().connect(self.password_entry,
                                            "changed",
-                                           self.on_auth_prompt_entry_text_changed)
+                                           self.on_password_entry_text_changed)
 
-        trackers.con_tracker_get().connect(self.auth_prompt_entry,
+        trackers.con_tracker_get().connect(self.password_entry,
                                            "button-press-event",
-                                           self.on_auth_prompt_entry_button_press)
+                                           self.on_password_entry_button_press)
 
-        trackers.con_tracker_get().connect(self.auth_prompt_entry,
+        trackers.con_tracker_get().connect(self.password_entry,
                                            "activate",
                                            self.on_auth_enter_key)
 
-        # Keyboard layout button
+        self.entry_box.pack_start(self.password_entry, True, True, 15)
 
-        self.kbd_layout_indicator = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        hbox_pass.pack_start(self.kbd_layout_indicator, False, False, 6)
+        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.entry_box.pack_end(button_box, False, False, 0)
 
-        # Status
-
-        vbox_status = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.box.pack_start(vbox_status, True, True, 6)
-
-        # Caps warning
-
-        self.capslock_label = Gtk.Label("")
-        self.capslock_label.set_alignment(0.5, 0.5)
-        vbox_status.pack_start(self.capslock_label, False, False, 0)
-
-        # Status Text
-
-        self.auth_message_label = Gtk.Label(None)
-        self.auth_message_label.set_alignment(0.5, 0.5)
-        vbox_status.pack_start(self.auth_message_label, False, False, 0)
-
-        # Buttons
-
-        self.action_area = Gtk.ButtonBox(orientation=Gtk.Orientation.HORIZONTAL)
-        self.action_area.set_layout(Gtk.ButtonBoxStyle.SPREAD)
-        self.action_area.show()
-
-        self.box.pack_start(self.action_area, False, True, 10)
-        self.action_area.show()
-
-        self.auth_switch_button = self.add_button(_("S_witch User…"))
-        trackers.con_tracker_get().connect(self.auth_switch_button,
-                                           "clicked",
-                                           self.on_switch_user_clicked)
-        self.auth_switch_button.set_visible(settings.get_user_switch_enabled())
-
-        self.auth_logout_button = self.add_button(_("Log _Out"))
-        trackers.con_tracker_get().connect(self.auth_logout_button,
-                                           "clicked",
-                                           self.on_logout_clicked)
-        self.auth_logout_button.set_visible(False)
-
-
-        self.auth_unlock_button = self.add_button(_("_Unlock"))
+        self.auth_unlock_button = TransparentButton("screensaver-unlock-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         self.auth_unlock_button.set_sensitive(False)
+
         trackers.con_tracker_get().connect(self.auth_unlock_button,
                                            "clicked",
                                            self.on_unlock_clicked)
-        self.auth_unlock_button.set_visible(True)
+
+        button_box.pack_start(self.auth_unlock_button, False, False, 4)
+
+        self.auth_switch_button = TransparentButton("screensaver-switch-users-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        trackers.con_tracker_get().connect(self.auth_switch_button,
+                                           "clicked",
+                                           self.on_switch_user_clicked)
+
+        button_box.pack_start(self.auth_switch_button, False, False, 4)
+
+        status.focusWidgets = [self.auth_unlock_button,
+                               self.auth_switch_button,
+                               self.password_entry]
+
+        vbox_messages = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+
+        self.capslock_label = Gtk.Label("")
+        self.capslock_label.get_style_context().add_class("caps-message")
+        self.capslock_label.set_alignment(0.5, 0.5)
+        vbox_messages.pack_start(self.capslock_label, False, False, 2)
+
+        self.auth_message_label = Gtk.Label("")
+        self.auth_message_label.get_style_context().add_class("auth-message")
+        self.auth_message_label.set_alignment(0.5, 0.5)
+        vbox_messages.pack_start(self.auth_message_label, False, False, 2)
+
+        self.box.pack_start(vbox_messages, False, False, 0)
 
         self.real_name = utils.get_user_display_name()
         self.user_name = utils.get_user_name()
 
         self.update_realname_label()
-        self.update_username_label()
-
-        self.setup_kbd_layout_button()
 
         global acc_service
 
@@ -190,32 +235,23 @@ class UnlockDialog(BaseWindow):
     def on_revealed(self, widget, child):
         if self.get_child_revealed():
             self.keymap_handler(self.keymap)
-            self.auth_prompt_entry.grab_focus_without_selecting()
         else:
-            self.auth_prompt_entry.set_text("")
+            self.password_entry.set_text("")
 
     def entry_is_focus(self):
-        return self.auth_prompt_entry.is_focus()
+        return self.password_entry.is_focus()
 
     def queue_key_event(self, event):
-        if not self.auth_prompt_entry.get_realized():
-            self.auth_prompt_entry.realize()
+        if not self.password_entry.get_realized():
+            self.password_entry.realize()
 
-        self.auth_prompt_entry.event(event)
+        self.password_entry.event(event)
 
     def keymap_handler(self, keymap):
         if keymap.get_caps_lock_state():
             self.capslock_label.set_text(_("You have the Caps Lock key on."))
         else:
             self.capslock_label.set_text("")
-
-    def add_button(self, text):
-        button = Gtk.Button.new_from_stock(text)
-        button.set_focus_on_click(False)
-        button.set_can_default(True)
-        button.set_no_show_all(True)
-        self.action_area.pack_end(button, False, True, 0)
-        return button
 
     def on_accounts_service_loaded(self, service, param):
         self.real_name = service.get_real_name()
@@ -228,10 +264,12 @@ class UnlockDialog(BaseWindow):
                 self.face_image.set_from_file(path)
                 break
 
-    def on_auth_prompt_entry_text_changed(self, editable):
+    def on_password_entry_text_changed(self, editable):
+        if not self.password_entry.has_focus():
+            self.password_entry.grab_focus()
         self.auth_unlock_button.set_sensitive(editable.get_text() != "")
 
-    def on_auth_prompt_entry_button_press(self, widget, event):
+    def on_password_entry_button_press(self, widget, event):
         if event.button == 3 and event.type == Gdk.EventType.BUTTON_PRESS:
             return Gdk.EVENT_STOP
 
@@ -240,62 +278,41 @@ class UnlockDialog(BaseWindow):
     def on_unlock_clicked(self, button=None):
         self.emit("inhibit-timeout")
 
-        text = self.auth_prompt_entry.get_text()
-        self.show_spinner()
+        text = self.password_entry.get_text()
+        self.start_progress()
 
-        self.clear_entry()
+        self.password_entry.set_placeholder_text (_("Checking..."))
 
         self.authenticate(text)
 
     def on_auth_enter_key(self, widget):
         if widget.get_text() == "":
             return
+
         self.on_unlock_clicked()
 
     def on_switch_user_clicked(self, widget):
         utils.do_user_switch()
 
-    def on_logout_clicked(self, widget):
-        self.set_sensitive(False)
-        utils.do_logout()
+    def pulse(self):
+        self.password_entry.progress_pulse()
+        return True
 
-    def setup_kbd_layout_button(self):
-        global kbd_config
+    def start_progress(self):
+        self.password_entry.set_progress_pulse_step(0.2)
+        trackers.timer_tracker_get().start("auth-progress",
+                                           100,
+                                           self.pulse)
 
-        if kbd_config is None:
-            kbd_config = Gkbd.Configuration()
-
-        if len(kbd_config.get_group_names()) > 1:
-            indicator = Gkbd.Indicator()
-            indicator.set_parent_tooltips(True)
-            self.kbd_layout_indicator.pack_start(indicator, False, False, 0)
-
-            self.kbd_layout_indicator.show_all()
-        else:
-            self.kbd_layout_indicator.hide()
-
-    def show_spinner(self):
-        self.spinner.start()
-        self.stack.set_visible_child_name("spinner")
-
-    def show_entry(self):
-        self.spinner.stop()
-        self.stack.set_visible_child_name("entry")
+    def stop_progress(self):
+        trackers.timer_tracker_get().cancel("auth-progress")
+        self.password_entry.set_progress_fraction(0.0)
 
     def clear_entry(self):
-        self.auth_prompt_entry.set_text("")
+        self.password_entry.set_text("")
 
     def update_realname_label(self):
-        markup = "<span font_desc=\"Ubuntu 14\"><b>%s</b></span>" % (self.real_name)
-
-        self.realname_label.set_markup(markup)
-
-    def update_username_label(self):
-        hostname = utils.get_host_name()
-
-        markup = "<span font_desc=\"Ubuntu 10\"><i>%s @ %s</i></span>" % (self.user_name, hostname)
-
-        self.username_label.set_markup(markup)
+        self.realname_label.set_text(self.real_name)
 
     def authenticate(self, password):
         CinnamonDesktop.desktop_check_user_password(self.user_name,
@@ -303,6 +320,8 @@ class UnlockDialog(BaseWindow):
                                                     self.authenticate_callback)
 
     def authenticate_callback(self, success, data=None):
+        self.stop_progress()
+
         if success:
             self.clear_entry()
             self.emit("auth-success")
@@ -311,12 +330,11 @@ class UnlockDialog(BaseWindow):
             self.emit("auth-failure")
 
     def authentication_failed(self):
-        self.show_entry()
+        self.clear_entry()
+
+        self.password_entry.set_placeholder_text (_("Enter password..."))
         self.auth_message_label.set_text(_("Password incorrect - try again."))
 
-        self.auth_prompt_entry.grab_focus()
+        self.password_entry.grab_focus()
 
         self.emit("uninhibit-timeout")
-
-    def update_logout_button(self):
-        self.auth_logout_button.set_visible(status.LogoutEnabled)

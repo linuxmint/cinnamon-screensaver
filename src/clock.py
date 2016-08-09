@@ -16,6 +16,8 @@ class ClockWidget(BaseWindow):
         super(ClockWidget, self).__init__()
         self.screen = screen
 
+        self.get_style_context().add_class("clock")
+
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
 

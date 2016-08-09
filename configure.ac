@@ -66,15 +66,15 @@ exec_prefix=$old_exec_prefix
 
 AC_OUTPUT([
 Makefile
-po/Makefile.in
-src/Makefile
-src/cinnamon-screensaver.desktop.in
 data/Makefile
+data/org.cinnamon.ScreenSaver.service
+data/icons/Makefile
+files/Makefile
+po/Makefile.in
 screensavers/Makefile
 screensavers/webkit@cinnamon.org/Makefile
-screensavers/xscreensaver@cinnamon.org/Makefile
 screensavers/webkit@cinnamon.org/webkit-stars@cinnamon.org/Makefile
-data/org.cinnamon.ScreenSaver.service
-files/Makefile
+screensavers/xscreensaver@cinnamon.org/Makefile
+src/Makefile
+src/cinnamon-screensaver.desktop.in
 ])
-

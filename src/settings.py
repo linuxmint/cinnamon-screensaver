@@ -2,7 +2,8 @@
 
 import gi
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gio, CinnamonDesktop
+gi.require_version('Gkbd', '3.0')
+from gi.repository import Gio, CinnamonDesktop, Gkbd
 
 bg_settings = Gio.Settings(schema_id="org.cinnamon.desktop.background")
 
@@ -10,14 +11,14 @@ bg = CinnamonDesktop.BG()
 bg.load_from_preferences(bg_settings)
 bg_settings.connect("changed", lambda s,k: bg.load_from_preferences(bg_settings))
 
+kbd_config = Gkbd.Configuration()
+kbd_config.start_listen()
+
 ####
 ss_settings = Gio.Settings(schema_id="org.cinnamon.desktop.screensaver")
 DEFAULT_MESSAGE_KEY = "default-message"
 SCREENSAVER_NAME_KEY = "screensaver-name"
 USER_SWITCH_ENABLED_KEY = "user-switch-enabled"
-LOGOUT_ENABLED_KEY = "logout-enabled"
-LOGOUT_DELAY_KEY = "logout-delay"
-LOGOUT_COMMAND_KEY = "logout-command"
 IDLE_ACTIVATE_KEY = "idle-activation-enabled"
 LOCK_ENABLED_KEY = "lock-enabled"
 LOCK_DELAY_KEY = "lock-delay"
@@ -27,6 +28,8 @@ TIME_FORMAT_KEY = "time-format"
 FONT_DATE_KEY = "font-date"
 FONT_MESSAGE_KEY = "font-message"
 FONT_TIME_KEY = "font-time"
+SHOW_FLAGS_KEY = "show-flags"
+
 ####
 if_settings = Gio.Settings(schema_id="org.cinnamon.desktop.interface")
 CLOCK_SHOW_DATE_KEY = "clock-show-date"
@@ -50,17 +53,6 @@ def get_screensaver_name():
 
 def get_user_switch_enabled():
     return ss_settings.get_boolean(USER_SWITCH_ENABLED_KEY)
-
-def get_logout_enabled():
-    return ss_settings.get_boolean(LOGOUT_ENABLED_KEY)
-
-def get_logout_delay():
-    return ss_settings.get_uint(LOGOUT_DELAY_KEY)
-
-def get_logout_command():
-    cmd = ss_settings.get_string(LOGOUT_COMMAND_KEY)
-
-    return check_string(cmd)
 
 def get_idle_activate():
     return ss_settings.get_boolean(IDLE_ACTIVATE_KEY)
@@ -104,3 +96,7 @@ def get_clock_should_show_date():
 
 def get_clock_should_use_24h():
     return if_settings.get_boolean(CLOCK_USE_24H_KEY)
+
+def get_show_flags():
+    return True
+    return ss_settings.get_boolean(SHOW_FLAGS_KEY)

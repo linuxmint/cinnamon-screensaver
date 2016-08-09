@@ -94,8 +94,6 @@ class KeyBindings(GObject.GObject):
     def load_bindings(self):
         self.shortcut_actions = []
 
-        i = 0
-
         for action_id in ALLOWED_ACTIONS:
             bindings = self.media_key_settings.get_strv(CinnamonDesktop.desktop_get_media_key_string(action_id))
 
@@ -112,6 +110,17 @@ class KeyBindings(GObject.GObject):
         if filtered_state == 0 and event.keyval == Gdk.KEY_Escape:
             if status.Awake:
                 self.manager.cancel_unlock_widget()
+                return True
+
+        if status.Awake:
+            if (event.keyval in (Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab)):
+                if event.keyval == Gdk.KEY_ISO_Left_Tab:
+                    self.manager.propagate_tab_event(True)
+                else:
+                    self.manager.propagate_tab_event(False)
+                return True
+            elif filtered_state == 0 and (event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_space)):
+                self.manager.propagate_activation()
                 return True
 
         for entry in self.shortcut_actions:

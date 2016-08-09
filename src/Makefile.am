@@ -21,6 +21,7 @@ app_PYTHON = \
         constants.py \
         eventHandler.py \
         fader.py \
+        focusNavigator.py \
         grabHelper.py \
         keybindings.py \
         logindProxy.py \

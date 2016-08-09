@@ -1,4 +1,5 @@
 NULL =
+SUBDIRS = icons
 
 dbussessionservicedir = $(DBUS_SESSION_SERVICE_DIR)
 dbussessionservice_DATA = org.cinnamon.ScreenSaver.service

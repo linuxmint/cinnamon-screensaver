@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk, Gdk, GObject
-import random
 
 import utils
 import trackers
@@ -37,6 +36,7 @@ class Stage(Gtk.Window):
         self.overlay = None
         self.clock_widget = None
         self.unlock_dialog = None
+        self.unlock_dialog_initial_x = -1
 
         self.event_handler = EventHandler(manager)
 
@@ -208,7 +208,7 @@ class Stage(Gtk.Window):
 
     def on_wake_timeout(self):
         self.set_timeout_active(None, False)
-        self.cancel_unlock_widget()
+        self.manager.cancel_unlock_widget()
 
         return False
 
@@ -222,9 +222,6 @@ class Stage(Gtk.Window):
 
     def set_message(self, msg):
         self.clock_widget.set_message(msg)
-
-    def update_logout_button(self):
-        self.unlock_dialog.update_logout_button()
 
 # Methods that manipulate the unlock dialog
 
@@ -279,6 +276,9 @@ class Stage(Gtk.Window):
         status.Awake = False
 
         self.clock_widget.start_positioning()
+
+    def propagate_tab_event(self, shifted):
+        self.unlock_dialog.do_tab_event(shifted)
 
     def do_motion_notify_event(self, event):
         return self.event_handler.on_motion_event(event)
@@ -349,42 +349,35 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                monitor_rect = self.screen.get_monitor_geometry(utils.get_mouse_monitor())
+                child.set_halign(Gtk.Align.START)
+                child.set_valign(Gtk.Align.CENTER)
 
-                allocation.width = nat_rect.width
-                allocation.height = nat_rect.height
+            current_monitor = child.current_monitor
 
+            monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+
+            allocation.width = nat_rect.width
+            allocation.height = nat_rect.height
+
+            halign = child.get_halign()
+            valign = child.get_valign()
+
+            if halign == Gtk.Align.START:
                 allocation.x = monitor_rect.x
+            elif halign == Gtk.Align.CENTER:
+                allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
+            elif halign == Gtk.Align.END:
+                allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
+
+            if valign == Gtk.Align.START:
+                allocation.y = monitor_rect.y
+            elif valign == Gtk.Align.CENTER:
                 allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
+            elif valign == Gtk.Align.END:
+                allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
 
-                return True
-            else:
-                current_monitor = child.current_monitor
+            # utils.debug_allocation(allocation)
 
-                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
-
-                allocation.width = nat_rect.width
-                allocation.height = nat_rect.height
-
-                halign = child.get_halign()
-                valign = child.get_valign()
-
-                if halign == Gtk.Align.START:
-                    allocation.x = monitor_rect.x
-                elif halign == Gtk.Align.CENTER:
-                    allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
-                elif halign == Gtk.Align.END:
-                    allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
-
-                if valign == Gtk.Align.START:
-                    allocation.y = monitor_rect.y
-                elif valign == Gtk.Align.CENTER:
-                    allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
-                elif valign == Gtk.Align.END:
-                    allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
-
-                # utils.debug_allocation(allocation)
-
-                return True
+            return True
 
         return False

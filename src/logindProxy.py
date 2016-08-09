@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 
 from gi.repository import Gio, GObject, GLib
-import dbus
 import os
 
 import constants as c

@@ -2,14 +2,13 @@
 
 from gi.repository import Gdk
 import time
-import sys
 import traceback
 
 import constants as c
 import trackers
-import utils
 import settings
 import status
+from focusNavigator import FocusNavigator
 from sessionProxy import SessionProxy
 from logindProxy import LogindProxy, LogindConnectionError
 from consoleKitProxy import ConsoleKitProxy, ConsoleKitConnectionError
@@ -22,7 +21,6 @@ class ScreensaverManager:
         self.service_message_cb = service_message_cb
 
         self.activated_timestamp = 0
-        self.lock_delay_id = 0
 
         self.stage = None
         self.stage_fader = None
@@ -34,6 +32,7 @@ class ScreensaverManager:
         status.LogoutEnabled = False
 
         self.grab_helper = GrabHelper(self)
+        self.focus_nav = FocusNavigator()
 
         self.session_watcher = SessionProxy()
         trackers.con_tracker_get().connect(self.session_watcher,
@@ -139,7 +138,6 @@ class ScreensaverManager:
             self.grab_helper.release()
             status.Active = False
             self.cancel_timers()
-            raise e
 
     def despawn_stage(self, effect_time=c.STAGE_DESPAWN_TRANSITION, callback=None):
         self.stage.transition_out(effect_time, callback)
@@ -171,12 +169,10 @@ class ScreensaverManager:
     def start_timers(self):
         self.activated_timestamp = time.time()
         self.start_lock_delay()
-        self.start_logout_delay()
 
     def cancel_timers(self):
         self.activated_timestamp = 0
         self.stop_lock_delay()
-        self.stop_logout_delay()
 
     def cancel_unlock_widget(self):
         self.grab_stage()
@@ -203,32 +199,16 @@ class ScreensaverManager:
     def stop_lock_delay(self):
         trackers.timer_tracker_get().cancel("idle-lock-delay")
 
-    def on_logout_delay_timeout(self):
-        status.LogoutEnabled = True
-        self.stage.update_logout_button()
-
-        return False
-
-    def start_logout_delay(self):
-        if not utils.should_show_logout():
-            return
-
-        logout_delay = settings.get_logout_delay()
-
-        if logout_delay == 0:
-            self.on_logout_delay_timeout()
-        else:
-            trackers.timer_tracker_get().start_seconds("logout-button-delay",
-                                                       logout_delay,
-                                                       self.on_logout_delay_timeout)
-
-    def stop_logout_delay(self):
-        trackers.timer_tracker_get().cancel("logout-button-delay")
-
 ##### EventHandler call
 
     def queue_dialog_key_event(self, event):
         self.stage.queue_dialog_key_event(event)
+
+    def propagate_tab_event(self, shifted):
+        self.focus_nav.navigate(shifted)
+
+    def propagate_activation(self):
+        self.focus_nav.activate_focus()
 
 # Session watcher handler:
 

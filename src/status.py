@@ -4,4 +4,4 @@ Active = False
 Locked = False
 Awake = False
 
-LogoutEnabled = False
+focusChain = []

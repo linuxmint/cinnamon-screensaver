@@ -79,38 +79,6 @@ def session_is_cinnamon():
 
     return False
 
-def should_show_logout():
-    if not settings.get_logout_enabled():
-        return False
-
-    if settings.get_logout_command() != "" or session_is_cinnamon():
-        return True
-
-    return False
-
-def do_logout():
-    custom_command = settings.get_logout_command()
-
-    if custom_command != "":
-        command = custom_command
-    else:
-        if session_is_cinnamon():
-            command = "%s %s" % ("cinnamon-session-quit", "--logout --no-prompt")
-        else:
-            command = None
-
-    if not command:
-        return
-
-    ctx = Gdk.Display.get_default().get_app_launch_context()
-
-    app = Gio.AppInfo.create_from_commandline(command, None, 0)
-
-    if app:
-        app.launch(None, ctx)
-
-    do_quit()
-
 def override_user_time(window):
     ev_time = Gtk.get_current_event_time()
 
