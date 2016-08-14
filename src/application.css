@@ -35,13 +35,12 @@
 .passwordentry {
     font-size: 11px;
     box-shadow: none;
-    border-color: alpha(white, .7);
+    border-color: alpha(white, .2);
     border-style: solid;
     color: white;
     background-image: none;
     background-color: transparent;
     border-width: 1px;
-    box-shadow: 1px 1px alpha(black, 0.8);
 }
 
 .passwordentry.progressbar {
@@ -61,16 +60,15 @@
 }
 
 .transparentbutton {
-    border-color: alpha(white, .7);
+    border-color: alpha(white, .1);
     box-shadow: none;
     background-image: none;
     background-color: transparent;
     border-radius: 20px;
     outline-radius: 20px;
     outline-color: transparent;
-    color: white;
+    color: alpha(white, .7);
     border-width: 1px;
-    box-shadow: 1px 1px alpha(white, 0.3);
 }
 
 .passwordentry:focused,
@@ -80,11 +78,12 @@
 }
 
 .transparentbutton:insensitive {
-    color: #444444;
+    color: #333333;
 }
 
 .passwordentry:prelight,
 .transparentbutton:prelight {
+    border-color: alpha(white, .5);
     background-color: alpha(grey, .3);
 }
 
