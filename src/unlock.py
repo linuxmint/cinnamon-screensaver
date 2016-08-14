@@ -102,7 +102,10 @@ class PasswordEntry(Gtk.Entry):
         font_size = 10.0
 
         cr.move_to(0, h - ((h - font_size) / 2))
-        cr.set_source_rgb(0, 0, 0)
+
+        rgba = self.get_style_context().get_color(Gtk.StateFlags.NORMAL)
+
+        cr.set_source_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha)
         cr.show_text(text.upper()[:2])
 
         final_surf = cr.get_target()

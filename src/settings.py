@@ -28,12 +28,15 @@ TIME_FORMAT_KEY = "time-format"
 FONT_DATE_KEY = "font-date"
 FONT_MESSAGE_KEY = "font-message"
 FONT_TIME_KEY = "font-time"
-SHOW_FLAGS_KEY = "show-flags"
 
 ####
 if_settings = Gio.Settings(schema_id="org.cinnamon.desktop.interface")
 CLOCK_SHOW_DATE_KEY = "clock-show-date"
 CLOCK_USE_24H_KEY = "clock-use-24h"
+
+####
+gk_settings = Gio.Settings(schema_id="org.gnome.libgnomekbd.indicator")
+SHOW_FLAGS_KEY = "show-flags"
 
 def check_string(string):
     if string and string != "":
@@ -98,5 +101,4 @@ def get_clock_should_use_24h():
     return if_settings.get_boolean(CLOCK_USE_24H_KEY)
 
 def get_show_flags():
-    return True
-    return ss_settings.get_boolean(SHOW_FLAGS_KEY)
+    return gk_settings.get_boolean(SHOW_FLAGS_KEY)
