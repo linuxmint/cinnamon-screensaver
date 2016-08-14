@@ -1,6 +1,5 @@
 /usr/share/applications
 /usr/share/icons
-/usr/share/cinnamon-screensaver/flags
 /usr/share/cinnamon-screensaver/*.py
 /usr/share/cinnamon-screensaver/*.css
 /usr/share/cinnamon-screensaver/__pycache__

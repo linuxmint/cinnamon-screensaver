@@ -73,7 +73,7 @@ class PasswordEntry(Gtk.Entry):
             name = settings.kbd_config.get_group_name(group)
 
             if settings.get_show_flags():
-                path = os.path.join(config.pkgdatadir, "flags", "%s.png" % name)
+                path = os.path.join(config.datadir, "cinnamon", "flags", "%s.png" % name)
                 if os.path.exists(path):
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
 
