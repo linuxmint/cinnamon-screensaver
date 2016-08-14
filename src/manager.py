@@ -205,7 +205,7 @@ class ScreensaverManager:
     def stop_lock_delay(self):
         trackers.timer_tracker_get().cancel("idle-lock-delay")
 
-##### EventHandler call
+##### EventHandler/GrabHelper/FocusNavigator calls
 
     def queue_dialog_key_event(self, event):
         self.stage.queue_dialog_key_event(event)
@@ -215,6 +215,9 @@ class ScreensaverManager:
 
     def propagate_activation(self):
         self.focus_nav.activate_focus()
+
+    def get_focused_widget(self):
+        return self.focus_nav.get_focused_widget()
 
 # Session watcher handler:
 

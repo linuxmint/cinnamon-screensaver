@@ -81,3 +81,13 @@ class FocusNavigator:
         elif isinstance(widget, Gtk.Entry):
             widget.activate()
 
+    def get_focused_widget(self):
+        widgets = status.focusWidgets
+
+        focus_index = self._get_focus_index()
+
+        if focus_index == -1:
+            return None
+
+        return widgets[focus_index]
+
