@@ -2,6 +2,7 @@
 
 from gi.repository import GLib, Gio, Gdk, Gtk
 import os
+import grp
 import subprocess
 
 import config
@@ -50,6 +51,15 @@ def get_host_name():
         utf8_name = nofail_locale_to_utf8(name)
 
     return utf8_name
+
+def user_can_lock():
+    name = GLib.get_user_name()
+
+    group = grp.getgrnam("nopasswdlogin")
+    if name in group.gr_mem:
+        return False
+
+    return True
 
 def process_is_running(name):
     res = subprocess.check_output(["pidof", name])

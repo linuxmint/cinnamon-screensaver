@@ -5,6 +5,7 @@ import time
 import traceback
 
 import constants as c
+import utils
 import trackers
 import settings
 import status
@@ -75,9 +76,11 @@ class ScreensaverManager:
         if not status.Active:
             if self.set_active(True, msg):
                 self.stop_lock_delay()
-                status.Locked = True
+                if utils.user_can_lock():
+                    status.Locked = True
         else:
-            status.Locked = True
+            if utils.user_can_lock():
+                status.Locked = True
             self.stage.set_message(msg)
 
     def unlock(self):
@@ -185,6 +188,9 @@ class ScreensaverManager:
 
     def start_lock_delay(self):
         if not settings.get_idle_lock_enabled():
+            return
+
+        if not utils.user_can_lock():
             return
 
         lock_delay = settings.get_idle_lock_delay()
