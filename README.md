@@ -41,7 +41,6 @@ to the idle listening state.
 
 ### To do
 - add cinnamon proxy, close expo/overview upon idle (feature from old screensaver)
-- don't allow more than one instance of cinnamon-screensaver-main.py (should check dbus for a our name already being used?)
 - fix google chrome notifications showing over screensaver (is it something we can do or muffin?) - we could add a 'screensaver' window group to muffin, above all others.  A gdk filter might let us suppress window raises (from old screensaver) - but it's not introspectable, would need a C helper.
 - add music player widget?  Upper edge strip?
 - security testing... try to break it

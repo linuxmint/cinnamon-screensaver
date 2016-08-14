@@ -12,6 +12,13 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class ScreensaverService(dbus.service.Object):
     def __init__(self):
+        sessionBus = dbus.SessionBus ()
+        request = sessionBus.request_name(c.SS_SERVICE, dbus.bus.NAME_FLAG_DO_NOT_QUEUE)
+
+        if request == dbus.bus.REQUEST_NAME_REPLY_EXISTS:
+            print("cinnamon-screensaver already running!  Exiting...")
+            quit()
+
         bus_name = dbus.service.BusName(c.SS_SERVICE, bus=dbus.SessionBus())
         dbus.service.Object.__init__(self, bus_name, c.SS_PATH)
 
