@@ -55,9 +55,13 @@ def get_host_name():
 def user_can_lock():
     name = GLib.get_user_name()
 
-    group = grp.getgrnam("nopasswdlogin")
-    if name in group.gr_mem:
-        return False
+    # KeyError is generated if group doesn't exist, ignore it and allow lock
+    try:
+        group = grp.getgrnam("nopasswdlogin")
+        if name in group.gr_mem:
+            return False
+    except KeyError:
+        pass
 
     return True
 
