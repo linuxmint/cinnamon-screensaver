@@ -1,0 +1,35 @@
+#! /usr/bin/python3
+
+import subprocess
+import time
+import os
+
+print("Assertion: Notifications should not appear while the screensaver is active")
+print("Test: Activate the screensaver, then send a test notification a couple seconds later.")
+print("Expected outcome: Notification should *not* appear over the screensaver window.\n")
+
+print("Starting cinnamon-screensaver if necessary...")
+ps_output = subprocess.check_output(["ps", "-A"])
+if "cinnamon-screen" not in ps_output.decode("utf-8"):
+    os.system("cinnamon-screensaver &")
+    time.sleep(2)
+print("Ok\n")
+
+print("Locking screen...")
+os.system("cinnamon-screensaver-command --lock")
+print("Ok\n")
+
+print("waiting a few seconds...")
+time.sleep(5)
+print("Ok\n")
+
+print("Sending a notification...")
+os.system("notify-send 'Test notification' 'You should not see this while the screen is locked'")
+print("Ok\n")
+
+print("waiting a few more seconds...")
+time.sleep(5)
+os.system("cinnamon-screensaver-command --deactivate")
+print("Unlocked.  Terminating.")
+quit()
+

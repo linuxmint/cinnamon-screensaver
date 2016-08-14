@@ -1,19 +1,14 @@
 #!/usr/bin/make -f
 
-export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
-DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
-
 %:
 	dh $@ --parallel --with=autoreconf,gnome
 
 override_dh_gnome_clean:
 	dh_gnome_clean --no-control
 
-override_dh_auto_configure:
-	dh_auto_configure -- \
-	    --enable-locking \
-	    --libexecdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver
+DEB_CONFIGURE_SCRIPT_ENV += PYTHON="/usr/bin/python3"
 
-override_dh_install:
-	dh_install --list-missing
-	rm -rf debian/cinnamon-screensaver/usr/share/doc/cinnamon-screensaver-*
+DEB_MAKE_EXTRA_ARGS += pythondir=/usr/share/cinnamon-screensaver
+
+install/cinnamon-screensaver::
+	dh_python3 -p$(cdbs_curpkg)
