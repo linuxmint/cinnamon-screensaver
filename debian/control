@@ -7,6 +7,8 @@ Build-Depends: debhelper (>= 9),
                dh-autoreconf,
                dh-python,
                gnome-common,
+               librsvg2-bin,
+               python-rsvg,
                gnome-pkg-tools (>= 0.10)
 Standards-Version: 3.9.6
 
