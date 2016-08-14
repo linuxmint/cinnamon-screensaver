@@ -33,6 +33,12 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 AM_GLIB_GNU_GETTEXT
 
+# gtkdocize greps for '^GTK_DOC_CHECK'
+m4_ifdef([GTK_DOC_CHECK], [
+GTK_DOC_CHECK([1.18],[--flavour no-tmpl])],
+          [AM_CONDITIONAL([ENABLE_GTK_DOC], [false])
+           enable_gtk_doc=no])
+
 AM_PATH_PYTHON(3.4)
 
 # Find out where the session service file goes
