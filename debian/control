@@ -9,6 +9,7 @@ Build-Depends: debhelper (>= 9),
                gnome-common,
                librsvg2-bin,
                python-rsvg,
+               libglib2.0-dev,
                gnome-pkg-tools (>= 0.10)
 Standards-Version: 3.9.6
 
