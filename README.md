@@ -40,11 +40,16 @@ If the authentication is successful, all widgets are destroyed, all grabs releas
 to the idle listening state.
 
 ### To do
-- add cinnamon proxy, close expo/overview upon idle (feature from old screensaver)
-- fix google chrome notifications showing over screensaver (is it something we can do or muffin?) - we could add a 'screensaver' window group to muffin, above all others.  A gdk filter might let us suppress window raises (from old screensaver) - but it's not introspectable, would need a C helper.
+- Add GdkFilter to prevent new windows raising themselves above the stage
+- Gtk 3.20.. make a new CSS file, do a check at startup which file to use based on gtk version check
+- Make styling work at fallback provider priority (1 instead of 600)
+- clock positioning broken in Gtk 3.20 (widget.queue_resize instead of widget.queue_draw to trigger GtkOverlay
+  redraws, but still issues?)
 - add music player widget?  Upper edge strip?
 - security testing... try to break it
-
+- add our own flag gsettings key to org.cinnamon.desktop.screensaver, instead of using libgnomekbd?  it's a dependency
+  anyhow.  Add user setting for this as well?
+- Evaluate allowed keybindings - add more?  Some missing? (keybindings.py)
 
 Files:
 
@@ -56,6 +61,8 @@ cinnamon-screensaver-command.py:  Send commands to the screensaver via the comma
 cinnamon-screensaver-main.py: Main entry point into the program, handles a couple of arguments, adds our css provider, fires up the ScreensaverService.
 
 baseWindow.py: A base revealer class that the Clock and Unlock widgets implement - any widget that will move around the Stage should implement this (except the monitorViews) - the revealer base lets you do simple fade-ins and fade-outs.
+
+cinnamonProxy.py: Connects to Cinnamon's dbus interface, asks Cinnamon to make sure expo or overview are closed (as they make a server grab that we can't wrest focus from, preventing the screensaver from activating).
 
 clock.py (inherits BaseWindow): The clock widget that bounces around the screen, this contains all of that.  Positioning is done via a randomizer on a timer that adjusts vertical and horizontal alignment properties (one of
 start, center, or end) along with current monitor, which is used by the Stage positioning function to tell it where to place the Clock widget.
