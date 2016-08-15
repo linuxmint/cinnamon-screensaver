@@ -15,6 +15,7 @@ appdir = $(datadir)/cinnamon-screensaver
 app_PYTHON = \
         __init__.py \
         baseWindow.py \
+        cinnamonProxy.py \
         clock.py \
         config.py \
         consoleKitProxy.py \

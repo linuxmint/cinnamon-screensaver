@@ -33,11 +33,18 @@ CK_SESSION_INTERFACE            = CK_INTERFACE + ".Session"
 DBUS_SERVICE                    = "org.freedesktop.DBus"
 DBUS_PATH                       = "/org/freedesktop/DBus"
 DBUS_INTERFACE                  = "org.freedesktop.DBus"
+DBUS_PROP_INTERFACE              = DBUS_INTERFACE + ".Properties"
 
 # Cinnamon Screensaver
 SS_SERVICE                      = "org.cinnamon.ScreenSaver"
 SS_PATH                         = "/org/cinnamon/ScreenSaver"
 SS_INTERFACE                    = "org.cinnamon.ScreenSaver"
+
+# Cinnamon
+
+CINNAMON_SERVICE                = "org.Cinnamon"
+CINNAMON_PATH                   = "/org/Cinnamon"
+CINNAMON_INTERFACE              = "org.Cinnamon"
 
 # /* Gnome Session Manager */
 GSM_SERVICE                     = "org.gnome.SessionManager"

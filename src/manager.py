@@ -11,6 +11,7 @@ import settings
 import status
 from focusNavigator import FocusNavigator
 from sessionProxy import SessionProxy
+from cinnamonProxy import CinnamonProxy
 from logindProxy import LogindProxy, LogindConnectionError
 from consoleKitProxy import ConsoleKitProxy, ConsoleKitConnectionError
 from stage import Stage
@@ -36,6 +37,8 @@ class ScreensaverManager:
         self.focus_nav = FocusNavigator()
 
         self.session_watcher = SessionProxy()
+        self.cinnamon_watcher = CinnamonProxy()
+
         trackers.con_tracker_get().connect(self.session_watcher,
                                            "idle-changed", 
                                            self.on_session_idle_changed)
@@ -91,6 +94,7 @@ class ScreensaverManager:
     def set_active(self, active, msg=None):
         if active:
             if not status.Active:
+                self.cinnamon_watcher.exit_expo_and_overview()
                 if self.grab_helper.grab_root(False):
                     if not self.stage:
                         self.spawn_stage(msg, c.STAGE_SPAWN_TRANSITION, self.on_spawn_stage_complete)
