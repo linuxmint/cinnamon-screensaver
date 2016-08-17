@@ -2,6 +2,8 @@
 
 AUTOMAKE_OPTIONS = 1.7
 
+DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
+
 NULL =
 
 SUBDIRS =			\
