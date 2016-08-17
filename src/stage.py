@@ -1,6 +1,9 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, GObject
+import gi
+gi.require_version('CScreensaver', '1.0')
+
+from gi.repository import Gtk, Gdk, GObject, CScreensaver
 
 import utils
 import trackers
@@ -73,6 +76,8 @@ class Stage(Gtk.Window):
         self.overlay.show_all()
         self.add(self.overlay)
 
+        self.gdk_filter = CScreensaver.GdkEventFilter()
+
     def transition_in(self, effect_time, callback):
         self.show()
         self.fader.fade_in(effect_time, callback)
@@ -99,6 +104,7 @@ class Stage(Gtk.Window):
 
         self.setup_children()
 
+        self.gdk_filter.start(self)
         # self.focus_and_present()
 
     def setup_children(self):
@@ -121,6 +127,9 @@ class Stage(Gtk.Window):
         self.clock_widget = None
         self.away_message = None
         self.monitors = []
+
+        self.gdk_filter.stop()
+        self.gdk_filter = None
 
         self.destroy()
 

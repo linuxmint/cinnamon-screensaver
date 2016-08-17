@@ -17,6 +17,8 @@ AC_CONFIG_SRCDIR(src/cinnamon-screensaver-main.py)
 AM_INIT_AUTOMAKE([1.7 no-dist-gzip dist-xz])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+LT_INIT([disable-static])
+
 AC_CONFIG_HEADERS(config.h)
 
 AM_MAINTAINER_MODE([enable])
@@ -32,6 +34,16 @@ GETTEXT_PACKAGE=cinnamon-screensaver
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 AM_GLIB_GNU_GETTEXT
+GOBJECT_INTROSPECTION_CHECK([0.9.7])
+
+AC_DEFUN([AC_CHECK_X_HEADER], [
+  ac_save_CPPFLAGS="$CPPFLAGS"
+  if test \! -z "$includedir" ; then 
+    CPPFLAGS="$CPPFLAGS -I$includedir"
+  fi
+  CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+  AC_CHECK_HEADER([$1],[$2],[$3],[$4])
+  CPPFLAGS="$ac_save_CPPFLAGS"])
 
 # gtkdocize greps for '^GTK_DOC_CHECK'
 m4_ifdef([GTK_DOC_CHECK], [
@@ -40,6 +52,15 @@ GTK_DOC_CHECK([1.18],[--flavour no-tmpl])],
            enable_gtk_doc=no])
 
 AM_PATH_PYTHON(3.4)
+
+PKG_CHECK_MODULES(CSCREENSAVER, gobject-2.0 gtk+-3.0 gdk-x11-3.0 x11)
+
+have_shape=no
+AC_CHECK_X_HEADER(X11/extensions/shape.h, [have_shape=yes],,
+                    [#include <X11/Xlib.h>])
+if test "$have_shape" = yes; then
+  AC_DEFINE(HAVE_SHAPE_EXT, 1, [Define if shape extension is available])
+fi
 
 # Find out where the session service file goes
 # The sad sed hack is recommended by section 27.10 of the automake manual.
@@ -81,6 +102,9 @@ data/Makefile
 data/org.cinnamon.ScreenSaver.service
 data/icons/Makefile
 files/Makefile
+libcscreensaver/Makefile
+libcscreensaver/cscreensaver.pc
+libcscreensaver/cscreensaver-uninstalled.pc
 po/Makefile.in
 screensavers/Makefile
 screensavers/webkit@cinnamon.org/Makefile

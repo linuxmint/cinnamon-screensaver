@@ -29,7 +29,6 @@ class CinnamonProxy(GObject.GObject):
 
     def on_proxy_ready(self, object, result, data=None):
         self.proxy = Gio.DBusProxy.new_for_bus_finish(result)
-        print(self.proxy.Set)
 
     def exit_expo_and_overview(self):
         if self.proxy == None:

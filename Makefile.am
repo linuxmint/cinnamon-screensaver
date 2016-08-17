@@ -9,6 +9,7 @@ SUBDIRS =			\
 	po 			\
 	data			\
     files       \
+    libcscreensaver \
     screensavers \
 	$(NULL)
 
