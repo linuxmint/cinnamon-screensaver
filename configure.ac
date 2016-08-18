@@ -10,7 +10,7 @@ PKG_PROG_PKG_CONFIG([0.26])
 AC_CONFIG_MACRO_DIR([m4])
 AC_SUBST([ACLOCAL_AMFLAGS], ["-I $ac_macro_dir \${ACLOCAL_FLAGS}"])
 
-AX_IS_RELEASE([git-directory])
+## AX_IS_RELEASE([git-directory])
 
 AC_CONFIG_SRCDIR(src/cinnamon-screensaver-main.py)
 
