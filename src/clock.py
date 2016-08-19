@@ -15,16 +15,11 @@ class ClockWidget(BaseWindow):
     def __init__(self, screen, away_message=None, initial_monitor=0):
         super(ClockWidget, self).__init__()
         self.screen = screen
-
+        # self.set_name("clock")
         self.get_style_context().add_class("clock")
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
-
-        self.set_margin_start(200)
-        self.set_margin_end(200)
-        self.set_margin_top(100)
-        self.set_margin_bottom(100)
 
         self.current_monitor = initial_monitor
 

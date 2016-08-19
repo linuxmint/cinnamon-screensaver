@@ -16,8 +16,6 @@ from baseWindow import BaseWindow
 class StatusBar(BaseWindow):
     def __init__(self, screen):
         super(StatusBar, self).__init__()
-        # self.get_style_context().add_class("statusbar")
-        self.set_name("statusbar")
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
         self.screen = screen
@@ -25,16 +23,21 @@ class StatusBar(BaseWindow):
 
         self.update_geometry()
 
-        self.sound_widget = SoundWidget()
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.box.set_halign(Gtk.Align.FILL)
 
-        self.add(self.sound_widget)
+        self.box.get_style_context().add_class("statusbar")
+
+        self.add(self.box)
+
+        self.sound_widget = SoundWidget()
+        self.box.pack_start(self.sound_widget, False, False, 6)
 
         self.show_all()
 
 class SoundWidget(Gtk.Box):
     def __init__(self):
         super(SoundWidget, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
-
         self.controller = None
         self.output = None
 

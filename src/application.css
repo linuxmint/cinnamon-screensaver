@@ -5,22 +5,21 @@
 }
 
 .clock {
-    margin-top: 100px;
-    margin-bottom: 100px;
-    margin-left: 200px;
-    margin-right: 200px;
+    padding: 100px 200px 100px 200px;
     color: #eeeeee;
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
-#statusbar {
-    box-shadow: none;
+.statusbar {
     border-color: alpha(white, .2);
+    border-width: 0 0 1px 0;
     border-style: solid;
     color: white;
-    background-image: none;
+    /*background-image: none;*/
     background-color: transparent;
-    border-width: 0 0 1px 0;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0));
+    /*box-shadow: 1px 1px alpha(black, 0.4);*/
+    padding: 4px;
 }
 
 .auth-message {
@@ -70,7 +69,7 @@
 }
 
 .transparentbutton {
-    border-color: alpha(white, .1);
+    border-color: alpha(white, .2);
     box-shadow: none;
     background-image: none;
     background-color: transparent;
@@ -81,19 +80,54 @@
     border-width: 1px;
 }
 
-.passwordentry:focused,
-.transparentbutton:focused {
-    background-color: alpha(grey, .15);
-    border-color: @theme_selected_bg_color;
-}
-
 .transparentbutton:insensitive {
     color: #333333;
 }
 
-.passwordentry:prelight,
-.transparentbutton:prelight {
-    border-color: alpha(white, .5);
+.passwordentry:focused,
+.transparentbutton:focused {
     background-color: alpha(grey, .3);
+    border-color: @theme_selected_bg_color;
+    box-shadow: 1px 1px alpha(white, 0.1);
 }
 
+.passwordentry:prelight,
+.transparentbutton:prelight {
+    border-color: alpha(white, .2);
+    background-color: alpha(grey, .2);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.passwordentry:prelight:focused,
+.transparentbutton:prelight:focused {
+    border-color: @theme_selected_bg_color;
+    background-color: alpha(grey, .4);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.passwordentry:active,
+.transparentbutton:active {
+    border-color: @theme_selected_bg_color;
+    background-color: alpha(grey, .6);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.passwordentry:active:focused,
+.transparentbutton:active:focused {
+    border-color: @theme_selected_bg_color;
+    background-color: alpha(grey, .9);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+
+/*
+.transparentbutton:selected:focused {
+    border-color: alpha(@theme_selected_bg_color, 1.0);
+    background-color: alpha(grey, .5);
+}
+
+.transparentbutton:prelight:focused {
+    border-color: alpha(@theme_selected_bg_color, 1.0);
+    background-color: alpha(grey, .3);
+}
+*/

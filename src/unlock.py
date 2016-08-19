@@ -241,9 +241,6 @@ class UnlockDialog(BaseWindow):
         else:
             self.password_entry.set_text("")
 
-    def entry_is_focus(self):
-        return self.password_entry.is_focus()
-
     def queue_key_event(self, event):
         if not self.password_entry.get_realized():
             self.password_entry.realize()

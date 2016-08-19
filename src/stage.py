@@ -304,9 +304,6 @@ class Stage(Gtk.Window):
 
         self.clock_widget.start_positioning()
 
-    def propagate_tab_event(self, shifted):
-        self.unlock_dialog.do_tab_event(shifted)
-
     def do_motion_notify_event(self, event):
         return self.event_handler.on_motion_event(event)
 
