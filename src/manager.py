@@ -15,7 +15,7 @@ from cinnamonProxy import CinnamonProxy
 from logindProxy import LogindProxy, LogindConnectionError
 from consoleKitProxy import ConsoleKitProxy, ConsoleKitConnectionError
 from stage import Stage
-from grabHelper import GrabHelper
+from grabHelper import GrabHelper, GrabDummy
 
 class ScreensaverManager:
     def __init__(self, service_message_cb):
@@ -33,7 +33,11 @@ class ScreensaverManager:
         status.Awake = False
         status.LogoutEnabled = False
 
-        self.grab_helper = GrabHelper(self)
+        if status.TestMode:
+            self.grab_helper = GrabDummy(self)
+        else:
+            self.grab_helper = GrabHelper(self)
+
         self.focus_nav = FocusNavigator()
 
         self.session_watcher = SessionProxy()

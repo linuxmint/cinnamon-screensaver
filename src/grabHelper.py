@@ -5,6 +5,34 @@ import time
 
 from eventHandler import EventHandler
 
+class GrabDummy:
+    def __init__(self, manager = None):
+        self.offscreen = None
+
+        self.screen = Gdk.Screen.get_default()
+
+        self.mouse_grab_window = None
+        self.keyboard_grab_window = None
+        self.mouse_hide_cursor = False
+
+    def grab_root(self, hide_cursor):
+        return True
+
+    def grab_offscreen(self, hide_cursor):
+        return True
+
+    def grab_window(self, window, hide_cursor):
+        return True
+
+    def move_to_window(self, window, hide_cursor):
+        return
+
+    def release(self):
+        return
+
+    def release_mouse(self):
+        return True
+
 class GrabHelper:
     def __init__(self, manager = None):
 

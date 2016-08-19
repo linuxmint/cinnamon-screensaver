@@ -12,6 +12,7 @@ import os
 
 import config
 from service import ScreensaverService
+import status
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
@@ -21,13 +22,20 @@ class Main:
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver')
         parser.add_argument('--version', dest='version', action='store_true',
                             help='Display the current version')
+        parser.add_argument('--test-mode', dest='test_mode', action='store_true',
+                            help="Test mode - for debugging only")
         parser.add_argument('--no-daemon', dest='no_daemon', action='store_true',
                             help="Deprecated: left for compatibility only - we never become a daemon")
+
         args = parser.parse_args()
 
         if args.version:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
+
+        if args.test_mode:
+            print("running in test mode - escape key exits, GtkInspector works, no keep-on-top, primary monitor only")
+            status.TestMode = True
 
         self.init_style_overrides()
 

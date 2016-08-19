@@ -7,6 +7,7 @@ import subprocess
 
 import config
 import settings
+import status
 
 def nofail_locale_to_utf8(string):
     try:
@@ -102,6 +103,9 @@ def debug_allocation(alloc):
     print("x:%d, y:%d, width:%d, height:%d" % (alloc.x, alloc.y, alloc.width, alloc.height))
 
 def get_mouse_monitor():
+    if status.TestMode:
+        return Gdk.Screen.get_default().get_primary_monitor()
+
     manager = Gdk.Display.get_default().get_device_manager()
     pointer = manager.get_client_pointer()
 
