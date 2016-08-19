@@ -19,23 +19,15 @@ from statusBar import StatusBar
 
 class Stage(Gtk.Window):
     def __init__(self, screen, manager, away_message):
-        if status.TestMode:
-            wtype = Gtk.WindowType.TOPLEVEL
-        else:
-            wtype = Gtk.WindowType.POPUP
-
-        Gtk.Window.__init__(self, type=wtype)
+        Gtk.Window.__init__(self,
+                            type=Gtk.WindowType.POPUP,
+                            decorated=False,
+                            skip_taskbar_hint=True,
+                            skip_pager_hint=True)
 
         trackers.con_tracker_get().connect(settings.bg,
                                            "changed", 
                                            self.on_bg_changed)
-
-        if not status.TestMode:
-            self.set_keep_above(True)
-            self.fullscreen()
-            self.set_decorated(False)
-            self.set_skip_taskbar_hint(True)
-            self.set_skip_pager_hint(True)
 
         self.destroying = False
 
@@ -67,6 +59,9 @@ class Stage(Gtk.Window):
                         Gdk.EventMask.FOCUS_CHANGE_MASK)
 
         self.update_geometry()
+
+        self.set_keep_above(True)
+        self.fullscreen()
 
         self.overlay = Gtk.Overlay()
         self.fader = Fader(self)
@@ -105,14 +100,13 @@ class Stage(Gtk.Window):
     def on_realized(self, widget):
         window = self.get_window()
 
-        if not status.TestMode:
-            window.set_fullscreen_mode(Gdk.FullscreenMode.ALL_MONITORS)
-
+        window.set_fullscreen_mode(Gdk.FullscreenMode.ALL_MONITORS)
         window.move_resize(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
 
         self.setup_children()
 
         self.gdk_filter.start(self)
+        # self.focus_and_present()
 
     def setup_children(self):
         self.setup_monitors()
@@ -144,12 +138,7 @@ class Stage(Gtk.Window):
     def setup_monitors(self):
         n = self.screen.get_n_monitors()
 
-        if status.TestMode:
-            r = (self.screen.get_primary_monitor(),)
-        else:
-            r = range(n)
-
-        for index in r:
+        for index in range(n):
             monitor = MonitorView(self.screen, index)
 
             image = Gtk.Image()
@@ -316,36 +305,21 @@ class Stage(Gtk.Window):
         self.clock_widget.start_positioning()
 
     def do_motion_notify_event(self, event):
-        if status.TestMode:
-            self.event_handler.on_motion_event(event)
-            return Gtk.Widget.do_motion_notify_event(self, event)
-
         return self.event_handler.on_motion_event(event)
 
     def do_key_press_event(self, event):
-        if status.TestMode:
-            self.event_handler.on_key_press_event(event)
-            return Gtk.Widget.do_key_press_event(self, event)
-
         return self.event_handler.on_key_press_event(event)
 
     def do_button_press_event(self, event):
-        if status.TestMode:
-            self.event_handler.on_button_press_event(event)
-            return Gtk.Widget.do_button_press_event(self, event)
-
         return self.event_handler.on_button_press_event(event)
 
     # Override BaseWindow.update_geometry
     def update_geometry(self):
-        if status.TestMode:
-            self.rect = self.screen.get_monitor_geometry(self.screen.get_primary_monitor())
-        else:
-            self.rect = Gdk.Rectangle()
-            self.rect.x = 0
-            self.rect.y = 0
-            self.rect.width = self.screen.get_width()
-            self.rect.height = self.screen.get_height()
+        self.rect = Gdk.Rectangle()
+        self.rect.x = 0
+        self.rect.y = 0
+        self.rect.width = self.screen.get_width()
+        self.rect.height = self.screen.get_height()
 
 # Overlay window management #
 

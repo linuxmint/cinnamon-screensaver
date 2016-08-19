@@ -5,5 +5,3 @@ Locked = False
 Awake = False
 
 focusChain = []
-
-TestMode = False
