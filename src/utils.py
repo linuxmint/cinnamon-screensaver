@@ -109,6 +109,9 @@ def get_mouse_monitor():
 
     return Gdk.Screen.get_default().get_monitor_at_point(x, y)
 
+def get_primary_monitor():
+    return Gdk.Screen.get_default().get_primary_monitor()
+
 def lookup_plugin_path(name):
     if name == "":
         return None

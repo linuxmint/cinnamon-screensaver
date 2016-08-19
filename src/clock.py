@@ -109,7 +109,7 @@ class ClockWidget(BaseWindow):
 
     def positioning_callback(self):
         self.unreveal()
-        self.queue_draw()
+        self.queue_resize()
 
         trackers.timer_tracker_get().start("align-clock-timeout",
                                            self.REVEALER_DURATION + 10,
@@ -141,7 +141,7 @@ class ClockWidget(BaseWindow):
 
             self.current_monitor = new_monitor
 
-        self.queue_draw()
+        self.queue_resize()
 
         self.reveal()
 

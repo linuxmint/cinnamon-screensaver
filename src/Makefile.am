@@ -33,6 +33,7 @@ app_PYTHON = \
         settings.py \
         stage.py \
         status.py \
+        statusBar.py \
         trackers.py \
         unlock.py \
         utils.py \

@@ -13,6 +13,16 @@
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
+#statusbar {
+    box-shadow: none;
+    border-color: alpha(white, .2);
+    border-style: solid;
+    color: white;
+    background-image: none;
+    background-color: transparent;
+    border-width: 0 0 1px 0;
+}
+
 .auth-message {
     font-size: 12px;
     color: red;

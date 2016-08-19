@@ -15,6 +15,7 @@ from eventHandler import EventHandler
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
+from statusBar import StatusBar
 
 class Stage(Gtk.Window):
     def __init__(self, screen, manager, away_message):
@@ -39,7 +40,7 @@ class Stage(Gtk.Window):
         self.overlay = None
         self.clock_widget = None
         self.unlock_dialog = None
-        self.unlock_dialog_initial_x = -1
+        self.status_bar = None
 
         self.event_handler = EventHandler(manager)
 
@@ -111,6 +112,7 @@ class Stage(Gtk.Window):
         self.setup_monitors()
         self.setup_clock()
         self.setup_unlock()
+        self.setup_status_bar()
 
     def destroy_stage(self):
         trackers.con_tracker_get().disconnect(settings.bg,
@@ -198,6 +200,11 @@ class Stage(Gtk.Window):
                                            "auth-failure",
                                            self.authentication_result_callback, False)
 
+    def setup_status_bar(self):
+        self.status_bar = StatusBar(self.screen)
+        self.add_child_widget(self.status_bar)
+        self.put_on_top(self.status_bar)
+
     def queue_dialog_key_event(self, event):
         self.unlock_dialog.queue_key_event(event)
 
@@ -246,7 +253,8 @@ class Stage(Gtk.Window):
             monitor.show_wallpaper()
 
         #FIXME - wrong way to do this, it should start exactly after the stack animation
-        #        completes in monitor.show_wallpaper()
+        #        completes in monitor.show_wallpaper(), however, sometimes we're
+        #        already showing the wallpaper, if we're not using a plugin...
         GObject.timeout_add(260, self.after_wallpaper_shown_for_unlock)
 
     def after_wallpaper_shown_for_unlock(self):
@@ -258,6 +266,9 @@ class Stage(Gtk.Window):
 
         self.unlock_dialog.show()
         self.unlock_dialog.reveal()
+
+        self.status_bar.show()
+        self.status_bar.reveal()
 
         status.Awake = True
 
@@ -271,14 +282,21 @@ class Stage(Gtk.Window):
             self.clock_widget.unreveal()
             self.clock_widget.hide()
 
+        trackers.con_tracker_get().connect(self.unlock_dialog,
+                                           "notify::child-revealed",
+                                           self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
+        self.status_bar.unreveal()
+
+    def after_unlock_unrevealed(self, obj, pspec):
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
+        self.status_bar.hide()
 
-        #FIXME - see above, same thing but with revealer animations
-        GObject.timeout_add(260, self.after_unlock_hidden)
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "notify::child-revealed",
+                                              self.after_unlock_unrevealed)
 
-    def after_unlock_hidden(self):
         for monitor in self.monitors:
             monitor.show_plugin()
 
@@ -357,11 +375,12 @@ class Stage(Gtk.Window):
         if isinstance(child, ClockWidget):
             min_rect, nat_rect = child.get_preferred_size()
 
+            current_monitor = child.current_monitor
+
             if status.Awake:
                 child.set_halign(Gtk.Align.START)
                 child.set_valign(Gtk.Align.CENTER)
-
-            current_monitor = child.current_monitor
+                current_monitor = utils.get_mouse_monitor()
 
             monitor_rect = self.screen.get_monitor_geometry(current_monitor)
 
@@ -386,6 +405,24 @@ class Stage(Gtk.Window):
                 allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
 
             # utils.debug_allocation(allocation)
+
+            return True
+
+        if isinstance(child, StatusBar):
+            min_rect, nat_rect = child.get_preferred_size()
+
+            if status.Awake:
+                current_monitor = utils.get_mouse_monitor()
+                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+                allocation.x = monitor_rect.x
+                allocation.y = monitor_rect.y
+                allocation.width = monitor_rect.width
+                allocation.height = nat_rect.height
+            else:
+                allocation.x = child.rect.x
+                allocation.y = child.rect.y
+                allocation.width = child.rect.width
+                allocation.height = nat_rect.height
 
             return True
 
