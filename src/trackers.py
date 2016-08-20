@@ -143,6 +143,18 @@ class ConnectionTracker:
 
         self._connect_to_dispose(name, instance, callback)
 
+    def handler_block(self, instance, signal, callback):
+        name = self._name(instance, signal, callback)
+
+        if self.connections[name]:
+            self.connections[name][1].handler_block(self.connections[name][0])
+
+    def handler_unblock(self, instance, signal, callback):
+        name = self._name(instance, signal, callback)
+
+        if self.connections[name]:
+            self.connections[name][1].handler_unblock(self.connections[name][0])
+
     def disconnect(self, instance, signal, callback):
         name = self._name(instance, signal, callback)
         debug_sigs("disconnect", name)

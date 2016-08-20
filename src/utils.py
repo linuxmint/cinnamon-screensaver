@@ -6,7 +6,6 @@ import grp
 import subprocess
 
 import config
-import settings
 
 def nofail_locale_to_utf8(string):
     try:

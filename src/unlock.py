@@ -6,7 +6,6 @@ gi.require_version('Gkbd', '3.0')
 gi.require_version('AccountsService', '1.0')
 from gi.repository import Gtk, Gdk, AccountsService, GObject, CinnamonDesktop, GdkPixbuf
 import os
-import math
 import cairo
 
 import utils

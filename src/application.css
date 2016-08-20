@@ -119,15 +119,15 @@
     box-shadow: 1px 1px alpha(white, 0.1);
 }
 
-
-/*
-.transparentbutton:selected:focused {
-    border-color: alpha(@theme_selected_bg_color, 1.0);
-    background-color: alpha(grey, .5);
+.volumeslider {
+    -GtkScale-slider-length: 4;
+    -GtkRange-slider-width: 24;
+    border-color: @theme_bg_color;
+    background-color: @theme_selected_bg_color;
+    border-style: solid;
+    padding: 3px 3px 3px 3px;
 }
 
-.transparentbutton:prelight:focused {
-    border-color: alpha(@theme_selected_bg_color, 1.0);
-    background-color: alpha(grey, .3);
+.volumeslider:insensitive {
+    background-color: alpha(white, .5);
 }
-*/

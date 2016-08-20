@@ -31,12 +31,14 @@ app_PYTHON = \
         service.py \
         sessionProxy.py \
         settings.py \
+        soundWidget.py \
         stage.py \
         status.py \
         statusBar.py \
         trackers.py \
         unlock.py \
         utils.py \
+        volumeSlider.py \
         x11.py
 
 app_DATA = application.css
