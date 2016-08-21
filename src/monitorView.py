@@ -145,9 +145,11 @@ class MonitorView(BaseWindow):
     def show_plugin(self):
         if self.socket:
             self.stack.set_visible_child_name("plugin")
+            status.PluginRunning = True
 
     def show_wallpaper(self):
         self.stack.set_visible_child_name("wallpaper")
+        status.PluginRunning = False
 
     def show_starting_view(self):
         if self.socket:

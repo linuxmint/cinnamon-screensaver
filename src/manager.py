@@ -31,7 +31,6 @@ class ScreensaverManager:
         status.Active = False
         status.Locked = False
         status.Awake = False
-        status.LogoutEnabled = False
 
         self.grab_helper = GrabHelper(self)
         self.focus_nav = FocusNavigator()

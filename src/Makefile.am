@@ -31,6 +31,7 @@ app_PYTHON = \
         manager.py \
         monitorView.py \
         notificationWidget.py \
+        powerWidget.py \
         service.py \
         sessionProxy.py \
         settings.py \

@@ -13,8 +13,12 @@ class BaseWindow(Gtk.Revealer):
         self.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.set_transition_duration(self.REVEALER_DURATION)
 
+    def _reveal_idle_callback(self):
+        self.show()
+        self.set_reveal_child(True)
+
     def reveal(self):
-        GObject.idle_add(self.set_reveal_child, True)
+        GObject.idle_add(self._reveal_idle_callback)
 
     def unreveal(self):
         GObject.idle_add(self.set_reveal_child, False)

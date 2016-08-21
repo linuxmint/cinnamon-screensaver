@@ -5,3 +5,5 @@ Locked = False
 Awake = False
 
 focusChain = []
+
+PluginRunning = False

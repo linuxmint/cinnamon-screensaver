@@ -266,14 +266,8 @@ class Stage(Gtk.Window):
         self.put_on_top(self.clock_widget)
         self.put_on_top(self.unlock_dialog)
 
-        self.clock_widget.show()
         self.clock_widget.reveal()
-
-        self.unlock_dialog.show()
         self.unlock_dialog.reveal()
-
-        self.audio_bar.show()
-        self.info_bar.show()
         self.audio_bar.reveal()
         self.info_bar.reveal()
 
@@ -308,6 +302,9 @@ class Stage(Gtk.Window):
 
         for monitor in self.monitors:
             monitor.show_plugin()
+
+        if not status.PluginRunning:
+            self.info_bar.reveal()
 
         status.Awake = False
 
