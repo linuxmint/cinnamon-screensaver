@@ -65,7 +65,7 @@ class SoundWidget(Gtk.Box):
             self.on_volume_changed(None, None)
 
     def on_volume_changed(self, output, pspec):
-        vol = self.output.get_volume()
+        vol = self.output.props.volume
         muted = self.output.get_is_muted()
         max_vol = self.controller.get_vol_max_norm()
 
