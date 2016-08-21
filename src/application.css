@@ -29,7 +29,8 @@
     border-radius: 0 0 0 3px;
 }
 
-.notificationwidget {
+.notificationwidget,
+.powerwidget {
     font-size: 12px;
     font-weight: bold;
     border-color: alpha(white, .2);
@@ -39,6 +40,7 @@
     background-color: transparent;
     background-image: none;
     text-shadow: 1px 1px alpha(black, 0.8);
+    padding: 4px;
 }
 
 .auth-message {

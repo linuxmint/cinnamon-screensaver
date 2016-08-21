@@ -10,6 +10,13 @@ STAGE_IDLE_CANCEL_SPAWN_TRANSITION = 125
 
 GRAB_RELEASE_TIMEOUT = 1 * 1000
 
+
+# upower
+UPOWER_SERVICE                  = "org.freedesktop.UPower"
+UPOWER_PATH                     = "/org/freedesktop/UPower"
+UPOWER_INTERFACE                = "org.freedesktop.UPower"
+UPOWER_DEVICE_INTERFACE         = "org.freedesktop.UPower.Device"
+
 # logind
 LOGIND_SERVICE                  = "org.freedesktop.login1"
 LOGIND_PATH                     = "/org/freedesktop/login1"

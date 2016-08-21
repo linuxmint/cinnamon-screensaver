@@ -39,6 +39,7 @@ app_PYTHON = \
         status.py \
         trackers.py \
         unlock.py \
+        uPowerProxy.py \
         utils.py \
         volumeSlider.py \
         volumeWidget.py \

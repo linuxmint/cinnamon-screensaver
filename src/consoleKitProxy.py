@@ -49,7 +49,6 @@ class ConsoleKitProxy(GObject.GObject):
                                            self.on_signal)
 
     def on_signal(self, proxy, sender, signal, params):
-        print("signal", signal)
         if signal == "Unlock":
             self.emit("unlock")
         elif signal == "Lock":

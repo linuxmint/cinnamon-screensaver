@@ -33,6 +33,9 @@ class NotificationWidget(Gtk.Frame):
         self.session_bus.add_match_string("type='method_call',interface='org.freedesktop.Notifications',member='Notify',eavesdrop=true")
         self.session_bus.add_message_filter(self.on_notification_observed)
 
+    def should_show(self):
+        return self.notification_count > 0
+
     def on_notification_observed(self, bus, message):
         self.notification_count += 1
 

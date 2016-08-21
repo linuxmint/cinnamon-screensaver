@@ -6,6 +6,7 @@ import utils
 import status
 from baseWindow import BaseWindow
 from notificationWidget import NotificationWidget
+from powerWidget import PowerWidget
 
 class InfoBar(BaseWindow):
     def __init__(self, screen):
@@ -29,8 +30,9 @@ class InfoBar(BaseWindow):
         hbox.pack_start(self.notification_widget, False, False, 6)
         self.notification_widget.connect("notification", self.on_notification_received)
 
-        # self.attention_widget = AttentionWidget()
-        # self.box.pack_end(self.attention_widget, False, False, 6)
+        self.power_widget = PowerWidget()
+        hbox.pack_start(self.power_widget, False, False, 6)
+        self.power_widget.connect("power-state-changed", self.on_power_state_changed)
 
         self.show_all()
 
@@ -38,15 +40,23 @@ class InfoBar(BaseWindow):
         if not status.PluginRunning:
             self.reveal()
 
+    def on_power_state_changed(self, obj):
+        if self.power_widget.should_show():
+            self.power_widget.set_visible(True)
+
     # Overrides BaseWindow.reveal()
     def reveal(self):
         do_reveal = False
 
-        if self.notification_widget.notification_count > 0: 
+        if self.notification_widget.should_show(): 
             self.notification_widget.set_visible(True)
             do_reveal = True
         else:
             self.notification_widget.set_visible(False)
+
+        if self.power_widget.should_show():
+            self.power_widget.set_visible(True)
+            do_reveal = True
 
         # if self.attention_widget.needs_attention:
         #     self.attention_widget.set_visible(True)
