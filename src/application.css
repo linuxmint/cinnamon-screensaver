@@ -10,16 +10,35 @@
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
-.statusbar {
+.topbar {
     border-color: alpha(white, .2);
-    border-width: 0 0 1px 0;
     border-style: solid;
     color: white;
-    /*background-image: none;*/
     background-color: transparent;
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0));
-    /*box-shadow: 1px 1px alpha(black, 0.4);*/
     padding: 4px;
+}
+
+.audiobar {
+    border-width: 0 1px 1px 0;
+    border-radius: 0 0 3px 0;
+}
+
+.infobar {
+    border-width: 0 0 1px 1px;
+    border-radius: 0 0 0 3px;
+}
+
+.notificationwidget {
+    font-size: 12px;
+    font-weight: bold;
+    border-color: alpha(white, .2);
+    border-style: solid;
+    border-radius: 2px;
+    color: white;
+    background-color: transparent;
+    background-image: none;
+    text-shadow: 1px 1px alpha(black, 0.8);
 }
 
 .auth-message {

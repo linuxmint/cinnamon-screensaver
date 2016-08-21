@@ -7,12 +7,14 @@ from gi.repository import Gtk
 
 import utils
 from baseWindow import BaseWindow
-from soundWidget import SoundWidget
+from volumeWidget import VolumeWidget
 
-class StatusBar(BaseWindow):
+class AudioBar(BaseWindow):
     def __init__(self, screen):
-        super(StatusBar, self).__init__()
+        super(AudioBar, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
+
+        self.set_size_request(-1, 30)
 
         self.screen = screen
         self.monitor_index = utils.get_primary_monitor()
@@ -21,12 +23,12 @@ class StatusBar(BaseWindow):
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.set_halign(Gtk.Align.FILL)
-
-        self.box.get_style_context().add_class("statusbar")
+        self.box.get_style_context().add_class("topbar")
+        self.box.get_style_context().add_class("audiobar")
 
         self.add(self.box)
 
-        self.sound_widget = SoundWidget()
-        self.box.pack_start(self.sound_widget, False, False, 6)
+        self.volume_widget = VolumeWidget()
+        self.box.pack_start(self.volume_widget, False, False, 6)
 
         self.show_all()

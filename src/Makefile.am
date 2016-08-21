@@ -14,6 +14,7 @@ appdir = $(datadir)/cinnamon-screensaver
 
 app_PYTHON = \
         __init__.py \
+        audioBar.py \
         baseWindow.py \
         cinnamonProxy.py \
         clock.py \
@@ -24,21 +25,22 @@ app_PYTHON = \
         fader.py \
         focusNavigator.py \
         grabHelper.py \
+        infoBar.py \
         keybindings.py \
         logindProxy.py \
         manager.py \
         monitorView.py \
+        notificationWidget.py \
         service.py \
         sessionProxy.py \
         settings.py \
-        soundWidget.py \
         stage.py \
         status.py \
-        statusBar.py \
         trackers.py \
         unlock.py \
         utils.py \
         volumeSlider.py \
+        volumeWidget.py \
         x11.py
 
 app_DATA = application.css

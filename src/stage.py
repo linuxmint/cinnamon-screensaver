@@ -15,7 +15,8 @@ from eventHandler import EventHandler
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
-from statusBar import StatusBar
+from audioBar import AudioBar
+from infoBar import InfoBar
 
 class Stage(Gtk.Window):
     def __init__(self, screen, manager, away_message):
@@ -112,7 +113,7 @@ class Stage(Gtk.Window):
         self.setup_monitors()
         self.setup_clock()
         self.setup_unlock()
-        self.setup_status_bar()
+        self.setup_status_bars()
 
     def destroy_stage(self):
         trackers.con_tracker_get().disconnect(settings.bg,
@@ -200,10 +201,14 @@ class Stage(Gtk.Window):
                                            "auth-failure",
                                            self.authentication_result_callback, False)
 
-    def setup_status_bar(self):
-        self.status_bar = StatusBar(self.screen)
-        self.add_child_widget(self.status_bar)
-        self.put_on_top(self.status_bar)
+    def setup_status_bars(self):
+        self.audio_bar = AudioBar(self.screen)
+        self.add_child_widget(self.audio_bar)
+        self.put_on_top(self.audio_bar)
+
+        self.info_bar = InfoBar(self.screen)
+        self.add_child_widget(self.info_bar)
+        self.put_on_top(self.info_bar)
 
     def queue_dialog_key_event(self, event):
         self.unlock_dialog.queue_key_event(event)
@@ -267,8 +272,10 @@ class Stage(Gtk.Window):
         self.unlock_dialog.show()
         self.unlock_dialog.reveal()
 
-        self.status_bar.show()
-        self.status_bar.reveal()
+        self.audio_bar.show()
+        self.info_bar.show()
+        self.audio_bar.reveal()
+        self.info_bar.reveal()
 
         status.Awake = True
 
@@ -286,12 +293,14 @@ class Stage(Gtk.Window):
                                            "notify::child-revealed",
                                            self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
-        self.status_bar.unreveal()
+        self.audio_bar.unreveal()
+        self.info_bar.unreveal()
 
     def after_unlock_unrevealed(self, obj, pspec):
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
-        self.status_bar.hide()
+        self.audio_bar.hide()
+        self.info_bar.hide()
 
         trackers.con_tracker_get().disconnect(self.unlock_dialog,
                                               "notify::child-revealed",
@@ -405,7 +414,7 @@ class Stage(Gtk.Window):
 
             return True
 
-        if isinstance(child, StatusBar):
+        if isinstance(child, AudioBar):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
@@ -413,14 +422,33 @@ class Stage(Gtk.Window):
                 monitor_rect = self.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x
                 allocation.y = monitor_rect.y
-                allocation.width = monitor_rect.width
+                allocation.width = nat_rect.width
                 allocation.height = nat_rect.height
             else:
                 allocation.x = child.rect.x
                 allocation.y = child.rect.y
-                allocation.width = child.rect.width
+                allocation.width = nat_rect.width
                 allocation.height = nat_rect.height
 
             return True
+
+        if isinstance(child, InfoBar):
+            min_rect, nat_rect = child.get_preferred_size()
+
+            if status.Awake:
+                current_monitor = utils.get_mouse_monitor()
+                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+                allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
+                allocation.y = monitor_rect.y
+                allocation.width = nat_rect.width
+                allocation.height = nat_rect.height
+            else:
+                allocation.x = child.rect.x + child.rect.width - nat_rect.width
+                allocation.y = child.rect.y
+                allocation.width = nat_rect.width
+                allocation.height = nat_rect.height
+
+            return True
+
 
         return False

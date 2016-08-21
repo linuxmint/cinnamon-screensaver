@@ -7,6 +7,7 @@ public_icons_themes = \
 public_icons = \
     hicolor_actions_scalable_screensaver-unlock-symbolic.svg \
     hicolor_actions_scalable_screensaver-switch-users-symbolic.svg \
+    hicolor_status_scalable_screensaver-notification-symbolic.svg \
     $(NULL)
 
 EXTRA_DIST = \
