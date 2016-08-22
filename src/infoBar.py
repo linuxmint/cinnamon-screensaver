@@ -60,6 +60,8 @@ class InfoBar(BaseWindow):
             # we maybe should treat the power widget the same way, but only when our battery is low?
             if status.Awake:
                 do_reveal = True
+        else:
+            self.power_widget.set_visible(False)
 
         if do_reveal:
             super(InfoBar, self).reveal()
