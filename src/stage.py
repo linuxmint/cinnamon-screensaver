@@ -303,10 +303,10 @@ class Stage(Gtk.Window):
         for monitor in self.monitors:
             monitor.show_plugin()
 
+        status.Awake = False
+
         if not status.PluginRunning:
             self.info_bar.reveal()
-
-        status.Awake = False
 
         self.clock_widget.start_positioning()
 

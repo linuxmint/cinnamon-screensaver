@@ -98,7 +98,6 @@ class UPowerProxy(GObject.GObject):
             dev = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SYSTEM, Gio.DBusProxyFlags.NONE, None,
                                                  c.UPOWER_SERVICE, path, c.UPOWER_DEVICE_INTERFACE,
                                                  None)
-
             if self.get_device_type(dev) in (DeviceType.Battery, DeviceType.LinePower):
                 self.relevant_devices.append((path, dev))
                 trackers.con_tracker_get().connect(dev,
@@ -139,7 +138,7 @@ class UPowerProxy(GObject.GObject):
 
     def get_batteries(self):
         if len(self.relevant_devices) == 0:
-            return None
+            return []
 
         ret = []
 
@@ -150,16 +149,16 @@ class UPowerProxy(GObject.GObject):
         return ret
 
     def get_device_state(self, dev):
-        return self.get_device_property(dev, "State")
+        return self.get_device_property(dev, "State")[0]
 
     def get_device_type(self, dev):
-        return self.get_device_property(dev, "Type")
+        return self.get_device_property(dev, "Type")[0]
 
     def get_device_online(self, dev):
-        return self.get_device_property(dev, "Online")
+        return self.get_device_property(dev, "Online")[0]
 
     def get_device_icon_name(self, dev):
-        return self.get_device_property(dev, "IconName")
+        return self.get_device_property(dev, "IconName")[0]
 
     def get_device_property(self, dev_proxy, prop_name):
         result = dev_proxy.get_connection().call_sync(c.UPOWER_SERVICE,
@@ -168,7 +167,7 @@ class UPowerProxy(GObject.GObject):
                                                       "Get",
                                                       GLib.Variant("(ss)",
                                                                    (c.UPOWER_DEVICE_INTERFACE, prop_name)),
-                                                      None,
+                                                      GLib.VariantType("(v)"),
                                                       Gio.DBusCallFlags.NONE,
                                                       -1,
                                                       None)
@@ -178,12 +177,12 @@ class UPowerProxy(GObject.GObject):
     def full_and_on_ac_or_no_batteries(self):
         batteries = self.get_batteries()
 
-        if batteries == None:
+        if batteries == []:
             return True
 
         all_batteries_full = True
 
-        for battery in batteries:
+        for path, battery in batteries:
             if self.get_device_state(battery) not in (DeviceState.FullyCharged, DeviceState.Unknown):
                 all_batteries_full = False
                 break

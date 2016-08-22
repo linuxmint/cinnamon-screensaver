@@ -64,6 +64,3 @@ class InfoBar(BaseWindow):
         if do_reveal:
             super(InfoBar, self).reveal()
 
-    def unreveal(self):
-
-
