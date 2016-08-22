@@ -4,6 +4,7 @@ from gi.repository import Gtk
 
 import utils
 import status
+import trackers
 from baseWindow import BaseWindow
 from notificationWidget import NotificationWidget
 from powerWidget import PowerWidget
@@ -17,6 +18,9 @@ class InfoBar(BaseWindow):
         self.monitor_index = utils.get_primary_monitor()
 
         self.update_geometry()
+
+        self.show_power = False
+        self.show_notifications = False
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.get_style_context().add_class("topbar")
@@ -37,32 +41,41 @@ class InfoBar(BaseWindow):
         self.show_all()
 
     def on_notification_received(self, obj):
-        if not status.PluginRunning:
-            self.reveal()
+        self.update_revealed()
 
     def on_power_state_changed(self, obj):
-        if self.power_widget.should_show():
-            self.power_widget.set_visible(True)
+        self.update_revealed()
 
-    # Overrides BaseWindow.reveal()
-    def reveal(self):
+    def update_revealed(self):
         do_reveal = False
 
-        if self.notification_widget.should_show(): 
-            self.notification_widget.set_visible(True)
-            do_reveal = True
-        else:
-            self.notification_widget.set_visible(False)
+        self.show_power = self.power_widget.should_show()
+        self.show_notifications = self.notification_widget.should_show()
 
-        if self.power_widget.should_show():
-            self.power_widget.set_visible(True)
-            # TODO: above, do_reveal causes the infobar to show even when we're not awake (unlock dialog up)
-            # we maybe should treat the power widget the same way, but only when our battery is low?
-            if status.Awake:
+        # Determine if we want to show all the time or only when status.Awake
+
+        if status.Awake:
+            if self.show_power or self.show_notifications:
                 do_reveal = True
-        else:
-            self.power_widget.set_visible(False)
+        elif status.Active and not status.PluginRunning:
+            if self.show_notifications:
+                do_reveal = True
 
+       
         if do_reveal:
-            super(InfoBar, self).reveal()
+            self.power_widget.set_visible(self.show_power)
+            self.notification_widget.set_visible(self.show_notifications)
+            self.reveal()
+        else:
+            self.unreveal()
+            trackers.con_tracker_get().connect(self,
+                                               "notify::child-revealed",
+                                               self.after_unreveal)
+
+    def after_unreveal(self, obj, pspec):
+        self.power_widget.set_visible(self.show_power)
+        self.notification_widget.set_visible(self.show_notifications)
+        trackers.con_tracker_get().disconnect(self,
+                                              "notify::child-revealed",
+                                              self.after_unreveal)
 

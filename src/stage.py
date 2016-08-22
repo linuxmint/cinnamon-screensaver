@@ -266,12 +266,12 @@ class Stage(Gtk.Window):
         self.put_on_top(self.clock_widget)
         self.put_on_top(self.unlock_dialog)
 
+        status.Awake = True
+
         self.clock_widget.reveal()
         self.unlock_dialog.reveal()
         self.audio_bar.reveal()
-        self.info_bar.reveal()
-
-        status.Awake = True
+        self.info_bar.update_revealed()
 
     def cancel_unlock_widget(self):
         if not status.Awake:
@@ -294,7 +294,6 @@ class Stage(Gtk.Window):
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
         self.audio_bar.hide()
-        self.info_bar.hide()
 
         trackers.con_tracker_get().disconnect(self.unlock_dialog,
                                               "notify::child-revealed",
@@ -305,8 +304,7 @@ class Stage(Gtk.Window):
 
         status.Awake = False
 
-        if not status.PluginRunning:
-            self.info_bar.reveal()
+        self.info_bar.update_revealed()
 
         self.clock_widget.start_positioning()
 
