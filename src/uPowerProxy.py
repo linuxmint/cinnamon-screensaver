@@ -9,15 +9,24 @@ import constants as c
 import trackers
 
 class DeviceType(IntEnum):
-    Unknown = 0 
-    LinePower = 1 
-    Battery = 2 
+    Unknown = 0
+    LinePower = 1
+    Battery = 2
     Ups = 3
-    Monitor = 4 
+    Monitor = 4
     Mouse = 5
-    Keyboard = 6 
+    Keyboard = 6
     Pda = 7
-    Phone = 8 
+    Phone = 8
+
+class DeviceState(IntEnum):
+    Unknown = 0
+    Charging = 1
+    Discharging = 2
+    Empty = 3
+    FullyCharged = 4
+    PendingCharge = 5
+    PendingDischarge = 6
 
 class UPowerConnectionError(Exception):
     pass
@@ -35,7 +44,7 @@ class UPowerProxy(GObject.GObject):
 
         self.loaded = False
         self.have_battery = False
-        self.discharging = False
+        self.plugged_in = False
 
         self.relevant_devices = []
 
@@ -90,15 +99,13 @@ class UPowerProxy(GObject.GObject):
                                                  c.UPOWER_SERVICE, path, c.UPOWER_DEVICE_INTERFACE,
                                                  None)
 
-            dev_type = self.get_device_property(path, "Type", "u")
-
-            if dev_type in (DeviceType.Battery, DeviceType.LinePower):
+            if self.get_device_type(dev) in (DeviceType.Battery, DeviceType.LinePower):
                 self.relevant_devices.append((path, dev))
                 trackers.con_tracker_get().connect(dev,
                                                    "g-properties-changed",
                                                    self.on_device_properties_changed)
 
-        if len(self.relevant_devices) == 0:
+        if len(self.get_batteries()) == 0:
             self.have_battery = False
             return;
 
@@ -119,15 +126,13 @@ class UPowerProxy(GObject.GObject):
 
     def check_current_devices(self):
         for path, dev in self.relevant_devices:
-            dev_type = self.get_device_property(path, "Type", "u")
-            if dev_type == DeviceType.LinePower:
-                self.discharging = self.get_device_property(path, "Online", "b")
+            if self.get_device_type(dev) == DeviceType.LinePower:
+                self.plugged_in = self.get_device_property(dev, "Online")
 
     def get_battery_icon_name(self, path):
         for dev_path, dev in self.relevant_devices:
             if path == dev_path:
-                icon_name = self.get_device_property(path, "IconName", "s")
-                return icon_name
+                return self.get_device_icon_name(dev)
 
         print("Battery not found")
         return None
@@ -139,18 +144,49 @@ class UPowerProxy(GObject.GObject):
         ret = []
 
         for path, dev in self.relevant_devices:
-            dev_type = self.get_device_property(path, "Type", "u")
-            if dev_type == DeviceType.Battery:
+            if self.get_device_type(dev) == DeviceType.Battery:
                 ret.append((path, dev))
 
         return ret
 
-    def get_device_property(self, path, prop_name, variant_string):
-        props = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SYSTEM, Gio.DBusProxyFlags.NONE, None,
-                                                 c.UPOWER_SERVICE, path, c.DBUS_PROP_INTERFACE,
-                                                 None)
+    def get_device_state(self, dev):
+        return self.get_device_property(dev, "State")
 
-        result = props.Get("(ss)", c.UPOWER_DEVICE_INTERFACE, prop_name)
+    def get_device_type(self, dev):
+        return self.get_device_property(dev, "Type")
+
+    def get_device_online(self, dev):
+        return self.get_device_property(dev, "Online")
+
+    def get_device_icon_name(self, dev):
+        return self.get_device_property(dev, "IconName")
+
+    def get_device_property(self, dev_proxy, prop_name):
+        result = dev_proxy.get_connection().call_sync(c.UPOWER_SERVICE,
+                                                      dev_proxy.get_object_path(),
+                                                      c.DBUS_PROP_INTERFACE,
+                                                      "Get",
+                                                      GLib.Variant("(ss)",
+                                                                   (c.UPOWER_DEVICE_INTERFACE, prop_name)),
+                                                      None,
+                                                      Gio.DBusCallFlags.NONE,
+                                                      -1,
+                                                      None)
 
         return result
+
+    def full_and_on_ac_or_no_batteries(self):
+        batteries = self.get_batteries()
+
+        if batteries == None:
+            return True
+
+        all_batteries_full = True
+
+        for battery in batteries:
+            if self.get_device_state(battery) not in (DeviceState.FullyCharged, DeviceState.Unknown):
+                all_batteries_full = False
+                break
+
+        return self.plugged_in and all_batteries_full
 

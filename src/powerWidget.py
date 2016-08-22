@@ -15,7 +15,6 @@ class PowerWidget(Gtk.Frame):
     def __init__(self):
         super(PowerWidget, self).__init__()
         self.get_style_context().add_class("powerwidget")
-        # self.set_size_request(50, -1)
 
         self._should_show = False
         self.path_widget_pairs = []
@@ -45,11 +44,11 @@ class PowerWidget(Gtk.Frame):
         self.emit("power-state-changed")
 
     def construct_icons(self):
-        batteries = self.power_proxy.get_batteries()
-
-        if batteries == None:
+        if self.power_proxy.full_and_on_ac_or_no_batteries():
             self._should_show = False
             return
+
+        batteries = self.power_proxy.get_batteries()
 
         for path, battery in batteries:
             image = Gtk.Image.new_from_icon_name(self.power_proxy.get_battery_icon_name(path), Gtk.IconSize.LARGE_TOOLBAR)

@@ -56,14 +56,14 @@ class InfoBar(BaseWindow):
 
         if self.power_widget.should_show():
             self.power_widget.set_visible(True)
-            do_reveal = True
-
-        # if self.attention_widget.needs_attention:
-        #     self.attention_widget.set_visible(True)
-        #     do_reveal = True
-        # else:
-        #     self.attention_widget.set_visible(False)
+            # TODO: above, do_reveal causes the infobar to show even when we're not awake (unlock dialog up)
+            # we maybe should treat the power widget the same way, but only when our battery is low?
+            if status.Awake:
+                do_reveal = True
 
         if do_reveal:
             super(InfoBar, self).reveal()
+
+    def unreveal(self):
+
 
