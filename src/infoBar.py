@@ -23,6 +23,7 @@ class InfoBar(BaseWindow):
         self.show_notifications = False
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.box.set_halign(Gtk.Align.FILL)
         self.box.get_style_context().add_class("topbar")
         self.box.get_style_context().add_class("infobar")
         self.add(self.box)
@@ -31,11 +32,11 @@ class InfoBar(BaseWindow):
         self.box.pack_start(hbox, False, False, 6)
 
         self.notification_widget = NotificationWidget()
-        hbox.pack_start(self.notification_widget, False, False, 6)
+        hbox.pack_start(self.notification_widget, True, True, 3)
         self.notification_widget.connect("notification", self.on_notification_received)
 
         self.power_widget = PowerWidget()
-        hbox.pack_start(self.power_widget, False, False, 6)
+        hbox.pack_start(self.power_widget, True, True, 3)
         self.power_widget.connect("power-state-changed", self.on_power_state_changed)
 
         self.show_all()

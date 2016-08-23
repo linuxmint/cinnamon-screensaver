@@ -14,8 +14,6 @@ class AudioBar(BaseWindow):
         super(AudioBar, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
-        self.set_size_request(-1, 30)
-
         self.screen = screen
         self.monitor_index = utils.get_primary_monitor()
 

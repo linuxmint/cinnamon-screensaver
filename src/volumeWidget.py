@@ -25,7 +25,7 @@ class VolumeWidget(Gtk.Box):
                                            "button-press-event",
                                            self.on_button_press_event)
 
-        self.pack_start(self.volume_slider, False, False, 0)
+        self.pack_start(self.volume_slider, False, False, 6)
 
         self.initialize_sound_controller()
 
