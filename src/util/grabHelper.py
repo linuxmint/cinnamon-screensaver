@@ -3,7 +3,7 @@
 from gi.repository import Gdk, Gtk, GdkX11
 import time
 
-from eventHandler import EventHandler
+from util.eventHandler import EventHandler
 
 class GrabHelper:
     def __init__(self, manager = None):

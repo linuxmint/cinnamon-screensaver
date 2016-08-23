@@ -3,9 +3,7 @@
 from gi.repository import CinnamonDesktop, GLib, Gtk, Gio
 import random
 
-import utils
-import trackers
-import settings
+from util import utils, trackers, settings
 from baseWindow import BaseWindow
 
 CLOCK_POSITIONING_TIMEOUT = 5

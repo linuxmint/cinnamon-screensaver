@@ -2,21 +2,18 @@
 
 import gi
 gi.require_version('CScreensaver', '1.0')
-
 from gi.repository import Gtk, Gdk, GObject, CScreensaver
 
-import utils
-import trackers
-import settings
 import status
 import constants as c
-from fader import Fader
-from eventHandler import EventHandler
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
 from audioBar import AudioBar
 from infoBar import InfoBar
+from util import utils, trackers, settings
+from util.fader import Fader
+from util.eventHandler import EventHandler
 
 class Stage(Gtk.Window):
     def __init__(self, screen, manager, away_message):

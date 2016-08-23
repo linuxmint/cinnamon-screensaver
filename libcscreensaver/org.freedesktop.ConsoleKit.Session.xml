@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+
+  <interface name="org.freedesktop.ConsoleKit.Session">
+    <doc:doc>
+      <doc:description>
+        <doc:para>Session objects represent and store information
+        related to a user session.
+        </doc:para>
+        <doc:para>The properties associated with the Session
+        specifically refer to the properties of the "session leader".
+        </doc:para>
+      </doc:description>
+    </doc:doc>
+    <method name="GetId">
+      <arg name="ssid" direction="out" type="o">
+        <doc:doc>
+          <doc:summary>Session ID</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the ID for Session.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </method>
+    <method name="GetSeatId">
+      <arg name="sid" direction="out" type="o">
+        <doc:doc>
+          <doc:summary>Seat ID</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the ID for the Seat the Session is
+        attached to.</doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="interface" to="Seat">org.freedesktop.ConsoleKit.Seat</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetSessionType">
+      <arg name="type" direction="out" type="s">
+        <doc:doc>
+          <doc:summary>Session type</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Returns the type of the session.</doc:para>
+          <doc:para>Warning: we haven't yet defined the allowed values for this property.
+          It is probably best to avoid this until we do.
+          </doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:session-type">session-type</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetUser">
+      <arg name="uid" direction="out" type="u">
+        <doc:doc>
+          <doc:summary>User ID</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the user that the session belongs to.</doc:para>
+        </doc:description>
+        <doc:deprecated version="0.1.3" instead="GetUnixUser"/>
+        <doc:seealso><doc:ref type="property" to="Session:user">user</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetUnixUser">
+      <arg name="uid" direction="out" type="u">
+        <doc:doc>
+          <doc:summary>POSIX User ID</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the POSIX user ID that the session belongs to.</doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:unix-user">unix-user</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetX11Display">
+      <arg name="display" direction="out" type="s">
+        <doc:doc>
+          <doc:summary>The value of the X11 display</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the value of the X11 DISPLAY for this session
+        if one is present.</doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:x11-display">x11-display</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetX11DisplayDevice">
+       <arg name="x11_display_device" direction="out" type="s">
+        <doc:doc>
+          <doc:summary>The value of the X11 display device</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the value of the display device (aka TTY) that the
+        X11 display for the session is connected to.  If there is no x11-display set then this value
+        is undefined.</doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:x11-display-device">x11-display-device</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetDisplayDevice">
+      <arg name="display_device" direction="out" type="s">
+        <doc:doc>
+          <doc:summary>The value of the display device</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the value of the display device (aka TTY) that the
+        session is connected to.</doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:display-device">display-device</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetRemoteHostName">
+      <arg name="remote_host_name" direction="out" type="s">
+        <doc:doc>
+          <doc:summary>The remote host name</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the value of the remote host name for the session.
+        </doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:remote-host-name">remote-host-name</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetLoginSessionId">
+       <arg name="login_session_id" direction="out" type="s">
+        <doc:doc>
+          <doc:summary>The value of the native system login session ID</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns the value of the login session ID that the
+        underlying system uses to enforce session boundaries.  If there is no login session ID
+        set then this value is an empty string.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </method>
+    <method name="IsActive">
+      <arg name="active" direction="out" type="b">
+        <doc:doc>
+          <doc:summary>TRUE if the session is active, otherwise FALSE</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns whether the session is active on the Seat that
+        it is attached to.</doc:para>
+        <doc:para>If the session is not attached to a seat this value is undefined.
+        </doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:active">active</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="IsLocal">
+      <arg name="local" direction="out" type="b">
+        <doc:doc>
+          <doc:summary>TRUE if the session is local, otherwise FALSE</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description><doc:para>Returns whether the session is local</doc:para>
+        <doc:para>FIXME: we need to come up with a concrete definition for this value.
+        It was originally used as a way to identify XDMCP sessions that originate
+        from a remote system.
+        </doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:is-local">is-local</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetCreationTime">
+      <arg name="iso8601_datetime" type="s" direction="out">
+        <doc:doc>
+          <doc:summary>An ISO 8601 format date-type string</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Returns an ISO 8601 date-time string that corresponds to
+          the time that the session was opened.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </method>
+
+    <method name="Activate">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Attempt to activate the this session.  In most
+          cases, if successful, this will cause the session to
+          become visible and become active on the seat that it
+          is attached to.</doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="method" to="Seat.ActivateSession">Seat.ActivateSession()</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="Lock">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <doc:doc>
+        <doc:description>
+          <doc:para>This will cause a <doc:ref type="signal" to="Session::Lock">Lock</doc:ref>
+          signal to be emitted for this session.
+          </doc:para>
+        </doc:description>
+        <doc:permission>This method is restricted to privileged users by D-Bus policy.</doc:permission>
+        <doc:seealso><doc:ref type="signal" to="Session::Lock">Lock signal</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="Unlock">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <doc:doc>
+        <doc:description>
+          <doc:para>This will cause an <doc:ref type="signal" to="Session::Unlock">Unlock</doc:ref>
+          signal to be emitted for this session.
+          </doc:para>
+          <doc:para>This can be used by login managers to unlock a session before it is
+          re-activated during fast-user-switching.
+          </doc:para>
+        </doc:description>
+        <doc:permission>This method is restricted to privileged users by D-Bus policy.</doc:permission>
+        <doc:seealso><doc:ref type="signal" to="Session::Unlock">Unlock signal</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+
+    <method name="GetIdleHint">
+      <arg name="idle_hint" type="b" direction="out">
+        <doc:doc>
+          <doc:summary>The value of the idle-hint</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Gets the value of the <doc:ref type="property" to="Session:idle-hint">idle-hint</doc:ref>
+          property.
+          </doc:para>
+        </doc:description>
+        <doc:seealso><doc:ref type="property" to="Session:idle-hint">idle-hint</doc:ref></doc:seealso>
+      </doc:doc>
+    </method>
+    <method name="GetIdleSinceHint">
+      <arg name="iso8601_datetime" type="s" direction="out">
+        <doc:doc>
+          <doc:summary>An ISO 8601 format date-type string</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Returns an ISO 8601 date-time string that corresponds to
+          the time of the last change of the idle-hint.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </method>
+    <method name="SetIdleHint">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <arg name="idle_hint" type="b" direction="in">
+        <doc:doc>
+          <doc:summary>boolean value to set the idle-hint to</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>This may be used by the session to indicate that
+          it is idle.
+          </doc:para>
+          <doc:para>Use of this method is restricted to the user
+          that owns the session.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </method>
+
+    <signal name="ActiveChanged">
+      <arg name="is_active" type="b">
+        <doc:doc>
+          <doc:summary>TRUE if the session is active, otherwise FALSE</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Emitted when the active property has changed.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
+    <signal name="IdleHintChanged">
+      <arg name="hint" type="b">
+        <doc:doc>
+          <doc:summary>the new value of idle-hint</doc:summary>
+        </doc:doc>
+      </arg>
+      <doc:doc>
+        <doc:description>
+          <doc:para>Emitted when the idle-hint property has changed.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
+    <signal name="Lock">
+      <doc:doc>
+        <doc:description>
+          <doc:para>Emitted in response to a call to the <doc:ref type="method" to="Session.Lock">Lock()</doc:ref> method.</doc:para>
+          <doc:para>It is intended that the screensaver for the session should lock the screen in response to this signal.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
+    <signal name="Unlock">
+      <doc:doc>
+        <doc:description>
+          <doc:para>Emitted in response to a call to the <doc:ref type="method" to="Session.Unlock">Unlock()</doc:ref> method.</doc:para>
+          <doc:para>It is intended that the screensaver for the session should unlock the screen in response to this signal.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
+
+    <property name="unix-user" type="u" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>The user assigned to the session.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="user" type="u" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>The user assigned to the session.</doc:para>
+        </doc:description>
+        <doc:deprecated version="0.1.3" instead="unix-user"/>
+      </doc:doc>
+    </property>
+    <property name="session-type" type="s" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>The type of the session.</doc:para>
+          <doc:para>Warning: we haven't yet defined the allowed values for this property.
+          It is probably best to avoid this until we do.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="remote-host-name" type="s" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>The remote host name for the session.
+          </doc:para>
+          <doc:para>This will be set in situations where the session is
+          opened and controlled from a remote system.
+          </doc:para>
+          <doc:para>For example, this value will be set when the
+          session is created from an SSH or XDMCP connection.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="display-device" type="s" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>The display device (aka TTY) that the
+          session is connected to.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="x11-display" type="s" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>Value of the X11 DISPLAY for this session
+          if one is present.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="x11-display-device" type="s" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+          The display device (aka TTY) that the X11 display for the
+          session is connected to.  If there is no x11-display set then
+          this value is undefined.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="active" type="b" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+          Whether the session is active on the Seat that
+          it is attached to.</doc:para>
+          <doc:para>If the session is not attached to a seat this value is undefined.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="is-local" type="b" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+          Whether the session is local</doc:para>
+          <doc:para>FIXME: we need to come up with a concrete definition for this value.
+          It was originally used as a way to identify XDMCP sessions that originate
+          from a remote system.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+    <property name="idle-hint" type="b" access="readwrite">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+          This is a hint used to indicate that the session may be idle.
+          </doc:para>
+          <doc:para>
+          For sessions with a <doc:ref type="property" to="Session:x11-display">x11-display</doc:ref> set (ie. graphical
+          sessions), it is up to each session to delegate the
+          responsibility for updating this value.  Typically, the
+          screensaver will set this.
+          </doc:para>
+          <doc:para>However, for non-graphical sessions with a <doc:ref type="property" to="Session:display-device">display-device</doc:ref> set
+          the Session object itself will periodically update this value based
+          on the activity detected on the display-device itself.
+          </doc:para>
+          <doc:para>
+          This should not be considered authoritative.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+
+  </interface>
+</node>

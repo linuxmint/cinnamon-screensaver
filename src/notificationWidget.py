@@ -1,10 +1,9 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, GLib, GObject
-import dbus
+from gi.repository import Gtk, GObject
 
-import trackers
-import status
+import dbusClientManager
+from util import trackers
 
 class NotificationWidget(Gtk.Frame):
     __gsignals__ = {
@@ -27,28 +26,20 @@ class NotificationWidget(Gtk.Frame):
         self.image = Gtk.Image.new_from_icon_name("screensaver-notification-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         box.pack_end(self.image, False, False, 4)
 
-        self.connect("destroy", self.on_destroy)
+        self.notification_proxy = dbusClientManager.NotificationClient
+        trackers.con_tracker_get().connect(self.notification_proxy,
+                                           "notification-received",
+                                           self.on_notification_received)
 
-        self.session_bus = dbus.SessionBus()
-        self.session_bus.add_match_string("type='method_call',interface='org.freedesktop.Notifications',member='Notify',eavesdrop=true")
-        self.session_bus.add_message_filter(self.on_notification_observed)
-
-    def should_show(self):
-        return self.notification_count > 0
-
-    def on_notification_observed(self, bus, message):
+    def on_notification_received(self, proxy):
         self.notification_count += 1
 
         self.update_label()
 
         self.emit("notification")
 
+    def should_show(self):
+        return self.notification_count > 0
+
     def update_label(self):
         self.label.set_text(str(self.notification_count))
-
-    def on_destroy(self, widget):
-        # remove_message_filter fails.. why?
-        self.session_bus.remove_message_filter(self.on_notification_observed)
-        # but this works, which also apparently cleans up any remaining refs so we can dispose properly
-        self.session_bus.remove_match_string("type='method_call',interface='org.freedesktop.Notifications',member='Notify',eavesdrop=true")
-

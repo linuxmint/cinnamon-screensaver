@@ -3,7 +3,7 @@
 from gi.repository import Gtk, Gdk
 import cairo
 
-import trackers
+from util import trackers
 
 class VolumeSlider(Gtk.Scale):
     def __init__(self):

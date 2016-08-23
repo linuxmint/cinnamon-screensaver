@@ -1,0 +1,146 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+                      "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!-- GDBus 2.48.1 -->
+<node>
+  <interface name="org.Cinnamon">
+    <method name="Eval">
+      <arg type="s" name="script" direction="in">
+      </arg>
+      <arg type="b" name="success" direction="out">
+      </arg>
+      <arg type="s" name="result" direction="out">
+      </arg>
+    </method>
+    <method name="ScreenshotArea">
+      <arg type="b" name="include_cursor" direction="in">
+      </arg>
+      <arg type="i" name="x" direction="in">
+      </arg>
+      <arg type="i" name="y" direction="in">
+      </arg>
+      <arg type="i" name="width" direction="in">
+      </arg>
+      <arg type="i" name="height" direction="in">
+      </arg>
+      <arg type="b" name="flash" direction="in">
+      </arg>
+      <arg type="s" name="filename" direction="in">
+      </arg>
+    </method>
+    <method name="ScreenshotWindow">
+      <arg type="b" name="include_frame" direction="in">
+      </arg>
+      <arg type="b" name="include_cursor" direction="in">
+      </arg>
+      <arg type="b" name="flash" direction="in">
+      </arg>
+      <arg type="s" name="filename" direction="in">
+      </arg>
+    </method>
+    <method name="Screenshot">
+      <arg type="b" name="include_frame" direction="in">
+      </arg>
+      <arg type="b" name="flash" direction="in">
+      </arg>
+      <arg type="s" name="filename" direction="in">
+      </arg>
+    </method>
+    <method name="ShowOSD">
+      <arg type="a{sv}" name="params" direction="in">
+      </arg>
+    </method>
+    <method name="FlashArea">
+      <arg type="i" name="x" direction="in">
+      </arg>
+      <arg type="i" name="y" direction="in">
+      </arg>
+      <arg type="i" name="width" direction="in">
+      </arg>
+      <arg type="i" name="height" direction="in">
+      </arg>
+    </method>
+    <method name="highlightXlet">
+      <arg type="s" name="arg_0" direction="in">
+      </arg>
+      <arg type="s" name="arg_1" direction="in">
+      </arg>
+      <arg type="b" name="arg_2" direction="in">
+      </arg>
+    </method>
+    <method name="highlightPanel">
+      <arg type="i" name="arg_0" direction="in">
+      </arg>
+      <arg type="b" name="arg_1" direction="in">
+      </arg>
+    </method>
+    <method name="addPanelQuery">
+    </method>
+    <method name="destroyDummyPanels">
+    </method>
+    <method name="activateCallback">
+      <arg type="s" name="arg_0" direction="in">
+      </arg>
+      <arg type="s" name="arg_1" direction="in">
+      </arg>
+      <arg type="s" name="arg_2" direction="in">
+      </arg>
+    </method>
+    <method name="updateSetting">
+      <arg type="s" name="arg_0" direction="in">
+      </arg>
+      <arg type="s" name="arg_1" direction="in">
+      </arg>
+      <arg type="s" name="arg_2" direction="in">
+      </arg>
+      <arg type="s" name="arg_3" direction="in">
+      </arg>
+    </method>
+    <method name="switchWorkspaceRight">
+    </method>
+    <method name="switchWorkspaceLeft">
+    </method>
+    <method name="switchWorkspaceUp">
+    </method>
+    <method name="switchWorkspaceDown">
+    </method>
+    <method name="JumpToNewWorkspace">
+    </method>
+    <method name="RemoveCurrentWorkspace">
+    </method>
+    <method name="ShowExpo">
+    </method>
+    <method name="GetRunningXletUUIDs">
+      <arg type="s" name="arg_0" direction="in">
+      </arg>
+      <arg type="as" name="arg_1" direction="out">
+      </arg>
+    </method>
+    <method name="ReloadXlet">
+      <arg type="s" name="uuid" direction="in">
+      </arg>
+      <arg type="s" name="type" direction="in">
+      </arg>
+    </method>
+    <method name="PushSubprocessResult">
+      <arg type="i" name="process_id" direction="in">
+      </arg>
+      <arg type="s" name="result" direction="in">
+      </arg>
+    </method>
+    <method name="ToggleKeyboard">
+    </method>
+    <signal name="XletAddedComplete">
+      <arg type="b" name="arg_0">
+      </arg>
+      <arg type="s" name="arg_1">
+      </arg>
+    </signal>
+    <property type="b" name="OverviewActive" access="readwrite">
+    </property>
+    <property type="b" name="ExpoActive" access="readwrite">
+    </property>
+    <property type="s" name="CinnamonVersion" access="read">
+    </property>
+  </interface>
+  <node name="LookingGlass"/>
+</node>

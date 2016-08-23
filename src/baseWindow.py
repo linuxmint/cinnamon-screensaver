@@ -2,7 +2,7 @@
 
 from gi.repository import Gtk, GObject
 
-import trackers
+from util import trackers
 
 class BaseWindow(Gtk.Revealer):
     REVEALER_DURATION = 250

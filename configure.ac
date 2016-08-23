@@ -100,6 +100,7 @@ AC_OUTPUT([
 Makefile
 data/Makefile
 data/org.cinnamon.ScreenSaver.service
+data/cinnamon-screensaver.desktop.in
 data/icons/Makefile
 files/Makefile
 libcscreensaver/Makefile
@@ -111,5 +112,7 @@ screensavers/webkit@cinnamon.org/Makefile
 screensavers/webkit@cinnamon.org/webkit-stars@cinnamon.org/Makefile
 screensavers/xscreensaver@cinnamon.org/Makefile
 src/Makefile
-src/cinnamon-screensaver.desktop.in
+src/binfiles/Makefile
+src/dbusdepot/Makefile
+src/util/Makefile
 ])

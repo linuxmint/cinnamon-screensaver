@@ -3,7 +3,7 @@
 from gi.repository import Gdk
 
 import status
-from keybindings import KeyBindings
+from util.keybindings import KeyBindings
 
 MOTION_THRESHOLD = 100
 

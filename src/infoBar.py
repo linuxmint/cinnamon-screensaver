@@ -2,9 +2,8 @@
 
 from gi.repository import Gtk
 
-import utils
 import status
-import trackers
+from util import utils, trackers
 from baseWindow import BaseWindow
 from notificationWidget import NotificationWidget
 from powerWidget import PowerWidget

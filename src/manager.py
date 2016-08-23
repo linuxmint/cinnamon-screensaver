@@ -5,17 +5,13 @@ import time
 import traceback
 
 import constants as c
-import utils
-import trackers
-import settings
 import status
-from focusNavigator import FocusNavigator
-from sessionProxy import SessionProxy
-from cinnamonProxy import CinnamonProxy
-from logindProxy import LogindProxy, LogindConnectionError
-from consoleKitProxy import ConsoleKitProxy, ConsoleKitConnectionError
+
 from stage import Stage
-from grabHelper import GrabHelper
+import dbusClientManager
+from util import utils, settings, trackers
+from util.focusNavigator import FocusNavigator
+from util.grabHelper import GrabHelper
 
 class ScreensaverManager:
     def __init__(self, service_message_cb):
@@ -25,7 +21,6 @@ class ScreensaverManager:
         self.activated_timestamp = 0
 
         self.stage = None
-        self.stage_fader = None
 
         # Ensure our state
         status.Active = False
@@ -35,39 +30,58 @@ class ScreensaverManager:
         self.grab_helper = GrabHelper(self)
         self.focus_nav = FocusNavigator()
 
-        self.session_watcher = SessionProxy()
-        self.cinnamon_watcher = CinnamonProxy()
+        self.session_client = dbusClientManager.SessionClient
+        self.cinnamon_client = dbusClientManager.CinnamonClient
 
-        trackers.con_tracker_get().connect(self.session_watcher,
+        trackers.con_tracker_get().connect(self.session_client,
                                            "idle-changed", 
                                            self.on_session_idle_changed)
 
-        try:
-            self.logind_watcher = LogindProxy()
-            trackers.con_tracker_get().connect(self.logind_watcher,
-                                               "lock",
-                                               lambda proxy: self.lock())
-            trackers.con_tracker_get().connect(self.logind_watcher,
-                                               "unlock",
-                                               lambda proxy: self.unlock())
-            trackers.con_tracker_get().connect(self.logind_watcher,
-                                               "active",
-                                               lambda proxy: self.simulate_user_activity())
-        except LogindConnectionError:
-            print("no logind, trying ConsoleKit")
-            try:
-                self.ck_watcher = ConsoleKitProxy()
-                trackers.con_tracker_get().connect(self.ck_watcher,
-                                                   "lock",
-                                                   lambda proxy: self.lock())
-                trackers.con_tracker_get().connect(self.ck_watcher,
-                                                   "unlock",
-                                                   lambda proxy: self.unlock())
-                trackers.con_tracker_get().connect(self.ck_watcher,
-                                                   "active",
-                                                   lambda proxy: self.simulate_user_activity())
-            except ConsoleKitConnectionError:
-                print("ConsoleKit failed, continuing, but certain functionality will be limited")
+        self.login_client = None
+
+        login_client = dbusClientManager.LogindClient
+        trackers.con_tracker_get().connect(login_client,
+                                           "startup-status",
+                                           self.on_logind_startup_result)
+
+    def on_logind_startup_result(self, client, success):
+        trackers.con_tracker_get().disconnect(client,
+                                              "startup-status",
+                                              self.on_logind_startup_result)
+
+        if success:
+            self.connect_to_login_client(client)
+        else:
+            login_client = dbusClientManager.ConsoleKitClient
+            trackers.con_tracker_get().connect(login_client,
+                                               "startup-status",
+                                               self.on_consolekit_startup_result)
+
+    def on_consolekit_startup_result(self, client, success):
+        trackers.con_tracker_get().disconnect(client,
+                                              "startup-status",
+                                              self.on_consolekit_startup_result)
+
+        if success:
+            self.connect_to_login_client(client)
+        else:
+            print("Unable to connect to either logind or ConsoleKit.  Certain things will not work,")
+            print("such as automatic unlocking when switching users from the desktop manager,")
+            print("or locking in appropriate power/system-management events.")
+            self.login_client = None
+
+    def connect_to_login_client(self, client):
+        self.login_client = client
+
+        trackers.con_tracker_get().connect(client,
+                                           "lock",
+                                           lambda proxy: self.lock())
+        trackers.con_tracker_get().connect(client,
+                                           "unlock",
+                                           lambda proxy: self.unlock())
+        trackers.con_tracker_get().connect(client,
+                                           "active",
+                                           lambda proxy: self.simulate_user_activity())
 
 ##### Service handlers (from service.py)
 
@@ -93,7 +107,7 @@ class ScreensaverManager:
     def set_active(self, active, msg=None):
         if active:
             if not status.Active:
-                self.cinnamon_watcher.exit_expo_and_overview()
+                self.cinnamon_client.exit_expo_and_overview()
                 if self.grab_helper.grab_root(False):
                     if not self.stage:
                         self.spawn_stage(msg, c.STAGE_SPAWN_TRANSITION, self.on_spawn_stage_complete)

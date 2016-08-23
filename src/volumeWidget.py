@@ -5,8 +5,9 @@ gi.require_version('Cvc', '1.0')
 
 from gi.repository import Gtk, Cvc, Gdk
 
-import trackers
 from volumeSlider import VolumeSlider
+from util import trackers
+
 
 class VolumeWidget(Gtk.Box):
     def __init__(self):

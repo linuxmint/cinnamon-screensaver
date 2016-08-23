@@ -5,10 +5,8 @@ import re
 import cairo
 
 import status
-import settings
-import utils
-import trackers
 from baseWindow import BaseWindow
+from util import settings, utils, trackers
 
 class WallpaperStack(Gtk.Stack):
     def __init__(self):

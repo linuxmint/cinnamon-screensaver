@@ -3,12 +3,7 @@ AUTOMAKE_OPTIONS = 1.7
 
 NULL =
 
-SUBDIRS =
-
-desktopdir = $(datadir)/applications
-desktop_in_files = cinnamon-screensaver.desktop.in
-desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-@INTLTOOL_DESKTOP_RULE@
+SUBDIRS = binfiles util dbusdepot
 
 appdir = $(datadir)/cinnamon-screensaver
 
@@ -16,44 +11,28 @@ app_PYTHON = \
         __init__.py \
         audioBar.py \
         baseWindow.py \
-        cinnamonProxy.py \
         clock.py \
         config.py \
-        consoleKitProxy.py \
         constants.py \
-        eventHandler.py \
-        fader.py \
-        focusNavigator.py \
-        grabHelper.py \
+        dbusClientManager.py \
         infoBar.py \
-        keybindings.py \
-        logindProxy.py \
         manager.py \
         monitorView.py \
         notificationWidget.py \
         powerWidget.py \
         service.py \
-        sessionProxy.py \
-        settings.py \
         stage.py \
         status.py \
-        trackers.py \
         unlock.py \
-        uPowerProxy.py \
-        utils.py \
         volumeSlider.py \
         volumeWidget.py \
-        x11.py
+        $(NULL)
 
 app_DATA = application.css
 
 app_SCRIPTS = cinnamon-screensaver-main.py \
-              cinnamon-screensaver-command.py
-
-%:%.in Makefile
-	$(AM_V_GEN)sed                  \
-        -e s!\@datadir\@!$(datadir)!        \
-        < $< > $@
+              cinnamon-screensaver-command.py \
+              $(NULL)
 
 config.py: config.py.in Makefile
 	$(AM_V_GEN)sed                  \
@@ -67,19 +46,12 @@ config.py: config.py.in Makefile
         -e s!\@GETTEXT_PACKAGE\@!$(GETTEXT_PACKAGE)!    \
         < $< > $@
 
-all-local: config.py cinnamon-screensaver cinnamon-screensaver-command
-
-bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-command
+all-local: config.py
 
 EXTRA_DIST =                \
-    cinnamon-screensaver.desktop.in \
-    cinnamon-screensaver.in \
     config.py.in \
     debug-screensaver.sh        \
     $(NULL)
-
-CLEANFILES =                \
-    cinnamon-screensaver.desktop.in
 
 MAINTAINERCLEANFILES =          \
     *~              \

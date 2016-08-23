@@ -3,5 +3,9 @@
 /usr/share/cinnamon-screensaver/*.py
 /usr/share/cinnamon-screensaver/*.css
 /usr/share/cinnamon-screensaver/__pycache__
+/usr/share/cinnamon-screensaver/dbusdepot/*.py
+/usr/share/cinnamon-screensaver/dbusdepot/__pycache__
+/usr/share/cinnamon-screensaver/util/*.py
+/usr/share/cinnamon-screensaver/util/__pycache__
 /usr/share/dbus-1
 /usr/bin

@@ -1,5 +1,106 @@
 lib_LTLIBRARIES = libcscreensaver.la
 
+dbus_built_sources =\
+	cscreensaver-cinnamon-proxy.c \
+    cscreensaver-cinnamon-proxy.h \
+    cscreensaver-session-presence-proxy.c \
+    cscreensaver-session-presence-proxy.h \
+    cscreensaver-notifications-proxy.c \
+    cscreensaver-notifications-proxy.h \
+    cscreensaver-upower-proxy.c \
+    cscreensaver-upower-proxy.h \
+    cscreensaver-upower-device-proxy.c \
+    cscreensaver-upower-device-proxy.h \
+    cscreensaver-logind-manager-proxy.c \
+    cscreensaver-logind-manager-proxy.h \
+    cscreensaver-logind-session-proxy.c \
+    cscreensaver-logind-session-proxy.h \
+    cscreensaver-consolekit-manager-proxy.c \
+    cscreensaver-consolekit-manager-proxy.h \
+    cscreensaver-consolekit-session-proxy.c \
+    cscreensaver-consolekit-session-proxy.h
+
+cscreensaver-cinnamon-proxy.h : Makefile.am org.Cinnamon.xml
+	gdbus-codegen										\
+		--annotate "org.Cinnamon" org.gtk.GDBus.C.Name "Cinnamon"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-cinnamon-proxy	\
+		org.Cinnamon.xml							\
+		$(NULL)
+cscreensaver-cinnamon-proxy.c : cscreensaver-cinnamon-proxy.h
+
+cscreensaver-session-presence-proxy.h : Makefile.am org.gnome.SessionManager.Presence.xml
+	gdbus-codegen										\
+		--annotate "org.gnome.SessionManager.Presence" org.gtk.GDBus.C.Name "SessionPresence"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-session-presence-proxy	\
+		org.gnome.SessionManager.Presence.xml							\
+		$(NULL)
+cscreensaver-session-presence-proxy.c : cscreensaver-session-presence-proxy.h
+
+cscreensaver-notifications-proxy.h : Makefile.am org.freedesktop.Notifications.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.Notifications" org.gtk.GDBus.C.Name "Notifications"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-notifications-proxy	\
+		org.freedesktop.Notifications.xml							\
+		$(NULL)
+cscreensaver-notifications-proxy.c : cscreensaver-notifications-proxy.h
+
+cscreensaver-upower-proxy.h : Makefile.am org.freedesktop.UPower.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.UPower" org.gtk.GDBus.C.Name "UPower"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-upower-proxy	\
+		org.freedesktop.UPower.xml							\
+		$(NULL)
+cscreensaver-upower-proxy.c : cscreensaver-upower-proxy.h
+
+cscreensaver-upower-device-proxy.h : Makefile.am org.freedesktop.UPower.Device.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.UPower.Device" org.gtk.GDBus.C.Name "UPowerDevice"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-upower-device-proxy	\
+		org.freedesktop.UPower.Device.xml							\
+		$(NULL)
+cscreensaver-upower-device-proxy.c : cscreensaver-upower-device-proxy.h
+
+cscreensaver-logind-manager-proxy.h : Makefile.am org.freedesktop.login1.Manager.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.login1.Manager" org.gtk.GDBus.C.Name "LogindManager"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-logind-manager-proxy	\
+		org.freedesktop.login1.Manager.xml							\
+		$(NULL)
+cscreensaver-logind-manager-proxy.c : cscreensaver-logind-manager-proxy.h
+
+cscreensaver-logind-session-proxy.h : Makefile.am org.freedesktop.login1.Session.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.login1.Session" org.gtk.GDBus.C.Name "LogindSession"		\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-logind-session-proxy	\
+		org.freedesktop.login1.Session.xml							\
+		$(NULL)
+cscreensaver-logind-session-proxy.c : cscreensaver-logind-session-proxy.h
+
+cscreensaver-consolekit-manager-proxy.h : Makefile.am org.freedesktop.ConsoleKit.Manager.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.ConsoleKit.Manager" org.gtk.GDBus.C.Name "ConsoleKitManager"	\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-consolekit-manager-proxy	\
+		org.freedesktop.ConsoleKit.Manager.xml							\
+		$(NULL)
+cscreensaver-consolekit-manager-proxy.c : cscreensaver-consolekit-manager-proxy.h
+
+cscreensaver-consolekit-session-proxy.h : Makefile.am org.freedesktop.ConsoleKit.Session.xml
+	gdbus-codegen										\
+		--annotate "org.freedesktop.ConsoleKit.Session" org.gtk.GDBus.C.Name "ConsoleKitSession"	\
+		--c-namespace CScreensaver						\
+		--generate-c-code cscreensaver-consolekit-session-proxy	\
+		org.freedesktop.ConsoleKit.Session.xml							\
+		$(NULL)
+cscreensaver-consolekit-session-proxy.c : cscreensaver-consolekit-session-proxy.h
+
 libcscreensaver_la_CPPFLAGS =            \
     $(WARN_CFLAGS)          \
     $(CSCREENSAVER_CFLAGS)           \
@@ -10,6 +111,7 @@ libcscreensaver_la_CPPFLAGS =            \
 libcscreensaver_la_gir_sources =             \
     cscreensaver-gdk-event-filter.c \
     cscreensaver-gdk-event-filter.h \
+    $(dbus_built_sources) \
     $(NULL)
 
 libcscreensaver_la_SOURCES =             \
@@ -42,12 +144,20 @@ gir_DATA = CScreensaver-1.0.gir
 typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
-CLEANFILES = $(gir_DATA) $(typelib_DATA)
+CLEANFILES = $(gir_DATA) \
+             $(typelib_DATA) \
+             $(dbus_built_sources)
 
 MAINTAINERCLEANFILES =          \
     Makefile.in
 
 EXTRA_DIST = \
     cscreensaver.pc.in          \
-    cscreensaver-uninstalled.pc.in
-
+    cscreensaver-uninstalled.pc.in \
+    org.Cinnamon.xml \
+	org.freedesktop.ConsoleKit.Manager.xml \
+	org.freedesktop.ConsoleKit.Session.xml \
+	org.freedesktop.Notifications.xml \
+	org.freedesktop.UPower.Device.xml \
+	org.freedesktop.UPower.xml \
+	org.gnome.SessionManager.Presence.xml

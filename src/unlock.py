@@ -8,9 +8,7 @@ from gi.repository import Gtk, Gdk, AccountsService, GObject, CinnamonDesktop, G
 import os
 import cairo
 
-import utils
-import trackers
-import settings
+from util import utils, trackers, settings
 import status
 import config
 from baseWindow import BaseWindow

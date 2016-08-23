@@ -1,11 +1,9 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, GLib, GObject
-import dbus
+from gi.repository import Gtk, GObject
 
-import trackers
-import status
-from uPowerProxy import UPowerProxy
+from util import trackers
+import dbusClientManager
 
 class PowerWidget(Gtk.Frame):
     __gsignals__ = {
@@ -21,18 +19,11 @@ class PowerWidget(Gtk.Frame):
         self.box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(self.box)
 
-        self.power_proxy = UPowerProxy()
-
-        trackers.con_tracker_get().connect(self.power_proxy,
-                                           "ready",
-                                           self.on_proxy_loaded)
+        self.power_proxy = dbusClientManager.UPowerClient
 
         trackers.con_tracker_get().connect(self.power_proxy,
                                            "power-state-changed",
                                            self.on_power_state_changed)
-
-    def on_proxy_loaded(self, proxy):
-        self.construct_icons()
 
     def on_power_state_changed(self, proxy):
         for widget in self.box.get_children():

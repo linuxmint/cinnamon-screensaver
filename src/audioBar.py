@@ -1,13 +1,10 @@
 #! /usr/bin/python3
 
-import gi
-gi.require_version('Cvc', '1.0')
-
 from gi.repository import Gtk
 
-import utils
 from baseWindow import BaseWindow
 from volumeWidget import VolumeWidget
+from util import utils
 
 class AudioBar(BaseWindow):
     def __init__(self, screen):
