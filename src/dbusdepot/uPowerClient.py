@@ -67,9 +67,9 @@ class UPowerClient(BaseClient):
 
         self.relevant_devices = []
 
-        # self.proxy.call_enumerate_devices and _sync both return bad data (utf-8 encoding error)
-        # This works fine.
-        for path in self.proxy.call_sync("EnumerateDevices", None, Gio.DBusCallFlags.NONE, -1, None)[0]:
+        # The return type for this call has to be overridden in gdbus-codegen
+        # (See the Makefile.am) - or else we get utf-8 errors (python3 issue?)
+        for path in self.proxy.call_enumerate_devices_sync():
             dev = CScreensaver.UPowerDeviceProxy.new_for_bus_sync(Gio.BusType.SYSTEM,
                                                                   Gio.DBusProxyFlags.NONE,
                                                                   self.UPOWER_SERVICE,

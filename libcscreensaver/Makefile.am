@@ -52,6 +52,7 @@ cscreensaver-upower-proxy.h : Makefile.am org.freedesktop.UPower.xml
 		--annotate "org.freedesktop.UPower" org.gtk.GDBus.C.Name "UPower"		\
 		--c-namespace CScreensaver						\
 		--generate-c-code cscreensaver-upower-proxy	\
+		--annotate "org.freedesktop.UPower.EnumerateDevices()[devices]" org.gtk.GDBus.C.ForceGVariant true \
 		org.freedesktop.UPower.xml							\
 		$(NULL)
 cscreensaver-upower-proxy.c : cscreensaver-upower-proxy.h
