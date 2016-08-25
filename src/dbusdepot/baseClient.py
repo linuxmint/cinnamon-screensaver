@@ -26,7 +26,6 @@ class BaseClient(GObject.GObject):
                                  None,
                                  self._on_proxy_ready)
         except GLib.Error as e:
-            print("Could not acquire org.gnome.SessionManager proxy - idle listening is disabled", e)
             self.proxy = None
             self.on_failure()
 

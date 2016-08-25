@@ -9,6 +9,7 @@ appdir = $(datadir)/cinnamon-screensaver/dbusdepot
 
 app_PYTHON = \
         __init__.py \
+        baseClient.py \
         cinnamonClient.py \
         consoleKitClient.py \
         logindClient.py \
