@@ -1,60 +1,80 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk
-import dbus, dbus.service, dbus.glib
-import signal
+import gi
+gi.require_version('CScreensaver', '1.0')
+
+from gi.repository import Gtk, CScreensaver, Gio, GObject
 
 import constants as c
 from manager import ScreensaverManager
 
-signal.signal(signal.SIGINT, signal.SIG_DFL)
+class ScreensaverService(GObject.Object):
 
 
-class ScreensaverService(dbus.service.Object):
     def __init__(self):
-        sessionBus = dbus.SessionBus ()
-        request = sessionBus.request_name(c.SS_SERVICE, dbus.bus.NAME_FLAG_DO_NOT_QUEUE)
+        super(ScreensaverService, self).__init__()
 
-        if request == dbus.bus.REQUEST_NAME_REPLY_EXISTS:
-            print("cinnamon-screensaver already running!  Exiting...")
-            quit()
+        self.temp_active_id = 0
 
-        bus_name = dbus.service.BusName(c.SS_SERVICE, bus=dbus.SessionBus())
-        dbus.service.Object.__init__(self, bus_name, c.SS_PATH)
+        self.bus = Gio.bus_get_sync(Gio.BusType.SESSION)
 
-        self.screen_manager = ScreensaverManager(self.on_manager_message)
+        Gio.bus_own_name_on_connection(self.bus,
+                                       c.SS_SERVICE,
+                                       Gio.BusNameOwnerFlags.NONE,
+                                       self.on_name_acquired,
+                                       self.on_name_denied)
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='s', out_signature='')
-    def Lock(self, msg):
-        self.screen_manager.lock(msg)
+    def on_name_denied(self, connection, name, data=None):
+        print("A screensaver is already running!  Exiting...")
+        quit()
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='')
-    def Quit(self):
-        self.screen_manager.unlock()
+    def on_name_acquired(self, connection, name, data=None):
+        self.interface = CScreensaver.ScreenSaverSkeleton.new()
+
+        self.interface.connect("handle-lock", self.handle_lock)
+        self.interface.connect("handle-quit", self.handle_quit)
+        self.interface.connect("handle-set-active", self.handle_set_active)
+        self.interface.connect("handle-get-active", self.handle_get_active)
+        self.interface.connect("handle-get-active-time", self.handle_get_active_time)
+        self.interface.connect("handle-simulate-user-activity", self.handle_simulate_user_activity)
+
+        self.manager = ScreensaverManager()
+        self.manager.connect("active-changed", self.on_active_changed)
+
+        self.interface.export(self.bus, c.SS_PATH)
+
+    def handle_lock(self, iface, inv, msg):
+        self.manager.lock(msg)
+
+        iface.complete_lock(inv)
+
+    def handle_quit(self, iface, inv):
+        self.manager.unlock()
+
+        iface.complete_quit(inv)
+
         Gtk.main_quit()
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='b', out_signature='')
-    def SetActive(self, active):
-        self.screen_manager.set_active(active)
+    def handle_set_active(self, iface, inv, active):
+        self.manager.set_active(active)
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='b')
-    def GetActive(self):
-        return self.screen_manager.get_active()
+        iface.complete_set_active(inv)
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='u')
-    def GetActiveTime(self):
-        return self.screen_manager.get_active_time()
+    def handle_get_active(self, iface, inv):
+        active = self.manager.get_active()
 
-    @dbus.service.method(c.SS_SERVICE, in_signature='', out_signature='')
-    def SimulateUserActivity(self):
-        if self.screen_manager.is_locked():
-            self.screen_manager.simulate_user_activity()
+        iface.complete_get_active(inv, active)
 
-    @dbus.service.signal(c.SS_SERVICE, signature='b')
-    def ActiveChanged(self, state):
-        print("Emitting ActiveChanged", state)
+    def handle_get_active_time(self, iface, inv):
+        atime = self.manager.get_active_time()
 
-    def on_manager_message(self, name, data):
-        if name == "ActiveChanged":
-            self.ActiveChanged(data)
+        iface.complete_get_active_time(inv, atime)
 
+    def handle_simulate_user_activity(self, iface, inv):
+        if self.manager.is_locked():
+            self.manager.simulate_user_activity()
+
+        iface.complete_simulate_user_activity(inv)
+
+    def on_active_changed(self, manager, state, data=None):
+        self.interface.emit_active_changed(state)

@@ -1,0 +1,47 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+                      "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!-- GDBus 2.48.1 -->
+<node>
+  <interface name="org.cinnamon.ScreenSaver">
+    <method name="Lock">
+      <arg type="s" name="message" direction="in">
+      </arg>
+    </method>
+    <method name="SimulateUserActivity">
+    </method>
+    <method name="GetActive">
+      <arg type="b" name="arg_0" direction="out">
+      </arg>
+    </method>
+    <method name="GetActiveTime">
+      <arg type="u" name="seconds" direction="out">
+      </arg>
+    </method>
+    <method name="GetSessionIdleTime">
+      <arg type="u" name="seconds" direction="out">
+      </arg>
+    </method>
+    <method name="SetActive">
+      <arg type="b" name="e" direction="in">
+      </arg>
+    </method>
+    <method name="Throttle">
+      <arg type="s" name="application_name" direction="in">
+      </arg>
+      <arg type="s" name="reason_for_inhibit" direction="in">
+      </arg>
+      <arg type="u" name="cookie" direction="out">
+      </arg>
+    </method>
+    <method name="UnThrottle">
+      <arg type="u" name="cookie" direction="in">
+      </arg>
+    </method>
+    <method name="Quit">
+    </method>
+    <signal name="ActiveChanged">
+      <arg type="b" name="arg_0">
+      </arg>
+    </signal>
+  </interface>
+</node>

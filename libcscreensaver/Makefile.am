@@ -5,6 +5,8 @@ dbus_built_sources =\
     cscreensaver-cinnamon-proxy.h \
     cscreensaver-session-presence-proxy.c \
     cscreensaver-session-presence-proxy.h \
+    cscreensaver-screensaver-proxy.c \
+    cscreensaver-screensaver-proxy.h \
     cscreensaver-notifications-proxy.c \
     cscreensaver-notifications-proxy.h \
     cscreensaver-upower-proxy.c \
@@ -102,6 +104,15 @@ cscreensaver-consolekit-session-proxy.h : Makefile.am org.freedesktop.ConsoleKit
 		$(NULL)
 cscreensaver-consolekit-session-proxy.c : cscreensaver-consolekit-session-proxy.h
 
+cscreensaver-screensaver-proxy.h : Makefile.am org.cinnamon.ScreenSaver.xml
+	gdbus-codegen                                       \
+        --annotate "org.cinnamon.ScreenSaver" org.gtk.GDBus.C.Name "ScreenSaver"    \
+        --c-namespace CScreensaver                      \
+        --generate-c-code cscreensaver-screensaver-proxy \
+        org.cinnamon.ScreenSaver.xml                          \
+        $(NULL)
+cscreensaver-screensaver-proxy.c : cscreensaver-screensaver-proxy.h
+
 libcscreensaver_la_CPPFLAGS =            \
     $(WARN_CFLAGS)          \
     $(CSCREENSAVER_CFLAGS)           \
@@ -155,6 +166,7 @@ MAINTAINERCLEANFILES =          \
 EXTRA_DIST = \
     cscreensaver.pc.in          \
     cscreensaver-uninstalled.pc.in \
+    org.cinnamon.Screensaver.xml \
     org.Cinnamon.xml \
 	org.freedesktop.ConsoleKit.Manager.xml \
 	org.freedesktop.ConsoleKit.Session.xml \

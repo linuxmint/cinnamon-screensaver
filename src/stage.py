@@ -1,7 +1,5 @@
 #! /usr/bin/python3
 
-import gi
-gi.require_version('CScreensaver', '1.0')
 from gi.repository import Gtk, Gdk, GObject, CScreensaver
 
 import status

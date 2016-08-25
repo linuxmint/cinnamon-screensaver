@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gdk
+from gi.repository import Gdk, GObject
 import time
 import traceback
 
@@ -13,10 +13,15 @@ from util import utils, settings, trackers
 from util.focusNavigator import FocusNavigator
 from util.grabHelper import GrabHelper
 
-class ScreensaverManager:
-    def __init__(self, service_message_cb):
+class ScreensaverManager(GObject.Object):
+    __gsignals__ = {
+        'active-changed': (GObject.SignalFlags.RUN_LAST, None, (bool, )),
+    }
+
+    def __init__(self):
+        super(ScreensaverManager, self).__init__()
+
         self.screen = Gdk.Screen.get_default()
-        self.service_message_cb = service_message_cb
 
         self.activated_timestamp = 0
 
@@ -167,7 +172,7 @@ class ScreensaverManager:
 
         status.Active = True
 
-        self.service_message_cb("ActiveChanged", True)
+        self.emit("active-changed", True)
 
         self.start_timers()
 
@@ -176,7 +181,7 @@ class ScreensaverManager:
         status.Active = False
 
         if was_active:
-            self.service_message_cb("ActiveChanged", False)
+            self.emit("active-changed", False)
 
         self.cancel_timers()
 
