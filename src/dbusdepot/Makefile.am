@@ -15,6 +15,7 @@ app_PYTHON = \
         logindClient.py \
         loginInterface.py \
         notificationClient.py \
+        screensaverClient.py \
         sessionClient.py \
         uPowerClient.py \
         $(NULL)

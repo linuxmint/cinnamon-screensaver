@@ -1,12 +1,15 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio, GLib
-import dbus
+import gi
+gi.require_version('CScreensaver', '1.0')
+
+from gi.repository import Gio, GLib, CScreensaver
 import signal
 import argparse
 import gettext
 from enum import IntEnum
 
+from dbusdepot.screensaverClient import ScreenSaverClient
 import constants as c
 import config
 
@@ -25,7 +28,6 @@ class Action(IntEnum):
 class ScreensaverCommand:
 
     def __init__(self, mainloop):
-        self.proxy = None
         self.mainloop = mainloop
 
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver Command')
@@ -58,50 +60,36 @@ class ScreensaverCommand:
         self.action_id = args.action_id
         self.message = args.message
 
-        Gio.bus_watch_name(Gio.BusType.SESSION, c.SS_SERVICE, Gio.BusNameWatcherFlags.NONE,
-                           self.on_appeared, self.on_disappeared)
+        self.client = ScreenSaverClient()
+        self.client.connect("client-ready", self.on_client_ready)
 
-    def on_appeared(self, connection, name, owner):
-        try:
-            Gio.DBusProxy.new_for_bus(Gio.BusType.SESSION, Gio.DBusProxyFlags.NONE, None,
-                                      c.SS_SERVICE, c.SS_PATH, c.SS_INTERFACE,
-                                      None, self.on_proxy_ready, None)
-        except dbus.exceptions.DBusException as e:
-            print(e)
-            self.proxy = None
+    def on_client_ready(self, client, success):
+        if not success or client.proxy == None:
             print("Can't connect to screensaver!")
             self.mainloop.quit()
-
-    def on_disappeared(self, connection, name):
-        self.proxy = None
-        print("Can't connect to screensaver!")
-        self.mainloop.quit()
-
-    def on_proxy_ready(self, object, result, data=None):
-        self.proxy = Gio.DBusProxy.new_for_bus_finish(result)
-
-        self.perform_action()
+        else:
+            self.perform_action()
 
     def perform_action(self):
         if self.action_id == Action.EXIT:
-            self.proxy.Quit()
+            self.client.proxy.call_quit_sync()
         elif self.action_id == Action.QUERY:
-            if self.proxy.GetActive():
+            if self.client.proxy.call_get_active_sync():
                 print(_("The screensaver is active\n"))
             else:
                 print(_("The screensaver is inactive\n"))
         elif self.action_id == Action.TIME:
-            time = self.proxy.GetActiveTime()
+            time = self.client.proxy.call_get_active_time_sync()
             if time == 0:
                 print(_("The screensaver is not currently active.\n"))
             else:
                 print(gettext.ngettext ("The screensaver has been active for %d second.\n", "The screensaver has been active for %d seconds.\n", time) % time)
         elif self.action_id == Action.LOCK:
-            self.proxy.Lock("(s)", self.message)
+            self.client.proxy.call_lock_sync(self.message)
         elif self.action_id == Action.ACTIVATE:
-            self.proxy.SetActive("(b)", True)
+            self.client.proxy.call_set_active_sync(True)
         elif self.action_id == Action.DEACTIVATE:
-            self.proxy.SetActive("(b)", False)
+            self.client.proxy.call_set_active_sync(False)
 
         self.mainloop.quit()
 
