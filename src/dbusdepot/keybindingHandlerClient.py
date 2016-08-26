@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio, GObject, CScreensaver
+from gi.repository import Gio, CScreensaver
 
 from dbusdepot.baseClient import BaseClient
 

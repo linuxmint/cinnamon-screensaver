@@ -26,6 +26,7 @@ class BaseClient(GObject.GObject):
                                  None,
                                  self._on_proxy_ready)
         except GLib.Error as e:
+            print("Unable to connect to dbus object: %s" % (self.path), e)
             self.proxy = None
             self.on_failure()
 

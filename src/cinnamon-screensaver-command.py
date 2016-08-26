@@ -3,14 +3,13 @@
 import gi
 gi.require_version('CScreensaver', '1.0')
 
-from gi.repository import Gio, GLib, CScreensaver
+from gi.repository import GLib
 import signal
 import argparse
 import gettext
 from enum import IntEnum
 
 from dbusdepot.screensaverClient import ScreenSaverClient
-import constants as c
 import config
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
