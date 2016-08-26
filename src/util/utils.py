@@ -65,7 +65,12 @@ def user_can_lock():
     return True
 
 def process_is_running(name):
-    res = subprocess.check_output(["pidof", name])
+    res = ""
+
+    try:
+        res = subprocess.check_output(["pidof", name])
+    except subprocess.CalledProcessError:
+        pass
 
     return res != ""
 
