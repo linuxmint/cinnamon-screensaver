@@ -4,10 +4,9 @@ import gi
 gi.require_version('CDesktopEnums', '3.0')
 from gi.repository import Gtk, GObject, Gdk, Gio, CinnamonDesktop
 from gi.repository.CDesktopEnums import MediaKeyType as MK
-import dbus
 
 import status
-import constants as c
+import dbusClientManager
 
 ALLOWED_ACTIONS = [MK.MUTE,
                    MK.VOLUME_UP,
@@ -62,34 +61,14 @@ class KeyBindings(GObject.GObject):
 
         self.manager = manager
 
-        self.proxy = None
-        self.keymap = Gdk.Keymap.get_default()
+        self.client = dbusClientManager.KeybindingHandlerClient
 
-        Gio.bus_watch_name(Gio.BusType.SESSION, c.CSD_MEDIAKEY_HANDLER_SERVICE,
-                           Gio.BusNameWatcherFlags.NONE,
-                           self.on_csd_appeared, self.on_csd_disappeared)
+        self.keymap = Gdk.Keymap.get_default()
 
         self.media_key_settings = Gio.Settings(schema_id="org.cinnamon.desktop.keybindings.media-keys")
         self.shortcut_actions = []
 
         self.load_bindings()
-
-    def on_csd_appeared(self, connection, name, owner):
-        try:
-            Gio.DBusProxy.new_for_bus(Gio.BusType.SESSION, Gio.DBusProxyFlags.NONE, None,
-                                      c.CSD_MEDIAKEY_HANDLER_SERVICE, 
-                                      c.CSD_MEDIAKEY_HANDLER_PATH,
-                                      c.CSD_MEDIAKEY_HANDLER_INTERFACE,
-                                      None, self.on_proxy_ready, None)
-        except dbus.exceptions.DBusException as e:
-            print(e)
-            self.proxy = None
-
-    def on_csd_disappeared(self, connection, name):
-        self.proxy = None
-
-    def on_proxy_ready(self, object, result, data=None):
-        self.proxy = Gio.DBusProxy.new_for_bus_finish(result)
 
     def load_bindings(self):
         self.shortcut_actions = []
@@ -132,11 +111,7 @@ class KeyBindings(GObject.GObject):
             if res == -1:
                 continue
             else:
-                self.on_media_key_pressed(res)
+                self.client.handle_keybinding(res)
                 return True
 
         return False
-
-    def on_media_key_pressed(self, action):
-        self.proxy.HandleKeybinding('(u)', action)
-

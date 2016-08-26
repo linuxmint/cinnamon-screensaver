@@ -20,7 +20,9 @@ dbus_built_sources =\
     cscreensaver-consolekit-manager-proxy.c \
     cscreensaver-consolekit-manager-proxy.h \
     cscreensaver-consolekit-session-proxy.c \
-    cscreensaver-consolekit-session-proxy.h
+    cscreensaver-consolekit-session-proxy.h \
+    cscreensaver-keybinding-handler-proxy.c \
+    cscreensaver-keybinding-handler-proxy.h
 
 cscreensaver-cinnamon-proxy.h : Makefile.am org.Cinnamon.xml
 	gdbus-codegen										\
@@ -112,6 +114,15 @@ cscreensaver-screensaver-proxy.h : Makefile.am org.cinnamon.ScreenSaver.xml
         org.cinnamon.ScreenSaver.xml                          \
         $(NULL)
 cscreensaver-screensaver-proxy.c : cscreensaver-screensaver-proxy.h
+
+cscreensaver-keybinding-handler-proxy.h : Makefile.am org.cinnamon.SettingsDaemon.KeybindingHandler.xml
+	gdbus-codegen                                       \
+        --annotate "org.cinnamon.SettingsDaemon.KeybindingHandler" org.gtk.GDBus.C.Name "KeybindingHandler" \
+        --c-namespace CScreensaver                      \
+        --generate-c-code cscreensaver-keybinding-handler-proxy   \
+        org.cinnamon.SettingsDaemon.KeybindingHandler.xml                           \
+        $(NULL)
+cscreensaver-keybinding-handler-proxy.c : cscreensaver-keybinding-handler-proxy.h
 
 libcscreensaver_la_CPPFLAGS =            \
     $(WARN_CFLAGS)          \

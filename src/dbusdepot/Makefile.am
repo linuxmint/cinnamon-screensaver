@@ -12,6 +12,7 @@ app_PYTHON = \
         baseClient.py \
         cinnamonClient.py \
         consoleKitClient.py \
+        keybindingHandlerClient.py \
         logindClient.py \
         loginInterface.py \
         notificationClient.py \

@@ -14,7 +14,3 @@ GRAB_RELEASE_TIMEOUT = 1 * 1000
 SS_SERVICE                      = "org.cinnamon.ScreenSaver"
 SS_PATH                         = "/org/cinnamon/ScreenSaver"
 SS_INTERFACE                    = "org.cinnamon.ScreenSaver"
-
-CSD_MEDIAKEY_HANDLER_SERVICE    = "org.cinnamon.SettingsDaemon"
-CSD_MEDIAKEY_HANDLER_PATH       = "/org/cinnamon/SettingsDaemon/KeybindingHandler"
-CSD_MEDIAKEY_HANDLER_INTERFACE  = "org.cinnamon.SettingsDaemon.KeybindingHandler"
