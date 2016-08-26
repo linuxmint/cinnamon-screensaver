@@ -94,7 +94,7 @@ class UPowerClient(BaseClient):
 
         for path, dev in self.relevant_devices:
             if dev.get_property("type") == DeviceType.LinePower:
-                new_plugged_in = dev.get_online()
+                new_plugged_in = dev.get_property("online")
             if dev.get_property("type") == DeviceType.Battery:
                 new_have_battery = True
 
@@ -102,20 +102,13 @@ class UPowerClient(BaseClient):
             self.have_battery = new_have_battery
             self.plugged_in = new_plugged_in
 
-    def on_device_properties_changed(self, proxy, pspec, data):
-        if pspec.get_name() in ("online", "icon-name", "state"):
+    def on_device_properties_changed(self, proxy, pspec, data=None):
+        if pspec.name in ("online", "icon-name", "state"):
             self.update_state()
             self.emit_changed()
 
     def emit_changed(self):
         self.emit("power-state-changed")
-
-    def get_battery_icon_name(self, path):
-        for dev_path, dev in self.relevant_devices:
-            if path == dev_path:
-                return dev.get_property("icon_name")
-
-        return None
 
     def get_batteries(self):
         if len(self.relevant_devices) == 0:
@@ -138,6 +131,7 @@ class UPowerClient(BaseClient):
         all_batteries_full = True
 
         for path, dev in batteries:
+            print(dev.get_property("state"))
             if dev.get_property("state") not in (DeviceState.FullyCharged, DeviceState.Unknown):
                 all_batteries_full = False
                 break

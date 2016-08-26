@@ -19,13 +19,15 @@ class PowerWidget(Gtk.Frame):
         self.box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(self.box)
 
-        self.power_proxy = dbusClientManager.UPowerClient
+        self.power_client = dbusClientManager.UPowerClient
 
-        trackers.con_tracker_get().connect(self.power_proxy,
+        trackers.con_tracker_get().connect(self.power_client,
                                            "power-state-changed",
                                            self.on_power_state_changed)
 
-    def on_power_state_changed(self, proxy):
+        self.power_client.rescan_devices()
+
+    def on_power_state_changed(self, client):
         for widget in self.box.get_children():
             widget.destroy()
 
@@ -34,10 +36,10 @@ class PowerWidget(Gtk.Frame):
         self.emit("power-state-changed")
 
     def construct_icons(self):
-        batteries = self.power_proxy.get_batteries()
+        batteries = self.power_client.get_batteries()
 
         for path, battery in batteries:
-            image = Gtk.Image.new_from_icon_name(self.power_proxy.get_battery_icon_name(path), Gtk.IconSize.LARGE_TOOLBAR)
+            image = Gtk.Image.new_from_icon_name(battery.get_property("icon-name"), Gtk.IconSize.LARGE_TOOLBAR)
 
             self.box.pack_start(image, False, False, 4)
             self.path_widget_pairs.append((path, image))
@@ -46,6 +48,6 @@ class PowerWidget(Gtk.Frame):
         self.box.show_all()
 
     def should_show(self):
-        return not self.power_proxy.full_and_on_ac_or_no_batteries()
+        return not self.power_client.full_and_on_ac_or_no_batteries()
 
 
