@@ -22,7 +22,14 @@ class LogindClient(LoginInterface, BaseClient):
         self.session_proxy = None
 
     def on_client_setup_complete(self):
-        self.session_id = self.proxy.call_get_session_by_pid_sync(self.pid)
+        try:
+            self.session_id = self.proxy.call_get_session_by_pid_sync(self.pid)
+        except GLib.Error:
+            print("Not running under the session scope, trying XDG_SESSION_ID")
+            id_suffix = os.getenv("XDG_SESSION_ID", "")
+            if id_suffix != "":
+                self.session_id = "/org/freedesktop/login1/session/%s" % (id_suffix,)
+                print("found session: %s" % (id_suffix,))
 
         try:
             self.session_proxy = CScreensaver.LogindSessionProxy.new_for_bus(Gio.BusType.SYSTEM,
