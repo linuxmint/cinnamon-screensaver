@@ -33,7 +33,7 @@ class NotificationWidget(Gtk.Frame):
 
     def on_notification_received(self, proxy):
         self.notification_count += 1
-
+        print(self.notification_count)
         self.update_label()
 
         self.emit("notification")

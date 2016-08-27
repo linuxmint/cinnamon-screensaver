@@ -20,6 +20,5 @@ class ScreenSaverClient(BaseClient):
         self.emit("client-ready", True)
 
     def on_failure(self, *args):
-        print("no proxy")
         self.emit("client-ready", False)
 

@@ -23,3 +23,6 @@ class CinnamonClient(BaseClient):
 
         self.proxy.set_property("overview-active", False)
         self.proxy.set_property("expo-active", False)
+
+    def on_failure(self, *args):
+        print("Failed to connect to Cinnamon - screensaver will not activate when expo or overview modes are active.")

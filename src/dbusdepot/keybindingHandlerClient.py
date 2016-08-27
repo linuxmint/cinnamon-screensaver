@@ -21,3 +21,5 @@ class KeybindingHandlerClient(BaseClient):
         if self.proxy:
             self.proxy.call_handle_keybinding(mk_type, None, None)
 
+    def on_failure(self, *args):
+        print("Failed to connect to the keybinding handler - media key shortcuts will not work.")

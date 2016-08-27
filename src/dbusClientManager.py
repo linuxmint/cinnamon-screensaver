@@ -1,17 +1,96 @@
 #! /usr/bin/python3
 
 from dbusdepot.cinnamonClient import CinnamonClient as _CinnamonClient
-from dbusdepot.consoleKitClient import ConsoleKitClient as _ConsoleKitClient
-from dbusdepot.logindClient import LogindClient as _LogindClient
 from dbusdepot.notificationClient import NotificationClient as _NotificationClient
 from dbusdepot.sessionClient import SessionClient as _SessionClient
 from dbusdepot.uPowerClient import UPowerClient as _UPowerClient
 from dbusdepot.keybindingHandlerClient import KeybindingHandlerClient as _KeybindingHandlerClient
 
+from dbusdepot.consoleKitClient import ConsoleKitClient
+from dbusdepot.logindClient import LogindClient
+
+from util import trackers
+
+# Our dbus proxies are abstracted out one level more than really necessary - we have
+# clients that the screensaver initializes, that can never fail.  The actual connection
+# business to the various dbus address is performed asynchronously from within each client.
+# The following clients can fail to establish with their respective dbus interfaces without
+# competely breaking the program (or at least that's what we're after) - it just means that
+# depending on what fails, you may end up without keyboard shortcut support, or a battery 
+# widget, etc...
+
 CinnamonClient = _CinnamonClient()
-ConsoleKitClient = _ConsoleKitClient()
-LogindClient = _LogindClient()
 NotificationClient = _NotificationClient()
 SessionClient = _SessionClient()
 UPowerClient = _UPowerClient()
 KeybindingHandlerClient = _KeybindingHandlerClient()
+
+# The login client is a bit different - we can have either logind or ConsoleKit.
+# So, we have to do a bit more work to determine which one we're going to use.
+# This doesn't really need to impact the main startup business though - whichever
+# one we end up using, all we're doing is connecting to signals from one or the
+# other client.  Whichever we end up with is invisible/not relevant to the program.
+
+class LoginClientResolver:
+    def __init__(self, manager):
+
+        self.manager = manager
+        self.login_client = None
+
+        self.try_logind()
+
+    def try_logind(self):
+        print("Trying to connect to logind...")
+
+        login_client = LogindClient()
+        trackers.con_tracker_get().connect(login_client,
+                                           "startup-status",
+                                           self.on_logind_startup_result)
+
+    def on_logind_startup_result(self, client, success):
+        trackers.con_tracker_get().disconnect(client,
+                                              "startup-status",
+                                              self.on_logind_startup_result)
+
+        if success:
+            print("Successfully using logind")
+            self.login_client = client
+            self.setup_manager_connections()
+        else:
+            print("Failed to connect to logind, or it doesn't exist.")
+            self.try_console_kit()
+
+    def try_console_kit(self):
+        print("Trying to connect to ConsoleKit...")
+
+        login_client = ConsoleKitClient()
+        trackers.con_tracker_get().connect(login_client,
+                                           "startup-status",
+                                           self.on_consolekit_startup_result)
+
+    def on_consolekit_startup_result(self, client, success):
+        trackers.con_tracker_get().disconnect(client,
+                                              "startup-status",
+                                              self.on_consolekit_startup_result)
+
+        if success:
+            print("Successfully using ConsoleKit")
+            self.login_client = client
+            self.setup_manager_connections()
+        else:
+            print("Failed to connect to ConsoleKit, or it doesn't exist.\n")
+
+            print("Unable to connect to either logind or ConsoleKit.  Certain things will not work,")
+            print("such as automatic unlocking when switching users from the desktop manager,")
+            print("or locking in appropriate power/system-management events.")
+
+    def setup_manager_connections(self):
+        trackers.con_tracker_get().connect(self.login_client,
+                                           "lock",
+                                           lambda proxy: self.manager.lock())
+        trackers.con_tracker_get().connect(self.login_client,
+                                           "unlock",
+                                           lambda proxy: self.manager.unlock())
+        trackers.con_tracker_get().connect(self.login_client,
+                                           "active",
+                                           lambda proxy: self.manager.simulate_user_activity())

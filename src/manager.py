@@ -36,57 +36,13 @@ class ScreensaverManager(GObject.Object):
         self.focus_nav = FocusNavigator()
 
         self.session_client = dbusClientManager.SessionClient
-        self.cinnamon_client = dbusClientManager.CinnamonClient
-
         trackers.con_tracker_get().connect(self.session_client,
                                            "idle-changed", 
                                            self.on_session_idle_changed)
 
-        self.login_client = None
+        self.cinnamon_client = dbusClientManager.CinnamonClient
 
-        login_client = dbusClientManager.LogindClient
-        trackers.con_tracker_get().connect(login_client,
-                                           "startup-status",
-                                           self.on_logind_startup_result)
-
-    def on_logind_startup_result(self, client, success):
-        trackers.con_tracker_get().disconnect(client,
-                                              "startup-status",
-                                              self.on_logind_startup_result)
-
-        if success:
-            self.connect_to_login_client(client)
-        else:
-            login_client = dbusClientManager.ConsoleKitClient
-            trackers.con_tracker_get().connect(login_client,
-                                               "startup-status",
-                                               self.on_consolekit_startup_result)
-
-    def on_consolekit_startup_result(self, client, success):
-        trackers.con_tracker_get().disconnect(client,
-                                              "startup-status",
-                                              self.on_consolekit_startup_result)
-
-        if success:
-            self.connect_to_login_client(client)
-        else:
-            print("Unable to connect to either logind or ConsoleKit.  Certain things will not work,")
-            print("such as automatic unlocking when switching users from the desktop manager,")
-            print("or locking in appropriate power/system-management events.")
-            self.login_client = None
-
-    def connect_to_login_client(self, client):
-        self.login_client = client
-
-        trackers.con_tracker_get().connect(client,
-                                           "lock",
-                                           lambda proxy: self.lock())
-        trackers.con_tracker_get().connect(client,
-                                           "unlock",
-                                           lambda proxy: self.unlock())
-        trackers.con_tracker_get().connect(client,
-                                           "active",
-                                           lambda proxy: self.simulate_user_activity())
+        dbusClientManager.LoginClientResolver(self)
 
 ##### Service handlers (from service.py)
 

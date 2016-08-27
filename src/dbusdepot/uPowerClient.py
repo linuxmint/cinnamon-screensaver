@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio, GObject, CScreensaver
+from gi.repository import Gio, GObject, CScreensaver, GLib
 from enum import IntEnum
 
 from dbusdepot.baseClient import BaseClient
@@ -67,18 +67,24 @@ class UPowerClient(BaseClient):
 
         self.relevant_devices = []
 
-        # The return type for this call has to be overridden in gdbus-codegen
-        # (See the Makefile.am) - or else we get utf-8 errors (python3 issue?)
-        for path in self.proxy.call_enumerate_devices_sync():
-            dev = CScreensaver.UPowerDeviceProxy.new_for_bus_sync(Gio.BusType.SYSTEM,
-                                                                  Gio.DBusProxyFlags.NONE,
-                                                                  self.UPOWER_SERVICE,
-                                                                  path,
-                                                                  None)
+        try:
+            # The return type for this call has to be overridden in gdbus-codegen
+            # (See the Makefile.am) - or else we get utf-8 errors (python3 issue?)
+            for path in self.proxy.call_enumerate_devices_sync():
+                try:
+                    dev = CScreensaver.UPowerDeviceProxy.new_for_bus_sync(Gio.BusType.SYSTEM,
+                                                                          Gio.DBusProxyFlags.NONE,
+                                                                          self.UPOWER_SERVICE,
+                                                                          path,
+                                                                          None)
 
-            if dev.get_property("type") in (DeviceType.Battery, DeviceType.LinePower):
-                self.relevant_devices.append((path, dev))
-                dev.prop_changed_id = dev.connect("notify", self.on_device_properties_changed)
+                    if dev.get_property("type") in (DeviceType.Battery, DeviceType.LinePower):
+                        self.relevant_devices.append((path, dev))
+                        dev.prop_changed_id = dev.connect("notify", self.on_device_properties_changed)
+                except GLib.Error:
+                    print("UPowerClient had trouble connecting with device:", path, " - skipping it")
+        except GLib.Error:
+            print("UPowerClient had trouble enumerating through devices.  The battery indicator will be disabled")
 
         self.update_state()
         self.emit_changed()
@@ -138,3 +144,5 @@ class UPowerClient(BaseClient):
 
         return self.plugged_in and all_batteries_full
 
+    def on_failure(self, *args):
+        print("Failed to establish a connection with UPower - the battery indicator will be disabled.")

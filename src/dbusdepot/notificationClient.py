@@ -55,3 +55,5 @@ class NotificationClient(BaseClient):
 
         return message.copy()
 
+    def on_failure(self, *args):
+        print("Failed to establish a dbus messaging monitor for notifications.  A notification count will not be displayed.")

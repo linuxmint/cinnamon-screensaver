@@ -39,10 +39,9 @@ class LogindClient(LoginInterface, BaseClient):
                                                                              None,
                                                                              self.on_session_ready,
                                                                              None)
-        except GLib.Error as e:
-            print("Could not acquire org.freedesktop.login1", e)
+        except GLib.Error:
             self.session_proxy = None
-            self.emit_failure()
+            self.on_failure()
 
     def on_session_ready(self, object, result, data=None):
         self.session_proxy = CScreensaver.LogindSessionProxy.new_for_bus_finish(result)
@@ -54,8 +53,7 @@ class LogindClient(LoginInterface, BaseClient):
         self.emit("startup-status", True)
 
     def on_active_changed(self, proxy, pspec, data=None):
-        active = self.proxy.get_active()
-        if active:
+        if self.session_proxy.get_property("active"):
             self.emit("active")
 
     def on_failure(self, *args):

@@ -30,8 +30,7 @@ class ConsoleKitClient(LoginInterface, BaseClient):
                                                                                  None,
                                                                                  self.on_session_ready,
                                                                                  None)
-        except GLib.Error as e:
-            print("Could not acquire org.freedesktop.ConsoleKit", e)
+        except GLib.Error:
             self.session_proxy = None
             self.on_failure()
 
@@ -44,8 +43,8 @@ class ConsoleKitClient(LoginInterface, BaseClient):
 
         self.emit("startup-status", True)
 
-    def on_active_changed(self, proxy, pspec, data=None):
-        if self.session_proxy.get_active():
+    def on_active_changed(self, proxy, active, data=None):
+        if active:
             self.emit("active")
 
     def on_failure(self, *args):

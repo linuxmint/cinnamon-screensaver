@@ -29,3 +29,5 @@ class SessionClient(BaseClient):
             self.idle = new_idle
             self.emit("idle-changed", self.idle)
 
+    def on_failure(self, *args):
+        print("Failed to connect to session manager - idle detection will not work.")
