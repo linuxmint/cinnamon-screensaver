@@ -4,7 +4,6 @@ import gi
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, Gdk
-from dbus.mainloop.glib import DBusGMainLoop
 import signal
 import gettext
 import argparse
@@ -42,8 +41,6 @@ class Main:
             Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), prov, 600)
 
 if __name__ == "__main__":
-    DBusGMainLoop(set_as_default=True)
-
     main = Main()
 
 

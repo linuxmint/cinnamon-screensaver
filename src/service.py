@@ -48,6 +48,8 @@ class ScreensaverService(GObject.Object):
 
         iface.complete_lock(inv)
 
+        return True
+
     def handle_quit(self, iface, inv):
         self.manager.unlock()
 
@@ -55,26 +57,36 @@ class ScreensaverService(GObject.Object):
 
         Gtk.main_quit()
 
+        return True
+
     def handle_set_active(self, iface, inv, active):
         self.manager.set_active(active)
 
         iface.complete_set_active(inv)
+
+        return True
 
     def handle_get_active(self, iface, inv):
         active = self.manager.get_active()
 
         iface.complete_get_active(inv, active)
 
+        return True
+
     def handle_get_active_time(self, iface, inv):
         atime = self.manager.get_active_time()
 
         iface.complete_get_active_time(inv, atime)
+
+        return True
 
     def handle_simulate_user_activity(self, iface, inv):
         if self.manager.is_locked():
             self.manager.simulate_user_activity()
 
         iface.complete_simulate_user_activity(inv)
+
+        return True
 
     def on_active_changed(self, manager, state, data=None):
         self.interface.emit_active_changed(state)
