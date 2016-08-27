@@ -26,8 +26,8 @@ class NotificationWidget(Gtk.Frame):
         self.image = Gtk.Image.new_from_icon_name("screensaver-notification-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         box.pack_end(self.image, False, False, 4)
 
-        self.notification_proxy = dbusClientManager.NotificationClient
-        trackers.con_tracker_get().connect(self.notification_proxy,
+        self.notification_watcher = dbusClientManager.NotificationWatcher
+        trackers.con_tracker_get().connect(self.notification_watcher,
                                            "notification-received",
                                            self.on_notification_received)
 

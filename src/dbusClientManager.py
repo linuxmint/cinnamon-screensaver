@@ -1,13 +1,13 @@
 #! /usr/bin/python3
 
 from dbusdepot.cinnamonClient import CinnamonClient as _CinnamonClient
-from dbusdepot.notificationClient import NotificationClient as _NotificationClient
 from dbusdepot.sessionClient import SessionClient as _SessionClient
 from dbusdepot.uPowerClient import UPowerClient as _UPowerClient
 from dbusdepot.keybindingHandlerClient import KeybindingHandlerClient as _KeybindingHandlerClient
 
 from dbusdepot.consoleKitClient import ConsoleKitClient
 from dbusdepot.logindClient import LogindClient
+from gi.repository import CScreensaver
 
 from util import trackers
 
@@ -20,10 +20,14 @@ from util import trackers
 # widget, etc...
 
 CinnamonClient = _CinnamonClient()
-NotificationClient = _NotificationClient()
 SessionClient = _SessionClient()
 UPowerClient = _UPowerClient()
 KeybindingHandlerClient = _KeybindingHandlerClient()
+
+# The notification watcher is a C introspected class - some of the functions it uses
+# don't work well via introspection.
+
+NotificationWatcher = CScreensaver.NotificationWatcher()
 
 # The login client is a bit different - we can have either logind or ConsoleKit.
 # So, we have to do a bit more work to determine which one we're going to use.

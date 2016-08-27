@@ -1,4 +1,4 @@
-#include "cscreensaver-gdk-event-filter.h"
+#include "cs-gdk-event-filter.h"
 
 #ifdef HAVE_SHAPE_EXT
 #include <X11/extensions/shape.h>
@@ -6,14 +6,14 @@
 #include <gtk/gtkx.h>
 #include <string.h>
 
-G_DEFINE_TYPE (CScreensaverGdkEventFilter, cscreensaver_gdk_event_filter, G_TYPE_OBJECT);
+G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT);
 
-static void clear_widget (CScreensaverGdkEventFilter *filter);
+static void clear_widget (CsGdkEventFilter *filter);
 
 static void
-unshape_window (CScreensaverGdkEventFilter *filter)
+unshape_window (CsGdkEventFilter *filter)
 {
-    g_return_if_fail (CSCREENSAVER_IS_GDK_EVENT_FILTER (filter));
+    g_return_if_fail (CS_IS_GDK_EVENT_FILTER (filter));
 
     gdk_window_shape_combine_region (gtk_widget_get_window (GTK_WIDGET (filter->stage)),
                                      NULL,
@@ -22,11 +22,11 @@ unshape_window (CScreensaverGdkEventFilter *filter)
 }
 
 static void
-raise_stage (CScreensaverGdkEventFilter *filter)
+raise_stage (CsGdkEventFilter *filter)
 {
     GdkWindow *win;
 
-    g_return_if_fail (CSCREENSAVER_IS_GDK_EVENT_FILTER (filter));
+    g_return_if_fail (CS_IS_GDK_EVENT_FILTER (filter));
 
     win = gtk_widget_get_window (GTK_WIDGET (filter->stage));
 
@@ -50,7 +50,7 @@ x11_window_is_ours (Window window)
 }
 
 static void
-cscreensaver_gdk_event_filter_xevent (CScreensaverGdkEventFilter *filter,
+cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
                                       GdkXEvent *xevent)
 {
     XEvent *ev;
@@ -108,7 +108,7 @@ select_popup_events (void)
 }
 
 static void
-select_shape_events (CScreensaverGdkEventFilter *filter)
+select_shape_events (CsGdkEventFilter *filter)
 {
 #ifdef HAVE_SHAPE_EXT
         unsigned long events;
@@ -132,53 +132,53 @@ select_shape_events (CScreensaverGdkEventFilter *filter)
 static GdkFilterReturn
 xevent_filter (GdkXEvent *xevent,
                GdkEvent  *event,
-               CScreensaverGdkEventFilter *filter)
+               CsGdkEventFilter *filter)
 {
-        cscreensaver_gdk_event_filter_xevent (filter, xevent);
+        cs_gdk_event_filter_xevent (filter, xevent);
 
         return GDK_FILTER_CONTINUE;
 }
 
 static void
-cscreensaver_gdk_event_filter_init (CScreensaverGdkEventFilter *filter)
+cs_gdk_event_filter_init (CsGdkEventFilter *filter)
 {
     filter->shape_event_base = 0;
     filter->stage = NULL;
 }
 
 static void
-cscreensaver_gdk_event_filter_finalize (GObject *object)
+cs_gdk_event_filter_finalize (GObject *object)
 {
-        CScreensaverGdkEventFilter *filter;
+        CsGdkEventFilter *filter;
 
         g_return_if_fail (object != NULL);
-        g_return_if_fail (CSCREENSAVER_IS_GDK_EVENT_FILTER (object));
+        g_return_if_fail (CS_IS_GDK_EVENT_FILTER (object));
 
-        filter = CSCREENSAVER_GDK_EVENT_FILTER (object);
+        filter = CS_GDK_EVENT_FILTER (object);
 
-        cscreensaver_gdk_event_filter_stop (filter);
+        cs_gdk_event_filter_stop (filter);
 
-        G_OBJECT_CLASS (cscreensaver_gdk_event_filter_parent_class)->finalize (object);
+        G_OBJECT_CLASS (cs_gdk_event_filter_parent_class)->finalize (object);
 }
 
 static void
-cscreensaver_gdk_event_filter_class_init (CScreensaverGdkEventFilterClass *klass)
+cs_gdk_event_filter_class_init (CsGdkEventFilterClass *klass)
 {
         GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
-        object_class->finalize     = cscreensaver_gdk_event_filter_finalize;
+        object_class->finalize     = cs_gdk_event_filter_finalize;
 }
 
 static void
-on_widget_finalized (CScreensaverGdkEventFilter *filter,
+on_widget_finalized (CsGdkEventFilter *filter,
                      GtkWidget                  *stage)
 {
-    cscreensaver_gdk_event_filter_stop (filter);
+    cs_gdk_event_filter_stop (filter);
     clear_widget (filter);
 }
 
 static void
-clear_widget (CScreensaverGdkEventFilter *filter)
+clear_widget (CsGdkEventFilter *filter)
 {
     if (filter->stage == NULL)
         return;
@@ -188,8 +188,8 @@ clear_widget (CScreensaverGdkEventFilter *filter)
 }
 
 void
-cscreensaver_gdk_event_filter_start (CScreensaverGdkEventFilter *filter,
-                                     GtkWidget                  *stage)
+cs_gdk_event_filter_start (CsGdkEventFilter *filter,
+                           GtkWidget        *stage)
 {
     g_return_if_fail(stage != NULL);
 
@@ -204,20 +204,20 @@ cscreensaver_gdk_event_filter_start (CScreensaverGdkEventFilter *filter,
 }
 
 void
-cscreensaver_gdk_event_filter_stop (CScreensaverGdkEventFilter *filter)
+cs_gdk_event_filter_stop (CsGdkEventFilter *filter)
 {
     gdk_window_remove_filter (NULL, (GdkFilterFunc) xevent_filter, filter);
     clear_widget (filter);
 }
 
-CScreensaverGdkEventFilter *
-cscreensaver_gdk_event_filter_new (void)
+CsGdkEventFilter *
+cs_gdk_event_filter_new (void)
 {
         GObject     *result;
 
-        result = g_object_new (CSCREENSAVER_TYPE_GDK_EVENT_FILTER,
+        result = g_object_new (CS_TYPE_GDK_EVENT_FILTER,
                                NULL);
 
-        return CSCREENSAVER_GDK_EVENT_FILTER (result);
+        return CS_GDK_EVENT_FILTER (result);
 }
 
