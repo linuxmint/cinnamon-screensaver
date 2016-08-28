@@ -2,8 +2,8 @@
 # coding: utf-8
 
 import gi
-gi.require_version('Gkbd', '3.0')
 gi.require_version('AccountsService', '1.0')
+gi.require_version('CinnamonDesktop', '3.0')
 from gi.repository import Gtk, Gdk, AccountsService, GObject, CinnamonDesktop, GdkPixbuf
 import os
 import cairo
@@ -11,6 +11,7 @@ import cairo
 from util import utils, trackers, settings
 import status
 import config
+import singletons
 from baseWindow import BaseWindow
 
 acc_service = None
@@ -50,67 +51,42 @@ class PasswordEntry(Gtk.Entry):
         self.set_placeholder_text (_("Enter password..."))
         self.set_can_default(True)
 
-        trackers.con_tracker_get().connect(settings.kbd_config,
-                                           "group-changed",
-                                           self.on_group_changed)
-
         trackers.con_tracker_get().connect(self,
                                            "icon-press",
                                            self.on_icon_pressed)
 
-        self.current_pixbuf = None
+        self.keyboard_layout = singletons.KeyboardLayout
+        self.keyboard_layout.set_lockscreen_group()
+
+        trackers.con_tracker_get().connect(self.keyboard_layout,
+                                           "group-changed",
+                                           self.on_group_changed)
 
         self.update_layout_icon()
 
-    def update_layout_icon(self):
-        pixbuf = None
+        trackers.con_tracker_get().connect(self,
+                                           "destroy",
+                                           self.on_destroy)
 
-        if len(settings.kbd_config.get_group_names()) > 1:
-            group = settings.kbd_config.get_current_group()
-            name = settings.kbd_config.get_group_name(group)
-
-            if settings.get_show_flags():
-                path = os.path.join(config.datadir, "cinnamon", "flags", "%s.png" % name)
-                if os.path.exists(path):
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
-
-            if pixbuf == None:
-                pixbuf = self.get_text_pixbuf(name)
-
-        self.set_icon_from_pixbuf(Gtk.EntryIconPosition.PRIMARY, pixbuf)
-
-    def on_icon_pressed(self, entry, icon_pos, event):
-        if icon_pos == Gtk.EntryIconPosition.PRIMARY:
-            settings.kbd_config.lock_next_group()
-
-    def on_group_changed(self, config, group):
+    def on_group_changed(self, keyboard_layout):
         self.grab_focus_without_selecting()
         self.update_layout_icon()
 
-    def get_text_pixbuf(self, text):
-        v, w, h = Gtk.icon_size_lookup(Gtk.IconSize.MENU)
+    def on_icon_pressed(self, entry, icon_pos, event):
+        if icon_pos == Gtk.EntryIconPosition.PRIMARY:
+            self.keyboard_layout.next_group()
 
-        surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
-        cr = cairo.Context(surf)
+    def update_layout_icon(self):
+        pixbuf = self.keyboard_layout.get_image_pixbuf()
 
-        cr.set_source_rgba(0, 0, 0, 0)
-        cr.fill()
-
-        font_size = 10.0
-
-        cr.move_to(0, h - ((h - font_size) / 2))
-
-        rgba = self.get_style_context().get_color(Gtk.StateFlags.NORMAL)
-
-        cr.set_source_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha)
-        cr.show_text(text.upper()[:2])
-
-        final_surf = cr.get_target()
-
-        return Gdk.pixbuf_get_from_surface(final_surf, 0, 0, w, h)
+        self.set_icon_from_pixbuf(Gtk.EntryIconPosition.PRIMARY, pixbuf)
 
     def grab_focus(self):
         Gtk.Entry.grab_focus_without_selecting(self)
+
+    def on_destroy(self, widget, data=None):
+        self.keyboard_layout.restore_original_group()
+
 
 class UnlockDialog(BaseWindow):
     __gsignals__ = {

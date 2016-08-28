@@ -4,6 +4,7 @@ from gi.repository import Gtk, Gdk, GObject, CScreensaver
 
 import status
 import constants as c
+import singletons
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
@@ -21,7 +22,7 @@ class Stage(Gtk.Window):
                             skip_taskbar_hint=True,
                             skip_pager_hint=True)
 
-        trackers.con_tracker_get().connect(settings.bg,
+        trackers.con_tracker_get().connect(singletons.Backgrounds,
                                            "changed", 
                                            self.on_bg_changed)
 
@@ -111,7 +112,7 @@ class Stage(Gtk.Window):
         self.setup_status_bars()
 
     def destroy_stage(self):
-        trackers.con_tracker_get().disconnect(settings.bg,
+        trackers.con_tracker_get().disconnect(singletons.Backgrounds,
                                               "changed",
                                               self.on_bg_changed)
 
@@ -139,9 +140,9 @@ class Stage(Gtk.Window):
 
             image = Gtk.Image()
 
-            settings.bg.create_and_set_gtk_image (image,
-                                                  monitor.rect.width,
-                                                  monitor.rect.height)
+            singletons.Backgrounds.create_and_set_gtk_image (image,
+                                                             monitor.rect.width,
+                                                             monitor.rect.height)
 
             monitor.set_initial_wallpaper_image(image)
 
@@ -159,7 +160,7 @@ class Stage(Gtk.Window):
         for monitor in self.monitors:
             image = Gtk.Image()
 
-            settings.bg.create_and_set_gtk_image (image,
+            singletons.Backgrounds.create_and_set_gtk_image (image,
                                                   monitor.rect.width,
                                                   monitor.rect.height)
 
