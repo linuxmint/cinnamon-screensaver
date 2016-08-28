@@ -61,30 +61,26 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
        ConfigureNofify is used to tell us when windows are raised. */
     switch (ev->xany.type) {
         case MapNotify:
-            {
-                XMapEvent *xme = &ev->xmap;
+            XMapEvent *xme = &ev->xmap;
 
-                if (! x11_window_is_ours (xme->window)) {
-                    raise_stage (filter);
-                }
-
-                break;
+            if (! x11_window_is_ours (xme->window)) {
+                raise_stage (filter);
             }
+
+            break;
         case ConfigureNotify:
-            {
-                XConfigureEvent *xce = &ev->xconfigure;
+            XConfigureEvent *xce = &ev->xconfigure;
 
-                if (! x11_window_is_ours (xce->window)) {
-                    raise_stage (filter);
-                }
+            if (! x11_window_is_ours (xce->window)) {
+                raise_stage (filter);
+            }
 
-                break;
-        }
-    default:
+            break;
+        default:
 #ifdef HAVE_SHAPE_EXT
-        if (ev->xany.type == (window->priv->shape_event_base + ShapeNotify)) {
-            unshape_window (window);
-        }
+            if (ev->xany.type == (window->priv->shape_event_base + ShapeNotify)) {
+                unshape_window (window);
+            }
 #endif
         break;
     }
@@ -93,50 +89,49 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
 static void
 select_popup_events (void)
 {
-        XWindowAttributes attr;
-        unsigned long     events;
+    XWindowAttributes attr;
+    unsigned long     events;
 
-        gdk_error_trap_push ();
+    gdk_error_trap_push ();
 
-        memset (&attr, 0, sizeof (attr));
-        XGetWindowAttributes (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), &attr);
+    memset (&attr, 0, sizeof (attr));
+    XGetWindowAttributes (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), &attr);
 
-        events = SubstructureNotifyMask | attr.your_event_mask;
-        XSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), events);
+    events = SubstructureNotifyMask | attr.your_event_mask;
+    XSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), events);
 
-        gdk_error_trap_pop_ignored ();
+    gdk_error_trap_pop_ignored ();
 }
 
 static void
 select_shape_events (CsGdkEventFilter *filter)
 {
 #ifdef HAVE_SHAPE_EXT
-        unsigned long events;
-        int           shape_error_base;
+    unsigned long events;
+    int           shape_error_base;
 
-        gdk_error_trap_push ();
+    gdk_error_trap_push ();
 
-        if (XShapeQueryExtension (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &filter->shape_event_base, &shape_error_base)) {
-            events = ShapeNotifyMask;
+    if (XShapeQueryExtension (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &filter->shape_event_base, &shape_error_base)) {
+        events = ShapeNotifyMask;
 
-            XShapeSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()),
-                               GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (filter->stage))),
-                               events);
-        }
+        XShapeSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()),
+                           GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (filter->stage))),
+                           events);
+    }
 
-        gdk_error_trap_pop_ignored ();
+    gdk_error_trap_pop_ignored ();
 #endif
 }
-
 
 static GdkFilterReturn
 xevent_filter (GdkXEvent *xevent,
                GdkEvent  *event,
                CsGdkEventFilter *filter)
 {
-        cs_gdk_event_filter_xevent (filter, xevent);
+    cs_gdk_event_filter_xevent (filter, xevent);
 
-        return GDK_FILTER_CONTINUE;
+    return GDK_FILTER_CONTINUE;
 }
 
 static void
@@ -149,16 +144,16 @@ cs_gdk_event_filter_init (CsGdkEventFilter *filter)
 static void
 cs_gdk_event_filter_finalize (GObject *object)
 {
-        CsGdkEventFilter *filter;
+    CsGdkEventFilter *filter;
 
-        g_return_if_fail (object != NULL);
-        g_return_if_fail (CS_IS_GDK_EVENT_FILTER (object));
+    g_return_if_fail (object != NULL);
+    g_return_if_fail (CS_IS_GDK_EVENT_FILTER (object));
 
-        filter = CS_GDK_EVENT_FILTER (object);
+    filter = CS_GDK_EVENT_FILTER (object);
 
-        cs_gdk_event_filter_stop (filter);
+    cs_gdk_event_filter_stop (filter);
 
-        G_OBJECT_CLASS (cs_gdk_event_filter_parent_class)->finalize (object);
+    G_OBJECT_CLASS (cs_gdk_event_filter_parent_class)->finalize (object);
 }
 
 static void
@@ -213,11 +208,11 @@ cs_gdk_event_filter_stop (CsGdkEventFilter *filter)
 CsGdkEventFilter *
 cs_gdk_event_filter_new (void)
 {
-        GObject     *result;
+    GObject     *result;
 
-        result = g_object_new (CS_TYPE_GDK_EVENT_FILTER,
-                               NULL);
+    result = g_object_new (CS_TYPE_GDK_EVENT_FILTER,
+                           NULL);
 
-        return CS_GDK_EVENT_FILTER (result);
+    return CS_GDK_EVENT_FILTER (result);
 }
 
