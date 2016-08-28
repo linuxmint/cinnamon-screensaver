@@ -16,15 +16,15 @@ G_BEGIN_DECLS
 
 typedef struct
 {
-        GObject        obj;
+    GObject        obj;
 
-        GtkWidget     *stage;
-        int            shape_event_base;
+    GtkWidget     *stage;
+    int            shape_event_base;
 } CsGdkEventFilter;
 
 typedef struct
 {
-        GObjectClass    parent_class;
+    GObjectClass    parent_class;
 } CsGdkEventFilterClass;
 
 GType                        cs_gdk_event_filter_get_type           (void);

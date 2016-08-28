@@ -101,48 +101,48 @@ cs_notification_watcher_init (CsNotificationWatcher *watcher)
 static void
 cs_notification_watcher_dispose (GObject *object)
 {
-        CsNotificationWatcher *watcher;
+    CsNotificationWatcher *watcher;
 
-        g_return_if_fail (object != NULL);
-        g_return_if_fail (CS_IS_NOTIFICATION_WATCHER (object));
+    g_return_if_fail (object != NULL);
+    g_return_if_fail (CS_IS_NOTIFICATION_WATCHER (object));
 
-        watcher = CS_NOTIFICATION_WATCHER (object);
+    watcher = CS_NOTIFICATION_WATCHER (object);
 
-        if (watcher->filter_id > 0) {
-            g_dbus_connection_remove_filter (watcher->connection, watcher->filter_id);
-            watcher->filter_id = 0;
-        }
+    if (watcher->filter_id > 0) {
+        g_dbus_connection_remove_filter (watcher->connection, watcher->filter_id);
+        watcher->filter_id = 0;
+    }
 
-        g_clear_object (&watcher->connection);
+    g_clear_object (&watcher->connection);
 
-        G_OBJECT_CLASS (cs_notification_watcher_parent_class)->dispose (object);
+    G_OBJECT_CLASS (cs_notification_watcher_parent_class)->dispose (object);
 }
 
 static void
 cs_notification_watcher_class_init (CsNotificationWatcherClass *klass)
 {
-        GObjectClass   *object_class = G_OBJECT_CLASS (klass);
+    GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
-        object_class->dispose     = cs_notification_watcher_dispose;
+    object_class->dispose     = cs_notification_watcher_dispose;
 
-        signals [NOTIFICATION_RECEIVED] =
-            g_signal_new ("notification-received",
-            G_TYPE_FROM_CLASS (object_class),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET (CsNotificationWatcherClass, notification_received),
-            NULL, NULL,
-            g_cclosure_marshal_VOID__VOID,
-            G_TYPE_NONE, 0);
+    signals [NOTIFICATION_RECEIVED] =
+        g_signal_new ("notification-received",
+        G_TYPE_FROM_CLASS (object_class),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET (CsNotificationWatcherClass, notification_received),
+        NULL, NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE, 0);
 }
 
 CsNotificationWatcher *
 cs_notification_watcher_new (void)
 {
-        GObject     *result;
+    GObject     *result;
 
-        result = g_object_new (CS_TYPE_NOTIFICATION_WATCHER,
-                               NULL);
+    result = g_object_new (CS_TYPE_NOTIFICATION_WATCHER,
+                           NULL);
 
-        return CS_NOTIFICATION_WATCHER (result);
+    return CS_NOTIFICATION_WATCHER (result);
 }
 

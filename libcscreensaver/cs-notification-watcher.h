@@ -17,17 +17,17 @@ G_BEGIN_DECLS
 
 typedef struct
 {
-        GObject        obj;
+    GObject        obj;
 
-        GDBusConnection *connection;
-        gint             filter_id;
+    GDBusConnection *connection;
+    gint             filter_id;
 } CsNotificationWatcher;
 
 typedef struct
 {
-        GObjectClass    parent_class;
+    GObjectClass    parent_class;
 
-        void (* notification_received) (CsNotificationWatcher *watcher);
+    void (* notification_received) (CsNotificationWatcher *watcher);
 } CsNotificationWatcherClass;
 
 GType                        cs_notification_watcher_get_type           (void);
