@@ -61,6 +61,7 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
        ConfigureNofify is used to tell us when windows are raised. */
     switch (ev->xany.type) {
         case MapNotify:
+          {
             XMapEvent *xme = &ev->xmap;
 
             if (! x11_window_is_ours (xme->window)) {
@@ -68,7 +69,9 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
             }
 
             break;
+          }
         case ConfigureNotify:
+          {
             XConfigureEvent *xce = &ev->xconfigure;
 
             if (! x11_window_is_ours (xce->window)) {
@@ -76,13 +79,16 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
             }
 
             break;
+          }
         default:
+          {
 #ifdef HAVE_SHAPE_EXT
             if (ev->xany.type == (window->priv->shape_event_base + ShapeNotify)) {
                 unshape_window (window);
             }
 #endif
         break;
+          }
     }
 }
 

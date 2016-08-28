@@ -14,7 +14,7 @@ app_PYTHON = \
         clock.py \
         config.py \
         constants.py \
-        dbusClientManager.py \
+        singletons.py \
         infoBar.py \
         manager.py \
         monitorView.py \

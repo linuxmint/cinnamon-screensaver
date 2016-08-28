@@ -116,7 +116,7 @@ cs-keybinding-handler-proxy.h : Makefile.am org.cinnamon.SettingsDaemon.Keybindi
 cs-keybinding-handler-proxy.c : cs-keybinding-handler-proxy.h
 
 cs-media-player-proxy.h : Makefile.am org.mpris.MediaPlayer2.Player.xml
-    gdbus-codegen                                       \
+	gdbus-codegen                                       \
         --annotate "org.mpris.MediaPlayer2.Player" org.gtk.GDBus.C.Name "MediaPlayer" \
         --c-namespace Cs                      \
         --generate-c-code cs-media-player-proxy   \
