@@ -20,7 +20,9 @@ dbus_built_sources =\
     cs-consolekit-session-proxy.c \
     cs-consolekit-session-proxy.h \
     cs-keybinding-handler-proxy.c \
-    cs-keybinding-handler-proxy.h
+    cs-keybinding-handler-proxy.h \
+    cs-media-player-proxy.c \
+    cs-media-player-proxy.h
 
 cs-cinnamon-proxy.h : Makefile.am org.Cinnamon.xml
 	gdbus-codegen										\
@@ -113,6 +115,15 @@ cs-keybinding-handler-proxy.h : Makefile.am org.cinnamon.SettingsDaemon.Keybindi
         $(NULL)
 cs-keybinding-handler-proxy.c : cs-keybinding-handler-proxy.h
 
+cs-media-player-proxy.h : Makefile.am org.mpris.MediaPlayer2.Player.xml
+    gdbus-codegen                                       \
+        --annotate "org.mpris.MediaPlayer2.Player" org.gtk.GDBus.C.Name "MediaPlayer" \
+        --c-namespace Cs                      \
+        --generate-c-code cs-media-player-proxy   \
+        org.mpris.MediaPlayer2.Player.xml                           \
+        $(NULL)
+cs-media-player-proxy.c : cs-media-player-proxy.h
+
 libcscreensaver_la_CPPFLAGS =            \
     $(WARN_CFLAGS)          \
     $(CSCREENSAVER_CFLAGS)           \
@@ -177,4 +188,5 @@ EXTRA_DIST = \
     org.freedesktop.ConsoleKit.Manager.xml \
     org.freedesktop.ConsoleKit.Session.xml \
     org.cinnamon.ScreenSaver.xml \
-    org.cinnamon.SettingsDaemon.KeybindingHandler.xml
+    org.cinnamon.SettingsDaemon.KeybindingHandler.xml \
+    org.mpris.MediaPlayer2.Player.xml

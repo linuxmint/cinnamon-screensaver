@@ -6,7 +6,7 @@ from gi.repository import Gtk, GObject, Gdk, Gio, CinnamonDesktop
 from gi.repository.CDesktopEnums import MediaKeyType as MK
 
 import status
-import dbusClientManager
+import singletons
 
 ALLOWED_ACTIONS = [MK.MUTE,
                    MK.VOLUME_UP,
@@ -61,7 +61,7 @@ class KeyBindings(GObject.GObject):
 
         self.manager = manager
 
-        self.client = dbusClientManager.KeybindingHandlerClient
+        self.client = singletons.KeybindingHandlerClient
 
         self.keymap = Gdk.Keymap.get_default()
 

@@ -1,14 +1,5 @@
 #! /usr/bin/python3
 
-from dbusdepot.cinnamonClient import CinnamonClient as _CinnamonClient
-from dbusdepot.sessionClient import SessionClient as _SessionClient
-from dbusdepot.uPowerClient import UPowerClient as _UPowerClient
-from dbusdepot.keybindingHandlerClient import KeybindingHandlerClient as _KeybindingHandlerClient
-
-from dbusdepot.consoleKitClient import ConsoleKitClient
-from dbusdepot.logindClient import LogindClient
-from gi.repository import CScreensaver
-
 from util import trackers
 
 # Our dbus proxies are abstracted out one level more than really necessary - we have
@@ -19,21 +10,33 @@ from util import trackers
 # depending on what fails, you may end up without keyboard shortcut support, or a battery 
 # widget, etc...
 
+from dbusdepot.cinnamonClient import CinnamonClient as _CinnamonClient
+from dbusdepot.sessionClient import SessionClient as _SessionClient
+from dbusdepot.uPowerClient import UPowerClient as _UPowerClient
+from dbusdepot.keybindingHandlerClient import KeybindingHandlerClient as _KeybindingHandlerClient
+from dbusdepot.mediaPlayerClient import MediaPlayerClient as _MediaPlayerClient
+
 CinnamonClient = _CinnamonClient()
 SessionClient = _SessionClient()
 UPowerClient = _UPowerClient()
 KeybindingHandlerClient = _KeybindingHandlerClient()
+MediaPlayerClient = _MediaPlayerClient()
 
 # The notification watcher is a C introspected class - some of the functions it uses
 # don't work well via introspection.
 
+from gi.repository import CScreensaver
 NotificationWatcher = CScreensaver.NotificationWatcher()
 
 # The login client is a bit different - we can have either logind or ConsoleKit.
 # So, we have to do a bit more work to determine which one we're going to use.
 # This doesn't really need to impact the main startup business though - whichever
 # one we end up using, all we're doing is connecting to signals from one or the
-# other client.  Whichever we end up with is invisible/not relevant to the program.
+# other client.  Whichever we end up with is invisible/not relevant to the rest of
+# the application.
+
+from dbusdepot.consoleKitClient import ConsoleKitClient
+from dbusdepot.logindClient import LogindClient
 
 class LoginClientResolver:
     def __init__(self, manager):

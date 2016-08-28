@@ -3,7 +3,7 @@
 from gi.repository import Gtk, GObject
 
 from util import trackers
-import dbusClientManager
+import singletons
 
 class PowerWidget(Gtk.Frame):
     __gsignals__ = {
@@ -19,7 +19,7 @@ class PowerWidget(Gtk.Frame):
         self.box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(self.box)
 
-        self.power_client = dbusClientManager.UPowerClient
+        self.power_client = singletons.UPowerClient
 
         trackers.con_tracker_get().connect(self.power_client,
                                            "power-state-changed",

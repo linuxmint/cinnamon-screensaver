@@ -8,7 +8,7 @@ import constants as c
 import status
 
 from stage import Stage
-import dbusClientManager
+import singletons
 from util import utils, settings, trackers
 from util.focusNavigator import FocusNavigator
 from util.grabHelper import GrabHelper
@@ -35,14 +35,14 @@ class ScreensaverManager(GObject.Object):
         self.grab_helper = GrabHelper(self)
         self.focus_nav = FocusNavigator()
 
-        self.session_client = dbusClientManager.SessionClient
+        self.session_client = singletons.SessionClient
         trackers.con_tracker_get().connect(self.session_client,
                                            "idle-changed", 
                                            self.on_session_idle_changed)
 
-        self.cinnamon_client = dbusClientManager.CinnamonClient
+        self.cinnamon_client = singletons.CinnamonClient
 
-        dbusClientManager.LoginClientResolver(self)
+        singletons.LoginClientResolver(self)
 
 ##### Service handlers (from service.py)
 
