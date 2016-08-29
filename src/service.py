@@ -9,8 +9,6 @@ import constants as c
 from manager import ScreensaverManager
 
 class ScreensaverService(GObject.Object):
-
-
     def __init__(self):
         super(ScreensaverService, self).__init__()
 
@@ -18,17 +16,23 @@ class ScreensaverService(GObject.Object):
 
         self.bus = Gio.bus_get_sync(Gio.BusType.SESSION)
 
-        Gio.bus_own_name_on_connection(self.bus,
-                                       c.SS_SERVICE,
-                                       Gio.BusNameOwnerFlags.NONE,
-                                       self.on_name_acquired,
-                                       self.on_name_denied)
+        Gio.bus_own_name(Gio.BusType.SESSION,
+                         c.SS_SERVICE,
+                         Gio.BusNameOwnerFlags.NONE,
+                         self.on_bus_acquired,
+                         self.on_name_acquired,
+                         self.on_name_lost)
 
-    def on_name_denied(self, connection, name, data=None):
+    def on_name_lost(self, connection, name, data=None):
         print("A screensaver is already running!  Exiting...")
         quit()
 
     def on_name_acquired(self, connection, name, data=None):
+        print("Starting screensaver...")
+
+    def on_bus_acquired(self, connection, name, data=None):
+        self.bus = connection
+
         self.interface = CScreensaver.ScreenSaverSkeleton.new()
 
         self.interface.connect("handle-lock", self.handle_lock)
