@@ -67,7 +67,7 @@ class KeyboardLayout(GObject.Object):
         self.update_saved_group(group)
         self.emit("group-changed")
 
-    def get_image_pixbuf(self):
+    def get_image_pixbuf(self, widget):
         pixbuf = None
 
         if self.enabled:
@@ -80,16 +80,15 @@ class KeyboardLayout(GObject.Object):
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
 
             if pixbuf == None:
-                pixbuf = self.get_text_pixbuf(name)
+                pixbuf = self.get_text_pixbuf(name, widget)
 
         return pixbuf
 
-    def get_text_pixbuf(self, text):
+    def get_text_pixbuf(self, text, widget):
         v, w, h = Gtk.icon_size_lookup(Gtk.IconSize.MENU)
 
         surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
         cr = cairo.Context(surf)
-        surf.destroy()
 
         cr.set_source_rgba(0, 0, 0, 0)
         cr.fill()
@@ -98,13 +97,12 @@ class KeyboardLayout(GObject.Object):
 
         cr.move_to(0, h - ((h - font_size) / 2))
 
-        rgba = self.get_style_context().get_color(Gtk.StateFlags.NORMAL)
-        Gdk.cairo_set_source_rgba(rgba)
+        rgba = widget.get_style_context().get_color(Gtk.StateFlags.NORMAL)
+        Gdk.cairo_set_source_rgba(cr, rgba)
 
         cr.show_text(text.upper()[:2])
 
         final_surf = cr.get_target()
         pixbuf = Gdk.pixbuf_get_from_surface(final_surf, 0, 0, w, h)
-        cr.destroy()
 
         return pixbuf

@@ -27,6 +27,7 @@ FONT_MESSAGE_KEY = "font-message"
 FONT_TIME_KEY = "font-time"
 SHOW_FLAGS_KEY = "show-flags"
 KB_LAYOUT_KEY = "layout-group"
+SHOW_CLOCK_KEY = "show-clock"
 
 # Interface settings - the same logic applies here as above - we don't
 # need to listen to changes to these.
@@ -111,3 +112,5 @@ def get_kb_group():
 def set_kb_group(group):
     return ss_settings.set_int(KB_LAYOUT_KEY, group)
 
+def get_show_clock():
+    return ss_settings.get_boolean(SHOW_CLOCK_KEY)

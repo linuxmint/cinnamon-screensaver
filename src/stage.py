@@ -170,11 +170,9 @@ class Stage(Gtk.Window):
         self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
-        if settings.get_screensaver_name() == "":
-            self.clock_widget.show_all()
-            self.clock_widget.reveal()
-            self.clock_widget.start_positioning()
+        if settings.get_screensaver_name() == "" and settings.get_show_clock():
             self.put_on_top(self.clock_widget)
+            self.clock_widget.start_positioning()
 
     def setup_unlock(self):
         self.unlock_dialog = UnlockDialog()
@@ -302,7 +300,9 @@ class Stage(Gtk.Window):
 
         self.info_bar.update_revealed()
 
-        self.clock_widget.start_positioning()
+        if settings.get_screensaver_name() == "" and settings.get_show_clock():
+            self.put_on_top(self.clock_widget)
+            self.clock_widget.start_positioning()
 
     def do_motion_notify_event(self, event):
         return self.event_handler.on_motion_event(event)

@@ -77,7 +77,7 @@ class PasswordEntry(Gtk.Entry):
             self.keyboard_layout.next_group()
 
     def update_layout_icon(self):
-        pixbuf = self.keyboard_layout.get_image_pixbuf()
+        pixbuf = self.keyboard_layout.get_image_pixbuf(self)
 
         self.set_icon_from_pixbuf(Gtk.EntryIconPosition.PRIMARY, pixbuf)
 

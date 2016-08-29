@@ -42,6 +42,8 @@ class ClockWidget(BaseWindow):
 
         self.update_clock()
 
+        self.show_all()
+
     def on_clock_changed(self, clock, pspec):
         self.update_clock()
 
