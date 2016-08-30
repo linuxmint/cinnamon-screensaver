@@ -44,16 +44,10 @@ notification_filter_func (GDBusConnection *connection,
         g_strcmp0 (g_dbus_message_get_interface (message), NOTIFICATIONS_INTERFACE) == 0 &&
         g_strcmp0 (g_dbus_message_get_member (message), NOTIFY_METHOD) == 0) {
         g_idle_add (idle_notify_received, watcher);
-    }
-
-    dest = g_dbus_message_get_destination (message);
-
-    if (!incoming || g_strcmp0 (dest, g_dbus_connection_get_unique_name (connection)) == 0) {
-        return message;
-    } else {
-        g_clear_object (&message);
         return NULL;
     }
+
+    return message;
 }
 
 static void
