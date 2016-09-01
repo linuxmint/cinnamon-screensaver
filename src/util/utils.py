@@ -89,6 +89,21 @@ def do_user_switch():
         app = Gio.AppInfo.create_from_commandline(command, "gdmflexiserver", 0)
         if app:
             app.launch(None, ctx)
+    elif os.getenv("XDG_SEAT_PATH") is not None:
+        try:
+            bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
+            bus.call_sync("org.freedesktop.DisplayManager",
+                          os.getenv("XDG_SEAT_PATH"),
+                          "org.freedesktop.DisplayManager.Seat",
+                          "SwitchToGreeter",
+                          None,
+                          None,
+                          Gio.DBusCallFlags.NONE,
+                          -1,
+                          None)
+
+        except GLib.Error as err:
+            print("Switch user failed: " + err.message)
 
 def session_is_cinnamon():
     if "cinnamon" in GLib.getenv("DESKTOP_SESSION"):
