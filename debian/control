@@ -35,6 +35,8 @@ Depends: cinnamon-desktop-data (>= 3.0.0),
          ${misc:Depends},
          ${python:Depends},
          ${shlibs:Depends}
+Suggests: cinnamon-screensaver-x-plugin,
+          cinnamon-screensaver-webkit-plugin
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
@@ -42,7 +44,7 @@ Description: Cinnamon screen saver and locker
 Package: cinnamon-screensaver-x-plugin
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
-Depends: cinnamon-screensaver (>= 3.0.0),
+Depends: cinnamon-screensaver (>= 3.1.0),
          xscreensaver-data
 Recommends: xscreensaver-data-extra,
             xscreensaver-gl,
@@ -52,8 +54,8 @@ Description: XScreensaver plugin for cinnamon-screensaver
 Package: cinnamon-screensaver-webkit-plugin
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
-Depends: cinnamon-screensaver (>= 3.0.0),
-         gir1.2-webkit2-3.0
+Depends: cinnamon-screensaver (>= 3.1.0),
+         gir1.2-webkit2-4.0 | gir1.2-webkit2-3.0
 Description: Webkit plugin for cinnamon-screensaver
 
 Package: libcscreensaver0
