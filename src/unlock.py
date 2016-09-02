@@ -203,8 +203,6 @@ class UnlockDialog(BaseWindow):
                                                  "notify::child-revealed",
                                                  self.on_revealed)
 
-        self.show_all()
-
     def cancel(self):
         self.auth_message_label.set_text("")
 

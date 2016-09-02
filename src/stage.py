@@ -74,6 +74,8 @@ class Stage(Gtk.Window):
         self.overlay.show_all()
         self.add(self.overlay)
 
+        self.power_client = singletons.UPowerClient
+
         self.gdk_filter = CScreensaver.GdkEventFilter()
 
     def transition_in(self, effect_time, callback):
@@ -116,10 +118,13 @@ class Stage(Gtk.Window):
                                               "changed",
                                               self.on_bg_changed)
 
+        trackers.con_tracker_get().disconnect(self.power_client,
+                                              "power-state-changed",
+                                              self.on_power_state_changed)
+
         self.set_timeout_active(None, False)
 
-        for monitor in self.monitors:
-            monitor.destroy()
+        self.destroy_monitor_views()
 
         self.fader = None
         self.unlock_dialog = None
@@ -148,13 +153,10 @@ class Stage(Gtk.Window):
 
             self.monitors.append(monitor)
 
-            monitor.show_starting_view()
-            monitor.reveal()
-
             self.add_child_widget(monitor)
             self.put_on_bottom(monitor)
 
-            monitor.queue_draw()
+        self.update_monitor_views()
 
     def on_bg_changed(self, bg):
         for monitor in self.monitors:
@@ -166,11 +168,25 @@ class Stage(Gtk.Window):
 
             monitor.set_next_wallpaper_image(image)
 
+    def on_power_state_changed(self, client, data=None):
+        trackers.con_tracker_get().connect(self.monitors[0],
+                                           "current-view-change-complete",
+                                           self.after_power_state_changed)
+
+        self.update_monitor_views()
+
+    def after_power_state_changed(self, monitor):
+        trackers.con_tracker_get().disconnect(monitor,
+                                              "current-view-change-complete",
+                                              self.after_power_state_changed)
+
+        self.info_bar.update_revealed()
+
     def setup_clock(self):
         self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
-        if settings.get_screensaver_name() == "" and settings.get_show_clock():
+        if not settings.should_show_plugin() and settings.get_show_clock():
             self.put_on_top(self.clock_widget)
             self.clock_widget.start_positioning()
 
@@ -203,6 +219,10 @@ class Stage(Gtk.Window):
         self.info_bar = InfoBar(self.screen)
         self.add_child_widget(self.info_bar)
         self.put_on_top(self.info_bar)
+
+        trackers.con_tracker_get().connect(self.power_client,
+                                           "power-state-changed",
+                                           self.on_power_state_changed)
 
     def queue_dialog_key_event(self, event):
         self.unlock_dialog.queue_key_event(event)
@@ -248,19 +268,23 @@ class Stage(Gtk.Window):
 
         self.clock_widget.stop_positioning()
 
-        for monitor in self.monitors:
-            monitor.show_wallpaper()
+        status.Awake = True
 
-        #FIXME - wrong way to do this, it should start exactly after the stack animation
-        #        completes in monitor.show_wallpaper(), however, sometimes we're
-        #        already showing the wallpaper, if we're not using a plugin...
-        GObject.timeout_add(260, self.after_wallpaper_shown_for_unlock)
+        # Connect to one of our monitorViews (we have at least one always), to wait for
+        # its transition to finish before running after_wallpaper_shown_for_unlock()
+        trackers.con_tracker_get().connect(self.monitors[0],
+                                           "current-view-change-complete",
+                                           self.after_wallpaper_shown_for_unlock)
 
-    def after_wallpaper_shown_for_unlock(self):
+        self.update_monitor_views()
+
+    def after_wallpaper_shown_for_unlock(self, monitor, data=None):
+        trackers.con_tracker_get().disconnect(monitor,
+                                              "current-view-change-complete",
+                                              self.after_wallpaper_shown_for_unlock)
+
         self.put_on_top(self.clock_widget)
         self.put_on_top(self.unlock_dialog)
-
-        status.Awake = True
 
         self.clock_widget.reveal()
         self.unlock_dialog.reveal()
@@ -273,14 +297,11 @@ class Stage(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
-        if settings.get_screensaver_name() != "":
-            self.clock_widget.unreveal()
-            self.clock_widget.hide()
-
         trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "notify::child-revealed",
                                            self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
+        self.clock_widget.unreveal()
         self.audio_bar.unreveal()
         self.info_bar.unreveal()
 
@@ -288,21 +309,43 @@ class Stage(Gtk.Window):
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
         self.audio_bar.hide()
+        self.clock_widget.hide()
 
         trackers.con_tracker_get().disconnect(self.unlock_dialog,
                                               "notify::child-revealed",
                                               self.after_unlock_unrevealed)
 
-        for monitor in self.monitors:
-            monitor.show_plugin()
-
         status.Awake = False
+
+        trackers.con_tracker_get().connect(self.monitors[0],
+                                           "current-view-change-complete",
+                                           self.after_transitioned_back_to_sleep)
+
+        self.update_monitor_views()
+
+    def after_transitioned_back_to_sleep(self, monitor, data=None):
+        trackers.con_tracker_get().disconnect(monitor,
+                                              "current-view-change-complete",
+                                              self.after_transitioned_back_to_sleep)
 
         self.info_bar.update_revealed()
 
-        if settings.get_screensaver_name() == "" and settings.get_show_clock():
+        if not status.PluginRunning and settings.get_show_clock():
             self.put_on_top(self.clock_widget)
             self.clock_widget.start_positioning()
+
+    def update_monitor_views(self):
+        low_power = not self.power_client.plugged_in
+
+        for monitor in self.monitors:
+            monitor.update_view(status.Awake, low_power)
+
+            if not monitor.get_reveal_child():
+                monitor.reveal()
+
+    def destroy_monitor_views(self):
+        for monitor in self.monitors:
+            monitor.destroy()
 
     def do_motion_notify_event(self, event):
         return self.event_handler.on_motion_event(event)

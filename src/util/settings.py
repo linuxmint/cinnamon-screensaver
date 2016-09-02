@@ -52,6 +52,9 @@ def get_default_away_message():
 
     return _check_string(msg)
 
+def should_show_plugin():
+    return get_screensaver_name() != ""
+
 def get_screensaver_name():
     name = ss_settings.get_string(SCREENSAVER_NAME_KEY)
 

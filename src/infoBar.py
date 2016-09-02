@@ -31,19 +31,17 @@ class InfoBar(BaseWindow):
         self.box.pack_start(hbox, False, False, 6)
 
         self.notification_widget = NotificationWidget()
+        self.notification_widget.set_no_show_all(True)
         hbox.pack_start(self.notification_widget, True, True, 3)
         self.notification_widget.connect("notification", self.on_notification_received)
 
         self.power_widget = PowerWidget()
+        self.power_widget.set_no_show_all(True)
         hbox.pack_start(self.power_widget, True, True, 3)
-        self.power_widget.connect("power-state-changed", self.on_power_state_changed)
 
         self.show_all()
 
     def on_notification_received(self, obj):
-        self.update_revealed()
-
-    def on_power_state_changed(self, obj):
         self.update_revealed()
 
     def update_revealed(self):

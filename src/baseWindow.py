@@ -14,7 +14,7 @@ class BaseWindow(Gtk.Revealer):
         self.set_transition_duration(self.REVEALER_DURATION)
 
     def _reveal_idle_callback(self):
-        self.show()
+        self.show_all()
         self.set_reveal_child(True)
 
     def reveal(self):

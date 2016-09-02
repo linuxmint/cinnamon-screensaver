@@ -12,72 +12,78 @@ import signal
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-parser = argparse.ArgumentParser(description="XScreenSaver chainloader")
-parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
-parser.add_argument("--dir", action="store", help="directory to search for xscreensaver hacks")
-parser.add_argument("--hack", action="store", help="xscreensaver hack to load")
-args = parser.parse_args()
+class XScreensaverPlugin:
+    def __init__(self):
+        parser = argparse.ArgumentParser(description="Cinnamon Screensaver XScreensaver Plugin")
+        parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
+        parser.add_argument("--dir", action="store", help="directory to search for xscreensaver hacks")
+        parser.add_argument("--hack", action="store", help="xscreensaver hack to load")
+        self.args = parser.parse_args()
 
-hackCalled = False
+        GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGTERM, self.on_terminate)
 
-def loadHack (plug, data):
-    global hackCalled
+        if self.args.standalone:
+            self.plug = Gtk.Window()
+        else:
+            self.plug = Gtk.Plug()
 
-    if hackCalled:
-        return
-    xid = str(plug.get_window().get_xid())
+        self.plug.draw_id = self.plug.connect("draw", self.load_hack)
+        self.plug.connect("delete-event", Gtk.main_quit)
 
-    directories = ["/usr/lib/xscreensaver/",
-                   "/usr/libexec/xscreensaver/",
-                   "/usr/local/lib/xscreensaver/",
-                   "/usr/local/libexec/xscreensaver/"]
-    if args.dir:
-        directories.append(args.dir)
+        self.plug.show_all()
 
-    if (args.hack):
-        hack = args.hack
-    else:
-        settings = Gio.Settings.new("org.cinnamon.desktop.screensaver")
-        hack = settings.get_string("xscreensaver-hack")
+        self.xid = self.plug.get_window().get_xid()
+        print("WINDOW ID=" + str(self.xid))
+        sys.stdout.flush()
 
-    success = False
+    def load_hack (self, plug, data=None):
+        self.plug.disconnect(self.plug.draw_id)
 
-    for direc in directories:
-        try:
-            path = shlex.split(direc + hack)
-            path.append("-window-id")
-            path.append(xid)
-            GLib.spawn_async(path)
-            success = True
-            hackCalled = True
-            break;
-        except:
-            pass
+        directories = ["/usr/lib/xscreensaver/",
+                       "/usr/libexec/xscreensaver/",
+                       "/usr/local/lib/xscreensaver/",
+                       "/usr/local/libexec/xscreensaver/"]
 
-    if not success:
-        syslog.syslog("cinnamon-screensaver: Screensaver '%s' not found" % hack)
-        color = Gdk.RGBA()
-        color.red = 0
-        color.green = 0
-        color.blue = 0
-        color.alpha = 1
-        label = Gtk.Label()
-        label.override_background_color(Gtk.StateFlags.NORMAL, color)
-        label.show()
-        plug.add(label)
+        if self.args.dir:
+            directories.append(self.args.dir)
+
+        if (self.args.hack):
+            hack = self.args.hack
+        else:
+            settings = Gio.Settings.new(schema_id="org.cinnamon.desktop.screensaver")
+            hack = settings.get_string("xscreensaver-hack")
+
+        success = False
+
+        for direc in directories:
+            try:
+                path = shlex.split(direc + hack)
+                path.append("-window-id")
+                path.append(str(self.xid))
+                GLib.spawn_async(path)
+                success = True
+                break;
+            except:
+                pass
+
+        if not success:
+            syslog.syslog("cinnamon-screensaver: Screensaver '%s' not found" % hack)
+            color = Gdk.RGBA()
+            color.red = 0
+            color.green = 0
+            color.blue = 0
+            color.alpha = 1
+            label = Gtk.Label()
+            label.override_background_color(Gtk.StateFlags.NORMAL, color)
+            label.show()
+            self.plug.add(label)
+
+    def on_terminate(self, data=None):
+        self.plug.destroy()
+        Gtk.main_quit()
+
 
 if __name__ == "__main__":
-    if args.standalone:
-        plug = Gtk.Window()
-    else:
-        plug = Gtk.Plug()
-
-    plug.show_all()
-    plug.connect("delete-event", Gtk.main_quit)
-    xid = plug.get_window().get_xid()
-
-    print("WINDOW ID=" + str(xid))
-    sys.stdout.flush()
-
-    plug.connect("draw", loadHack)
+    XScreensaverPlugin()
     Gtk.main()
+

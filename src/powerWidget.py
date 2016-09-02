@@ -19,6 +19,8 @@ class PowerWidget(Gtk.Frame):
         self.box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(self.box)
 
+        self.box.show_all()
+
         self.power_client = singletons.UPowerClient
 
         trackers.con_tracker_get().connect(self.power_client,

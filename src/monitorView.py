@@ -3,6 +3,7 @@
 from gi.repository import Gtk, Gio, GLib, GObject
 import re
 import cairo
+import signal
 
 import status
 from baseWindow import BaseWindow
@@ -69,11 +70,16 @@ class WallpaperStack(Gtk.Stack):
         return False
 
 class MonitorView(BaseWindow):
+    __gsignals__ = {
+        'current-view-change-complete': (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
     def __init__(self, screen, index):
         super(MonitorView, self).__init__()
 
         self.screen = screen
         self.monitor_index = index
+
+        self.proc = None
 
         self.update_geometry()
 
@@ -89,22 +95,17 @@ class MonitorView(BaseWindow):
 
         self.stack.add_named(self.wallpaper_stack, "wallpaper")
 
-        name = settings.get_screensaver_name()
-        path = utils.lookup_plugin_path(name)
-        if path is not None:
-            self.path = path
-            self.socket = Gtk.Socket()
-            self.socket.show()
-            self.socket.set_halign(Gtk.Align.FILL)
-            self.socket.set_valign(Gtk.Align.FILL)
+        self.socket = Gtk.Socket()
+        self.socket.show()
+        self.socket.set_halign(Gtk.Align.FILL)
+        self.socket.set_valign(Gtk.Align.FILL)
 
-            self.stack.add_named(self.socket, "plugin")
+        # This prevents the socket from self-destructing when the plug process is killed
+        trackers.con_tracker_get().connect(self.socket,
+                                           "plug-removed",
+                                           lambda socket: True)
 
-            trackers.con_tracker_get().connect(self.socket,
-                                               "realize",
-                                               self.on_socket_realized)
-        else:
-            self.socket = None
+        self.stack.add_named(self.socket, "plugin")
 
         self.show_all()
 
@@ -117,9 +118,74 @@ class MonitorView(BaseWindow):
     def on_socket_realized(self, widget):
         self.spawn_plugin()
 
-    def spawn_plugin(self):
+    def kill_plugin(self):
+        if self.proc:
+            self.proc.send_signal(signal.SIGTERM)
+            self.proc = None
+
+    def show_plugin(self):
+        name = settings.get_screensaver_name()
+        path = utils.lookup_plugin_path(name)
+        if path is not None:
+            self.spawn_plugin(path)
+            trackers.con_tracker_get().connect(self.socket,
+                                               "plug-added",
+                                               self.on_plug_added)
+
+    def on_plug_added(self, socket, data=None):
+        trackers.con_tracker_get().disconnect(self.socket,
+                                              "plug-added",
+                                              self.on_plug_added)
+
+        status.PluginRunning = True
+
+        if self.stack.get_visible_child_name() == "plugin":
+            self.emit("current-view-change-complete")
+            return
+
+        self.stack.set_visible_child_name("plugin")
+        trackers.con_tracker_get().connect(self.stack,
+                                           "notify::transition-running",
+                                           self.notify_transition_callback)
+
+    def show_wallpaper(self):
+        status.PluginRunning = False
+
+        if self.stack.get_visible_child_name() == "wallpaper":
+            self.emit("current-view-change-complete")
+            return
+
+        self.stack.set_visible_child_name("wallpaper")
+        trackers.con_tracker_get().connect(self.stack,
+                                           "notify::transition-running",
+                                           self.notify_transition_callback)
+
+    def notify_transition_callback(self, stack, pspec, data=None):
+        # GtkStacks don't have any signal for telling you 'we're done transitioning'
+        # The closest we can come to it is for every animation tick they call a notify
+        # on the 'transition-running' property.  We wait until it returns False
+        # to emit our own transition completed signal.  This only works because our
+        # stack here *does* use a duration and transition type that isn't "None".
+
+        if stack.get_transition_running():
+            return
+        else:
+            trackers.con_tracker_get().disconnect(self.stack,
+                                                  "notify::transition-running",
+                                                  self.notify_transition_callback)
+            self.emit("current-view-change-complete")
+
+    def update_view(self, awake, low_power):
+        self.kill_plugin()
+
+        if not awake and not low_power and settings.should_show_plugin():
+            self.show_plugin()
+        else:
+            self.show_wallpaper()
+
+    def spawn_plugin(self, path):
         try:
-            self.proc = Gio.Subprocess.new((self.path, None),
+            self.proc = Gio.Subprocess.new((path, None),
                                            Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
 
             pipe = self.proc.get_stdout_pipe()
@@ -129,8 +195,9 @@ class MonitorView(BaseWindow):
             print(e)
             return
 
-    def on_bytes_read(self, obj, res):
-        bytes_read = obj.read_bytes_finish(res)
+    def on_bytes_read(self, pipe, res):
+        bytes_read = pipe.read_bytes_finish(res)
+        pipe.close(None)
 
         if bytes_read:
             output = bytes_read.get_data().decode()
@@ -140,17 +207,3 @@ class MonitorView(BaseWindow):
                 if match:
                     self.socket.add_id(int(match.group(1)))
 
-    def show_plugin(self):
-        if self.socket:
-            self.stack.set_visible_child_name("plugin")
-            status.PluginRunning = True
-
-    def show_wallpaper(self):
-        self.stack.set_visible_child_name("wallpaper")
-        status.PluginRunning = False
-
-    def show_starting_view(self):
-        if self.socket:
-            self.show_plugin()
-        else:
-            self.show_wallpaper()

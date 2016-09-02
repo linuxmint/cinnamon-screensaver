@@ -8,49 +8,59 @@ try:
 except ValueError:
     gi.require_version('WebKit2', '3.0')
 
-from gi.repository import Gtk, Gdk, GdkX11, WebKit2, Gio
+from gi.repository import Gtk, Gdk, GdkX11, WebKit2, Gio, GLib
 import sys
 import os
 import argparse
 import signal
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-parser = argparse.ArgumentParser(description="XScreenSaver chainloader")
-parser.add_argument("--standalone", action="store_true", help="run as standalone window instead of embedded in screensaver", dest="standalone")
-parser.add_argument("--plugin", action="store", help="plugin to load")
-parser.add_argument("--xid", action="store_true", help="print the xid to stdout instead talking over dbus")
-args = parser.parse_args()
+class WebkitPlugin:
+    def __init__(self):
+        parser = argparse.ArgumentParser(description="Cinnamon Screensaver Webkit Plugin Loader")
+        parser.add_argument("--standalone", action="store_true", help="Run as standalone window for testing", dest="standalone")
+        parser.add_argument("--plugin", action="store", help="plugin to load")
+        args = parser.parse_args()
 
-hackCalled = False
+        GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGTERM, self.on_terminate)
+
+        if args.standalone:
+            self.plug = Gtk.Window()
+        else:
+            self.plug = Gtk.Plug()
+
+        self.plug.show_all()
+        self.plug.connect("delete-event", Gtk.main_quit)
+
+        xid = self.plug.get_window().get_xid()
+        print("WINDOW ID=" + str(xid))
+        sys.stdout.flush()
+
+        self.webkit = WebKit2.WebView()
+
+        if (args.plugin):
+            plugin = args.plugin
+        else:
+            settings = Gio.Settings(schema_id="org.cinnamon.desktop.screensaver")
+            plugin = settings.get_string("screensaver-webkit-theme")
+
+        uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), plugin, "index.html")
+
+        if os.path.isfile(uri):
+            self.webkit.load_uri("file://" + uri)
+        else:
+            uri2 = os.path.join(os.getenv("HOME"), ".local/share/cinnamon-screensaver/screensavers/webkit", plugin, "index.html")
+            self.webkit.load_uri("file://" + uri2)
+
+        self.webkit.show()
+        self.plug.add(self.webkit)
+
+    def on_terminate(self, data=None):
+        self.plug.destroy()
+        Gtk.main_quit()
+
+
 if __name__ == "__main__":
-    if args.standalone:
-        plug = Gtk.Window()
-    else:
-        plug = Gtk.Plug()
-
-    plug.show_all()
-    plug.connect("delete-event", Gtk.main_quit)
-    xid = plug.get_window().get_xid()
-
-    print("WINDOW ID=" + str(xid))
-    sys.stdout.flush()
-
-    webkit = WebKit2.WebView()
-    settings = Gio.Settings("org.cinnamon.desktop.screensaver")
-    if (args.plugin):
-        plugin = args.plugin
-    else:
-        plugin = settings.get_string("screensaver-webkit-theme")
-
-    uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), plugin, "index.html")
-
-    if os.path.isfile(uri):
-        webkit.load_uri("file://" + uri)
-    else:
-        uri2 = os.path.join(os.getenv("HOME"), ".local/share/cinnamon-screensaver/screensavers/webkit", plugin, "index.html")
-        webkit.load_uri("file://" + uri2)
-
-    webkit.show()
-    plug.add (webkit)
+    WebkitPlugin()
     Gtk.main()
+

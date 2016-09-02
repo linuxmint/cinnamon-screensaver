@@ -137,7 +137,6 @@ class UPowerClient(BaseClient):
         all_batteries_full = True
 
         for path, dev in batteries:
-            print(dev.get_property("state"))
             if dev.get_property("state") not in (DeviceState.FullyCharged, DeviceState.Unknown):
                 all_batteries_full = False
                 break

@@ -26,6 +26,8 @@ class NotificationWidget(Gtk.Frame):
         self.image = Gtk.Image.new_from_icon_name("screensaver-notification-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         box.pack_end(self.image, False, False, 4)
 
+        box.show_all()
+
         self.notification_watcher = singletons.NotificationWatcher
         trackers.con_tracker_get().connect(self.notification_watcher,
                                            "notification-received",
@@ -33,7 +35,7 @@ class NotificationWidget(Gtk.Frame):
 
     def on_notification_received(self, proxy):
         self.notification_count += 1
-        print(self.notification_count)
+
         self.update_label()
 
         self.emit("notification")
