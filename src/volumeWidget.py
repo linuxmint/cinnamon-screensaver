@@ -5,9 +5,8 @@ gi.require_version('Cvc', '1.0')
 
 from gi.repository import Gtk, Cvc, Gdk
 
-from volumeSlider import VolumeSlider
-from util import trackers
-
+from widgets.volumeSlider import VolumeSlider
+from util import trackers, utils
 
 class VolumeWidget(Gtk.Box):
     def __init__(self):
@@ -91,8 +90,7 @@ class VolumeWidget(Gtk.Box):
         value = self.volume_slider.get_value()
         max_norm = self.controller.get_vol_max_norm()
 
-        # CLAMP(0, max_norm)
-        denormalized_volume =max(0, min((value / 100) * max_norm, max_norm))
+        denormalized_volume = utils.CLAMP((value / 100) * max_norm, 0, max_norm)
 
         trackers.con_tracker_get().handler_block(self.output,
                                                  "notify::volume",

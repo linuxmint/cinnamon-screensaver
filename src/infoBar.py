@@ -5,8 +5,8 @@ from gi.repository import Gtk
 import status
 from util import utils, trackers
 from baseWindow import BaseWindow
-from notificationWidget import NotificationWidget
-from powerWidget import PowerWidget
+from widgets.notificationWidget import NotificationWidget
+from widgets.powerWidget import PowerWidget
 
 class InfoBar(BaseWindow):
     def __init__(self, screen):

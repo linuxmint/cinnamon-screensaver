@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = 1.7
 
 NULL =
 
-SUBDIRS = binfiles util dbusdepot
+SUBDIRS = binfiles dbusdepot widgets util
 
 appdir = $(datadir)/cinnamon-screensaver
 
@@ -18,13 +18,11 @@ app_PYTHON = \
         infoBar.py \
         manager.py \
         monitorView.py \
-        notificationWidget.py \
-        powerWidget.py \
+        playerWidget.py \
         service.py \
         stage.py \
         status.py \
         unlock.py \
-        volumeSlider.py \
         volumeWidget.py \
         $(NULL)
 

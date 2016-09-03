@@ -31,6 +31,9 @@ class Fader:
         self.current_opacity = self.widget.get_opacity()
         self.target_opacity = 1.0
 
+        if not self.widget.get_visible():
+            self.widget.set_visible(True)
+
         if self.widget.get_mapped():
             self.start_time = self.widget.get_frame_clock().get_frame_time()
             self.end_time = self.start_time + (ms * 1000) # ms to microsec

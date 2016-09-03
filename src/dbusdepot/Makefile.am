@@ -15,6 +15,7 @@ app_PYTHON = \
         keybindingHandlerClient.py \
         logindClient.py \
         loginInterface.py \
+        mediaPlayerWatcher.py \
         screensaverClient.py \
         sessionClient.py \
         uPowerClient.py \

@@ -151,5 +151,8 @@ def lookup_plugin_path(name):
 
     return try_path
 
+def CLAMP(value, low, high):
+        return max(low, min(value, high))
+
 def do_quit():
     Gtk.main_quit()

@@ -37,6 +37,8 @@ class Main:
         path = os.path.join(config.pkgdatadir, "application.css")
         prov = Gtk.CssProvider()
 
+        Gtk.icon_size_register("audio-button", 20, 20)
+
         if prov.load_from_path(path):
             Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), prov, 600)
 

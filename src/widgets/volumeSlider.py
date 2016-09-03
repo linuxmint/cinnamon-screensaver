@@ -19,7 +19,7 @@ class VolumeSlider(Gtk.Scale):
         self.get_style_context().add_class("volumeslider")
         self.set_round_digits(0)
         self.set_draw_value(False)
-        self.set_size_request(170, -1)
+        self.set_size_request(130, -1)
 
         trackers.con_tracker_get().connect(self,
                                            "draw",
@@ -35,16 +35,15 @@ class VolumeSlider(Gtk.Scale):
         alloc = self.get_allocation()
 
         padding = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        border = ctx.get_padding(Gtk.StateFlags.NORMAL)
 
-        x = padding.left
-        y = padding.top
-        width = alloc.width - padding.left - padding.right
-        height = alloc.height - padding.top - padding.bottom
+        x = padding.left + border.left
+        y = padding.top + border.top
+        width = alloc.width - padding.left - padding.right - border.left - border.right
+        height = alloc.height - padding.top - padding.bottom - border.top - border.bottom
         ratio = height / width
         value = round(self.get_value())
         floor = y + height
-        current_val = 8
-        bar_width = 6
 
         if self.muted:
             fill_color = ctx.get_background_color(Gtk.StateFlags.INSENSITIVE)
@@ -59,37 +58,24 @@ class VolumeSlider(Gtk.Scale):
 
         cr.save()
 
-        while current_val <= value * 1.6:
-            cr.save()
-            cr.new_sub_path()
-            cr.move_to(current_val, floor)
-            short_corner_y = (current_val / 160) * height
-            cr.line_to(current_val, floor - short_corner_y)
-            cr.line_to(current_val + bar_width, floor - (short_corner_y + (bar_width * ratio)))
-            cr.line_to(current_val + bar_width, floor)
-            cr.line_to(current_val, floor)
-            Gdk.cairo_set_source_rgba(cr, fill_color)
-            cr.fill_preserve()
-            Gdk.cairo_set_source_rgba(cr, border_color)
-            cr.stroke()
-            current_val += 8
-            cr.restore()
+        cr.new_sub_path()
+        cr.move_to(x, floor)
+        cr.line_to(x + width, floor)
+        cr.line_to(x + width, y)
+        cr.close_path()
 
-        while current_val <= 160:
-            cr.save()
-            cr.new_sub_path()
-            cr.move_to(current_val, floor)
-            short_corner_y = (current_val / 160) * height
-            cr.line_to(current_val, floor - short_corner_y)
-            cr.line_to(current_val + bar_width, floor - (short_corner_y + (bar_width * ratio)))
-            cr.line_to(current_val + bar_width, floor)
-            cr.line_to(current_val, floor)
-            cr.set_source_rgba(1, 1, 1, .1)
-            cr.fill_preserve()
-            Gdk.cairo_set_source_rgba(cr, border_color)
-            cr.stroke()
-            current_val += 8
-            cr.restore()
+        cr.set_source_rgba(1, 1, 1, .1)
+
+        cr.fill()
+
+        cr.new_sub_path()
+        cr.move_to(x, floor)
+        cr.line_to(x + ((value / 100) * width), floor)
+        cr.line_to(x + ((value / 100) * width), floor - ((value / 100) * height))
+        cr.close_path()
+
+        Gdk.cairo_set_source_rgba(cr, fill_color)
+        cr.fill()
 
         cr.restore()
 

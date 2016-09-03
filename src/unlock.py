@@ -6,13 +6,12 @@ gi.require_version('AccountsService', '1.0')
 gi.require_version('CinnamonDesktop', '3.0')
 from gi.repository import Gtk, Gdk, AccountsService, GObject, CinnamonDesktop, GdkPixbuf
 import os
-import cairo
 
-from util import utils, trackers, settings
+from util import utils, trackers
 import status
-import config
 import singletons
 from baseWindow import BaseWindow
+from widgets.transparentButton import TransparentButton
 
 acc_service = None
 
@@ -27,16 +26,6 @@ class FramedImage(Gtk.Image):
     def set_from_file(self, path):
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, -1, self.min_height, True)
         self.set_from_pixbuf(pixbuf)
-
-class TransparentButton(Gtk.Button):
-    def __init__(self, name, size):
-        super(TransparentButton, self).__init__()
-        self.get_style_context().add_class("transparentbutton")
-        image = Gtk.Image.new_from_icon_name(name, size)
-
-        self.set_can_default(True)
-        self.set_can_focus(True)
-        self.set_image(image)
 
 class PasswordEntry(Gtk.Entry):
     def __init__(self):

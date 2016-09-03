@@ -15,13 +15,13 @@ from dbusdepot.cinnamonClient import CinnamonClient as _CinnamonClient
 from dbusdepot.sessionClient import SessionClient as _SessionClient
 from dbusdepot.uPowerClient import UPowerClient as _UPowerClient
 from dbusdepot.keybindingHandlerClient import KeybindingHandlerClient as _KeybindingHandlerClient
-# from dbusdepot.mediaPlayerClient import MediaPlayerClient as _MediaPlayerClient
+from dbusdepot.mediaPlayerWatcher import MediaPlayerWatcher as _MediaPlayerWatcher
 
 CinnamonClient = _CinnamonClient()
 SessionClient = _SessionClient()
 UPowerClient = _UPowerClient()
 KeybindingHandlerClient = _KeybindingHandlerClient()
-# MediaPlayerClient = _MediaPlayerClient()
+MediaPlayerWatcher = _MediaPlayerWatcher()
 
 
 # The notification watcher is a C introspected class - some of the functions it uses

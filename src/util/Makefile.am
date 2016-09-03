@@ -1,7 +1,9 @@
 ## We require new-style dependency handling.
 AUTOMAKE_OPTIONS = 1.7
 
-SUBDIRS=
+NULL =
+
+SUBDIRS =
 
 appdir = $(datadir)/cinnamon-screensaver/util
 

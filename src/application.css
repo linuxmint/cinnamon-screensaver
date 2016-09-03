@@ -145,9 +145,32 @@
     border-color: @theme_bg_color;
     background-color: @theme_selected_bg_color;
     border-style: solid;
-    padding: 3px 3px 3px 3px;
+    padding: 3px 0px 3px 0px;
 }
 
 .volumeslider:insensitive {
     background-color: alpha(white, .5);
+}
+
+.positionlabel {
+    font-family: monospace;
+    font-size: 10px;
+    text-shadow: 1px 1px alpha(black, 0.8);
+}
+
+.trackname {
+    font-family: monospace;
+    font-size: 10px;
+    text-shadow: 1px 1px alpha(black, 0.8);
+}
+
+.albumartist {
+    font-family: monospace;
+    font-size: 8px;
+    text-shadow: 1px 1px alpha(black, 0.8);
+}
+
+.positionbar {
+    -GtkProgressBar-min-horizontal-bar-height: 10;
+    -GtkProgressBar-min-horizontal-bar-width: 180;
 }

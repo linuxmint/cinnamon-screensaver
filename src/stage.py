@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, GObject, CScreensaver
+from gi.repository import Gtk, Gdk, CScreensaver
 
 import status
 import constants as c
@@ -19,8 +19,7 @@ class Stage(Gtk.Window):
         Gtk.Window.__init__(self,
                             type=Gtk.WindowType.POPUP,
                             decorated=False,
-                            skip_taskbar_hint=True,
-                            skip_pager_hint=True)
+                            skip_taskbar_hint=True)
 
         trackers.con_tracker_get().connect(singletons.Backgrounds,
                                            "changed", 
@@ -56,9 +55,7 @@ class Stage(Gtk.Window):
                         Gdk.EventMask.FOCUS_CHANGE_MASK)
 
         self.update_geometry()
-
-        self.set_keep_above(True)
-        self.fullscreen()
+        self.set_opacity(0.0)
 
         self.overlay = Gtk.Overlay()
         self.fader = Fader(self)
@@ -79,7 +76,7 @@ class Stage(Gtk.Window):
         self.gdk_filter = CScreensaver.GdkEventFilter()
 
     def transition_in(self, effect_time, callback):
-        self.show()
+        self.realize()
         self.fader.fade_in(effect_time, callback)
 
     def transition_out(self, effect_time, callback):
@@ -92,20 +89,15 @@ class Stage(Gtk.Window):
 
         self.fader.fade_out(effect_time, callback)
 
-    def focus_and_present(self):
-        utils.override_user_time(self.get_window())
-        self.present()
-
     def on_realized(self, widget):
         window = self.get_window()
 
-        window.set_fullscreen_mode(Gdk.FullscreenMode.ALL_MONITORS)
+        utils.override_user_time(window)
         window.move_resize(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
 
         self.setup_children()
 
         self.gdk_filter.start(self)
-        # self.focus_and_present()
 
     def setup_children(self):
         self.setup_monitors()
@@ -127,8 +119,16 @@ class Stage(Gtk.Window):
         self.destroy_monitor_views()
 
         self.fader = None
+
+        self.unlock_dialog.destroy()
+        self.clock_widget.destroy()
+        self.info_bar.destroy()
+        self.audio_bar.destroy()
+
         self.unlock_dialog = None
         self.clock_widget = None
+        self.info_bar = None
+        self.audio_bar = None
         self.away_message = None
         self.monitors = []
 
@@ -364,6 +364,16 @@ class Stage(Gtk.Window):
         self.rect.width = self.screen.get_width()
         self.rect.height = self.screen.get_height()
 
+        hints = Gdk.Geometry()
+        hints.min_width = self.rect.width
+        hints.min_height = self.rect.height
+        hints.max_width = self.rect.width
+        hints.max_height = self.rect.height
+        hints.base_width = self.rect.width
+        hints.base_height = self.rect.height
+
+        self.set_geometry_hints(self, hints, Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.MAX_SIZE | Gdk.WindowHints.BASE_SIZE)
+
 # Overlay window management #
 
     def maybe_update_layout(self):
@@ -444,8 +454,6 @@ class Stage(Gtk.Window):
             elif valign == Gtk.Align.END:
                 allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
 
-            # utils.debug_allocation(allocation)
-
             return True
 
         if isinstance(child, AudioBar):
@@ -474,7 +482,7 @@ class Stage(Gtk.Window):
                 monitor_rect = self.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
                 allocation.y = monitor_rect.y
-                allocation.width = nat_rect.width
+                allocation.width = utils.CLAMP(nat_rect.width, 0, monitor_rect.width / 2)
                 allocation.height = nat_rect.height
             else:
                 allocation.x = child.rect.x + child.rect.width - nat_rect.width

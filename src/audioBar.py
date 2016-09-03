@@ -4,6 +4,7 @@ from gi.repository import Gtk
 
 from baseWindow import BaseWindow
 from volumeWidget import VolumeWidget
+from playerWidget import PlayerWidget
 from util import utils
 
 class AudioBar(BaseWindow):
@@ -23,7 +24,16 @@ class AudioBar(BaseWindow):
 
         self.add(self.box)
 
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.box.pack_start(hbox, True, True, 6)
+
         self.volume_widget = VolumeWidget()
-        self.box.pack_start(self.volume_widget, False, False, 6)
+        hbox.pack_start(self.volume_widget, False, False, 0)
+
+        self.player_widget = PlayerWidget()
+        hbox.pack_start(self.player_widget, False, False, 0)
+        self.player_widget.set_no_show_all(True)
+
+        self.player_widget.set_visible(self.player_widget.should_show())
 
         self.show_all()

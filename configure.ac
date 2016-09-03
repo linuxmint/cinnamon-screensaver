@@ -108,5 +108,6 @@ screensavers/xscreensaver@cinnamon.org/Makefile
 src/Makefile
 src/binfiles/Makefile
 src/dbusdepot/Makefile
+src/widgets/Makefile
 src/util/Makefile
 ])

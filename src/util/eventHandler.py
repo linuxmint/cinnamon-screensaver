@@ -22,7 +22,7 @@ class EventHandler:
     def on_motion_event(self, event):
         if status.Awake:
             self.on_user_activity()
-            return Gdk.EVENT_PROPAGATE
+            return Gdk.EVENT_STOP
 
         if self.last_x == -1 or self.last_y == -1:
             self.last_x = event.x
