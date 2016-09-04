@@ -1,10 +1,16 @@
 #!/usr/bin/make -f
 
+DEB_PKG_CONFIG_LIBDIR=$(shell pkg-config gobject-introspection-1.0 --variable libdir | sed -e 's/.//')
+
 %:
 	dh $@ --parallel --with=autoreconf,gnome
 
 override_dh_gnome_clean:
 	dh_gnome_clean --no-control
+
+override_dh_install:
+	sed 's@DEB_PKG_CONFIG_LIBDIR@${DEB_PKG_CONFIG_LIBDIR}@' debian/libcscreensaver0.install.in > debian/libcscreensaver0.install
+	dh_install --list-missing
 
 DEB_CONFIGURE_SCRIPT_ENV += PYTHON="/usr/bin/python3"
 
