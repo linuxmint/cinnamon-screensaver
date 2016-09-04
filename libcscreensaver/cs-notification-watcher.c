@@ -23,7 +23,6 @@ idle_notify_received (gpointer user_data)
     g_return_val_if_fail (CS_IS_NOTIFICATION_WATCHER (user_data), FALSE);
 
     CsNotificationWatcher *watcher = CS_NOTIFICATION_WATCHER (user_data);
-
     g_signal_emit (watcher, signals[NOTIFICATION_RECEIVED], 0);
 
     return FALSE;
@@ -35,7 +34,8 @@ notification_filter_func (GDBusConnection *connection,
                           gboolean        *incoming,
                           gpointer         user_data)
 {
-    const gchar *dest;
+    GDBusMessage *ret = NULL;
+    gint32 transient = 0;
 
     CsNotificationWatcher *watcher = CS_NOTIFICATION_WATCHER (user_data);
 
@@ -43,11 +43,40 @@ notification_filter_func (GDBusConnection *connection,
         g_dbus_message_get_message_type (message) == G_DBUS_MESSAGE_TYPE_METHOD_CALL &&
         g_strcmp0 (g_dbus_message_get_interface (message), NOTIFICATIONS_INTERFACE) == 0 &&
         g_strcmp0 (g_dbus_message_get_member (message), NOTIFY_METHOD) == 0) {
-        g_idle_add (idle_notify_received, watcher);
-        return NULL;
+
+        GVariant *body = g_dbus_message_get_body (message);
+
+        if (body != NULL &&
+            g_variant_is_of_type (body, G_VARIANT_TYPE_TUPLE) &&
+            g_variant_n_children (body) >= 7) {
+
+            GVariant *hints;
+
+            hints = g_variant_get_child_value (body, 6);
+
+            if (hints != NULL && g_variant_is_of_type (hints, G_VARIANT_TYPE_DICTIONARY)) {
+                GVariant *transient_hint;
+
+                transient_hint = g_variant_lookup_value (hints, "transient", NULL);
+
+                if (transient_hint) {
+                    transient = g_variant_get_int32 (transient_hint);
+                }
+
+                g_clear_pointer (&transient_hint, g_variant_unref);
+            }
+
+            g_clear_pointer (&hints, g_variant_unref);
+        }
+    } else {
+        ret = message;
     }
 
-    return message;
+    if (ret == NULL && !transient) {
+        g_idle_add (idle_notify_received, watcher);
+    }
+
+    return ret;
 }
 
 static void
