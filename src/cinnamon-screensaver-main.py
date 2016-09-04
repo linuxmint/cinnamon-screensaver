@@ -4,13 +4,17 @@ import gi
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, Gdk
+from dbus.exceptions import DBusException
 import signal
 import gettext
 import argparse
 import os
 
 import config
-from service import ScreensaverService
+try:
+   from service import ScreensaverService
+except (ImportError, ValueError):
+   print("The screensaver service is not available.")
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
@@ -27,11 +31,12 @@ class Main:
         if args.version:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
-
-        self.init_style_overrides()
-
-        ScreensaverService()
-        Gtk.main()
+        try:
+            ScreensaverService()
+            self.init_style_overrides()
+            Gtk.main()
+        except (NameError, DBusException) as e:
+            print(e)
 
     def init_style_overrides(self):
         path = os.path.join(config.pkgdatadir, "application.css")
