@@ -45,12 +45,6 @@ AC_DEFUN([AC_CHECK_X_HEADER], [
   AC_CHECK_HEADER([$1],[$2],[$3],[$4])
   CPPFLAGS="$ac_save_CPPFLAGS"])
 
-# gtkdocize greps for '^GTK_DOC_CHECK'
-m4_ifdef([GTK_DOC_CHECK], [
-GTK_DOC_CHECK([1.18],[--flavour no-tmpl])],
-          [AM_CONDITIONAL([ENABLE_GTK_DOC], [false])
-           enable_gtk_doc=no])
-
 AM_PATH_PYTHON(3.4)
 
 PKG_CHECK_MODULES(CSCREENSAVER, gobject-2.0 gtk+-3.0 gdk-x11-3.0 x11 glib-2.0 gio-2.0)
