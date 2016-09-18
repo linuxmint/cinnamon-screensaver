@@ -10,12 +10,15 @@ PKG_PROG_PKG_CONFIG([0.26])
 AC_CONFIG_MACRO_DIR([m4])
 AC_SUBST([ACLOCAL_AMFLAGS], ["-I $ac_macro_dir \${ACLOCAL_FLAGS}"])
 
-## AX_IS_RELEASE([git-directory])
+m4_ifdef([AX_IS_RELEASE], [AX_IS_RELEASE([always])])
 
 AC_CONFIG_SRCDIR(src/cinnamon-screensaver-main.py)
 
 AM_INIT_AUTOMAKE([1.7 no-dist-gzip dist-xz])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+m4_ifdef([AX_COMPILER_FLAGS],
+         [AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS])])
 
 LT_INIT([disable-static])
 
