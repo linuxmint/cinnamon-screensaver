@@ -34,7 +34,14 @@ class NotificationWidget(Gtk.Frame):
                                            "notification-received",
                                            self.on_notification_received)
 
-    def on_notification_received(self, proxy):
+    def on_notification_received(self, proxy, sender, data=None):
+        mp_watcher = singletons.MediaPlayerWatcher
+
+        players = mp_watcher.get_all_player_names()
+
+        if sender.lower() in players:
+            return
+
         self.notification_count += 1
 
         self.update_label()

@@ -17,13 +17,22 @@ G_DEFINE_TYPE (CsNotificationWatcher, cs_notification_watcher, G_TYPE_OBJECT);
 #define NOTIFICATIONS_INTERFACE "org.freedesktop.Notifications"
 #define NOTIFY_METHOD "Notify"
 
+typedef struct
+{
+    CsNotificationWatcher *watcher;
+    gchar *sender;
+} NotificationIdleData;
+
 gboolean
 idle_notify_received (gpointer user_data)
 {
-    g_return_val_if_fail (CS_IS_NOTIFICATION_WATCHER (user_data), FALSE);
+    NotificationIdleData *data = (NotificationIdleData *) user_data;
 
-    CsNotificationWatcher *watcher = CS_NOTIFICATION_WATCHER (user_data);
-    g_signal_emit (watcher, signals[NOTIFICATION_RECEIVED], 0);
+    g_return_val_if_fail (CS_IS_NOTIFICATION_WATCHER (data->watcher), FALSE);
+    g_signal_emit (data->watcher, signals[NOTIFICATION_RECEIVED], 0, data->sender);
+
+    g_clear_pointer (&data->sender, g_free);
+    g_slice_free (NotificationIdleData, data);
 
     return FALSE;
 }
@@ -36,6 +45,7 @@ notification_filter_func (GDBusConnection *connection,
 {
     GDBusMessage *ret = NULL;
     gint32 transient = 0;
+    gchar *sender_str = NULL;
 
     CsNotificationWatcher *watcher = CS_NOTIFICATION_WATCHER (user_data);
 
@@ -67,13 +77,26 @@ notification_filter_func (GDBusConnection *connection,
             }
 
             g_clear_pointer (&hints, g_variant_unref);
+
+            GVariant *sender = g_variant_get_child_value (body, 0);
+
+            if (sender) {
+                sender_str = g_variant_dup_string (sender, NULL);
+            }
+
+            g_clear_pointer (&sender, g_variant_unref);
         }
     } else {
         ret = message;
     }
 
     if (ret == NULL && !transient) {
-        g_idle_add (idle_notify_received, watcher);
+        NotificationIdleData *data = g_slice_new0 (NotificationIdleData);
+
+        data->watcher = watcher;
+        data->sender = sender_str;
+
+        g_idle_add (idle_notify_received, data);
     }
 
     return ret;
@@ -155,7 +178,7 @@ cs_notification_watcher_class_init (CsNotificationWatcherClass *klass)
         G_STRUCT_OFFSET (CsNotificationWatcherClass, notification_received),
         NULL, NULL,
         g_cclosure_marshal_VOID__VOID,
-        G_TYPE_NONE, 0);
+        G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 
 CsNotificationWatcher *

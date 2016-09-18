@@ -252,3 +252,13 @@ class MediaPlayerWatcher(GObject.Object):
                 return client
 
         return None
+
+    def get_all_player_names(self):
+        ret = []
+
+        for client in self.player_clients:
+            fullname = client.get_name()
+            split = fullname.split(".")
+            ret.append(split[len(split) - 1].lower())
+
+        return ret

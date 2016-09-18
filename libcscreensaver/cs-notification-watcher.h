@@ -27,7 +27,7 @@ typedef struct
 {
     GObjectClass    parent_class;
 
-    void (* notification_received) (CsNotificationWatcher *watcher);
+    void (* notification_received) (CsNotificationWatcher *watcher, const gchar *sender);
 } CsNotificationWatcherClass;
 
 GType                        cs_notification_watcher_get_type           (void);
