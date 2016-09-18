@@ -148,9 +148,9 @@ class UnlockDialog(BaseWindow):
 
         button_box.pack_start(self.auth_switch_button, False, False, 4)
 
-        status.focusWidgets = [self.auth_unlock_button,
-                               self.auth_switch_button,
-                               self.password_entry]
+        status.focusWidgets = [self.password_entry,
+                               self.auth_unlock_button,
+                               self.auth_switch_button]
 
         vbox_messages = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
 

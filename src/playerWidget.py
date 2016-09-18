@@ -12,6 +12,7 @@ from widgets.blinkingLabel import BlinkingLabel
 from widgets.marqueeLabel import MarqueeLabel
 from widgets.transparentButton import TransparentButton
 import singletons
+import status
 
 class PlayerWidget(Gtk.Box):
     def __init__(self):
@@ -27,7 +28,7 @@ class PlayerWidget(Gtk.Box):
         size = Gtk.IconSize.from_name("audio-button")
         # size = Gtk.IconSize.MENU
 
-        status = self.player.get_playback_status()
+        player_status = self.player.get_playback_status()
 
         # Player buttons
 
@@ -48,7 +49,7 @@ class PlayerWidget(Gtk.Box):
 
         button_box.pack_start(self.previous_button, True, True, 2)
 
-        self.play_pause_button = TransparentButton(self.get_play_pause_icon_name(status), size)
+        self.play_pause_button = TransparentButton(self.get_play_pause_icon_name(player_status), size)
         self.play_pause_button.show()
         trackers.con_tracker_get().connect(self.play_pause_button,
                                            "clicked",
@@ -62,7 +63,11 @@ class PlayerWidget(Gtk.Box):
                                            self.on_next_clicked)
         button_box.pack_start(self.next_button, True, True, 2)
 
-        self.update_buttons(status)
+        self.update_buttons(player_status)
+
+        status.focusWidgets = status.focusWidgets + [self.previous_button,
+                                                     self.play_pause_button,
+                                                     self.next_button]
 
         # Position labels and bar
 
@@ -120,14 +125,14 @@ class PlayerWidget(Gtk.Box):
                                            "metadata-changed",
                                            self.on_metadata_changed)
 
-        self.on_playback_status_changed(self.player, self.player.get_playback_status())
+        self.on_playback_status_changed(self.player, player_status)
         self.on_metadata_changed(self.player)
 
         trackers.con_tracker_get().connect(self,
                                            "destroy",
                                            self.on_widget_destroy)
 
-        self.update_position_timer(status)
+        self.update_position_timer(player_status)
 
     def on_previous_clicked(self, button, data=None):
         self.player.go_previous()
