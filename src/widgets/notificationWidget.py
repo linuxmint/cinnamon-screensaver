@@ -11,6 +11,7 @@ class NotificationWidget(Gtk.Frame):
     }
     def __init__(self):
         super(NotificationWidget, self).__init__()
+        self.set_shadow_type(Gtk.ShadowType.NONE)
         self.get_style_context().add_class("notificationwidget")
 
         self.set_size_request(50, -1)

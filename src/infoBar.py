@@ -32,12 +32,16 @@ class InfoBar(BaseWindow):
 
         self.notification_widget = NotificationWidget()
         self.notification_widget.set_no_show_all(True)
-        hbox.pack_start(self.notification_widget, True, True, 3)
+        hbox.pack_start(self.notification_widget, True, True, 2)
         self.notification_widget.connect("notification", self.on_notification_received)
+
+        self.separator = Gtk.VSeparator()
+        self.separator.set_no_show_all(True)
+        hbox.pack_start(self.separator, True, True, 2)
 
         self.power_widget = PowerWidget()
         self.power_widget.set_no_show_all(True)
-        hbox.pack_start(self.power_widget, True, True, 3)
+        hbox.pack_start(self.power_widget, True, True, 2)
 
         self.show_all()
 
@@ -49,6 +53,7 @@ class InfoBar(BaseWindow):
 
         self.show_power = self.power_widget.should_show()
         self.show_notifications = self.notification_widget.should_show()
+        show_separator = self.show_power and self.show_notifications
 
         # Determine if we want to show all the time or only when status.Awake
 
@@ -63,6 +68,7 @@ class InfoBar(BaseWindow):
         if do_reveal:
             self.power_widget.set_visible(self.show_power)
             self.notification_widget.set_visible(self.show_notifications)
+            self.separator.set_visible(show_separator)
             self.reveal()
         else:
             self.unreveal()

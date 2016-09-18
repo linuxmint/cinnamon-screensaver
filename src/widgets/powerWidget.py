@@ -12,6 +12,7 @@ class PowerWidget(Gtk.Frame):
 
     def __init__(self):
         super(PowerWidget, self).__init__()
+        self.set_shadow_type(Gtk.ShadowType.NONE)
         self.get_style_context().add_class("powerwidget")
 
         self.path_widget_pairs = []
