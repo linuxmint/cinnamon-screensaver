@@ -2,11 +2,11 @@ Source: cinnamon-screensaver
 Section: x11
 Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
-Build-Depends: debhelper (>= 9),
+Build-Depends: autoconf-archive,
+               debhelper (>= 9),
                devscripts,
                dh-autoreconf,
                dh-python,
-               gnome-common,
                librsvg2-bin,
                python-rsvg,
                libglib2.0-dev,
