@@ -14,9 +14,9 @@ from widgets.transparentButton import TransparentButton
 import singletons
 import status
 
-class PlayerWidget(Gtk.Box):
+class PlayerControl(Gtk.Box):
     def __init__(self):
-        super(PlayerWidget, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
+        super(PlayerControl, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
         self.watcher = singletons.MediaPlayerWatcher
         self.player = self.watcher.get_best_player()

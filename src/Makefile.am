@@ -18,12 +18,12 @@ app_PYTHON = \
         infoBar.py \
         manager.py \
         monitorView.py \
-        playerWidget.py \
+        playerControl.py \
         service.py \
         stage.py \
         status.py \
         unlock.py \
-        volumeWidget.py \
+        volumeControl.py \
         $(NULL)
 
 app_DATA = application.css

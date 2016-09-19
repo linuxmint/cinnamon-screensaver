@@ -3,8 +3,8 @@
 from gi.repository import Gtk
 
 from baseWindow import BaseWindow
-from volumeWidget import VolumeWidget
-from playerWidget import PlayerWidget
+from volumeControl import VolumeControl
+from playerControl import PlayerControl
 from util import utils
 
 class AudioBar(BaseWindow):
@@ -27,10 +27,10 @@ class AudioBar(BaseWindow):
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.box.pack_start(hbox, True, True, 6)
 
-        self.volume_widget = VolumeWidget()
+        self.volume_widget = VolumeControl()
         hbox.pack_start(self.volume_widget, False, False, 0)
 
-        self.player_widget = PlayerWidget()
+        self.player_widget = PlayerControl()
         hbox.pack_start(self.player_widget, False, False, 0)
         self.player_widget.set_no_show_all(True)
 

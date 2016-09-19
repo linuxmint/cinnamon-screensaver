@@ -8,9 +8,9 @@ from gi.repository import Gtk, Cvc, Gdk
 from widgets.volumeSlider import VolumeSlider
 from util import trackers, utils
 
-class VolumeWidget(Gtk.Box):
+class VolumeControl(Gtk.Box):
     def __init__(self):
-        super(VolumeWidget, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
+        super(VolumeControl, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
         self.output = None
         self.controller = None

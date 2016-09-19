@@ -41,16 +41,13 @@ class VolumeSlider(Gtk.Scale):
         y = padding.top + border.top
         width = alloc.width - padding.left - padding.right - border.left - border.right
         height = alloc.height - padding.top - padding.bottom - border.top - border.bottom
-        ratio = height / width
         value = round(self.get_value())
         floor = y + height
 
         if self.muted:
             fill_color = ctx.get_background_color(Gtk.StateFlags.INSENSITIVE)
-            border_color = ctx.get_border_color(Gtk.StateFlags.INSENSITIVE)
         else:
             fill_color = ctx.get_background_color(Gtk.StateFlags.NORMAL)
-            border_color = ctx.get_border_color(Gtk.StateFlags.NORMAL)
 
         cr.set_line_width(1)
         cr.set_antialias(cairo.ANTIALIAS_GRAY)
