@@ -161,10 +161,25 @@ class MprisClient(BaseClient):
         if not self.metadata:
             self.metadata = self.proxy.get_property("metadata")
             if self.metadata:
-                self.max_position = self.metadata["mpris:length"]
-                self.track_name = self.metadata["xesam:title"]
-                self.album_name = self.metadata["xesam:album"]
-                self.artist_name = self.metadata["xesam:albumArtist"][0]
+                try:
+                    self.max_position = self.metadata["mpris:length"]
+                except KeyError:
+                    self.max_position = 0
+                try:
+                    self.track_name = self.metadata["xesam:title"]
+                except KeyError:
+                    self.track_name = _("Unknown title")
+                try:
+                    self.album_name = self.metadata["xesam:album"]
+                except KeyError:
+                    self.album_name = ""
+                try:
+                    self.artist_name = self.metadata["xesam:albumArtist"][0]
+                except KeyError:
+                    try:
+                        self.artist_name = self.metadata["xesam:artist"][0]
+                    except:
+                        self.artist_name = ""
 
     def on_playback_status_changed(self, proxy, pspec, data=None):
         self.emit("status-changed", self.get_playback_status())

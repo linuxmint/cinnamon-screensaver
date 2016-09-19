@@ -187,7 +187,18 @@ class PlayerControl(Gtk.Box):
 
     def update_labels(self):
         self.track_name_label.set_text(self.player.get_track_name())
-        self.album_artist_label.set_text("%s - %s" % (self.player.get_artist_name(), self.player.get_album_name()))
+
+        artist_name = self.player.get_artist_name()
+        album_name = self.player.get_album_name()
+
+        if artist_name != "" and album_name != "":
+            self.album_artist_label.set_text("%s - %s" % (self.player.get_artist_name(), self.player.get_album_name()))
+        elif artist_name != "":
+            self.album_artist_label.set_text(artist_name)
+        elif album_name != "":
+            self.album_artist_label.set_text(album_name)
+        else:
+            self.album_artist_label.set_text("")
 
     def pause_blink_step(self):
         self.max_pos_label.set_visible(not self.max_pos_label.get_visible())
