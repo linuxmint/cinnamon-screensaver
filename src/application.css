@@ -21,11 +21,13 @@
 .audiobar {
     border-width: 0 1px 1px 0;
     border-radius: 0 0 3px 0;
+    background-color: rgba(255, 255, 255, .05);
 }
 
 .infobar {
     border-width: 0 0 1px 1px;
     border-radius: 0 0 0 3px;
+    background-color: rgba(255, 255, 255, .05);
 }
 
 .notificationwidget,
@@ -138,10 +140,9 @@
 
 .volumeslider {
     -GtkScale-slider-length: 4;
-    -GtkRange-slider-width: 24;
-    border-color: @theme_bg_color;
-    background-color: @theme_selected_bg_color;
-    border-style: solid;
+    -GtkRange-slider-width: 30;
+    background-color: rgba(255, 255, 255, .1);
+    color: @theme_selected_bg_color;
     padding: 3px 0px 3px 0px;
 }
 
@@ -157,7 +158,7 @@
 
 .trackname {
     font-family: monospace;
-    font-size: 10px;
+    font-size: 12px;
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
@@ -168,6 +169,8 @@
 }
 
 .positionbar {
-    -GtkProgressBar-min-horizontal-bar-height: 10;
+    -GtkProgressBar-min-horizontal-bar-height: 14;
     -GtkProgressBar-min-horizontal-bar-width: 180;
+    background-color: rgba(255, 255, 255, .1);
+    color: @theme_selected_bg_color;
 }

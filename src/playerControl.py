@@ -11,6 +11,7 @@ from dbusdepot.mediaPlayerWatcher import PlaybackStatus
 from widgets.blinkingLabel import BlinkingLabel
 from widgets.marqueeLabel import MarqueeLabel
 from widgets.transparentButton import TransparentButton
+from widgets.positionBar import PositionBar
 import singletons
 import status
 
@@ -89,9 +90,7 @@ class PlayerControl(Gtk.Box):
         self.max_pos_label.get_style_context().add_class("positionlabel")
         position_length_box.pack_end(self.max_pos_label, False, False, 2)
 
-        self.position_bar = Gtk.ProgressBar(orientation=Gtk.Orientation.HORIZONTAL)
-        self.position_bar.get_style_context().add_class("positionbar")
-
+        self.position_bar = PositionBar()
         vbox.pack_end(self.position_bar, True, True, 2)
 
         # Track info
@@ -219,7 +218,10 @@ class PlayerControl(Gtk.Box):
         self.play_pause_button.set_image(image)
 
     def update_position_display(self):
-        value = self.player.get_position() / self.player.get_max_position()
+        if self.player.get_position() < self.player.get_max_position():
+            value = self.player.get_position() / self.player.get_max_position()
+        else:
+            value = 1.0
         value = utils.CLAMP(value, 0.0, 1.0)
         self.position_bar.set_fraction(value)
 

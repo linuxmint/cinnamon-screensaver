@@ -20,6 +20,8 @@ class VolumeSlider(Gtk.Scale):
         self.set_round_digits(0)
         self.set_draw_value(False)
         self.set_size_request(130, -1)
+        self.set_halign(Gtk.Align.CENTER)
+        self.set_valign(Gtk.Align.CENTER)
 
         trackers.con_tracker_get().connect(self,
                                            "draw",
@@ -35,40 +37,43 @@ class VolumeSlider(Gtk.Scale):
         alloc = self.get_allocation()
 
         padding = ctx.get_padding(Gtk.StateFlags.NORMAL)
-        border = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        border = ctx.get_border(Gtk.StateFlags.NORMAL)
 
         x = padding.left + border.left
         y = padding.top + border.top
         width = alloc.width - padding.left - padding.right - border.left - border.right
         height = alloc.height - padding.top - padding.bottom - border.top - border.bottom
-        value = round(self.get_value())
         floor = y + height
+        end = x + width
+        value = round(self.get_value())
+        value_x = x + ((value / 100) * width)
+        value_y = floor - ((value / 100) * height)
 
         if self.muted:
-            fill_color = ctx.get_background_color(Gtk.StateFlags.INSENSITIVE)
+            fill_color = ctx.get_color(Gtk.StateFlags.INSENSITIVE)
+            bg_color = ctx.get_background_color(Gtk.StateFlags.INSENSITIVE)
         else:
-            fill_color = ctx.get_background_color(Gtk.StateFlags.NORMAL)
-
-        cr.set_line_width(1)
-        cr.set_antialias(cairo.ANTIALIAS_GRAY)
-        cr.set_line_join(cairo.LINE_JOIN_ROUND)
+            fill_color = ctx.get_color(Gtk.StateFlags.NORMAL)
+            bg_color = ctx.get_background_color(Gtk.StateFlags.NORMAL)
 
         cr.save()
 
         cr.new_sub_path()
         cr.move_to(x, floor)
-        cr.line_to(x + width, floor)
-        cr.line_to(x + width, y)
+        cr.line_to(end, floor)
+        cr.line_to(end, y)
         cr.close_path()
 
-        cr.set_source_rgba(1, 1, 1, .1)
-
+        Gdk.cairo_set_source_rgba(cr, bg_color)
         cr.fill()
+
+        cr.restore()
+        cr.save()
 
         cr.new_sub_path()
         cr.move_to(x, floor)
-        cr.line_to(x + ((value / 100) * width), floor)
-        cr.line_to(x + ((value / 100) * width), floor - ((value / 100) * height))
+        cr.line_to(value_x, floor)
+        cr.line_to(value_x, value_y)
         cr.close_path()
 
         Gdk.cairo_set_source_rgba(cr, fill_color)

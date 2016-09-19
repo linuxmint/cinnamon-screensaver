@@ -12,6 +12,7 @@ app_PYTHON = \
         blinkingLabel.py \
         marqueeLabel.py \
         notificationWidget.py \
+        positionBar.py \
         powerWidget.py \
         transparentButton.py \
         volumeSlider.py \
