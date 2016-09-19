@@ -8,8 +8,8 @@ import singletons
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
-from audioBar import AudioBar
-from infoBar import InfoBar
+from audioPanel import AudioPanel
+from infoPanel import InfoPanel
 from util import utils, trackers, settings
 from util.fader import Fader
 from util.eventHandler import EventHandler
@@ -122,13 +122,13 @@ class Stage(Gtk.Window):
 
         self.unlock_dialog.destroy()
         self.clock_widget.destroy()
-        self.info_bar.destroy()
-        self.audio_bar.destroy()
+        self.info_panel.destroy()
+        self.audio_panel.destroy()
 
         self.unlock_dialog = None
         self.clock_widget = None
-        self.info_bar = None
-        self.audio_bar = None
+        self.info_panel = None
+        self.audio_panel = None
         self.away_message = None
         self.monitors = []
 
@@ -180,7 +180,7 @@ class Stage(Gtk.Window):
                                               "current-view-change-complete",
                                               self.after_power_state_changed)
 
-        self.info_bar.update_revealed()
+        self.info_panel.update_revealed()
 
     def setup_clock(self):
         self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
@@ -212,13 +212,13 @@ class Stage(Gtk.Window):
                                            self.authentication_result_callback, False)
 
     def setup_status_bars(self):
-        self.audio_bar = AudioBar(self.screen)
-        self.add_child_widget(self.audio_bar)
-        self.put_on_top(self.audio_bar)
+        self.audio_panel = AudioPanel(self.screen)
+        self.add_child_widget(self.audio_panel)
+        self.put_on_top(self.audio_panel)
 
-        self.info_bar = InfoBar(self.screen)
-        self.add_child_widget(self.info_bar)
-        self.put_on_top(self.info_bar)
+        self.info_panel = InfoPanel(self.screen)
+        self.add_child_widget(self.info_panel)
+        self.put_on_top(self.info_panel)
 
         trackers.con_tracker_get().connect(self.power_client,
                                            "power-state-changed",
@@ -288,8 +288,8 @@ class Stage(Gtk.Window):
 
         self.clock_widget.reveal()
         self.unlock_dialog.reveal()
-        self.audio_bar.reveal()
-        self.info_bar.update_revealed()
+        self.audio_panel.reveal()
+        self.info_panel.update_revealed()
 
     def cancel_unlock_widget(self):
         if not status.Awake:
@@ -302,13 +302,13 @@ class Stage(Gtk.Window):
                                            self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
         self.clock_widget.unreveal()
-        self.audio_bar.unreveal()
-        self.info_bar.unreveal()
+        self.audio_panel.unreveal()
+        self.info_panel.unreveal()
 
     def after_unlock_unrevealed(self, obj, pspec):
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
-        self.audio_bar.hide()
+        self.audio_panel.hide()
         self.clock_widget.hide()
 
         trackers.con_tracker_get().disconnect(self.unlock_dialog,
@@ -328,7 +328,7 @@ class Stage(Gtk.Window):
                                               "current-view-change-complete",
                                               self.after_transitioned_back_to_sleep)
 
-        self.info_bar.update_revealed()
+        self.info_panel.update_revealed()
 
         if not status.PluginRunning and settings.get_show_clock():
             self.put_on_top(self.clock_widget)
@@ -456,7 +456,7 @@ class Stage(Gtk.Window):
 
             return True
 
-        if isinstance(child, AudioBar):
+        if isinstance(child, AudioPanel):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
@@ -474,7 +474,7 @@ class Stage(Gtk.Window):
 
             return True
 
-        if isinstance(child, InfoBar):
+        if isinstance(child, InfoPanel):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:

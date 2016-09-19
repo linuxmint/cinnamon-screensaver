@@ -7,9 +7,9 @@ from volumeControl import VolumeControl
 from playerControl import PlayerControl
 from util import utils
 
-class AudioBar(BaseWindow):
+class AudioPanel(BaseWindow):
     def __init__(self, screen):
-        super(AudioBar, self).__init__()
+        super(AudioPanel, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
         self.screen = screen
@@ -19,8 +19,8 @@ class AudioBar(BaseWindow):
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.set_halign(Gtk.Align.FILL)
-        self.box.get_style_context().add_class("topbar")
-        self.box.get_style_context().add_class("audiobar")
+        self.box.get_style_context().add_class("toppanel")
+        self.box.get_style_context().add_class("audiopanel")
 
         self.add(self.box)
 

@@ -8,9 +8,9 @@ from baseWindow import BaseWindow
 from widgets.notificationWidget import NotificationWidget
 from widgets.powerWidget import PowerWidget
 
-class InfoBar(BaseWindow):
+class InfoPanel(BaseWindow):
     def __init__(self, screen):
-        super(InfoBar, self).__init__()
+        super(InfoPanel, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
         self.screen = screen
@@ -23,8 +23,8 @@ class InfoBar(BaseWindow):
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.set_halign(Gtk.Align.FILL)
-        self.box.get_style_context().add_class("topbar")
-        self.box.get_style_context().add_class("infobar")
+        self.box.get_style_context().add_class("toppanel")
+        self.box.get_style_context().add_class("infopanel")
         self.add(self.box)
 
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)

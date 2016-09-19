@@ -10,7 +10,7 @@
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
-.topbar {
+.toppanel {
     border-color: alpha(white, .2);
     border-style: solid;
     color: white;
@@ -18,13 +18,13 @@
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0));
 }
 
-.audiobar {
+.audiopanel {
     border-width: 0 1px 1px 0;
     border-radius: 0 0 3px 0;
     background-color: rgba(255, 255, 255, .05);
 }
 
-.infobar {
+.infopanel {
     border-width: 0 0 1px 1px;
     border-radius: 0 0 0 3px;
     background-color: rgba(255, 255, 255, .05);
