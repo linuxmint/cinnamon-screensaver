@@ -4,18 +4,18 @@
 - Make styling work at fallback provider priority (1 instead of 600)
 - ~~clock positioning broken in Gtk 3.20 (widget.queue_resize instead of widget.queue_draw to trigger GtkOverlay~~
   ~~redraws, but still issues?)~~
-- add music player widget?  Next to volume, track info, position (read-only) or time, 3 buttons (pause-forw-back)
+- ~~add music player widget?  Next to volume, track info, position (read-only) or time, 3 buttons (pause-forw-back)~~
 - security testing... try to break it
 - add our own flag gsettings key to org.cinnamon.desktop.screensaver, instead of using libgnomekbd?  it's a dependency
   anyhow.  Add user setting for this as well?
 - Evaluate allowed keybindings - add more?  Some missing? (keybindings.py)
-- No boxes around infobar widgets?  just a separator maybe, or nothing..
+- ~~No boxes around infobar widgets?  just a separator maybe, or nothing..~~
 - monitor window urgent/demands-attention hints - add to info bar?
-- Evaluate throttle - it's in the freedesktop spec.. idea being, you don't want a plugin screensaver running while 
+- ~~Evaluate throttle - it's in the freedesktop spec.. idea being, you don't want a plugin screensaver running while 
   you're on battery.  Since we talk to upower, we can implement this ourselves, or let our session manager tell us
-  when to throttle back/throttle forward (plug in, switch back to x plugin or whatever?)
-- keep track of last keyboard layout used in the unlocker, use that one by default (keeps user from having to switch
-  repeatedly when unlocking, while using a different input layout in general)
+  when to throttle back/throttle forward (plug in, switch back to x plugin or whatever?)~~
+- ~~keep track of last keyboard layout used in the unlocker, use that one by default (keeps user from having to switch
+  repeatedly when unlocking, while using a different input layout in general)~~
 
 
 How does it work?
