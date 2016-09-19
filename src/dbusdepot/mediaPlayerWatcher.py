@@ -168,7 +168,7 @@ class MprisClient(BaseClient):
                 try:
                     self.track_name = self.metadata["xesam:title"]
                 except KeyError:
-                    self.track_name = _("Unknown title")
+                    self.track_name = ""
                 try:
                     self.album_name = self.metadata["xesam:album"]
                 except KeyError:

@@ -153,17 +153,15 @@ class PlayerControl(Gtk.Box):
     def position_to_time_string(self, position):
         delta = datetime.timedelta(microseconds=position)
 
-        try:
-            time = datetime.datetime.strptime(str(delta), "%H:%M:%S.%f")
-        except:
-            time = datetime.datetime.strptime(str(delta), "%H:%M:%S")
+        duration = datetime.datetime.utcfromtimestamp(delta.total_seconds())
 
-        if time.hour < 1:
-            time_str = time.strftime("%M:%S")
+        if duration.hour < 0:
+            return _("--:--")
+
+        if duration.hour < 1:
+            return duration.strftime(_("%M:%S"))
         else:
-            time_str = time.strftime("%H:%M:%S")
-
-        return time_str
+            return duration.strftime(_("%H:%M:%S"))
 
     def on_playback_status_changed(self, player, status, data=None):
         self.update_buttons(status)
