@@ -26,7 +26,7 @@ app_PYTHON = \
         volumeControl.py \
         $(NULL)
 
-app_DATA = application.css
+app_DATA = cinnamon-screensaver.css
 
 app_SCRIPTS = cinnamon-screensaver-main.py \
               cinnamon-screensaver-command.py \

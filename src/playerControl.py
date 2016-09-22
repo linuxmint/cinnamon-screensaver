@@ -27,7 +27,6 @@ class PlayerControl(Gtk.Box):
 
     def build_layout(self):
         size = Gtk.IconSize.from_name("audio-button")
-        # size = Gtk.IconSize.MENU
 
         player_status = self.player.get_playback_status()
 

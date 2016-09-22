@@ -21,6 +21,8 @@ class Stage(Gtk.Window):
                             decorated=False,
                             skip_taskbar_hint=True)
 
+        self.get_style_context().add_class("csstage")
+
         trackers.con_tracker_get().connect(singletons.Backgrounds,
                                            "changed", 
                                            self.on_bg_changed)

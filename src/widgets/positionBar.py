@@ -8,7 +8,6 @@ from util import trackers
 class PositionBar(Gtk.ProgressBar):
     def __init__(self):
         super(PositionBar, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
-        self.get_style_context().remove_class("progressbar")
         self.get_style_context().add_class("positionbar")
 
         self.set_can_focus(False)

@@ -28,19 +28,46 @@ class Main:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
 
-        self.init_style_overrides()
+        Gtk.icon_size_register("audio-button", 20, 20)
+
+        Gtk.Settings.get_default().connect("notify::gtk-theme-name", self.on_theme_changed)
+        self.do_style_overrides()
 
         ScreensaverService()
         Gtk.main()
 
-    def init_style_overrides(self):
-        path = os.path.join(config.pkgdatadir, "application.css")
-        prov = Gtk.CssProvider()
+    def on_theme_changed(self, settings, pspec, data=None):
+        self.do_style_overrides()
 
-        Gtk.icon_size_register("audio-button", 20, 20)
+    def do_style_overrides(self):
+        theme_name = Gtk.Settings.get_default().get_property("gtk-theme-name")
+        provider = Gtk.CssProvider.get_named(theme_name)
 
-        if prov.load_from_path(path):
-            Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), prov, 600)
+        css = provider.to_string()
+
+        if ".csstage" not in css:
+            print("Cinnamon Screensaver support not found in current theme - adding some...")
+
+            path = os.path.join(config.pkgdatadir, "cinnamon-screensaver.css")
+
+            f = open(path, 'r')
+            fallback_css = f.read()
+            f.close()
+
+            if "@define-color theme_selected_bg_color" in css:
+                pass
+            elif "@define-color selected_bg_color" in css:
+                print("replacing theme_selected_bg_color with selected_bg_color")
+                fallback_css = fallback_css.replace("@theme_selected_bg_color", "@selected_bg_color")
+            else:
+                print("replacing theme_selected_bg_color with Adwaita blue")
+                fallback_css = fallback_css.replace("@selected_bg_color", "#4a90d9") # from Adwaita
+
+            fallback_prov = Gtk.CssProvider()
+
+            if fallback_prov.load_from_data(fallback_css.encode()):
+                Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), fallback_prov, 600)
+                Gtk.StyleContext.reset_widgets(Gdk.Screen.get_default())
 
 if __name__ == "__main__":
     main = Main()
