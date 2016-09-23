@@ -63,8 +63,8 @@ class MprisClient(BaseClient):
 
             try:
                 status = PlaybackStatus(eval("PlaybackStatus." + str_prop))
-            except ValueError as e:
-                print(e)
+            except (ValueError, TypeError):
+                pass
 
         return status
 

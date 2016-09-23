@@ -40,6 +40,7 @@ data/cinnamon-screensaver.desktop.in
 src/__pycache__
 stamp-h1
 xmldocs.make
+*.Plo
 *.lo
 *.la
 *proxy.c
