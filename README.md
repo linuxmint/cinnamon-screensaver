@@ -1,7 +1,7 @@
 ### To do
 - ~~Add GdkFilter to prevent new windows raising themselves above the stage~~
-- Gtk 3.20.. make a new CSS file, do a check at startup which file to use based on gtk version check
-- Make styling work at fallback provider priority (1 instead of 600)
+- ~~Gtk 3.20.. make a new CSS file, do a check at startup which file to use based on gtk version check~~
+- ~~Make styling work at fallback provider priority (1 instead of 600)~~
 - ~~clock positioning broken in Gtk 3.20 (widget.queue_resize instead of widget.queue_draw to trigger GtkOverlay~~
   ~~redraws, but still issues?)~~
 - ~~add music player widget?  Next to volume, track info, position (read-only) or time, 3 buttons (pause-forw-back)~~

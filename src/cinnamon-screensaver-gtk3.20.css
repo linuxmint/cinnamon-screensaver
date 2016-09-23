@@ -196,7 +196,7 @@
     color: @theme_selected_bg_color;
 }
 
-GtkViewport {
+.csstage GtkViewport {
     background-color: transparent;
     background-image: none;
 }

@@ -64,7 +64,7 @@ class Main:
                 fallback_css = fallback_css.replace("@theme_selected_bg_color", "@selected_bg_color")
             else:
                 print("replacing theme_selected_bg_color with Adwaita blue")
-                fallback_css = fallback_css.replace("@selected_bg_color", "#4a90d9") # from Adwaita
+                fallback_css = fallback_css.replace("@selected_bg_color", "#4a90d9")
 
             fallback_prov = Gtk.CssProvider()
 
