@@ -66,6 +66,18 @@ class TimerTracker:
         except KeyError:
             pass
 
+    def dump_timer_list(self):
+        print("Timer tracker dump:")
+
+        i = 0
+
+        for timer in self.timers:
+            print(timer)
+            i += 1
+
+        print("%d timers total" % i)
+
+
 timer_tracker = TimerTracker()
 
 def timer_tracker_get():
@@ -160,6 +172,17 @@ class ConnectionTracker:
         debug_sigs("disconnect", name)
 
         self._disconnect_by_name(name)
+
+    def dump_connections_list(self):
+        print("Connection tracker dump:")
+
+        i = 0
+
+        for connection in self.connections:
+            print(connection)
+            i += 1
+
+        print("%d connections total" % i)
 
 connection_tracker = ConnectionTracker()
 

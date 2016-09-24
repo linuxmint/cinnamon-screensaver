@@ -144,6 +144,13 @@ class ScreensaverManager(GObject.Object):
         self.stage.destroy_stage()
         self.stage = None
 
+        # Ideal time to check for leaking connections that might prevent GC by python and gobject
+        if trackers.DEBUG_SIGNALS:
+            trackers.con_tracker_get().dump_connections_list()
+
+        if trackers.DEBUG_TIMERS:
+            trackers.timer_tracker_get().dump_timer_list()
+
     def grab_stage(self):
         self.grab_helper.move_to_window(self.stage.get_window(), True)
 
