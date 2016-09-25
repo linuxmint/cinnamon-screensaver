@@ -3,6 +3,9 @@
 from gi.repository import GObject
 
 class LoginInterface(GObject.Object):
+    """
+    A common signal interface for our Logind and ConsoleKit clients.
+    """
     __gsignals__ = {
         'startup-status': (GObject.SignalFlags.RUN_LAST, None, (bool, )),
         'lock': (GObject.SignalFlags.RUN_LAST, None, ()),

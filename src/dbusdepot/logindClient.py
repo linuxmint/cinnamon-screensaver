@@ -7,10 +7,18 @@ from dbusdepot.baseClient import BaseClient
 from dbusdepot.loginInterface import LoginInterface
 
 class LogindClient(LoginInterface, BaseClient):
+    """
+    A client for communicating with logind.  At startup we check
+    for its availability, falling back to ConsoleKit if it's not
+    available.
+    """
     LOGIND_SERVICE      = "org.freedesktop.login1"
     LOGIND_PATH = "/org/freedesktop/login1"
 
     def __init__(self):
+        """
+        We first try to connect to the logind manager.
+        """
         super(LogindClient, self).__init__(Gio.BusType.SYSTEM,
                                            CScreensaver.LogindManagerProxy,
                                            self.LOGIND_SERVICE,
@@ -22,6 +30,18 @@ class LogindClient(LoginInterface, BaseClient):
         self.session_proxy = None
 
     def on_client_setup_complete(self):
+        """
+        If our manager connection succeeds, we ask it for the current session id and
+        then attempt to connect to its session interface.
+
+        Note: there are issues with retrieving this session id depending on how the
+        screensaver instances was started, when running under systemd.  If started from
+        a terminal (which is running in a different scope than the current session,) we
+        need to retrieve the session id via its environment variable.
+
+        If the screensaver is started as part of the session (due to autostart conditions,)
+        there is no issue here.
+        """
         try:
             self.session_id = self.proxy.call_get_session_by_pid_sync(self.pid)
         except GLib.Error:
@@ -44,6 +64,10 @@ class LogindClient(LoginInterface, BaseClient):
             self.on_failure()
 
     def on_session_ready(self, object, result, data=None):
+        """
+        Once we're connected to the session interface, we can respond to signals sent from
+        it - used primarily when returning from suspend, hibernation or the login screen.
+        """
         self.session_proxy = CScreensaver.LogindSessionProxy.new_for_bus_finish(result)
 
         self.session_proxy.connect("unlock", lambda proxy: self.emit("unlock"))

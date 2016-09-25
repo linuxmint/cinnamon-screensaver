@@ -26,6 +26,10 @@ class DeviceState(IntEnum):
     PendingDischarge = 6
 
 class UPowerClient(BaseClient):
+    """
+    This client communicates with the upower provider, tracking the power
+    state of the system (laptops - are we on battery or plugged in?)
+    """
     __gsignals__ = {
         'power-state-changed': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
@@ -129,6 +133,11 @@ class UPowerClient(BaseClient):
         return ret
 
     def full_and_on_ac_or_no_batteries(self):
+        """
+        This figures out whether the power widget should be shown or not -
+        currently we only show the widget if we have batteries and are not
+        plugged in.
+        """
         batteries = self.get_batteries()
 
         if batteries == []:

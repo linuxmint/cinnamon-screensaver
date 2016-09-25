@@ -6,6 +6,12 @@ from dbusdepot.baseClient import BaseClient
 import constants as c
 
 class ScreenSaverClient(BaseClient):
+    """
+    This is the paired proxy paired to our ScreensaverService interface.
+
+    It is only used by cinnamon-screensaver-command to communicate with
+    the screensaver process.
+    """
     __gsignals__ = {
         'client-ready': (GObject.SignalFlags.RUN_LAST, None, (bool,)),
     }

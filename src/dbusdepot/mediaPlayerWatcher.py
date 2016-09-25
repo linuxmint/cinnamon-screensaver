@@ -13,6 +13,14 @@ class PlaybackStatus(IntEnum):
     Stopped = 3
 
 class MprisClient(BaseClient):
+    """
+    Represents a media player with an mpris dbus interface.
+
+    There can be as many of these as there are players active in the session,
+    but we only control the first active one in our list.
+
+    These are instantiated by our MediaPlayerWatcher.
+    """
     __gsignals__ = {
         "position-changed": (GObject.SignalFlags.RUN_LAST, None, (int,)),
         "status-changed": (GObject.SignalFlags.RUN_LAST, None, (int,)),
@@ -51,9 +59,6 @@ class MprisClient(BaseClient):
         self.rate = self.proxy.get_property("rate")
 
         self.ensure_metadata()
-
-    def ensure_proxy_alive(self):
-        return self.proxy and self.proxy.get_name_owner() != None
 
     def get_playback_status(self):
         status = PlaybackStatus.Unknown
@@ -111,6 +116,12 @@ class MprisClient(BaseClient):
         return ""
 
     def get_position(self):
+        """
+        Position is a standard interface property, but according to the mpris spec,
+        it is *not* updated - it is recommended to retrieve the value at the rate
+        specified in the Rate property.  Retrieving the value requires a round-trip
+        to the player interface.
+        """
         if self.ensure_proxy_alive():
             # To get the position *reliably*, we must make a round-trip, because
             # the proxy's cached property may not get updated
@@ -198,9 +209,20 @@ class MprisClient(BaseClient):
         self.emit("metadata-changed")
 
 class MediaPlayerWatcher(GObject.Object):
+    """
+    Media player interfaces are different from our other interfaces.
+    There is no common owned name, players export their own unique interface,
+    within the org.mpris.MediaPlayer2.* namespace.  This allows multiple
+    players to exist on the bus at one time.  It requires us to list all
+    interfaces and filter out all but the ones in that namespace.  We then
+    create separate Player clients for each one.
+    """
     MPRIS_PATH = "/org/mpris/MediaPlayer2"
 
     def __init__(self):
+        """
+        Connect to the bus and retrieve a list of interfaces.
+        """
         super(MediaPlayerWatcher, self).__init__()
 
         self.player_clients = []
@@ -224,6 +246,11 @@ class MediaPlayerWatcher(GObject.Object):
             print("Cannot acquire session org.freedesktop.DBus client to watch for media players")
 
     def on_dbus_proxy_signal(self, proxy, sender, signal, parameters, data=None):
+        """
+        NameOwnerChanged is called both when a name appears on the bus, as
+        well as when it disappears.  The filled parameters tell us whether we've
+        gained or lost the player.
+        """
         if signal == "NameOwnerChanged":
             if parameters[2] != "":
                 self.on_name_acquired(parameters[0])
@@ -245,10 +272,16 @@ class MediaPlayerWatcher(GObject.Object):
             self.on_name_acquired(name)
 
     def on_name_acquired(self, name):
+        """
+        Create an mpris client for any discovered interfaces.
+        """
         if name.startswith("org.mpris.MediaPlayer2."):
             self.player_clients.append(MprisClient(name, self.MPRIS_PATH))
 
     def on_name_lost(self, name):
+        """
+        Remove any clients that disappear off the bus.
+        """
         item = None
         for client in self.player_clients:
             if client.get_name() == name:
@@ -259,6 +292,12 @@ class MediaPlayerWatcher(GObject.Object):
             self.player_clients.remove(item)
 
     def get_best_player(self):
+        """
+        Find the first player in our list that is either playing, or
+        *can* be played.  Players that are simply loaded but don't have
+        any playlist queued up should not pass these tests - we have only
+        limited control from the lockscreen.
+        """
         for client in self.player_clients:
             if client.get_playback_status() == PlaybackStatus.Playing:
                 return client
@@ -269,6 +308,12 @@ class MediaPlayerWatcher(GObject.Object):
         return None
 
     def get_all_player_names(self):
+        """
+        Return a list of all player simple names - this is used by our
+        notification code to ignore notifications sent from media players,
+        which are usually unimportant, but not marked as transient (which
+        would normally cause them to be ignored in the CsNotificationWatcher.)
+        """
         ret = []
 
         for client in self.player_clients:

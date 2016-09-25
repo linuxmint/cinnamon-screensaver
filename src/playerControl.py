@@ -16,6 +16,11 @@ import singletons
 import status
 
 class PlayerControl(Gtk.Box):
+    """
+    Provides info and controls for any active music or other media player.  It is a
+    a direct child of the AudioPanel, and is only shown if there is an active mpris
+    interface we can connect to.
+    """
     def __init__(self):
         super(PlayerControl, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
@@ -150,6 +155,11 @@ class PlayerControl(Gtk.Box):
         return icon_name
 
     def position_to_time_string(self, position):
+        """
+        We receive track position and track length values in microseconds.
+        This function formats this into readable HH:MM:SS format, and handles
+        any invalid values.
+        """
         delta = datetime.timedelta(microseconds=position)
 
         duration = datetime.datetime.utcfromtimestamp(delta.total_seconds())
@@ -170,6 +180,9 @@ class PlayerControl(Gtk.Box):
         self.update_position_values_appearance(status)
 
     def update_position_values_appearance(self, status):
+        """
+        When the player is paused, we blink the position/length values.
+        """
         if status == PlaybackStatus.Paused:
             self.max_pos_label.set_blinking(True)
             self.current_pos_label.set_blinking(True)
@@ -178,10 +191,16 @@ class PlayerControl(Gtk.Box):
             self.current_pos_label.set_blinking(False)
 
     def on_metadata_changed(self, player):
+        """
+        Update max position and labels when the player metadata changes
+        """
         self.max_pos_label.set_text(self.position_to_time_string(self.player.get_max_position()))
         self.update_labels()
 
     def update_labels(self):
+        """
+        Construct the track and artist-album labels as well as possible.
+        """
         self.track_name_label.set_text(self.player.get_track_name())
 
         artist_name = self.player.get_artist_name()
@@ -196,13 +215,10 @@ class PlayerControl(Gtk.Box):
         else:
             self.album_artist_label.set_text("")
 
-    def pause_blink_step(self):
-        self.max_pos_label.set_visible(not self.max_pos_label.get_visible())
-        self.current_pos_label.set_visible(not self.current_pos_label.get_visible())
-
-        return True
-
     def update_buttons(self, status):
+        """
+        Updates the player buttons based on the current state
+        """
         self.play_pause_button.set_sensitive(self.player.get_can_play_pause())
         self.next_button.set_sensitive(self.player.get_can_go_next())
         self.previous_button.set_sensitive(self.player.get_can_go_previous())
@@ -215,6 +231,9 @@ class PlayerControl(Gtk.Box):
         self.play_pause_button.set_image(image)
 
     def update_position_display(self):
+        """
+        Updates the position values and bar to reflect the current state.
+        """
         if self.player.get_position() < self.player.get_max_position():
             value = self.player.get_position() / self.player.get_max_position()
         else:
@@ -227,12 +246,20 @@ class PlayerControl(Gtk.Box):
         return True
 
     def update_position_timer(self, status):
+        """
+        Starts or stops the position update timer - this is based upon the provided rate
+        property of the player, which is defined as the recommended update frequency for position
+        data.
+        """
         if status == PlaybackStatus.Playing:
             trackers.timer_tracker_get().start("position-timer", self.player.get_rate() * 1000, self.update_position_display)
         else:
             trackers.timer_tracker_get().cancel("position-timer")
 
     def on_position_changed(self, player, position, data=None):
+        """
+        Callback for an explicit position change from the player.
+        """
         self.update_position_display()
 
     def on_widget_destroy(self, widget, data=None):
@@ -251,4 +278,7 @@ class PlayerControl(Gtk.Box):
         trackers.timer_tracker_get().cancel("position-timer")
 
     def should_show(self):
+        """
+        Checked by the AudioPanel, whether or not this widget should be displayed.
+        """
         return self.player != None

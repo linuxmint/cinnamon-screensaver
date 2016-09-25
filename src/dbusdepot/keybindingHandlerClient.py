@@ -5,6 +5,11 @@ from gi.repository import Gio, CScreensaver
 from dbusdepot.baseClient import BaseClient
 
 class KeybindingHandlerClient(BaseClient):
+    """
+    Connects to the media key interface of cinnamon-settings-daemon.
+    This calls the keybinding handler for shortcuts received by the
+    Keybindings object.
+    """
     KEYBINDING_HANDLER_SERVICE = "org.cinnamon.SettingsDaemon"
     KEYBINDING_HANDLER_PATH     = "/org/cinnamon/SettingsDaemon/KeybindingHandler"
 

@@ -5,6 +5,11 @@ from gi.repository import Gio, GObject, CScreensaver
 from dbusdepot.baseClient import BaseClient
 
 class SessionClient(BaseClient):
+    """
+    This client is for connecting to the session manager's Presence
+    interface - it is responsible for triggering activation of the
+    screensaver when the session goes into an idle state.
+    """
     __gsignals__ = {
         'idle-changed': (GObject.SignalFlags.RUN_LAST, None, (bool, )),
     }

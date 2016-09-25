@@ -9,6 +9,11 @@ from widgets.volumeSlider import VolumeSlider
 from util import trackers, utils
 
 class VolumeControl(Gtk.Box):
+    """
+    A direct child of the AudioPanel, it provides the volume slider.  This shows
+    any time we are Awake, regardless of any media player connections.  We use libcvc
+    to interact with the audio subsystem.
+    """
     def __init__(self):
         super(VolumeControl, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 

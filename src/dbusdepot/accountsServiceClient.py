@@ -5,6 +5,10 @@ from gi.repository import GObject, AccountsService
 from util import utils
 
 class AccountsServiceClient(GObject.Object):
+    """
+    Singleton for working with the AccountsService, which we use
+    to retrieve the user's face image and their real name.
+    """
     __gsignals__ = {
         'account-loaded': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
