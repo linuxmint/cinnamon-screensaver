@@ -15,6 +15,19 @@ from util.fader import Fader
 from util.eventHandler import EventHandler
 
 class Stage(Gtk.Window):
+    """
+    The Stage is the toplevel window of the entire screensaver while
+    in Active mode.
+
+    It's the first thing made, the last thing destroyed, and all other
+    widgets live inside of it (or rather, inside the GtkOverlay below)
+
+    It is Gtk.WindowType.POPUP to avoid being managed/composited by muffin,
+    and to prevent animation during its creation and destruction.
+
+    The Stage reponds pretty much only to the instructions of the
+    ScreensaverManager.
+    """
     def __init__(self, screen, manager, away_message):
         Gtk.Window.__init__(self,
                             type=Gtk.WindowType.POPUP,
@@ -73,15 +86,28 @@ class Stage(Gtk.Window):
         self.overlay.show_all()
         self.add(self.overlay)
 
+        # We hang onto the UPowerClient here so power events can
+        # trigger changes to and from low-power mode (no plugins.)
         self.power_client = singletons.UPowerClient
 
+        # This filter suppresses any other windows that might share
+        # our window group in muffin, from showing up over the Stage.
+        # For instance: Chrome and Firefox native notifications.
         self.gdk_filter = CScreensaver.GdkEventFilter()
 
     def transition_in(self, effect_time, callback):
+        """
+        This is the primary way of making the Stage visible.
+        """
         self.realize()
         self.fader.fade_in(effect_time, callback)
 
     def transition_out(self, effect_time, callback):
+        """
+        This is the primary way of destroying the stage.  This can
+        end up being called multiple times, so we keep track of if we've
+        already started a transition, and ignore further calls.
+        """
         if self.destroying:
             return
 
@@ -92,6 +118,13 @@ class Stage(Gtk.Window):
         self.fader.fade_out(effect_time, callback)
 
     def on_realized(self, widget):
+        """
+        Repositions the window when it is realized, to cover the entire
+        GdkScreen (a rectangle exactly encompassing all monitors.)
+
+        From here we also proceed to construct all overlay children and
+        activate our window suppressor.
+        """
         window = self.get_window()
 
         utils.override_user_time(window)
@@ -102,12 +135,20 @@ class Stage(Gtk.Window):
         self.gdk_filter.start(self)
 
     def setup_children(self):
+        """
+        Creates all of our overlay children.  If a new 'widget' gets added,
+        this should be the setup point for it.
+        """
         self.setup_monitors()
         self.setup_clock()
         self.setup_unlock()
         self.setup_status_bars()
 
     def destroy_stage(self):
+        """
+        Performs all tear-down necessary to destroy the Stage, destroying
+        all children in the process, and finally destroying itself.
+        """
         trackers.con_tracker_get().disconnect(singletons.Backgrounds,
                                               "changed",
                                               self.on_bg_changed)
@@ -140,6 +181,10 @@ class Stage(Gtk.Window):
         self.destroy()
 
     def setup_monitors(self):
+        """
+        Iterate through the monitors, and create MonitorViews for each one
+        to cover them.
+        """
         n = self.screen.get_n_monitors()
 
         for index in range(n):
@@ -161,6 +206,10 @@ class Stage(Gtk.Window):
         self.update_monitor_views()
 
     def on_bg_changed(self, bg):
+        """
+        Callback for our GnomeBackground instance, this tells us when
+        the background settings have changed, so we can update our wallpaper.
+        """
         for monitor in self.monitors:
             image = Gtk.Image()
 
@@ -171,6 +220,14 @@ class Stage(Gtk.Window):
             monitor.set_next_wallpaper_image(image)
 
     def on_power_state_changed(self, client, data=None):
+        """
+        Callback for UPower changes, this will make our MonitorViews update
+        themselves according to user setting and power state.
+
+        This is in two parts - it looks nicer to reveal/hide the info panel
+        only after the MonitorView changes, so we attach to a MonitorView signal
+        temporarily, which tells us then any animation is complete.
+        """
         trackers.con_tracker_get().connect(self.monitors[0],
                                            "current-view-change-complete",
                                            self.after_power_state_changed)
@@ -178,6 +235,9 @@ class Stage(Gtk.Window):
         self.update_monitor_views()
 
     def after_power_state_changed(self, monitor):
+        """
+        Update the visibility of the InfoPanel after updating the MonitorViews
+        """
         trackers.con_tracker_get().disconnect(monitor,
                                               "current-view-change-complete",
                                               self.after_power_state_changed)
@@ -185,6 +245,14 @@ class Stage(Gtk.Window):
         self.info_panel.update_revealed()
 
     def setup_clock(self):
+        """
+        Construct the clock widget and add it to the overlay, but only actually
+        show it if we're a) Not running a plug-in, and b) The user wants it via
+        preferences.
+
+        Initially invisible, regardless - its visibility is controlled via its
+        own positioning timer.
+        """
         self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
@@ -193,6 +261,20 @@ class Stage(Gtk.Window):
             self.clock_widget.start_positioning()
 
     def setup_unlock(self):
+        """
+        Construct the unlock dialog widget and add it to the overlay.  It will always
+        initially be invisible.
+
+        Any time the screensaver is awake, and the unlock dialog is raised, a timer runs.
+        After a certain elapsed time, the state will be reset, and the dialog will be hidden
+        once more.  Mouse and key events reset this timer, and the act of authentication
+        temporarily suspends it - the unlock widget accomplishes this via its inhibit- and
+        uninhibit-timeout signals
+
+        We also listen to actual authentication events, to destroy the stage if there is success,
+        and to do something cute if we fail (for now, this consists of 'blinking' the unlock
+        dialog.)
+        """
         self.unlock_dialog = UnlockDialog()
         self.add_child_widget(self.unlock_dialog)
         self.put_on_bottom(self.unlock_dialog)
@@ -214,6 +296,9 @@ class Stage(Gtk.Window):
                                            self.authentication_result_callback, False)
 
     def setup_status_bars(self):
+        """
+        Constructs the AudioPanel and InfoPanel and adds them to the overlay.
+        """
         self.audio_panel = AudioPanel(self.screen)
         self.add_child_widget(self.audio_panel)
         self.put_on_top(self.audio_panel)
@@ -227,15 +312,29 @@ class Stage(Gtk.Window):
                                            self.on_power_state_changed)
 
     def queue_dialog_key_event(self, event):
+        """
+        Sent from our EventHandler via the ScreensaverManager, this catches
+        initial key events before the unlock dialog is made visible, so that
+        the user doesn't have to first jiggle the mouse to wake things up before
+        beginning to type their password.  They can just start typing, and no
+        keystrokes will be lost.
+        """
         self.unlock_dialog.queue_key_event(event)
 
 # Timer stuff - after a certain time, the unlock dialog will cancel itself.
 # This timer is suspended during authentication, and any time a new user event is received
 
     def reset_timeout(self):
+        """
+        This is called when any user event is received in our EventHandler.
+        This restarts our dialog timeout.
+        """
         self.set_timeout_active(None, True)
 
     def set_timeout_active(self, dialog, active):
+        """
+        Start or stop the dialog timer
+        """
         if active:
             trackers.timer_tracker_get().start("wake-timeout",
                                                c.UNLOCK_TIMEOUT * 1000,
@@ -244,12 +343,20 @@ class Stage(Gtk.Window):
             trackers.timer_tracker_get().cancel("wake-timeout")
 
     def on_wake_timeout(self):
+        """
+        Go back to Sleep if we hit our timer limit
+        """
         self.set_timeout_active(None, False)
         self.manager.cancel_unlock_widget()
 
         return False
 
     def authentication_result_callback(self, dialog, success):
+        """
+        Called by authentication success or failure.  Either starts
+        the stage despawning process or simply 'blinks' the unlock
+        widget, depending on the outcome.
+        """
         if success:
             self.clock_widget.hide()
             self.unlock_dialog.hide()
@@ -258,11 +365,19 @@ class Stage(Gtk.Window):
             self.unlock_dialog.blink()
 
     def set_message(self, msg):
+        """
+        Passes along an away-message to the clock.
+        """
         self.clock_widget.set_message(msg)
 
-# Methods that manipulate the unlock dialog
-
     def raise_unlock_widget(self):
+        """
+        Bring the unlock widget to the front and make sure it's visible.
+
+        This is done in two steps - we don't want to show anything over a plugin
+        (graphic glitches abound) - so we update the MonitorViews first, then do
+        our other reveals after its transition is complete.
+        """
         self.reset_timeout()
 
         if status.Awake:
@@ -281,6 +396,9 @@ class Stage(Gtk.Window):
         self.update_monitor_views()
 
     def after_wallpaper_shown_for_unlock(self, monitor, data=None):
+        """
+        Finish raising the unlock widget - also bring up our status bars if applicable.
+        """
         trackers.con_tracker_get().disconnect(monitor,
                                               "current-view-change-complete",
                                               self.after_wallpaper_shown_for_unlock)
@@ -294,6 +412,14 @@ class Stage(Gtk.Window):
         self.info_panel.update_revealed()
 
     def cancel_unlock_widget(self):
+        """
+        Hide the unlock widget (and others) if the unlock has been canceled
+
+        This process is in three steps for aesthetic reasons - 
+            a) Unreveal all widgets (begin fading them out)
+            b) Switch over MonitorViews from wallpaper to plug-ins if needed.
+            c) Re-reveal the InfoPanel if applicable
+        """
         if not status.Awake:
             return
 
@@ -308,6 +434,10 @@ class Stage(Gtk.Window):
         self.info_panel.unreveal()
 
     def after_unlock_unrevealed(self, obj, pspec):
+        """
+        Called after unlock unreveal is complete.  Tells the MonitorViews
+        to update themselves.
+        """
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
         self.audio_panel.hide()
@@ -326,6 +456,10 @@ class Stage(Gtk.Window):
         self.update_monitor_views()
 
     def after_transitioned_back_to_sleep(self, monitor, data=None):
+        """
+        Called after the MonitorViews have updated - re-show the clock (if desired)
+        and the InfoPanel (if required.)
+        """
         trackers.con_tracker_get().disconnect(monitor,
                                               "current-view-change-complete",
                                               self.after_transitioned_back_to_sleep)
@@ -337,6 +471,10 @@ class Stage(Gtk.Window):
             self.clock_widget.start_positioning()
 
     def update_monitor_views(self):
+        """
+        Updates all of our MonitorViews based on the power
+        or Awake states.
+        """
         low_power = not self.power_client.plugged_in
 
         for monitor in self.monitors:
@@ -346,20 +484,35 @@ class Stage(Gtk.Window):
                 monitor.reveal()
 
     def destroy_monitor_views(self):
+        """
+        Destroy all MonitorViews
+        """
         for monitor in self.monitors:
             monitor.destroy()
 
     def do_motion_notify_event(self, event):
+        """
+        GtkWidget class motion-event handler.  Delegate to EventHandler
+        """
         return self.event_handler.on_motion_event(event)
 
     def do_key_press_event(self, event):
+        """
+        GtkWidget class key-press-event handler.  Delegate to EventHandler
+        """
         return self.event_handler.on_key_press_event(event)
 
     def do_button_press_event(self, event):
+        """
+        GtkWidget class button-press-event handler.  Delegate to EventHandler
+        """
         return self.event_handler.on_button_press_event(event)
 
-    # Override BaseWindow.update_geometry
     def update_geometry(self):
+        """
+        Override BaseWindow.update_geometry() - the Stage should always be the
+        GdkScreen size
+        """
         self.rect = Gdk.Rectangle()
         self.rect.x = 0
         self.rect.y = 0
@@ -376,9 +529,13 @@ class Stage(Gtk.Window):
 
         self.set_geometry_hints(self, hints, Gdk.WindowHints.MIN_SIZE | Gdk.WindowHints.MAX_SIZE | Gdk.WindowHints.BASE_SIZE)
 
-# Overlay window management #
+# Overlay window management
 
     def maybe_update_layout(self):
+        """
+        Called on all user events, moves widgets to the currently
+        focused monitor if it changes (whichever monitor the mouse is in)
+        """
         current_focus_monitor = utils.get_mouse_monitor()
 
         if self.last_focus_monitor == -1:
@@ -390,18 +547,48 @@ class Stage(Gtk.Window):
             self.overlay.queue_resize()
 
     def add_child_widget(self, widget):
+        """
+        Add a new child to the overlay
+        """
         self.overlay.add_overlay(widget)
 
     def put_on_top(self, widget):
+        """
+        Move the widget to the top of the overlay
+        (Over everything else)
+        """
         self.overlay.reorder_overlay(widget, -1)
         self.overlay.queue_draw()
 
     def put_on_bottom(self, widget):
+        """
+        Move the widget to the bottom of the overlay
+        (Under everything else)
+        """
         self.overlay.reorder_overlay(widget, 0)
         self.overlay.queue_draw()
 
     def position_overlay_child(self, overlay, child, allocation):
+        """
+        Callback for our GtkOverlay, think of this as a mini-
+        window manager for our Stage.
+
+        Depending on what type child is, we position it differently.
+        We always call child.get_preferred_size() whether we plan to use
+        it or not - this prevents allocation warning spew, particularly in
+        Gtk >= 3.20.
+
+        Returning True says, yes draw it.  Returning False tells it to skip
+        drawing.
+
+        If a new widget type is introduced that spawns directly on the stage,
+        it must have its own handling code here.
+        """
         if isinstance(child, MonitorView):
+            """
+            MonitorView is always the size and position of its assigned monitor.
+            This is calculated and stored by the child in child.rect)
+            """
             w, h = child.get_preferred_size()
             allocation.x = child.rect.x
             allocation.y = child.rect.y
@@ -411,6 +598,10 @@ class Stage(Gtk.Window):
             return True
 
         if isinstance(child, UnlockDialog):
+            """
+            UnlockDialog always shows on the currently focused monitor (the one the
+            mouse is currently in), and is kept centered.
+            """
             monitor = utils.get_mouse_monitor()
             monitor_rect = self.screen.get_monitor_geometry(monitor)
 
@@ -425,11 +616,24 @@ class Stage(Gtk.Window):
             return True
 
         if isinstance(child, ClockWidget):
+            """
+            ClockWidget behaves differently depending on if status.Awake is True or not.
+
+            The widget's halign and valign properties are used to store their gross position on the
+            monitor.  This limits the number of possible positions to (3 * 3 * n_monitors) when our
+            screensaver is not Awake, and the widget has an internal timer that randomizes halign,
+            valign, and current monitor every so many seconds, calling a queue_resize on itself after
+            each timer tick (which forces this function to run).
+            """
             min_rect, nat_rect = child.get_preferred_size()
 
             current_monitor = child.current_monitor
 
             if status.Awake:
+                """
+                If we're Awake, force the clock to track to the active monitor, and be aligned to
+                the left-center.
+                """
                 child.set_halign(Gtk.Align.START)
                 child.set_valign(Gtk.Align.CENTER)
                 current_monitor = utils.get_mouse_monitor()
@@ -459,6 +663,10 @@ class Stage(Gtk.Window):
             return True
 
         if isinstance(child, AudioPanel):
+            """
+            The AudioPanel is only shown when Awake, and attaches
+            itself to the upper-left corner of the active monitor.
+            """
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
@@ -477,6 +685,13 @@ class Stage(Gtk.Window):
             return True
 
         if isinstance(child, InfoPanel):
+            """
+            The InfoPanel can be shown while not Awake, but only if we're not running
+            a screensaver plugin.  In any case, it will only appear if a) We have received
+            notifications while the screensaver is running, or b) we're either on battery
+            or plugged in but with a non-full battery.  It attaches itself to the upper-right
+            corner of the monitor.
+            """
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
