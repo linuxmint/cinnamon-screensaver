@@ -1,8 +1,11 @@
 #! /usr/bin/python3
 
+import gi
+gi.require_version('AccountsService', '1.0')
 from gi.repository import GObject, AccountsService
+import os
 
-from util import utils
+from util import utils, trackers
 
 class AccountsServiceClient(GObject.Object):
     """

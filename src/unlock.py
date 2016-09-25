@@ -2,10 +2,9 @@
 # coding: utf-8
 
 import gi
-gi.require_version('AccountsService', '1.0')
+
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, Gdk, AccountsService, GObject, CinnamonDesktop, GdkPixbuf
-import os
+from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop, GdkPixbuf
 
 from util import utils, trackers
 import status
@@ -38,7 +37,6 @@ class FramedImage(Gtk.Image):
         else:
             self.min_height = ctx.get_color(Gtk.StateFlags.NORMAL).red * 255
 
-        print(self.min_height)
         self.set_size_request(-1, self.min_height)
 
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(self.path, -1, self.min_height, True)
@@ -292,7 +290,7 @@ class UnlockDialog(BaseWindow):
             self.update_realname_label()
 
         if client.face_path != None:
-            self.face_image.set_from_file(path)
+            self.face_image.set_from_file(client.face_path)
 
     def on_password_entry_text_changed(self, editable):
         """
