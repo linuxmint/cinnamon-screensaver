@@ -6,6 +6,9 @@ import cairo
 from util import trackers
 
 class VolumeSlider(Gtk.Scale):
+    """
+    Custom GtkScale widget for controlling the volume.
+    """
     def __init__(self):
         super(VolumeSlider, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 

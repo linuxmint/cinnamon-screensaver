@@ -5,6 +5,11 @@ from gi.repository import Gtk, GObject, GLib
 from util import trackers
 
 class _fixedViewport(Gtk.Viewport):
+    """
+    This is needed by MarqueeLabel to restrict the size of
+    our label, and cause the viewport to actually be functional.
+    Otherwise, the text is trimmed, but no scrolling occurs.
+    """
     def __init__(self):
         super(_fixedViewport, self).__init__()
 
@@ -14,7 +19,22 @@ class _fixedViewport(Gtk.Viewport):
         return (400, 400)
 
 class MarqueeLabel(Gtk.Stack):
-    # time->position mapping
+    """
+    A scrolling label for the PlayerControl - it uses the defined
+    pattern as a mapping between elapsed time and the hadjustment
+    of the _fixedViewport.  If the label text is wider than the
+    widget's actual width, we will scroll according to this map
+    over the course of 15 seconds.
+
+    It roughly translates to:
+         0.0 -  2.0 seconds: no movement.
+         2.0 - 10.0 seconds: gradually scroll to max adjustment of the viewport.
+        10.0 - 12.0 seconds: no movement.
+        12.0 - 15.0 seconds: scroll back to the starting position.
+
+    This widget also implements a stack (similar to the one in MonitorView) which
+    provides for a smooth label crossfade when track info changes.
+    """
     PATTERN = [( 0.0, 0.0),
                ( 2.0, 0.0),
                (10.0, 1.0),

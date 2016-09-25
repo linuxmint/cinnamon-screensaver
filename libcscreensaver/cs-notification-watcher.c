@@ -1,3 +1,15 @@
+/*
+ * CsNotificationWatcher: An introspectable C class that eavesdrops on the
+ * session bus, watching for calls to our notification handler (usually Cinnamon.)
+ * 
+ * Any notifications received are checked for transiency (and ignored if they are)
+ * and passed on to be handled by Cinnamon.
+ *
+ * Any non-transient notifications cause a signal to be sent to our notification
+ * widget, along with the sender name (in order to filter our mpris player notifications.)
+ */
+
+
 #include "cs-notification-watcher.h"
 
 enum {

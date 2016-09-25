@@ -6,6 +6,13 @@ from gi.repository import Gtk
 import status
 
 class FocusNavigator:
+    """
+    FocusNavigator helps with tab navigation between
+    widgets in our status.focusWidgets list.
+
+    Since we handle most user events ourselves, we also
+    need to handle Tab events correctly.
+    """
     def __init__(self, widgets=[]):
         status.focusWidgets = widgets
 

@@ -6,6 +6,9 @@ import cairo
 from util import trackers
 
 class PositionBar(Gtk.ProgressBar):
+    """
+    A custom GtkProgressBar for displaying the current track position.
+    """
     def __init__(self):
         super(PositionBar, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
         self.get_style_context().add_class("positionbar")

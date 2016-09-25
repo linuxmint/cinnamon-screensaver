@@ -26,7 +26,11 @@ def debug_sigs(*args):
 
 
 class TimerTracker:
-# self.timers = [name : timeout id] pairs
+    """
+    Utility class for tracking mainloop timers - they are stored as
+    [name : timeout id] pairs.  This is simply a way of managing them
+    without having to individually track source ids.
+    """
     def __init__(self):
         self.timers = {}
 
@@ -85,7 +89,18 @@ def timer_tracker_get():
     return timer_tracker
 
 class ConnectionTracker:
-# self.connections = [ name : (source id, instance) ] pairs
+    """
+    Utility class for tracking GObject signal connections.  It is tracked in
+    [ name : (source id, instance) ] pairs.  The name is generated as a magic
+    string consisting of "instance hash+signal name+callback hash".
+
+    As a convenience, we hang a weak reference on both the signal caller's instance
+    as well as the callback's instance.  If either of these instances are destroyed
+    we will receive a notification and automatically attempt to disconnect the original
+    signal connection.  This will frequently fail, depending on what gets destroyed first
+    (destruction of the source instance will usually mean implicit destruction of the
+    callback.)
+    """
     def __init__(self):
         self.connections = {}
 
@@ -128,6 +143,9 @@ class ConnectionTracker:
         self._disconnect_by_name(name)
 
     def connect(self, instance, signal, callback, *data):
+        """
+        Wrapper for instance.connect()
+        """
         name = self._name(instance, signal, callback)
         self._disconnect_by_name(name)
 
@@ -142,6 +160,9 @@ class ConnectionTracker:
         self._connect_to_dispose(name, instance, callback)
 
     def connect_after(self, instance, signal, callback, *data):
+        """
+        Wrapper for instance.connect_after()
+        """
         name = self._name(instance, signal, callback)
         self._disconnect_by_name(name)
 
@@ -156,18 +177,27 @@ class ConnectionTracker:
         self._connect_to_dispose(name, instance, callback)
 
     def handler_block(self, instance, signal, callback):
+        """
+        Wrapper for g_signal_handler_block().
+        """
         name = self._name(instance, signal, callback)
 
         if self.connections[name]:
             self.connections[name][1].handler_block(self.connections[name][0])
 
     def handler_unblock(self, instance, signal, callback):
+        """
+        Wrapper for g_signal_handler_unblock()
+        """
         name = self._name(instance, signal, callback)
 
         if self.connections[name]:
             self.connections[name][1].handler_unblock(self.connections[name][0])
 
     def disconnect(self, instance, signal, callback):
+        """
+        Wrapper for instance.disconnect()
+        """
         name = self._name(instance, signal, callback)
         debug_sigs("disconnect", name)
 

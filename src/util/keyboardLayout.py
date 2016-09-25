@@ -11,6 +11,12 @@ from util import trackers, settings
 import config
 
 class KeyboardLayout(GObject.Object):
+    """
+    Manages keyboard layouts, including setting the last-used one
+    for the unlock dialog.  This allows a user to always have the
+    same layout for their password, even if they're using a different
+    one in normal use.
+    """
     __gsignals__ = {
         'group-changed': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
@@ -50,6 +56,10 @@ class KeyboardLayout(GObject.Object):
         self.config.start_listen()
 
     def restore_original_group(self):
+        """
+        Called when the unlock dialog is destroyed, restores
+        the group that was active before the screensaver was activated.
+        """
         trackers.con_tracker_get().disconnect(self.config,
                                               "group-changed",
                                               self.on_group_changed)
@@ -68,6 +78,11 @@ class KeyboardLayout(GObject.Object):
         self.emit("group-changed")
 
     def get_image_pixbuf(self, widget):
+        """
+        Attempt to retrieve a flag image.  If one isn't available,
+        we return a pixbuf with the first two letters of the current
+        layout's country.
+        """
         pixbuf = None
 
         if self.enabled:

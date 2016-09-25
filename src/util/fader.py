@@ -3,6 +3,11 @@
 from gi.repository import GLib, GObject
 
 class Fader:
+    """
+    The Fader is used by the Stage to fade in from the desktop.
+
+    It uses a widget tick callback to change the opacity over time.
+    """
     def __init__(self, widget):
         self.widget = widget
         self.finished_cb = None

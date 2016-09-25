@@ -3,6 +3,9 @@
 from gi.repository import Gtk
 
 class TransparentButton(Gtk.Button):
+    """
+    Custom button widget used throughout.
+    """
     def __init__(self, name, size):
         super(TransparentButton, self).__init__()
         self.get_style_context().add_class("transparentbutton")

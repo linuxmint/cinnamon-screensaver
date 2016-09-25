@@ -35,6 +35,10 @@ ALLOWED_ACTIONS = [MK.MUTE,
                    MK.KEYBOARD_BRIGHTNESS_TOGGLE]
 
 class ShortcutAction(GObject.GObject):
+    """
+    A class representing a group of keybindings for a specific
+    media key action.
+    """
     def __init__(self, action, bindings):
         super(ShortcutAction, self).__init__()
 
@@ -56,6 +60,11 @@ class ShortcutAction(GObject.GObject):
         return -1
 
 class KeyBindings(GObject.GObject):
+    """
+    Receives keystrokes from the EventHandler - it checks for media key
+    activation, as well as special keys like Escape or Tab, and performs the
+    appropriate actions.
+    """
     def __init__(self, manager):
         super(KeyBindings, self).__init__()
 

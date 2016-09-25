@@ -6,6 +6,15 @@ import time
 from util.eventHandler import EventHandler
 
 class GrabHelper:
+    """
+    GrabHelper keeps track of keyboard and mouse grabs
+    for the screensaver - we require these grabs to be
+    successful in order for the screensaver to activate.
+
+    This prevents muffin from receiving any key events
+    (and activating any keyboard shortcuts other than
+    ones we want to allow.)
+    """
     def __init__(self, manager = None):
 
         if manager:

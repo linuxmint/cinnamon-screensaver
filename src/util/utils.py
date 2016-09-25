@@ -7,6 +7,8 @@ import subprocess
 
 import config
 
+# Various utility functions that are used in multiple places.
+
 def nofail_locale_to_utf8(string):
     try:
         ret = GLib.locale_to_utf8(string, -1, 0, 0)

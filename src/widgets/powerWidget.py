@@ -6,6 +6,11 @@ from util import trackers
 import singletons
 
 class PowerWidget(Gtk.Frame):
+    """
+    PowerWidget is a child of InfoPanel, and is only shown if we're on
+    a system that can run on battery power.  It is usually only visible
+    if the system is actually currently running on battery power.
+    """
     __gsignals__ = {
         'power-state-changed': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
@@ -39,6 +44,9 @@ class PowerWidget(Gtk.Frame):
         self.emit("power-state-changed")
 
     def construct_icons(self):
+        """
+        The upower dbus interface actually tells us what icon name to use.
+        """
         batteries = self.power_client.get_batteries()
 
         for path, battery in batteries:

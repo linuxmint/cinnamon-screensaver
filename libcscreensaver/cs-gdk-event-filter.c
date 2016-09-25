@@ -1,3 +1,12 @@
+/*
+ * CsGdkEventFilter: An introspectable C class that establishes an event
+ * trap for the screensaver.  It watches for any X events that could result
+ * in other windows showing up over our Stage, and ensures the Stage stays on
+ * top.  This will only ever be other override-redirect (non-managed) X windows,
+ * such as native Firefox or Chrome notification popups.
+ *
+ */
+
 #include "cs-gdk-event-filter.h"
 
 #ifdef HAVE_SHAPE_EXT

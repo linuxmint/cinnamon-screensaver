@@ -4,6 +4,11 @@ from gi.repository import Gtk, GObject, GLib
 from util import trackers
 
 class BlinkingLabel(Gtk.Label):
+    """
+    Used by the PlayerControl position and max_position elements.
+
+    When the player is in a paused state, we have these labels blink.
+    """
     def __init__(self, text, rate):
         super(BlinkingLabel, self).__init__()
 

@@ -6,6 +6,11 @@ import singletons
 from util import trackers
 
 class NotificationWidget(Gtk.Frame):
+    """
+    Notification widget is a child of the InfoPanel - it is
+    only shown if we've received intercepted a non-transient
+    notification that hasn't been sent from a media player.
+    """
     __gsignals__ = {
         "notification": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
