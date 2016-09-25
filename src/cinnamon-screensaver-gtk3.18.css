@@ -61,6 +61,8 @@
     background-clip: border-box;
     border-color: @theme_selected_bg_color;
     box-shadow: 1px 1px alpha(black, 0.8);
+    /* substitute for min-height - replace with min-height in Gtk 3.20+*/
+    color: rgba(150, 0, 0, 0);
 }
 
 .csstage .passwordentry {

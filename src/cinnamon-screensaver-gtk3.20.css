@@ -61,6 +61,7 @@
     background-clip: border-box;
     border-color: @theme_selected_bg_color;
     box-shadow: 1px 1px alpha(black, 0.8);
+    min-height: 150px;
 }
 
 .csstage .passwordentry {
