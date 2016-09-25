@@ -10,6 +10,14 @@ from baseWindow import BaseWindow
 from util import settings, utils, trackers
 
 class WallpaperStack(Gtk.Stack):
+    """
+    WallpaperStack implements a crossfade when changing backgrounds.
+
+    An initial image is made and added to the GtkStack.  When a new
+    image is requested, it is created and added to the stack, then
+    a crossfade transition is made to the new child.  The former
+    visible stack child is then destroyed.  And this repeats.
+    """
     def __init__(self):
         super(WallpaperStack, self).__init__()
 
@@ -19,6 +27,10 @@ class WallpaperStack(Gtk.Stack):
         self.current = None
 
     def set_initial_image(self, image):
+        """
+        Creates and sets the initial background image to use in 
+        the WallpaperStack.
+        """
         self.current = image
         self.current.set_visible(True)
 
@@ -32,6 +44,9 @@ class WallpaperStack(Gtk.Stack):
         self.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
 
     def transition_to_image(self, image):
+        """
+        Queues a new image in the stack, and begins the transition to it.
+        """
         self.queued = image
         self.queued.set_visible(True)
 
@@ -52,6 +67,12 @@ class WallpaperStack(Gtk.Stack):
         GObject.idle_add(tmp.destroy)
 
     def shade_wallpaper(self, widget, cr):
+        """
+        This draw callback adds a shade mask over the current
+        image.  It is uniform when not Awake, and acquires a
+        significant gradient vertically framing the unlock dialog
+        when Awake.
+        """
         if not status.Awake:
             cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
             cr.paint()
@@ -70,6 +91,10 @@ class WallpaperStack(Gtk.Stack):
         return False
 
 class MonitorView(BaseWindow):
+    """
+    A monitor-sized child of the stage that is responsible for displaying
+    the currently-selected wallpaper or appropriate plug-in.
+    """
     __gsignals__ = {
         'current-view-change-complete': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
@@ -115,15 +140,21 @@ class MonitorView(BaseWindow):
     def set_next_wallpaper_image(self, image):
         self.wallpaper_stack.transition_to_image(image)
 
-    def on_socket_realized(self, widget):
-        self.spawn_plugin()
-
     def kill_plugin(self):
+        """
+        Asks the active plug-in to exit gracefully.
+        The plug-in script is set to run Gtk.main_quit()
+        when it receives a SIGTERM.
+        """
         if self.proc:
             self.proc.send_signal(signal.SIGTERM)
             self.proc = None
 
     def show_plugin(self):
+        """
+        Attempt to retreive the current plug-in info and spawn
+        a script to instantiate it.
+        """
         name = settings.get_screensaver_name()
         path = utils.lookup_plugin_path(name)
         if path is not None:
@@ -133,6 +164,11 @@ class MonitorView(BaseWindow):
                                                self.on_plug_added)
 
     def on_plug_added(self, socket, data=None):
+        """
+        Callback for a plug-in being added to our GtkSocket.  This
+        completes the operation and makes the plugin stack child the
+        visible child for this MonitorView.
+        """
         trackers.con_tracker_get().disconnect(self.socket,
                                               "plug-added",
                                               self.on_plug_added)
@@ -149,6 +185,9 @@ class MonitorView(BaseWindow):
                                            self.notify_transition_callback)
 
     def show_wallpaper(self):
+        """
+        Initiate showing the wallpaper child of MonitorView
+        """
         status.PluginRunning = False
 
         if self.stack.get_visible_child_name() == "wallpaper":
@@ -161,12 +200,13 @@ class MonitorView(BaseWindow):
                                            self.notify_transition_callback)
 
     def notify_transition_callback(self, stack, pspec, data=None):
-        # GtkStacks don't have any signal for telling you 'we're done transitioning'
-        # The closest we can come to it is for every animation tick they call a notify
-        # on the 'transition-running' property.  We wait until it returns False
-        # to emit our own transition completed signal.  This only works because our
-        # stack here *does* use a duration and transition type that isn't "None".
-
+        """
+        GtkStacks don't have any signal for telling you 'we're done transitioning'
+        the closest we can come to it is for every animation tick they call a notify
+        on the 'transition-running' property.  We wait until it returns False
+        to emit our own transition completed signal.  This only works because our
+        stack here *does* use a duration and transition type that isn't "None".
+        """
         if stack.get_transition_running():
             return
         else:
@@ -176,6 +216,10 @@ class MonitorView(BaseWindow):
             self.emit("current-view-change-complete")
 
     def update_view(self, awake, low_power):
+        """
+        Syncs the current MonitorView state to whatever is appropriate, depending
+        on whether we're awake and whether a plugin should be visible instead.
+        """
         self.kill_plugin()
 
         if not awake and not low_power and settings.should_show_plugin():
@@ -184,6 +228,11 @@ class MonitorView(BaseWindow):
             self.show_wallpaper()
 
     def spawn_plugin(self, path):
+        """
+        Spawns the plug-in script and watches its STDOUT for a window ID to use for
+        our GtkSocket.  We hold a reference to it so that we can terminate it properly
+        later.
+        """
         try:
             self.proc = Gio.Subprocess.new((path, None),
                                            Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)

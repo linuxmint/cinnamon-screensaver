@@ -9,6 +9,11 @@ from util import utils
 
 class AudioPanel(BaseWindow):
     def __init__(self, screen):
+        """
+        Upper left panel - only shows when Awake.  Will always show the
+        volume slider, and will only show the player controls if there is
+        a controllable mpris player available.
+        """
         super(AudioPanel, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 

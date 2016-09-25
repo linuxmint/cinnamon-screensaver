@@ -16,6 +16,12 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
 
 class Main:
+    """
+    This is the main entry point to the program, and it shows up
+    in the process list.  We do any theme preparation here as well.
+
+    We start the ScreensaverService from here.
+    """
     def __init__(self):
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver')
         parser.add_argument('--version', dest='version', action='store_true',
@@ -40,6 +46,16 @@ class Main:
         self.do_style_overrides()
 
     def do_style_overrides(self):
+        """
+        Here we try to check for theme support in the current system's gtk theme.
+
+        We do this by retrieving a string of the current theme's final style sheet,
+        then searching for the .csstage style class.  If it's found, we return, otherwise
+        we add our own application-priority provider as a fallback.  While we have the
+        theme string, we check for a variable name we can use for the fallback experience,
+        and adjust it in our application stylesheet if necessary before adding it as a
+        provider.
+        """
         theme_name = Gtk.Settings.get_default().get_property("gtk-theme-name")
         provider = Gtk.CssProvider.get_named(theme_name)
 

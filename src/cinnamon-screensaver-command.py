@@ -25,7 +25,10 @@ class Action(IntEnum):
     VERSION = 7
 
 class ScreensaverCommand:
-
+    """
+    This is a standalone executable that provides a simple way
+    of controlling the screensaver via its dbus interface.
+    """
     def __init__(self, mainloop):
         self.mainloop = mainloop
 

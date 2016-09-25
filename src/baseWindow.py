@@ -5,6 +5,10 @@ from gi.repository import Gtk, GObject
 from util import trackers
 
 class BaseWindow(Gtk.Revealer):
+    """
+    BaseWindow is the base class for all of the Stage GtkOverlay's immediate
+    children.  It provides functionality for smooth fade-in and -out.
+    """
     REVEALER_DURATION = 250
 
     def __init__(self):

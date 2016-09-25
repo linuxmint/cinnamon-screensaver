@@ -9,10 +9,22 @@ import constants as c
 from manager import ScreensaverManager
 
 class ScreensaverService(GObject.Object):
+    """
+    This is the dbus service we run ourselves.  It is the owner
+    of our ScreensaverManager, and implements the org.cinnamon.Screensaver
+    dbus interface.  It is through this service that the screensaver
+    is controlled.
+    """
     def __init__(self):
-        super(ScreensaverService, self).__init__()
+        """
+        Immediately attempt to own org.cinnamon.Screensaver.
 
-        self.temp_active_id = 0
+        Failure to do so will result in simply quitting the program,
+        as we can't run more than one instance at a time.
+
+        Upon success we export our interface to the session bus.
+        """
+        super(ScreensaverService, self).__init__()
 
         self.bus = Gio.bus_get_sync(Gio.BusType.SESSION)
 
@@ -24,13 +36,25 @@ class ScreensaverService(GObject.Object):
                          self.on_name_lost)
 
     def on_name_lost(self, connection, name, data=None):
+        """
+        Failed to acquire our name - just exit.
+        """
         print("A screensaver is already running!  Exiting...")
-        quit()
+        Gtk.main_quit()
 
     def on_name_acquired(self, connection, name, data=None):
+        """
+        Acquired our name - pass... The real work will begin
+        on our bus_acquired callback.
+        """
         print("Starting screensaver...")
 
     def on_bus_acquired(self, connection, name, data=None):
+        """
+        Export our interface to the session bus.  Creates the
+        ScreensaverManager.  We are now ready to respond to requests
+        by cinnamon-session and cinnamon-screensaver-command.
+        """
         self.bus = connection
 
         self.interface = CScreensaver.ScreenSaverSkeleton.new()
@@ -47,6 +71,7 @@ class ScreensaverService(GObject.Object):
 
         self.interface.export(self.bus, c.SS_PATH)
 
+# Interface handlers
     def handle_lock(self, iface, inv, msg):
         self.manager.lock(msg)
 

@@ -10,10 +10,19 @@ CLOCK_POSITIONING_TIMEOUT = 5
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
 
 class ClockWidget(BaseWindow):
+    """
+    ClockWidget displays the time and away message on the screen.
+
+    It is a child of the Stage's GtkOverlay, and its placement is
+    controlled by the overlay's child positioning function.
+
+    When not Awake, it positions itself around all monitors
+    using a timer which randomizes its halign and valign properties
+    as well as its current monitor.
+    """
     def __init__(self, screen, away_message=None, initial_monitor=0):
         super(ClockWidget, self).__init__()
         self.screen = screen
-        # self.set_name("clock")
         self.get_style_context().add_class("clock")
 
         self.set_halign(Gtk.Align.CENTER)

@@ -9,6 +9,12 @@ from widgets.notificationWidget import NotificationWidget
 from widgets.powerWidget import PowerWidget
 
 class InfoPanel(BaseWindow):
+    """
+    Upper right corner panel - contains the notification counter and any
+    battery indicator(s) - this panel will generally show if it has anything
+    relevant to say, regardless of our Awake state (*except* when a plugin is
+    running, due to graphical issues.)
+    """
     def __init__(self, screen):
         super(InfoPanel, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
@@ -49,6 +55,14 @@ class InfoPanel(BaseWindow):
         self.update_revealed()
 
     def update_revealed(self):
+        """
+        Determines whether or not to show the panel, depending on:
+            - Whether the power widget should show (are we on battery?)
+            - Whether the notification widget should show (are there any?)
+            - Are we running a plugin or not?  Only show over wallpaper.
+
+        The panel will show if either of its child indicators has useful info.
+        """
         do_reveal = False
 
         self.show_power = self.power_widget.should_show()
