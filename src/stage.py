@@ -95,6 +95,22 @@ class Stage(Gtk.Window):
         # For instance: Chrome and Firefox native notifications.
         self.gdk_filter = CScreensaver.GdkEventFilter()
 
+        trackers.con_tracker_get().connect(self.screen,
+                                           "monitors-changed",
+                                           self.on_screen_changed)
+
+        trackers.con_tracker_get().connect(self.screen,
+                                           "size-changed",
+                                           self.on_screen_changed)
+
+    def on_screen_changed(self, screen, data=None):
+        self.destroy_monitor_views()
+
+        self.update_geometry()
+        self.size_to_screen()
+
+        self.setup_monitors()
+
     def transition_in(self, effect_time, callback):
         """
         This is the primary way of making the Stage visible.
@@ -125,14 +141,16 @@ class Stage(Gtk.Window):
         From here we also proceed to construct all overlay children and
         activate our window suppressor.
         """
+        self.size_to_screen()
+        self.setup_children()
+
+        self.gdk_filter.start(self)
+
+    def size_to_screen(self):
         window = self.get_window()
 
         utils.override_user_time(window)
         window.move_resize(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
-
-        self.setup_children()
-
-        self.gdk_filter.start(self)
 
     def setup_children(self):
         """
@@ -178,6 +196,14 @@ class Stage(Gtk.Window):
         self.gdk_filter.stop()
         self.gdk_filter = None
 
+        trackers.con_tracker_get().disconnect(self.screen,
+                                              "monitors-changed",
+                                              self.on_screen_changed)
+
+        trackers.con_tracker_get().disconnect(self.screen,
+                                              "size-changed",
+                                              self.on_screen_changed)
+
         self.destroy()
 
     def setup_monitors(self):
@@ -185,6 +211,8 @@ class Stage(Gtk.Window):
         Iterate through the monitors, and create MonitorViews for each one
         to cover them.
         """
+        self.monitors = []
+
         n = self.screen.get_n_monitors()
 
         for index in range(n):
@@ -489,6 +517,7 @@ class Stage(Gtk.Window):
         """
         for monitor in self.monitors:
             monitor.destroy()
+            del monitor
 
     def do_motion_notify_event(self, event):
         """

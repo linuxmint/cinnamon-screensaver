@@ -1,4 +1,6 @@
 .csstage {
+    background-image: none;
+    background-color: black;
 }
 
 .csstage .unlockbox {
