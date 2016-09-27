@@ -728,7 +728,7 @@ class Stage(Gtk.Window):
                 monitor_rect = self.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
                 allocation.y = monitor_rect.y
-                allocation.width = monitor_rect.width
+                allocation.width = nat_rect.width
                 allocation.height = nat_rect.height
             else:
                 allocation.x = child.rect.x + child.rect.width - nat_rect.width
