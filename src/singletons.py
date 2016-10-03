@@ -41,12 +41,11 @@ Backgrounds = CinnamonDesktop.BG()
 Backgrounds.load_from_preferences(settings.bg_settings)
 settings.bg_settings.connect("changed", lambda s,k: Backgrounds.load_from_preferences(s))
 
-
-# We do a bit more than just load the current keyboard layout for
-# password entry, so we'll have a utility class to manage that for us
-from util.keyboardLayout import KeyboardLayout as _KeyboardLayout
-KeyboardLayout = _KeyboardLayout()
-
+# We use XAppKbdLayoutController as a wrapper around libgnomekbd to supply the icon theme
+# with icons, as well as providing correct group names.
+gi.require_version('XApp', '1.0')
+from gi.repository import XApp
+KeyboardLayoutController = XApp.KbdLayoutController()
 
 # The login client is a bit different - we can have either logind or ConsoleKit.
 # So, we have to do a bit more work to determine which one we're going to use.

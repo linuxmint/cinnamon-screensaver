@@ -14,7 +14,6 @@ app_PYTHON = \
         focusNavigator.py \
         grabHelper.py \
         keybindings.py \
-        keyboardLayout.py \
         settings.py \
         trackers.py \
         utils.py \
