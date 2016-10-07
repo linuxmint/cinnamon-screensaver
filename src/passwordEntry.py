@@ -5,6 +5,7 @@ import gi
 
 gi.require_version('CinnamonDesktop', '3.0')
 from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop, GdkPixbuf
+import cairo
 
 from util import utils, trackers, settings
 import status
@@ -30,6 +31,9 @@ class PasswordEntry(Gtk.Entry):
         self.set_placeholder_text (_("Enter password..."))
         self.set_can_default(True)
 
+        self.current_icon_name = None
+        self.current_icon_pixbuf = None
+
         trackers.con_tracker_get().connect(self,
                                            "icon-press",
                                            self.on_icon_pressed)
@@ -38,8 +42,74 @@ class PasswordEntry(Gtk.Entry):
         self.set_lockscreen_keyboard_layout()
 
         trackers.con_tracker_get().connect(self,
+                                           "draw",
+                                           self.on_draw)
+
+        trackers.con_tracker_get().connect(self,
                                            "destroy",
                                            self.on_destroy)
+
+    def on_draw(self, widget, cr, data=None):
+        """
+        GtkEntry always makes its icons menu-sized, no matter how much actual
+        space is available for the image.  So, we use a transparent icon in
+        update_layout_icon(), just so GtkEntry thinks there's an icon there,
+        that way it allocates space for it, and responds to clicks in the area.
+        """
+        icon_rect = widget.get_icon_area(Gtk.EntryIconPosition.PRIMARY)
+        x = icon_rect.x
+        y = icon_rect.y
+        width = (icon_rect.width // 2) * 2
+        height = icon_rect.height
+
+        if settings.get_show_flags():
+            name = self.keyboard_controller.get_current_icon_name()
+
+            if name != self.current_icon_name:
+                self.current_icon_name = name
+                theme = Gtk.IconTheme.get_default()
+                pixbuf = theme.load_icon(name, 26, Gtk.IconLookupFlags.FORCE_SIZE)
+                self.current_icon_pixbuf = pixbuf
+
+            Gdk.cairo_set_source_pixbuf(cr,
+                                        self.current_icon_pixbuf,
+                                        (x + (width / 2) - (self.current_icon_pixbuf.get_width() / 2)),
+                                        (y + (height / 2) - (self.current_icon_pixbuf.get_height() / 2)))
+            cr.paint()
+        else:
+            if settings.get_show_upper_case_layout():
+                name = self.keyboard_controller.get_short_name().upper()
+            else:
+                name = self.keyboard_controller.get_short_name().lower()
+
+            self.current_icon_name = name
+
+            ctx = widget.get_style_context()
+            font_size = ctx.get_property("font-size", Gtk.StateFlags.BACKDROP)
+            family = ctx.get_property("font-family", Gtk.StateFlags.BACKDROP)
+            cr.select_font_face(family[0], cairo.FONT_WEIGHT_NORMAL, cairo.FONT_SLANT_NORMAL)
+            cr.set_font_size(font_size)
+
+            (xb, yb, w, h, xa, ya) = cr.text_extents(name)
+
+            # Drop shadow for visibility - 1px, 1px
+            cr.set_source_rgba(0, 0, 0, 0.8)
+            cr.move_to((x + (width / 2) - (w / 2)) + 1,
+                       (y + (height / 2) + (h / 2) + 1))
+
+            cr.show_text(name)
+
+            # Text
+
+            text_color = widget.get_style_context().get_color(Gtk.StateFlags.BACKDROP)
+
+            Gdk.cairo_set_source_rgba(cr, text_color)
+            cr.move_to((x + (width / 2) - (w / 2)),
+                       (y + (height / 2) + (h / 2)))
+
+            cr.show_text(name)
+
+        return False
 
     def start_progress(self):
         self.set_progress_pulse_step(0.2)
@@ -67,8 +137,12 @@ class PasswordEntry(Gtk.Entry):
             self.keyboard_controller.next_group()
 
     def update_layout_icon(self):
-        name = self.keyboard_controller.get_current_icon_name()
-        self.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, name)
+        """
+        Set an empty icon here so the widget responds to clicks and allocates space for it.
+        We'll do the actual flag or whatever in the 'draw' callback.  Setting the icon here
+        also ensures a redraw at the correct time to update the flag image.
+        """
+        self.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "screensaver-blank")
         self.set_icon_tooltip_text(Gtk.EntryIconPosition.PRIMARY, self.keyboard_controller.get_current_name())
 
         self.update_saved_group(self.keyboard_controller.get_current_group())
