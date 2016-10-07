@@ -26,6 +26,7 @@ FONT_DATE_KEY = "font-date"
 FONT_MESSAGE_KEY = "font-message"
 FONT_TIME_KEY = "font-time"
 SHOW_FLAGS_KEY = "show-flags"
+USE_CAPS_KEY = "upper-case-kbd-layout"
 KB_LAYOUT_KEY = "layout-group"
 SHOW_CLOCK_KEY = "show-clock"
 
@@ -109,6 +110,9 @@ def get_clock_should_use_24h():
 def get_show_flags():
     return ss_settings.get_boolean(SHOW_FLAGS_KEY)
 
+def get_show_upper_case_layout():
+    return ss_settings.get_boolean(USE_CAPS_KEY)
+
 def get_kb_group():
     return ss_settings.get_int(KB_LAYOUT_KEY)
 
@@ -117,3 +121,6 @@ def set_kb_group(group):
 
 def get_show_clock():
     return ss_settings.get_boolean(SHOW_CLOCK_KEY)
+
+def get_show_albumart():
+    return True

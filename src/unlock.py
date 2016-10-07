@@ -4,9 +4,9 @@
 import gi
 
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop, GdkPixbuf
+from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop
 
-from util import utils, trackers, settings
+from util import utils, trackers
 import status
 import singletons
 from baseWindow import BaseWindow
@@ -50,6 +50,7 @@ class UnlockDialog(BaseWindow):
 
         self.face_image = FramedImage()
         self.face_image.set_halign(Gtk.Align.CENTER)
+        self.face_image.get_style_context().add_class("faceimage")
         self.box.pack_start(self.face_image, False, False, 10)
 
         self.realname_label = Gtk.Label(None)
@@ -181,7 +182,7 @@ class UnlockDialog(BaseWindow):
             self.update_realname_label()
 
         if client.face_path != None:
-            self.face_image.set_from_file(client.face_path)
+            self.face_image.set_from_path(client.face_path)
 
     def on_password_entry_text_changed(self, editable):
         """

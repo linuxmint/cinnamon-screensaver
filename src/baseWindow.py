@@ -11,7 +11,7 @@ class BaseWindow(Gtk.Revealer):
     """
     REVEALER_DURATION = 250
 
-    def __init__(self):
+    def __init__(self, *args):
         super(BaseWindow, self).__init__()
 
         self.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)

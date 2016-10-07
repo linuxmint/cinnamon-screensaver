@@ -38,6 +38,7 @@ class MprisClient(BaseClient):
         self.album_name = ""
         self.track_name = ""
         self.artist_name = ""
+        self.albumart_url = ""
 
     def on_client_setup_complete(self):
         trackers.con_tracker_get().connect(self.proxy,
@@ -165,6 +166,11 @@ class MprisClient(BaseClient):
 
         return self.album_name
 
+    def get_albumart_url(self):
+        self.ensure_metadata()
+
+        return self.albumart_url
+
     def on_failure(self, *args):
         pass
 
@@ -191,6 +197,18 @@ class MprisClient(BaseClient):
                         self.artist_name = self.metadata["xesam:artist"][0]
                     except:
                         self.artist_name = ""
+                except IndexError:
+                    try:
+                        self.artist_name = self.metadata["xesam:albumArtist"]
+                    except KeyError:
+                        try:
+                            self.artist_name = self.metadata["xesam:artist"]
+                        except:
+                            self.artist_name = ""
+                try:
+                    self.albumart_url = self.metadata["mpris:artUrl"]
+                except KeyError:
+                    self.albumart_url = ""
 
     def on_playback_status_changed(self, proxy, pspec, data=None):
         self.emit("status-changed", self.get_playback_status())

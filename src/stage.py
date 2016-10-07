@@ -8,6 +8,7 @@ import singletons
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
+from albumArt import AlbumArt
 from audioPanel import AudioPanel
 from infoPanel import InfoPanel
 from util import utils, trackers, settings
@@ -50,6 +51,7 @@ class Stage(Gtk.Window):
         self.last_focus_monitor = -1
         self.overlay = None
         self.clock_widget = None
+        self.albumart_widget = None
         self.unlock_dialog = None
         self.status_bar = None
 
@@ -159,6 +161,7 @@ class Stage(Gtk.Window):
         """
         self.setup_monitors()
         self.setup_clock()
+        self.setup_albumart()
         self.setup_unlock()
         self.setup_status_bars()
 
@@ -183,11 +186,13 @@ class Stage(Gtk.Window):
 
         self.unlock_dialog.destroy()
         self.clock_widget.destroy()
+        self.albumart_widget.destroy()
         self.info_panel.destroy()
         self.audio_panel.destroy()
 
         self.unlock_dialog = None
         self.clock_widget = None
+        self.albumart_widget = None
         self.info_panel = None
         self.audio_panel = None
         self.away_message = None
@@ -288,6 +293,22 @@ class Stage(Gtk.Window):
             self.put_on_top(self.clock_widget)
             self.clock_widget.start_positioning()
 
+    def setup_albumart(self):
+        """
+        Construct the AlbumArt widget and add it to the overlay, but only actually
+        show it if we're a) Not running a plug-in, and b) The user wants it via
+        preferences.
+
+        Initially invisible, regardless - its visibility is controlled via its
+        own positioning timer.
+        """
+        self.albumart_widget = AlbumArt(self.screen, self.away_message, utils.get_mouse_monitor())
+        self.add_child_widget(self.albumart_widget)
+
+        if not settings.should_show_plugin() and settings.get_show_albumart():
+            self.put_on_top(self.albumart_widget)
+            self.albumart_widget.start_positioning()
+
     def setup_unlock(self):
         """
         Construct the unlock dialog widget and add it to the overlay.  It will always
@@ -387,6 +408,7 @@ class Stage(Gtk.Window):
         """
         if success:
             self.clock_widget.hide()
+            self.albumart_widget.hide()
             self.unlock_dialog.hide()
             self.manager.unlock()
         else:
@@ -412,6 +434,7 @@ class Stage(Gtk.Window):
             return
 
         self.clock_widget.stop_positioning()
+        self.albumart_widget.stop_positioning()
 
         status.Awake = True
 
@@ -432,9 +455,11 @@ class Stage(Gtk.Window):
                                               self.after_wallpaper_shown_for_unlock)
 
         self.put_on_top(self.clock_widget)
+        self.put_on_top(self.albumart_widget)
         self.put_on_top(self.unlock_dialog)
 
         self.clock_widget.reveal()
+        self.albumart_widget.reveal()
         self.unlock_dialog.reveal()
         self.audio_panel.reveal()
         self.info_panel.update_revealed()
@@ -458,6 +483,7 @@ class Stage(Gtk.Window):
                                            self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
         self.clock_widget.unreveal()
+        self.albumart_widget.unreveal()
         self.audio_panel.unreveal()
         self.info_panel.unreveal()
 
@@ -470,6 +496,7 @@ class Stage(Gtk.Window):
         self.unlock_dialog.cancel()
         self.audio_panel.hide()
         self.clock_widget.hide()
+        self.albumart_widget.hide()
 
         trackers.con_tracker_get().disconnect(self.unlock_dialog,
                                               "notify::child-revealed",
@@ -494,9 +521,13 @@ class Stage(Gtk.Window):
 
         self.info_panel.update_revealed()
 
-        if not status.PluginRunning and settings.get_show_clock():
-            self.put_on_top(self.clock_widget)
-            self.clock_widget.start_positioning()
+        if not status.PluginRunning:
+            if settings.get_show_clock():
+                self.put_on_top(self.clock_widget)
+                self.clock_widget.start_positioning()
+            if settings.get_show_albumart():
+                self.put_on_top(self.albumart_widget)
+                self.albumart_widget.start_positioning()
 
     def update_monitor_views(self):
         """
@@ -644,13 +675,13 @@ class Stage(Gtk.Window):
 
             return True
 
-        if isinstance(child, ClockWidget):
+        if isinstance(child, ClockWidget) or isinstance(child, AlbumArt):
             """
-            ClockWidget behaves differently depending on if status.Awake is True or not.
+            ClockWidget and AlbumArt behave differently depending on if status.Awake is True or not.
 
-            The widget's halign and valign properties are used to store their gross position on the
+            The widgets' halign and valign properties are used to store their gross position on the
             monitor.  This limits the number of possible positions to (3 * 3 * n_monitors) when our
-            screensaver is not Awake, and the widget has an internal timer that randomizes halign,
+            screensaver is not Awake, and the widgets have an internal timer that randomizes halign,
             valign, and current monitor every so many seconds, calling a queue_resize on itself after
             each timer tick (which forces this function to run).
             """
@@ -661,9 +692,12 @@ class Stage(Gtk.Window):
             if status.Awake:
                 """
                 If we're Awake, force the clock to track to the active monitor, and be aligned to
-                the left-center.
+                the left-center.  The albumart widget aligns right-center.
                 """
-                child.set_halign(Gtk.Align.START)
+                if isinstance(child, ClockWidget):
+                    child.set_halign(Gtk.Align.START)
+                else:
+                    child.set_halign(Gtk.Align.END)
                 child.set_valign(Gtk.Align.CENTER)
                 current_monitor = utils.get_mouse_monitor()
 

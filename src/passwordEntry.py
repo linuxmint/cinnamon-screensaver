@@ -4,14 +4,11 @@
 import gi
 
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop, GdkPixbuf
+from gi.repository import Gtk, Gdk
 import cairo
 
-from util import utils, trackers, settings
-import status
+from util import trackers, settings
 import singletons
-from baseWindow import BaseWindow
-from widgets.transparentButton import TransparentButton
 
 class PasswordEntry(Gtk.Entry):
     """

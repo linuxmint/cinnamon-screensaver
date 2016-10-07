@@ -10,7 +10,7 @@ appdir = $(datadir)/cinnamon-screensaver/widgets
 app_PYTHON = \
         __init__.py \
         blinkingLabel.py \
-        frameImage.py \
+        framedImage.py \
         marqueeLabel.py \
         notificationWidget.py \
         positionBar.py \

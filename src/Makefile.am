@@ -9,18 +9,20 @@ appdir = $(datadir)/cinnamon-screensaver
 
 app_PYTHON = \
         __init__.py \
+        albumArt.py \
         audioPanel.py \
         baseWindow.py \
         clock.py \
         config.py \
         constants.py \
-        singletons.py \
+        floating.py \
         infoPanel.py \
         manager.py \
         monitorView.py \
         passwordEntry.py \
         playerControl.py \
         service.py \
+        singletons.py \
         stage.py \
         status.py \
         unlock.py \

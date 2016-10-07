@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk, Gdk
-import cairo
 
 from util import trackers
 
