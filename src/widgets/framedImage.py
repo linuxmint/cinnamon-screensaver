@@ -4,7 +4,7 @@
 import gi
 
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject
+from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject, GLib
 
 from util import utils, trackers
 
@@ -80,7 +80,11 @@ class FramedImage(Gtk.Image):
             self.file.load_contents_async(self.cancellable, self.load_contents_async_callback)
 
     def load_contents_async_callback(self, file, result, data=None):
-        success, contents, etag_out = file.load_contents_finish(result)
+        try:
+            success, contents, etag_out = file.load_contents_finish(result)
+        except GLib.Error:
+            self.clear_image()
+            return
 
         if contents:
             cache_name = GLib.build_filenamev([GLib.get_user_cache_dir(), "cinnamon-screensaver-albumart-temp"])
@@ -94,7 +98,10 @@ class FramedImage(Gtk.Image):
                                               self.on_file_written)
 
     def on_file_written(self, file, result, data=None):
-        if file.replace_contents_finish(result):
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(file.get_path(), -1, self.get_theme_height(), True)
-            self.set_from_pixbuf(pixbuf)
-            self.emit("pixbuf-changed", pixbuf)
+        try:
+            if file.replace_contents_finish(result):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(file.get_path(), -1, self.get_theme_height(), True)
+                self.set_from_pixbuf(pixbuf)
+                self.emit("pixbuf-changed", pixbuf)
+        except GLib.Error:
+            pass

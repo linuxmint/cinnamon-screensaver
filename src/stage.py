@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 from gi.repository import Gtk, Gdk, CScreensaver
+import random
 
 import status
 import constants as c
@@ -11,6 +12,7 @@ from clock import ClockWidget
 from albumArt import AlbumArt
 from audioPanel import AudioPanel
 from infoPanel import InfoPanel
+from floating import ALIGNMENTS
 from util import utils, trackers, settings
 from util.fader import Fader
 from util.eventHandler import EventHandler
@@ -54,6 +56,8 @@ class Stage(Gtk.Window):
         self.albumart_widget = None
         self.unlock_dialog = None
         self.status_bar = None
+
+        self.floaters = []
 
         self.event_handler = EventHandler(manager)
 
@@ -197,6 +201,7 @@ class Stage(Gtk.Window):
         self.audio_panel = None
         self.away_message = None
         self.monitors = []
+        self.floaters = []
 
         self.gdk_filter.stop()
         self.gdk_filter = None
@@ -289,6 +294,8 @@ class Stage(Gtk.Window):
         self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
+        self.floaters.append(self.clock_widget)
+
         if not settings.should_show_plugin() and settings.get_show_clock():
             self.put_on_top(self.clock_widget)
             self.clock_widget.start_positioning()
@@ -304,6 +311,8 @@ class Stage(Gtk.Window):
         """
         self.albumart_widget = AlbumArt(self.screen, self.away_message, utils.get_mouse_monitor())
         self.add_child_widget(self.albumart_widget)
+
+        self.floaters.append(self.clock_widget)
 
         if not settings.should_show_plugin() and settings.get_show_albumart():
             self.put_on_top(self.albumart_widget)
@@ -700,6 +709,27 @@ class Stage(Gtk.Window):
                     child.set_halign(Gtk.Align.END)
                 child.set_valign(Gtk.Align.CENTER)
                 current_monitor = utils.get_mouse_monitor()
+            else:
+                for floater in self.floaters:
+                    """
+                    Don't let our floating widgets end up in the same spot.
+                    """
+                    if floater is child:
+                        continue
+                    if floater.get_halign() != child.get_halign() and floater.get_valign() != child.get_valign():
+                        continue
+
+                    fa = floater.get_halign()
+                    ca = child.get_halign()
+                    while fa == ca:
+                        ca = ALIGNMENTS[random.randint(0, 2)]
+                    child.set_halign(ca)
+
+                    fa = floater.get_valign()
+                    ca = child.get_valign()
+                    while fa == ca:
+                        ca = ALIGNMENTS[random.randint(0, 2)]
+                    child.set_valign(ca)
 
             monitor_rect = self.screen.get_monitor_geometry(current_monitor)
 
