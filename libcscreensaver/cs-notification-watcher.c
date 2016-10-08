@@ -35,7 +35,7 @@ typedef struct
     gchar *sender;
 } NotificationIdleData;
 
-gboolean
+static gboolean
 idle_notify_received (gpointer user_data)
 {
     NotificationIdleData *data = (NotificationIdleData *) user_data;
@@ -49,7 +49,7 @@ idle_notify_received (gpointer user_data)
     return FALSE;
 }
 
-GDBusMessage *
+static GDBusMessage *
 notification_filter_func (GDBusConnection *connection,
                           GDBusMessage    *message,
                           gboolean        *incoming,
@@ -72,7 +72,7 @@ notification_filter_func (GDBusConnection *connection,
             g_variant_is_of_type (body, G_VARIANT_TYPE_TUPLE) &&
             g_variant_n_children (body) >= 7) {
 
-            GVariant *hints;
+            GVariant *hints, *sender;
 
             hints = g_variant_get_child_value (body, 6);
 
@@ -90,7 +90,7 @@ notification_filter_func (GDBusConnection *connection,
 
             g_clear_pointer (&hints, g_variant_unref);
 
-            GVariant *sender = g_variant_get_child_value (body, 0);
+            sender = g_variant_get_child_value (body, 0);
 
             if (sender) {
                 sender_str = g_variant_dup_string (sender, NULL);

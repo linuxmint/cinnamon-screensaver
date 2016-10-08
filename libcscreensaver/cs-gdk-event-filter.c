@@ -8,6 +8,7 @@
  */
 
 #include "cs-gdk-event-filter.h"
+#include "config.h"
 
 #ifdef HAVE_SHAPE_EXT
 #include <X11/extensions/shape.h>
@@ -92,8 +93,8 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
         default:
           {
 #ifdef HAVE_SHAPE_EXT
-            if (ev->xany.type == (window->priv->shape_event_base + ShapeNotify)) {
-                unshape_window (window);
+            if (ev->xany.type == (filter->shape_event_base + ShapeNotify)) {
+                unshape_window (filter);
             }
 #endif
         break;
