@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio, GLib
+from gi.repository import Gio
 
 from util import trackers, settings
 from baseWindow import BaseWindow

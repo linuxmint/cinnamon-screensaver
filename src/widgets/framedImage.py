@@ -4,7 +4,7 @@
 import gi
 
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject, GLib
+from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject
 
 from util import utils, trackers
 
