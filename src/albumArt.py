@@ -2,7 +2,7 @@
 
 from gi.repository import Gio, GLib
 
-from util import trackers
+from util import trackers, settings
 from baseWindow import BaseWindow
 from floating import Floating
 from widgets.framedImage import FramedImage
@@ -24,6 +24,9 @@ class AlbumArt(Floating, BaseWindow):
         super(AlbumArt, self).__init__(initial_monitor)
         self.screen = screen
         self.get_style_context().add_class("albumart")
+
+        if not settings.get_show_albumart():
+            return
 
         self.watcher = singletons.MediaPlayerWatcher
         self.player = self.watcher.get_best_player()

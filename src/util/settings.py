@@ -29,6 +29,7 @@ SHOW_FLAGS_KEY = "show-flags"
 USE_CAPS_KEY = "upper-case-kbd-layout"
 KB_LAYOUT_KEY = "layout-group"
 SHOW_CLOCK_KEY = "show-clock"
+SHOW_ALBUMART = "show-album-art"
 
 # Interface settings - the same logic applies here as above - we don't
 # need to listen to changes to these.
@@ -123,4 +124,4 @@ def get_show_clock():
     return ss_settings.get_boolean(SHOW_CLOCK_KEY)
 
 def get_show_albumart():
-    return True
+    return ss_settings.get_boolean(SHOW_ALBUMART)
