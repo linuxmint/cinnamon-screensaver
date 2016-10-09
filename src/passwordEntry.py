@@ -31,16 +31,8 @@ class PasswordEntry(Gtk.Entry):
         self.current_icon_name = None
         self.current_icon_pixbuf = None
 
-        trackers.con_tracker_get().connect(self,
-                                           "icon-press",
-                                           self.on_icon_pressed)
-
         self.keyboard_controller = singletons.KeyboardLayoutController
         self.set_lockscreen_keyboard_layout()
-
-        trackers.con_tracker_get().connect(self,
-                                           "draw",
-                                           self.on_draw)
 
         trackers.con_tracker_get().connect(self,
                                            "destroy",
@@ -176,6 +168,14 @@ class PasswordEntry(Gtk.Entry):
         self.update_saved_group(new_group)
         self.update_layout_icon()
 
+        trackers.con_tracker_get().connect(self,
+                                           "icon-press",
+                                           self.on_icon_pressed)
+
+        trackers.con_tracker_get().connect(self,
+                                           "draw",
+                                           self.on_draw)
+
         trackers.con_tracker_get().connect(self.keyboard_controller,
                                            "layout-changed",
                                            self.on_layout_changed)
@@ -188,6 +188,9 @@ class PasswordEntry(Gtk.Entry):
         Called when the unlock dialog is destroyed, restores
         the group that was active before the screensaver was activated.
         """
+        if not self.keyboard_controller.get_enabled():
+            return
+
         trackers.con_tracker_get().disconnect(self.keyboard_controller,
                                               "layout-changed",
                                               self.on_layout_changed)
