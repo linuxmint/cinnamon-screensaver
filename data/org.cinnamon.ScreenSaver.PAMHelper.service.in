@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.cinnamon.ScreenSaver.PAMHelper
-Exec=@EXPANDED_BINDIR@/cinnamon-screensaver-pam-helper
