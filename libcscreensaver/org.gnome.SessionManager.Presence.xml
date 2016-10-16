@@ -33,38 +33,6 @@
         </doc:description>
       </doc:doc>
     </property>
-    <property name="status-text" type="s" access="readwrite">
-      <doc:doc>
-        <doc:description>
-          <doc:para>The descriptive status for the session.
-          </doc:para>
-        </doc:description>
-      </doc:doc>
-    </property>
-    <method name="SetStatus">
-      <arg type="u" name="status" direction="in">
-        <doc:doc>
-          <doc:summary>The status value</doc:summary>
-        </doc:doc>
-      </arg>
-      <doc:doc>
-        <doc:description>
-          <doc:para>Set the status value of the session.</doc:para>
-        </doc:description>
-      </doc:doc>
-    </method>
-    <method name="SetStatusText">
-      <arg type="s" name="status_text" direction="in">
-        <doc:doc>
-          <doc:summary>The descriptive status for the session.</doc:summary>
-        </doc:doc>
-      </arg>
-      <doc:doc>
-        <doc:description>
-          <doc:para>Set the descriptive status text for the session.</doc:para>
-        </doc:description>
-      </doc:doc>
-    </method>
 
     <signal name="StatusChanged">
       <arg name="status" type="u">
@@ -75,18 +43,6 @@
       <doc:doc>
         <doc:description>
           <doc:para>Indicates that the session status value has changed.</doc:para>
-        </doc:description>
-      </doc:doc>
-    </signal>
-    <signal name="StatusTextChanged">
-      <arg name="status_text" type="s">
-        <doc:doc>
-          <doc:summary>The new status text</doc:summary>
-        </doc:doc>
-      </arg>
-      <doc:doc>
-        <doc:description>
-          <doc:para>Indicates that the descriptive session status text has changed.</doc:para>
         </doc:description>
       </doc:doc>
     </signal>

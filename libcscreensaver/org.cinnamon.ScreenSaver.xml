@@ -25,18 +25,6 @@
       <arg type="b" name="e" direction="in">
       </arg>
     </method>
-    <method name="Throttle">
-      <arg type="s" name="application_name" direction="in">
-      </arg>
-      <arg type="s" name="reason_for_inhibit" direction="in">
-      </arg>
-      <arg type="u" name="cookie" direction="out">
-      </arg>
-    </method>
-    <method name="UnThrottle">
-      <arg type="u" name="cookie" direction="in">
-      </arg>
-    </method>
     <method name="Quit">
     </method>
     <signal name="ActiveChanged">
