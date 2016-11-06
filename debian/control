@@ -33,6 +33,7 @@ Depends: cinnamon-desktop-data (>= 3.0.0),
          gir1.2-accountsservice-1.0,
          gir1.2-xapp-1.0,
          libcscreensaver0,
+         iso-flag-png,
          ${misc:Depends},
          ${python:Depends},
          ${shlibs:Depends}

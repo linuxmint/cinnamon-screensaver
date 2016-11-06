@@ -25,8 +25,6 @@ TIME_FORMAT_KEY = "time-format"
 FONT_DATE_KEY = "font-date"
 FONT_MESSAGE_KEY = "font-message"
 FONT_TIME_KEY = "font-time"
-SHOW_FLAGS_KEY = "show-flags"
-USE_CAPS_KEY = "upper-case-kbd-layout"
 KB_LAYOUT_KEY = "layout-group"
 SHOW_CLOCK_KEY = "show-clock"
 SHOW_ALBUMART = "show-album-art"
@@ -36,6 +34,9 @@ SHOW_ALBUMART = "show-album-art"
 if_settings = Gio.Settings(schema_id="org.cinnamon.desktop.interface")
 CLOCK_SHOW_DATE_KEY = "clock-show-date"
 CLOCK_USE_24H_KEY = "clock-use-24h"
+KBD_LAYOUT_SHOW_FLAGS = "keyboard-layout-show-flags"
+KBD_LAYOUT_USE_CAPS = "keyboard-layout-use-upper"
+KBD_LAYOUT_PREFER_VARIANT = "keyboard-layout-prefer-variant-names"
 
 # Every setting has a getter (and setter, rarely).  This is mainly for
 # organizational purposes and cleanliness - it's easier to read in the
@@ -109,10 +110,13 @@ def get_clock_should_use_24h():
     return if_settings.get_boolean(CLOCK_USE_24H_KEY)
 
 def get_show_flags():
-    return ss_settings.get_boolean(SHOW_FLAGS_KEY)
+    return if_settings.get_boolean(KBD_LAYOUT_SHOW_FLAGS)
 
 def get_show_upper_case_layout():
-    return ss_settings.get_boolean(USE_CAPS_KEY)
+    return if_settings.get_boolean(KBD_LAYOUT_USE_CAPS)
+
+def get_use_layout_variant_names():
+    return if_settings.get_boolean(KBD_LAYOUT_PREFER_VARIANT)
 
 def get_kb_group():
     return ss_settings.get_int(KB_LAYOUT_KEY)

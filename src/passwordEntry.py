@@ -4,7 +4,7 @@
 import gi
 
 gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
 import cairo
 
 from util import trackers, settings
@@ -29,7 +29,7 @@ class PasswordEntry(Gtk.Entry):
         self.set_can_default(True)
 
         self.current_icon_name = None
-        self.current_icon_pixbuf = None
+        self.current_flag_id = 0
 
         self.keyboard_controller = singletons.KeyboardLayoutController
         self.set_lockscreen_keyboard_layout()
@@ -47,31 +47,50 @@ class PasswordEntry(Gtk.Entry):
         """
         icon_rect = widget.get_icon_area(Gtk.EntryIconPosition.PRIMARY)
         x = icon_rect.x
-        y = icon_rect.y
+        y = icon_rect.y + 2
         width = (icon_rect.width // 2) * 2
-        height = icon_rect.height
+        height = icon_rect.height - 4
+
+        handled = False
 
         if settings.get_show_flags():
             name = self.keyboard_controller.get_current_icon_name()
 
-            if name != self.current_icon_name:
-                self.current_icon_name = name
-                theme = Gtk.IconTheme.get_default()
-                pixbuf = theme.load_icon(name, 26, Gtk.IconLookupFlags.FORCE_SIZE)
-                self.current_icon_pixbuf = pixbuf
+            if name:
+                filename = "/usr/share/iso-flag-png/%s.png" % name
 
-            Gdk.cairo_set_source_pixbuf(cr,
-                                        self.current_icon_pixbuf,
-                                        (x + (width / 2) - (self.current_icon_pixbuf.get_width() / 2)),
-                                        (y + (height / 2) - (self.current_icon_pixbuf.get_height() / 2)))
-            cr.paint()
-        else:
-            if settings.get_show_upper_case_layout():
-                name = self.keyboard_controller.get_short_name().upper()
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, -1, height)
+
+                    render_x = (x + (width / 2) - (pixbuf.get_width() / 2))
+                    render_y = (y + (height / 2) - (pixbuf.get_height() / 2))
+
+                    Gdk.cairo_set_source_pixbuf(cr,
+                                                pixbuf,
+                                                render_x,
+                                                render_y)
+
+                    cr.paint()
+
+                    self.keyboard_controller.render_cairo_subscript(cr,
+                                                                    render_x + (pixbuf.get_width() / 2),
+                                                                    render_y + (pixbuf.get_height() / 2),
+                                                                    pixbuf.get_width() / 2,
+                                                                    pixbuf.get_height() / 2,
+                                                                    self.keyboard_controller.get_current_flag_id())
+
+                    handled = True
+                except GLib.Error:
+                    pass
+
+        if not handled:
+            if settings.get_use_layout_variant_names():
+                name = self.keyboard_controller.get_current_variant_label()
             else:
-                name = self.keyboard_controller.get_short_name().lower()
+                name = self.keyboard_controller.get_current_short_group_label()
 
-            self.current_icon_name = name
+            if settings.get_show_upper_case_layout():
+                name = name.upper()
 
             ctx = widget.get_style_context()
             font_size = ctx.get_property("font-size", Gtk.StateFlags.BACKDROP)
