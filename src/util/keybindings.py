@@ -7,6 +7,7 @@ from gi.repository.CDesktopEnums import MediaKeyType as MK
 
 import status
 import singletons
+from util import settings
 
 ALLOWED_ACTIONS = [MK.MUTE,
                    MK.VOLUME_UP,
@@ -114,13 +115,14 @@ class KeyBindings(GObject.GObject):
                 self.manager.propagate_activation()
                 return True
 
-        for entry in self.shortcut_actions:
-            res = entry.activate(event.keyval, event.hardware_keycode, filtered_state)
+        if settings.get_allow_shortcuts():
+            for entry in self.shortcut_actions:
+                res = entry.activate(event.keyval, event.hardware_keycode, filtered_state)
 
-            if res == -1:
-                continue
-            else:
-                self.client.handle_keybinding(res)
-                return True
+                if res == -1:
+                    continue
+                else:
+                    self.client.handle_keybinding(res)
+                    return True
 
         return False

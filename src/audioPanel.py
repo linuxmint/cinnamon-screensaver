@@ -5,7 +5,7 @@ from gi.repository import Gtk
 from baseWindow import BaseWindow
 from volumeControl import VolumeControl
 from playerControl import PlayerControl
-from util import utils
+from util import utils, settings
 
 class AudioPanel(BaseWindow):
     def __init__(self, screen):
@@ -21,6 +21,10 @@ class AudioPanel(BaseWindow):
         self.monitor_index = utils.get_primary_monitor()
 
         self.update_geometry()
+
+        if not settings.get_allow_media_control():
+            self.disabled = True
+            return
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.set_halign(Gtk.Align.FILL)

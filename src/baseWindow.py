@@ -14,6 +14,8 @@ class BaseWindow(Gtk.Revealer):
     def __init__(self, *args):
         super(BaseWindow, self).__init__()
 
+        self.disabled = False
+
         self.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.set_transition_duration(self.REVEALER_DURATION)
 
@@ -22,9 +24,14 @@ class BaseWindow(Gtk.Revealer):
         self.set_reveal_child(True)
 
     def reveal(self):
+        if self.disabled:
+            return
         GObject.idle_add(self._reveal_idle_callback)
 
     def unreveal(self):
+        if self.disabled:
+            return
+
         GObject.idle_add(self.set_reveal_child, False)
 
     def blink(self):

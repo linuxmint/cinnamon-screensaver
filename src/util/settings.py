@@ -26,8 +26,12 @@ FONT_DATE_KEY = "font-date"
 FONT_MESSAGE_KEY = "font-message"
 FONT_TIME_KEY = "font-time"
 KB_LAYOUT_KEY = "layout-group"
+
 SHOW_CLOCK_KEY = "show-clock"
 SHOW_ALBUMART = "show-album-art"
+ALLOW_SHORTCUTS = "allow-keyboard-shortcuts"
+ALLOW_MEDIA_CONTROL = "allow-media-control"
+SHOW_INFO_PANEL = "show-info-panel"
 
 # Interface settings - the same logic applies here as above - we don't
 # need to listen to changes to these.
@@ -129,3 +133,12 @@ def get_show_clock():
 
 def get_show_albumart():
     return ss_settings.get_boolean(SHOW_ALBUMART)
+
+def get_allow_shortcuts():
+    return ss_settings.get_boolean(ALLOW_SHORTCUTS)
+
+def get_allow_media_control():
+    return ss_settings.get_boolean(ALLOW_MEDIA_CONTROL)
+
+def get_show_info_panel():
+    return ss_settings.get_boolean(SHOW_INFO_PANEL)

@@ -3,7 +3,7 @@
 from gi.repository import Gtk
 
 import status
-from util import utils, trackers
+from util import utils, trackers, settings
 from baseWindow import BaseWindow
 from widgets.notificationWidget import NotificationWidget
 from widgets.powerWidget import PowerWidget
@@ -23,6 +23,10 @@ class InfoPanel(BaseWindow):
         self.monitor_index = utils.get_primary_monitor()
 
         self.update_geometry()
+
+        if not settings.get_show_info_panel():
+            self.disabled = True
+            return
 
         self.show_power = False
         self.show_notifications = False
@@ -63,6 +67,9 @@ class InfoPanel(BaseWindow):
 
         The panel will show if either of its child indicators has useful info.
         """
+        if self.disabled:
+            return
+
         do_reveal = False
 
         self.show_power = self.power_widget.should_show()
