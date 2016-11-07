@@ -1,8 +1,69 @@
-cinnamon-screensaver (3.1.0) UNRELEASED; urgency=medium
+cinnamon-screensaver (3.2.0) serena; urgency=medium
 
+  [ Michael Webster ]
   * Rewrite
 
- -- Michael Webster <miketwebster@gmail.com>  Sat, 09 Jul 2016 23:50:39 -0400
+  [ itzexor ]
+  * utils.py: add back alternate display manager support for user switching
+
+  [ Michael Webster ]
+  * Terminate plugins more cleanly, terminate them when they're no longer visible, terminate them when we're on battery (and restart them when we get plugged back in), clean up handling of transition between plugin and wallpaper.
+  * packaging: use pkg-config to figure out where our typelib/lib files go
+  * cs-notification-watcher.c: ignore transient notifications (such as those from banshee on track changes)
+
+  [ leigh123linux ]
+  * Revert "Fix gtkdocize: GTK_DOC_CHECK not called in ./configure.ac"
+  * Fix the gtkdoc issue properly
+
+  [ Maximiliano Curia ]
+  * Make AX_ macros optional and drop unused parts
+  * Drop gnome-common, add autconf-archive build dependency
+
+  [ Michael Webster ]
+  * Add media player widget, reorganize files a bit
+  * Remove borders from infobar widgets
+  * Add audio buttons to the focus chain
+  * notifications: Ignore notifications from active media players
+  * Fix some names and lint.
+  * media player: handle metadata safely, and make sure artist-album string is handled properly depending on the data we have available.
+  * Update README.md
+  * Make volume and position bars draw alike, make it easier to theme both, tweak layout of the audiobar a bit.  Also, fix div by 0 when a track doesn't have a max position.
+  * Rename Audio/InfoBar to Audio/InfoPanel
+  * playerControl.py: Improve how we get h:m:s from the microseconds reported for position and track length.
+
+  [ Corbin Auriti ]
+  * Delete debug-screensaver.sh
+
+  [ Michael Webster ]
+  * Theme work - ensure everything is reasonably able to be themed, and provide fallback styling if the currently selected theme doesn't supply anything - this is done by searching for the toplevel style class - "csstage" corresponding to the toplevel window for the screensaver.
+  * Add separate theming for Gtk 3.20+, update .gitignore, load a css file appropriate to the current Gtk version at startup (if no theme support is found).  Fix error handling in mediaPlayerWatcher.py.
+  * Update README.md, couple fixes to css files
+  * update pot file
+  * trackers: dump timer and connection list in debug mode after unlocking.
+  * manager.py, stage.py: add some documentation.
+  * More documentation..
+  * Add some documentation to the unlock dialog, make the user image size definable in CSS, reimplement the AccountsService handling as a client singleton like every other service.
+  * More cleanup, documentation
+  * Finish documentation
+  * Fix a couple regressions from documenting/refactoring
+  * Stage: Listen for GdkScreen changes in size and number of monitors, and reconstruct the monitorViews as needed.
+  * stage.py: Fix oversized info panel.
+  * Add script for testing keyboard layouts.
+  * Use XAppKbdLayoutController to interact with libgnomekbd for switching keyboard layouts and getting reliable flag icons.
+  * unlock.py: Split out PasswordEntry and FramedImage to their own files.
+  * Fix keyboard layout representation in the password entry.  GtkEntry is hardcoded to produce a menu-sized icon.  We supply a blank icon, and draw our own where it belongs, and at a better size.  This way, we can also provide themed text layout names as well, depending on user preference.
+  * Add albumart widget.
+  * finish implementing albumart preference.
+  * stage: Don't let floating widgets overlap, catch a couple potential errors when loading pixbufs - namely when we interrupt it by skipping a track.
+  * pyflakes cleanup
+  * libcscreensaver: Fix new build warnings, fix shape extension detection for the event filter.
+  * passwordEntry.py: Don't connect to draw and icon press signals if the keyboard layout controller is disabled.
+  * Remove unused file.
+  * proxies: Strip out unused interface elements to reduce lib size and runtime memory use (slightly.)
+  * passwordEntry.py: Rework to stay in sync with XApp.KbdLayoutController changes.  Perform all rendering/loading of icons ourselves, depend on new icon package, use new cinnamon desktop preferences for flag/case settings.
+  * Add preferences to lock down media keys, media player controls, notification counter.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 09 Jul 2016 23:50:39 -0400
 
 cinnamon-screensaver (3.0.1) sarah; urgency=medium
 
