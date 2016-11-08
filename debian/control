@@ -25,7 +25,7 @@ Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: cinnamon-desktop-data (>= 3.0.0),
          python3,
-         python3-xlib,
+         python3-xlib | debian-system-adjustments,
          python3-gi,
          gir1.2-cinnamondesktop-3.0,
          gir1.2-gkbd-3.0,
