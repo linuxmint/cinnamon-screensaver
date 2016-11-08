@@ -16,6 +16,7 @@ Build-Depends: autoconf-archive,
                libxext-dev,
                libgirepository1.0-dev,
                gobject-introspection,
+               intltool (>= 0.40.0),
                gnome-pkg-tools (>= 0.10)
 Standards-Version: 3.9.6
 
