@@ -275,8 +275,8 @@ class UnlockDialog(BaseWindow):
         """
         self.clear_entry()
 
-        self.password_entry.set_placeholder_text (_("Enter password..."))
-        self.auth_message_label.set_text(_("Password incorrect - try again."))
+        self.password_entry.set_placeholder_text (_("Please enter your password..."))
+        self.auth_message_label.set_text(_("Incorrect password"))
 
         self.password_entry.grab_focus()
 
