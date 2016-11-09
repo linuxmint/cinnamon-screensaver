@@ -51,6 +51,8 @@ class UnlockDialog(BaseWindow):
         self.face_image = FramedImage()
         self.face_image.set_halign(Gtk.Align.CENTER)
         self.face_image.get_style_context().add_class("faceimage")
+        self.face_image.set_no_show_all(True)
+
         self.box.pack_start(self.face_image, False, False, 10)
 
         self.realname_label = Gtk.Label(None)
@@ -177,12 +179,13 @@ class UnlockDialog(BaseWindow):
         """
         Handler for the AccountsService - requests the user real name and .face image.
         """
-        if client.real_name != None:
-            self.real_name = client.real_name
+        if client.get_real_name() != None:
+            self.real_name = client.get_real_name()
             self.update_realname_label()
 
-        if client.face_path != None:
-            self.face_image.set_from_path(client.face_path)
+        if client.get_face_path() != None:
+            self.face_image.set_from_path(client.get_face_path())
+            self.face_image.show()
 
     def on_password_entry_text_changed(self, editable):
         """

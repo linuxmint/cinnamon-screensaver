@@ -20,8 +20,6 @@ class AccountsServiceClient(GObject.Object):
         super(AccountsServiceClient, self).__init__()
 
         self.is_loaded = False
-        self.real_name = None
-        self.face_path = None
 
         self.service = AccountsService.UserManager.get_default().get_user(utils.get_user_name())
         trackers.con_tracker_get().connect(self.service,
@@ -29,14 +27,19 @@ class AccountsServiceClient(GObject.Object):
                                            self.on_accounts_service_loaded)
 
     def on_accounts_service_loaded(self, service, param):
-        self.real_name = service.get_real_name()
-
-        for path in [os.path.join(service.get_home_dir(), ".face"),
-                     service.get_icon_file(),
-                     "/usr/share/cinnamon/faces/user-generic.png"]:
-            if os.path.exists(path):
-                self.face_path = path
-                break
-
         self.is_loaded = True
         self.emit("account-loaded")
+
+    def get_real_name(self):
+        return self.service.get_real_name()
+
+    def get_face_path(self):
+        face_path = None
+
+        for path in [os.path.join(self.service.get_home_dir(), ".face"),
+                     self.service.get_icon_file()]:
+            if os.path.exists(path):
+                face_path = path
+                break
+
+        return face_path
