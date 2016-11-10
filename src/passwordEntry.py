@@ -139,7 +139,7 @@ class PasswordEntry(Gtk.Entry):
         return True
 
     def on_layout_changed(self, controller, layout):
-        self.grab_focus_without_selecting()
+        self.grab_focus()
         self.update_layout_icon()
 
     def on_icon_pressed(self, entry, icon_pos, event):
@@ -156,12 +156,6 @@ class PasswordEntry(Gtk.Entry):
         self.set_icon_tooltip_text(Gtk.EntryIconPosition.PRIMARY, self.keyboard_controller.get_current_name())
 
         self.update_saved_group(self.keyboard_controller.get_current_group())
-
-    def grab_focus(self):
-        """
-        Overrides the standard GtkWidget's grab_focus().
-        """
-        Gtk.Entry.grab_focus_without_selecting(self)
 
     def on_destroy(self, widget, data=None):
         self.restore_original_layout()

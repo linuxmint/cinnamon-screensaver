@@ -110,12 +110,13 @@ class Stage(Gtk.Window):
                                            self.on_screen_changed)
 
     def on_screen_changed(self, screen, data=None):
-        self.destroy_monitor_views()
-
         self.update_geometry()
         self.size_to_screen()
 
-        self.setup_monitors()
+        for monitor in self.monitors:
+            monitor.update_geometry()
+
+        self.overlay.queue_resize()
 
     def transition_in(self, effect_time, callback):
         """
@@ -239,7 +240,6 @@ class Stage(Gtk.Window):
             self.monitors.append(monitor)
 
             self.add_child_widget(monitor)
-            self.put_on_bottom(monitor)
 
         self.update_monitor_views()
 
@@ -297,7 +297,6 @@ class Stage(Gtk.Window):
         self.floaters.append(self.clock_widget)
 
         if not settings.should_show_plugin() and settings.get_show_clock():
-            self.put_on_top(self.clock_widget)
             self.clock_widget.start_positioning()
 
     def setup_albumart(self):
@@ -315,7 +314,6 @@ class Stage(Gtk.Window):
         self.floaters.append(self.clock_widget)
 
         if not settings.should_show_plugin() and settings.get_show_albumart():
-            self.put_on_top(self.albumart_widget)
             self.albumart_widget.start_positioning()
 
     def setup_unlock(self):
@@ -335,7 +333,6 @@ class Stage(Gtk.Window):
         """
         self.unlock_dialog = UnlockDialog()
         self.add_child_widget(self.unlock_dialog)
-        self.put_on_bottom(self.unlock_dialog)
 
         # Prevent a dialog timeout during authentication
         trackers.con_tracker_get().connect(self.unlock_dialog,
@@ -359,11 +356,9 @@ class Stage(Gtk.Window):
         """
         self.audio_panel = AudioPanel(self.screen)
         self.add_child_widget(self.audio_panel)
-        self.put_on_top(self.audio_panel)
 
         self.info_panel = InfoPanel(self.screen)
         self.add_child_widget(self.info_panel)
-        self.put_on_top(self.info_panel)
 
         trackers.con_tracker_get().connect(self.power_client,
                                            "power-state-changed",
@@ -463,10 +458,6 @@ class Stage(Gtk.Window):
                                               "current-view-change-complete",
                                               self.after_wallpaper_shown_for_unlock)
 
-        self.put_on_top(self.clock_widget)
-        self.put_on_top(self.albumart_widget)
-        self.put_on_top(self.unlock_dialog)
-
         self.clock_widget.reveal()
         self.albumart_widget.reveal()
         self.unlock_dialog.reveal()
@@ -532,10 +523,8 @@ class Stage(Gtk.Window):
 
         if not status.PluginRunning:
             if settings.get_show_clock():
-                self.put_on_top(self.clock_widget)
                 self.clock_widget.start_positioning()
             if settings.get_show_albumart():
-                self.put_on_top(self.albumart_widget)
                 self.albumart_widget.start_positioning()
 
     def update_monitor_views(self):
@@ -620,22 +609,6 @@ class Stage(Gtk.Window):
         Add a new child to the overlay
         """
         self.overlay.add_overlay(widget)
-
-    def put_on_top(self, widget):
-        """
-        Move the widget to the top of the overlay
-        (Over everything else)
-        """
-        self.overlay.reorder_overlay(widget, -1)
-        self.overlay.queue_draw()
-
-    def put_on_bottom(self, widget):
-        """
-        Move the widget to the bottom of the overlay
-        (Under everything else)
-        """
-        self.overlay.reorder_overlay(widget, 0)
-        self.overlay.queue_draw()
 
     def position_overlay_child(self, overlay, child, allocation):
         """
