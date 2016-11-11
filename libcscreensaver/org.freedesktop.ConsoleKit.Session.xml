@@ -53,5 +53,20 @@
       </doc:doc>
     </signal>
 
+    <signal name="Lock">
+     <doc:doc>
+        <doc:description>
+          <doc:para>Lock the desktop.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
+
+    <signal name="Unlock">
+     <doc:doc>
+        <doc:description>
+          <doc:para>Unlock the desktop.</doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
   </interface>
 </node>
