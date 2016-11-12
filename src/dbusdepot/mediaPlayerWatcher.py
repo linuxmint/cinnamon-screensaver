@@ -190,21 +190,20 @@ class MprisClient(BaseClient):
                     self.album_name = self.metadata["xesam:album"]
                 except KeyError:
                     self.album_name = ""
+                import dbus
                 try:
-                    self.artist_name = self.metadata["xesam:albumArtist"][0]
+                    if isinstance(self.metadata["xesam:albumArtist"], dbus.Array):
+                        self.artist_name = ", ".join(self.metadata["xesam:albumArtist"])
+                    else:
+                        self.artist_name = self.metadata["xesam:albumArtist"]
                 except KeyError:
                     try:
-                        self.artist_name = self.metadata["xesam:artist"][0]
-                    except:
-                        self.artist_name = ""
-                except IndexError:
-                    try:
-                        self.artist_name = self.metadata["xesam:albumArtist"]
-                    except KeyError:
-                        try:
+                        if isinstance(self.metadata["xesam:artist"], dbus.Array):
+                            self.artist_name = ", ".join(self.metadata["xesam:artist"])
+                        else:
                             self.artist_name = self.metadata["xesam:artist"]
-                        except:
-                            self.artist_name = ""
+                    except KeyError:
+                        self.artist_name = ""
                 try:
                     self.albumart_url = self.metadata["mpris:artUrl"]
                 except KeyError:
