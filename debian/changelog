@@ -1,3 +1,19 @@
+cinnamon-screensaver (3.2.1) serena; urgency=medium
+
+  [ Clement Lefebvre ]
+  * pkg: Add intltool to build-dep
+  * pkg: Don't depend on python3-xlib in LMDE
+  * Layout/l10n: Fix minor visual issues
+
+  [ Michael Webster ]
+  * unlock/accountsServiceClient: don't cache the username and face path, instead fetch them from AccountsService when used.  Also, allow for no face image by not using a fallback generic image, and hiding the image widget if there is no face for it.
+  * Remove some Gtk 3.18+ api calls - with a small change to GdkScreen updating, the stacking order is correct at stage construction and never changes.
+
+  [ Willy Sudiarto Raharjo ]
+  * ConsoleKit: Add lock/unlock signal.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 13 Nov 2016 12:12:35 +0000
+
 cinnamon-screensaver (3.2.0) serena; urgency=medium
 
   [ Michael Webster ]
