@@ -1,3 +1,9 @@
+cinnamon-screensaver (3.2.2) serena; urgency=medium
+
+  * pkg: Added missing dep on python3-gi-cairo
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 13 Nov 2016 13:13:58 +0000
+
 cinnamon-screensaver (3.2.1) serena; urgency=medium
 
   [ Clement Lefebvre ]
