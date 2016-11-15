@@ -38,19 +38,19 @@ class EventHandler:
         """
         if status.Awake:
             self.on_user_activity()
-            return Gdk.EVENT_STOP
+            return Gdk.EVENT_PROPAGATE
 
         if self.last_x == -1 or self.last_y == -1:
             self.last_x = event.x
             self.last_y = event.y
-            return Gdk.EVENT_STOP
+            return Gdk.EVENT_PROPAGATE
 
         distance = max(abs(self.last_x - event.x), abs(self.last_y - event.y))
 
         if distance > MOTION_THRESHOLD:
             self.on_user_activity()
 
-        return Gdk.EVENT_STOP
+        return Gdk.EVENT_PROPAGATE
 
     def on_button_press_event(self, event):
         """

@@ -138,7 +138,11 @@ class Stage(Gtk.Window):
 
         self.fader.cancel()
 
-        self.fader.fade_out(effect_time, callback)
+        if utils.have_gtk_version("3.18.0"):
+            self.fader.fade_out(effect_time, callback)
+        else:
+            self.hide()
+            callback()
 
     def on_realized(self, widget):
         """

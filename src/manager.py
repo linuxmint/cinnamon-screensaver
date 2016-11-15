@@ -104,6 +104,7 @@ class ScreensaverManager(GObject.Object):
         else:
             if self.stage:
                 self.despawn_stage(c.STAGE_DESPAWN_TRANSITION, self.on_despawn_stage_complete)
+                status.focusWidgets = []
             self.grab_helper.release()
             return True
         return False
@@ -146,10 +147,13 @@ class ScreensaverManager(GObject.Object):
         if status.Locked:
             self.stage.raise_unlock_widget()
             self.grab_helper.release_mouse()
+            self.stage.maybe_update_layout()
         else:
-            self.set_active(False)
+            GObject.idle_add(self.idle_deactivate)
 
-        self.stage.maybe_update_layout()
+    def idle_deactivate(self):
+        self.set_active(False)
+        return False
 
     def spawn_stage(self, away_message, effect_time=c.STAGE_SPAWN_TRANSITION, callback=None):
         """

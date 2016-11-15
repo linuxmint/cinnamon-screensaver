@@ -6,7 +6,7 @@ Locked = False    # Independent of Active, whether the unlock dialog will show w
 Awake = False     # Whether the unlock dialog is visible or not.
 
 # A list of focusable widgets that the user can tab between in the unlock screen.  See FocusNavigator.
-focusChain = []
+focusWidgets = []
 
 # This helps the Stage decide whether to show the clock widget or not while not Awake.
 # You get all sorts of artifacts trying to draw widgets over the x plugins

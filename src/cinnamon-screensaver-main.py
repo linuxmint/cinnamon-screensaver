@@ -65,7 +65,7 @@ class Main:
         if ".csstage" not in css:
             print("Cinnamon Screensaver support not found in current theme - adding some...")
 
-            if utils.have_gtk_3_20():
+            if utils.have_gtk_version("3.20.0"):
                 path = os.path.join(config.pkgdatadir, "cinnamon-screensaver-gtk3.20.css")
             else:
                 path = os.path.join(config.pkgdatadir, "cinnamon-screensaver-gtk3.18.css")

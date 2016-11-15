@@ -36,7 +36,7 @@ class FramedImage(Gtk.Image):
     def get_theme_height(self):
         ctx = self.get_style_context()
 
-        if utils.have_gtk_3_20():
+        if utils.have_gtk_version("3.20.0"):
             return ctx.get_property("min-height", Gtk.StateFlags.NORMAL)
         else:
             color = ctx.get_color(Gtk.StateFlags.NORMAL)

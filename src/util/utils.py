@@ -156,8 +156,12 @@ def lookup_plugin_path(name):
 def CLAMP(value, low, high):
         return max(low, min(value, high))
 
-def have_gtk_3_20():
-    return Gtk.get_major_version() >= 3 and Gtk.get_minor_version() >= 20
+def have_gtk_version(version_string):
+    [major, minor, micro] = version_string.split(".", 3)
+
+    return Gtk.get_major_version() >= eval(major) and \
+           Gtk.get_minor_version() >= eval(minor) and \
+           Gtk.get_micro_version() >= eval(micro)
 
 def do_quit():
     Gtk.main_quit()
