@@ -212,3 +212,8 @@ class PasswordEntry(Gtk.Entry):
 
         self.keyboard_controller.set_current_group(self.original_group)
 
+    def grab_focus(self):
+        Gtk.Widget.grab_focus(self)
+
+        length = self.get_buffer().get_length()
+        self.select_region(length, -1)
