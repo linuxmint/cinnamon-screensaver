@@ -37,8 +37,6 @@ class PlayerControl(Gtk.Box):
 
         # Player buttons
 
-        self.pack_start(Gtk.VSeparator(), True, True, 2)
-
         button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         button_box.set_homogeneous(True)
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -76,8 +74,6 @@ class PlayerControl(Gtk.Box):
 
         # Position labels and bar
 
-        self.pack_start(Gtk.VSeparator(), True, True, 2)
-
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.pack_start(vbox, True, True, 4)
 
@@ -98,8 +94,6 @@ class PlayerControl(Gtk.Box):
         vbox.pack_end(self.position_bar, True, True, 2)
 
         # Track info
-
-        self.pack_start(Gtk.VSeparator(), True, True, 2)
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.pack_start(vbox, True, True, 6)
