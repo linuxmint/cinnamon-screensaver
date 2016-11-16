@@ -67,8 +67,10 @@ class Main:
 
             if utils.have_gtk_version("3.20.0"):
                 path = os.path.join(config.pkgdatadir, "cinnamon-screensaver-gtk3.20.css")
-            else:
+            elif utils.have_gtk_version("3.18.0"):
                 path = os.path.join(config.pkgdatadir, "cinnamon-screensaver-gtk3.18.css")
+            else:
+                path = os.path.join(config.pkgdatadir, "cinnamon-screensaver-gtk3.14.css")
 
             f = open(path, 'r')
             fallback_css = f.read()

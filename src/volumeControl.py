@@ -30,6 +30,11 @@ class VolumeControl(Gtk.Box):
                                            "button-press-event",
                                            self.on_button_press_event)
 
+        if not utils.have_gtk_version("3.18.0"):
+            trackers.con_tracker_get().connect(self.volume_slider,
+                                               "scroll-event",
+                                               self.on_scroll_event)
+
         self.pack_start(self.volume_slider, False, False, 6)
 
         self.initialize_sound_controller()
@@ -118,3 +123,14 @@ class VolumeControl(Gtk.Box):
             self.output.set_is_muted(not self.volume_slider.muted)
 
         return Gdk.EVENT_PROPAGATE
+
+    def on_scroll_event(self, widget, event):
+        success, dx, dy = event.get_scroll_deltas()
+        step = self.volume_slider.get_adjustment().get_step_increment()
+
+        if dy < 0:
+            self.volume_slider.set_value(self.volume_slider.get_value() + step)
+        elif dy > 0:
+            self.volume_slider.set_value(self.volume_slider.get_value() - step)
+
+        return Gdk.EVENT_STOP

@@ -730,6 +730,20 @@ class Stage(Gtk.Window):
             elif valign == Gtk.Align.END:
                 allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
 
+            # Earlier gtk versions don't appear to include css padding in their preferred-size calculation
+            # This is true at least in 3.14 (Betsy/Jessir - is 3.16 relevant anywhere?)
+            if not utils.have_gtk_version("3.18.0"):
+                padding = child.get_style_context().get_padding(Gtk.StateFlags.NORMAL)
+                if halign == Gtk.Align.START:
+                    allocation.x += padding.left
+                elif halign == Gtk.Align.END:
+                    allocation.x -= padding.right
+
+                if valign == Gtk.Align.START:
+                    allocation.y += padding.top
+                elif valign == Gtk.Align.END:
+                    allocation.y -= padding.bottom
+
             return True
 
         if isinstance(child, AudioPanel):
