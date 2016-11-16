@@ -20,11 +20,8 @@ def nofail_locale_to_utf8(string):
 
     return ret
 
-def get_user_display_name():
-    name = GLib.get_real_name()
-
-    if not name or name == "Unknown":
-        name = GLib.get_user_name()
+def get_user_name():
+    name = GLib.get_user_name()
 
     utf8_name = None
 
@@ -33,8 +30,11 @@ def get_user_display_name():
 
     return utf8_name
 
-def get_user_name():
-    name = GLib.get_user_name()
+def get_user_display_name():
+    name = GLib.get_real_name()
+
+    if not name or name == "Unknown":
+        name = get_user_name()
 
     utf8_name = None
 
@@ -54,7 +54,7 @@ def get_host_name():
     return utf8_name
 
 def user_can_lock():
-    name = GLib.get_user_name()
+    name = get_user_name()
 
     # KeyError is generated if group doesn't exist, ignore it and allow lock
     try:
