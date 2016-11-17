@@ -134,6 +134,8 @@ libcscreensaver_la_CPPFLAGS =            \
 libcscreensaver_la_gir_sources =             \
     cs-gdk-event-filter.c \
     cs-gdk-event-filter.h \
+    cs-init-utils.c \
+    cs-init-utils.h \
     cs-notification-watcher.c \
     cs-notification-watcher.h \
     $(dbus_built_sources) \
@@ -141,6 +143,8 @@ libcscreensaver_la_gir_sources =             \
 
 libcscreensaver_la_SOURCES =             \
     $(libcscreensaver_la_gir_sources)        \
+    setuid.c \
+    setuid.h \
     $(NULL)
 
 libcscreensaver_la_LIBADD =  \

@@ -3,14 +3,16 @@
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GdkX11', '3.0')
+gi.require_version('CScreensaver', '1.0')
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, CScreensaver
 import signal
 import gettext
 import argparse
 import os
 
 import config
+import status
 from util import utils
 from service import ScreensaverService
 
@@ -26,6 +28,10 @@ class Main:
     """
     def __init__(self):
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver')
+        parser.add_argument('--debug', dest='debug', action='store_true',
+                            help='Print out some extra debugging info')
+        parser.add_argument('--disable-locking', dest='lock_disabled', action='store_true',
+                            help='Disable the lock screen')
         parser.add_argument('--version', dest='version', action='store_true',
                             help='Display the current version')
         parser.add_argument('--no-daemon', dest='no_daemon', action='store_true',
@@ -35,6 +41,11 @@ class Main:
         if args.version:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
+
+        status.LockEnabled = CScreensaver.init_utils_initialize_locking(args.debug) and not args.lock_disabled
+
+        if args.lock_disabled:
+            print("Locking disabled")
 
         Gtk.icon_size_register("audio-button", 20, 20)
 

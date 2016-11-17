@@ -6,6 +6,7 @@ import grp
 import subprocess
 
 import config
+import status
 
 # Various utility functions that are used in multiple places.
 
@@ -54,6 +55,9 @@ def get_host_name():
     return utf8_name
 
 def user_can_lock():
+    if not status.LockEnabled:
+        return False
+
     name = get_user_name()
 
     # KeyError is generated if group doesn't exist, ignore it and allow lock
