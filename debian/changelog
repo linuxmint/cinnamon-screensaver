@@ -1,3 +1,19 @@
+cinnamon-screensaver (3.2.3) serena; urgency=medium
+
+  [ Willy Sudiarto Raharjo ]
+  * Declare GdkX11.
+
+  [ Michael Webster ]
+  * events: For gtk < 3.18, skip the fade out animation, and immediately destroy the window.  Move the deactivate command into an idle callback, so we're not attempting to destroy the window while in the middle of processing a motion event.
+  * passwordEntry.py: emulate Gtk.Entry.grab_focus_without_selecting() - the real call was recently removed, as it doesn't exist in Gtk 3.14, however the behavior is still necessary - tabbing between buttons and entry will cause the entire partial password to be selected, causing overwrite.  This restores the original functionality without requiring gtk 3.18+
+  * Fixes for Betsy/Jessie:
+  * panels: Remove separators.  Tweak spacing for keyboard layout icon in the gtk 3.18 css file.
+  * utils.py: clean up get_user_name() calls.
+  * Disable locking if pam files aren't found or if we're running as root.
+  * utils.py: add 'liveuser' group check to user_can_lock() function.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 17 Nov 2016 09:49:37 +0000
+
 cinnamon-screensaver (3.2.2) serena; urgency=medium
 
   * pkg: Added missing dep on python3-gi-cairo
