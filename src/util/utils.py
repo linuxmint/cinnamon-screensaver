@@ -68,13 +68,6 @@ def user_can_lock():
     except KeyError:
         pass
 
-    try:
-        group = grp.getgrnam("liveuser")
-        if name in group.gr_mem:
-            return False
-    except KeyError:
-        pass
-
     return True
 
 def process_is_running(name):
