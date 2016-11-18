@@ -42,7 +42,7 @@ class Main:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
 
-        status.LockEnabled = CScreensaver.init_utils_initialize_locking(args.debug) and not args.lock_disabled
+        status.LockEnabled = not args.lock_disabled
 
         if args.lock_disabled:
             print("Locking disabled")

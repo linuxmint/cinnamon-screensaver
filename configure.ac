@@ -50,6 +50,8 @@ AC_DEFUN([AC_CHECK_X_HEADER], [
 
 AM_PATH_PYTHON(3.4)
 
+PKG_CHECK_MODULES(SCREENSAVER_MAIN, glib-2.0)
+
 PKG_CHECK_MODULES(CSCREENSAVER, gobject-2.0 gtk+-3.0 gdk-x11-3.0 x11 glib-2.0 gio-2.0)
 
 have_shape=no
