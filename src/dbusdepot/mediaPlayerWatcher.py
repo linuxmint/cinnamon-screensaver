@@ -22,7 +22,6 @@ class MprisClient(BaseClient):
     These are instantiated by our MediaPlayerWatcher.
     """
     __gsignals__ = {
-        "position-changed": (GObject.SignalFlags.RUN_LAST, None, (int,)),
         "status-changed": (GObject.SignalFlags.RUN_LAST, None, (int,)),
         "metadata-changed": (GObject.SignalFlags.RUN_LAST, None, ())
     }
@@ -33,8 +32,6 @@ class MprisClient(BaseClient):
                                           path)
 
         self.metadata = None
-        self.rate = 0
-        self.max_position = 0
         self.album_name = ""
         self.track_name = ""
         self.artist_name = ""
@@ -48,16 +45,6 @@ class MprisClient(BaseClient):
         trackers.con_tracker_get().connect(self.proxy,
                                            "notify::metadata",
                                            self.on_metadata_changed)
-
-        trackers.con_tracker_get().connect(self.proxy,
-                                           "notify::rate",
-                                           self.on_rate_changed)
-
-        trackers.con_tracker_get().connect(self.proxy,
-                                           "notify::position",
-                                           self.on_position_changed)
-
-        self.rate = self.proxy.get_property("rate")
 
         self.ensure_metadata()
 
@@ -116,41 +103,6 @@ class MprisClient(BaseClient):
 
         return ""
 
-    def get_position(self):
-        """
-        Position is a standard interface property, but according to the mpris spec,
-        it is *not* updated - it is recommended to retrieve the value at the rate
-        specified in the Rate property.  Retrieving the value requires a round-trip
-        to the player interface.
-        """
-        if self.ensure_proxy_alive():
-            # To get the position *reliably*, we must make a round-trip, because
-            # the proxy's cached property may not get updated
-
-            bus = self.proxy.get_connection()
-
-            pos = bus.call_sync(self.proxy.get_name(),
-                                self.proxy.get_object_path(),
-                                "org.freedesktop.DBus.Properties",
-                                "Get",
-                                GLib.Variant("(ss)", (self.proxy.get_interface_name(), "Position")),
-                                None,
-                                Gio.DBusCallFlags.NONE,
-                                -1,
-                                None)
-
-            return pos[0]
-
-        return 0.0
-
-    def get_max_position(self):
-        self.ensure_metadata()
-
-        return self.max_position
-
-    def get_rate(self):
-        return self.rate
-
     def get_track_name(self):
         self.ensure_metadata()
 
@@ -178,10 +130,6 @@ class MprisClient(BaseClient):
         if not self.metadata:
             self.metadata = self.proxy.get_property("metadata")
             if self.metadata:
-                try:
-                    self.max_position = self.metadata["mpris:length"]
-                except KeyError:
-                    self.max_position = 0
                 try:
                     self.track_name = self.metadata["xesam:title"]
                 except KeyError:
@@ -212,14 +160,6 @@ class MprisClient(BaseClient):
 
     def on_playback_status_changed(self, proxy, pspec, data=None):
         self.emit("status-changed", self.get_playback_status())
-
-    def on_position_changed(self, proxy, pspec, data=None):
-        position = proxy.get_property("position")
-
-        self.emit("position-changed", position)
-
-    def on_rate_changed(self, proxy, pspec, data=None):
-        self.rate = proxy.get_property("rate")
 
     def on_metadata_changed(self, proxy, pspec, data=None):
         self.metadata = None

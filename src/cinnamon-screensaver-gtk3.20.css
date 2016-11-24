@@ -166,14 +166,6 @@
     background-color: alpha(white, .5);
 }
 
-.csstage .positionlabel {
-    font-family: monospace;
-    font-size: 10px;
-    text-shadow: 1px 1px alpha(black, 0.8);
-    background-image: none;
-    background-color: transparent;
-}
-
 .csstage .trackname {
     font-family: monospace;
     font-size: 12px;
@@ -188,13 +180,6 @@
     text-shadow: 1px 1px alpha(black, 0.8);
     background-image: none;
     background-color: transparent;
-}
-
-.csstage .positionbar {
-    min-height: 14px;
-    min-width: 180px;
-    background-color: rgba(255, 255, 255, .1);
-    color: @theme_selected_bg_color;
 }
 
 .csstage GtkViewport {
