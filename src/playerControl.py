@@ -8,7 +8,6 @@ import datetime
 
 from util import trackers, utils
 from dbusdepot.mediaPlayerWatcher import PlaybackStatus
-from widgets.blinkingLabel import BlinkingLabel
 from widgets.marqueeLabel import MarqueeLabel
 from widgets.transparentButton import TransparentButton
 import singletons
