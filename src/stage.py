@@ -123,6 +123,7 @@ class Stage(Gtk.Window):
         self.overlay.queue_resize()
 
     def on_grab_broken_event(self, widget, event, data=None):
+        print("grab broken")
         GObject.idle_add(self.manager.grab_stage)
 
         return False
@@ -349,6 +350,7 @@ class Stage(Gtk.Window):
         dialog.)
         """
         self.unlock_dialog = UnlockDialog()
+        self.set_default(self.unlock_dialog.auth_unlock_button)
         self.add_child_widget(self.unlock_dialog)
 
         # Prevent a dialog timeout during authentication
@@ -361,11 +363,14 @@ class Stage(Gtk.Window):
 
         # Respond to authentication success/failure
         trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "auth-success",
+                                           "authenticate-success",
                                            self.authentication_result_callback, True)
         trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "auth-failure",
+                                           "authenticate-failure",
                                            self.authentication_result_callback, False)
+        trackers.con_tracker_get().connect(self.unlock_dialog,
+                                           "authenticate-cancel",
+                                           self.authentication_cancel_callback)
 
     def setup_status_bars(self):
         """
@@ -435,11 +440,17 @@ class Stage(Gtk.Window):
         else:
             self.unlock_dialog.blink()
 
+    def authentication_cancel_callback(self, dialog):
+        self.cancel_unlock_widget()
+
     def set_message(self, msg):
         """
         Passes along an away-message to the clock.
         """
         self.clock_widget.set_message(msg)
+
+    def initialize_pam(self):
+        return self.unlock_dialog.initialize_auth_client()
 
     def raise_unlock_widget(self):
         """
@@ -480,6 +491,9 @@ class Stage(Gtk.Window):
         self.unlock_dialog.reveal()
         self.audio_panel.reveal()
         self.info_panel.update_revealed()
+
+    def cancel_unlocking(self):
+        self.unlock_dialog.cancel_auth_client()
 
     def cancel_unlock_widget(self):
         """

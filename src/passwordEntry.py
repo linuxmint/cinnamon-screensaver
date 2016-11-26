@@ -20,7 +20,6 @@ class PasswordEntry(Gtk.Entry):
         super(PasswordEntry, self).__init__()
         self.get_style_context().add_class("passwordentry")
 
-        # self.set_halign(Gtk.Align.FILL)
         placeholder_text = _("Please enter your password...")
         self.set_width_chars(len(placeholder_text) + 1) # account for the flag
         self.set_has_frame(True)
@@ -28,8 +27,8 @@ class PasswordEntry(Gtk.Entry):
         self.set_visibility(False)
         self.set_property("caps-lock-warning", False)
         self.set_placeholder_text (placeholder_text)
-        self.set_can_default(True)
 
+        self.placeholder_text = placeholder_text
         self.current_icon_name = None
         self.current_flag_id = 0
 
