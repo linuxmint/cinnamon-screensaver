@@ -674,6 +674,15 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             current_monitor = child.current_monitor
+            monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+
+            # Restrict the widget size to 1/3 width and height of the current monitor
+            allocation.width = min(nat_rect.width, monitor_rect.width / 3)
+            allocation.height = min(nat_rect.height, monitor_rect.height / 3)
+
+            # Calculate padding required to center widgets within their particular 1/9th of the monitor
+            padding_left = padding_right = ((monitor_rect.width / 3) - allocation.width) / 2
+            padding_top = padding_bottom = ((monitor_rect.height / 3) - allocation.height) / 2
 
             if status.Awake:
                 """
@@ -708,41 +717,22 @@ class Stage(Gtk.Window):
                         ca = ALIGNMENTS[random.randint(0, 2)]
                     child.set_valign(ca)
 
-            monitor_rect = self.screen.get_monitor_geometry(current_monitor)
-
-            allocation.width = nat_rect.width
-            allocation.height = nat_rect.height
-
             halign = child.get_halign()
             valign = child.get_valign()
 
             if halign == Gtk.Align.START:
-                allocation.x = monitor_rect.x
+                allocation.x = monitor_rect.x + padding_left
             elif halign == Gtk.Align.CENTER:
-                allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
+                allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (allocation.width / 2)
             elif halign == Gtk.Align.END:
-                allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
+                allocation.x = monitor_rect.x + monitor_rect.width - allocation.width - padding_right
 
             if valign == Gtk.Align.START:
-                allocation.y = monitor_rect.y
+                allocation.y = monitor_rect.y + padding_top
             elif valign == Gtk.Align.CENTER:
-                allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
+                allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (allocation.height / 2)
             elif valign == Gtk.Align.END:
-                allocation.y = monitor_rect.y + monitor_rect.height - nat_rect.height
-
-            # Earlier gtk versions don't appear to include css padding in their preferred-size calculation
-            # This is true at least in 3.14 (Betsy/Jessir - is 3.16 relevant anywhere?)
-            if not utils.have_gtk_version("3.18.0"):
-                padding = child.get_style_context().get_padding(Gtk.StateFlags.NORMAL)
-                if halign == Gtk.Align.START:
-                    allocation.x += padding.left
-                elif halign == Gtk.Align.END:
-                    allocation.x -= padding.right
-
-                if valign == Gtk.Align.START:
-                    allocation.y += padding.top
-                elif valign == Gtk.Align.END:
-                    allocation.y -= padding.bottom
+                allocation.y = monitor_rect.y + monitor_rect.height - allocation.height - padding_bottom
 
             return True
 

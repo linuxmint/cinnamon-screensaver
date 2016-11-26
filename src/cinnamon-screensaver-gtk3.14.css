@@ -10,13 +10,11 @@
 }
 
 .csstage .clock {
-    padding: 100px 200px 100px 200px;
     color: #eeeeee;
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
 .csstage .albumart {
-    padding: 100px 200px 100px 200px;
 }
 
 .csstage .albumart .framedimage {
