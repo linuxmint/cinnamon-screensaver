@@ -656,8 +656,8 @@ class Stage(Gtk.Window):
             allocation.width = nat_rect.width
             allocation.height = nat_rect.height
 
-            allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (nat_rect.width / 2)
-            allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (nat_rect.height / 2)
+            allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (allocation.width / 2)
+            allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (allocation.height / 2)
 
             return True
 
@@ -673,28 +673,30 @@ class Stage(Gtk.Window):
             """
             min_rect, nat_rect = child.get_preferred_size()
 
-            current_monitor = child.current_monitor
+            if status.Awake:
+                current_monitor = utils.get_mouse_monitor()
+            else:
+                current_monitor = child.current_monitor
+
             monitor_rect = self.screen.get_monitor_geometry(current_monitor)
 
-            # Restrict the widget size to 1/3 width and height of the current monitor
-            allocation.width = min(nat_rect.width, monitor_rect.width / 3)
-            allocation.height = min(nat_rect.height, monitor_rect.height / 3)
-
-            # Calculate padding required to center widgets within their particular 1/9th of the monitor
-            padding_left = padding_right = ((monitor_rect.width / 3) - allocation.width) / 2
-            padding_top = padding_bottom = ((monitor_rect.height / 3) - allocation.height) / 2
+            region_w = monitor_rect.width / 3
+            region_h = monitor_rect.height / 3
 
             if status.Awake:
                 """
                 If we're Awake, force the clock to track to the active monitor, and be aligned to
                 the left-center.  The albumart widget aligns right-center.
                 """
+                unlock_mw, unlock_nw = self.unlock_dialog.get_preferred_width()
+                region_w = (monitor_rect.width - unlock_nw) / 2
+
                 if isinstance(child, ClockWidget):
                     child.set_halign(Gtk.Align.START)
                 else:
                     child.set_halign(Gtk.Align.END)
+
                 child.set_valign(Gtk.Align.CENTER)
-                current_monitor = utils.get_mouse_monitor()
             else:
                 for floater in self.floaters:
                     """
@@ -716,6 +718,14 @@ class Stage(Gtk.Window):
                     while fa == ca:
                         ca = ALIGNMENTS[random.randint(0, 2)]
                     child.set_valign(ca)
+
+            # Restrict the widget size to 1/3 width and height of the current monitor
+            allocation.width = min(nat_rect.width, region_w)
+            allocation.height = min(nat_rect.height, region_h)
+
+            # Calculate padding required to center widgets within their particular 1/9th of the monitor
+            padding_left = padding_right = (region_w - allocation.width) / 2
+            padding_top = padding_bottom = (region_h - allocation.height) / 2
 
             halign = child.get_halign()
             valign = child.get_valign()

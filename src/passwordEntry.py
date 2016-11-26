@@ -20,9 +20,9 @@ class PasswordEntry(Gtk.Entry):
         super(PasswordEntry, self).__init__()
         self.get_style_context().add_class("passwordentry")
 
-        self.set_halign(Gtk.Align.FILL)
+        # self.set_halign(Gtk.Align.FILL)
         placeholder_text = _("Please enter your password...")
-        self.set_width_chars(len(placeholder_text) + 3) # account for the flag
+        self.set_width_chars(len(placeholder_text) + 1) # account for the flag
         self.set_has_frame(True)
         self.set_input_purpose(Gtk.InputPurpose.PASSWORD)
         self.set_visibility(False)

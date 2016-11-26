@@ -79,7 +79,7 @@ class UnlockDialog(BaseWindow):
                                            "activate",
                                            self.on_auth_enter_key)
 
-        self.entry_box.pack_start(self.password_entry, True, True, 15)
+        self.entry_box.pack_start(self.password_entry, False, False, 15)
 
         button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.entry_box.pack_end(button_box, False, False, 0)
