@@ -23,6 +23,7 @@ libtool
 ltmain.sh
 missing
 omf.make
+libcscreensaver/test-passwd
 po/.intltool-merge-cache
 po/Makefile
 po/Makefile.in
@@ -35,6 +36,7 @@ src/Makefile.in
 src/config.py
 src/binfiles/cinnamon-screensaver
 src/binfiles/cinnamon-screensaver-command
+src/pamhelper/cinnamon-screensaver-pam-helper
 data/cinnamon-screensaver.desktop
 data/cinnamon-screensaver.desktop.in
 src/__pycache__
@@ -42,6 +44,7 @@ stamp-h1
 xmldocs.make
 *.Plo
 *.lo
+*.o
 *.la
 *proxy.c
 *proxy.h

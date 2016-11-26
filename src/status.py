@@ -17,3 +17,5 @@ PluginRunning = False
 # user can still lock explicitly.  The function checks for the existence of correct PAM files,
 # as well as adjusting the UID if this process is started as root.
 LockEnabled = True
+
+Debug = False

@@ -43,6 +43,7 @@ class Main:
             quit()
 
         status.LockEnabled = not args.lock_disabled
+        status.Debug = args.debug
 
         if args.lock_disabled:
             print("Locking disabled")
