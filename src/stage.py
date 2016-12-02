@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, CScreensaver
+from gi.repository import Gtk, Gdk, CScreensaver, GObject
 import random
 
 import status
@@ -109,6 +109,10 @@ class Stage(Gtk.Window):
                                            "size-changed",
                                            self.on_screen_changed)
 
+        trackers.con_tracker_get().connect(self,
+                                           "grab-broken-event",
+                                           self.on_grab_broken_event)
+
     def on_screen_changed(self, screen, data=None):
         self.update_geometry()
         self.size_to_screen()
@@ -117,6 +121,11 @@ class Stage(Gtk.Window):
             monitor.update_geometry()
 
         self.overlay.queue_resize()
+
+    def on_grab_broken_event(self, widget, event, data=None):
+        GObject.idle_add(self.manager.grab_stage)
+
+        return False
 
     def transition_in(self, effect_time, callback):
         """
@@ -186,6 +195,10 @@ class Stage(Gtk.Window):
         trackers.con_tracker_get().disconnect(self.power_client,
                                               "power-state-changed",
                                               self.on_power_state_changed)
+
+        trackers.con_tracker_get().disconnect(self,
+                                              "grab-broken-event",
+                                              self.on_grab_broken_event)
 
         self.set_timeout_active(None, False)
 
