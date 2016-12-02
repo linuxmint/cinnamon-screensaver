@@ -33,8 +33,13 @@ class Stage(Gtk.Window):
     ScreensaverManager.
     """
     def __init__(self, screen, manager, away_message):
-        self.mpl = Mplayer(self)
-        self.mplayer = self.mpl.wmclass
+
+        if settings.get_allow_media_control():
+            self.mpl = Mplayer(self)
+            self.mplayer = self.mpl.wmclass
+        else:
+            self.mplayer = None
+            
         Gtk.Window.__init__(self,
                             type=Gtk.WindowType.POPUP,
                             decorated=False,
@@ -205,7 +210,9 @@ class Stage(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
-        self.mpl.destroy = True
+        if self.mplayer:
+            self.mpl.destroy = True
+
         self.destroy_monitor_views()
 
         self.fader = None
