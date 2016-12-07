@@ -59,20 +59,21 @@ class VolumeControl(Gtk.Box):
             del old
         if self.controller.get_state() == Cvc.MixerControlState.READY:
             new = self.controller.get_default_sink()
-            if self.output and self.output != new:
-                old = self.output
-                self.output = new
-                del old
-            else:
-                self.output = new
-            trackers.con_tracker_get().connect(self.output,
-                                               "notify::is-muted",
-                                               self.on_volume_changed)
-            trackers.con_tracker_get().connect(self.output,
-                                               "notify::volume",
-                                               self.on_volume_changed)
+            if new is not None:
+                if self.output and self.output != new:
+                    old = self.output
+                    self.output = new
+                    del old
+                else:
+                    self.output = new
+                trackers.con_tracker_get().connect(self.output,
+                                                   "notify::is-muted",
+                                                   self.on_volume_changed)
+                trackers.con_tracker_get().connect(self.output,
+                                                   "notify::volume",
+                                                   self.on_volume_changed)
 
-            self.on_volume_changed(None, None)
+                self.on_volume_changed(None, None)
 
     def on_volume_changed(self, output, pspec):
         vol = self.output.props.volume
