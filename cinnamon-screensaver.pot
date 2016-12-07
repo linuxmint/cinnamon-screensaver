@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-08 19:22+0000\n"
+"POT-Creation-Date: 2016-12-07 15:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,30 +73,18 @@ msgstr[1] ""
 msgid "%A, %B %e"
 msgstr ""
 
-#: src/passwordEntry.py:24 src/unlock.py:278
+#: src/passwordEntry.py:24 src/unlock.py:281
 msgid "Please enter your password..."
 msgstr ""
 
-#: src/playerControl.py:168
-msgid "--:--"
-msgstr ""
-
-#: src/playerControl.py:171
-msgid "%M:%S"
-msgstr ""
-
-#: src/playerControl.py:173
-msgid "%H:%M:%S"
-msgstr ""
-
-#: src/unlock.py:172
+#: src/unlock.py:174
 msgid "You have the Caps Lock key on."
 msgstr ""
 
-#: src/unlock.py:218
+#: src/unlock.py:221
 msgid "Checking..."
 msgstr ""
 
-#: src/unlock.py:279
+#: src/unlock.py:282
 msgid "Incorrect password"
 msgstr ""
