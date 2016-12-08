@@ -5,7 +5,7 @@ import random
 
 from util import trackers
 
-POSITIONING_TIMEOUT = 5
+POSITIONING_TIMEOUT = 30
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
 
 class Floating:
