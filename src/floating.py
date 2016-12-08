@@ -16,6 +16,7 @@ class Floating:
         self.current_monitor = initial_monitor
 
     def start_positioning(self):
+        self.reveal()
         trackers.timer_tracker_get().cancel(str(self) + "positioning")
         trackers.timer_tracker_get().start_seconds(str(self) + "positioning",
                                                    POSITIONING_TIMEOUT,

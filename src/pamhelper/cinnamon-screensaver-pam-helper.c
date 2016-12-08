@@ -278,6 +278,7 @@ auth_check_idle (gpointer user_data)
 
         if (loop_counter < MAX_FAILURES)
         {
+            send_failure ();
             DEBUG ("Authentication failed, retrying (%u)\n", loop_counter);
         }
         else
