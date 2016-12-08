@@ -4,6 +4,7 @@ from gi.repository import Gtk
 import random
 
 from util import trackers
+from util import settings
 
 POSITIONING_TIMEOUT = 30
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
@@ -17,13 +18,15 @@ class Floating:
 
     def start_positioning(self):
         self.reveal()
-        trackers.timer_tracker_get().cancel(str(self) + "positioning")
-        trackers.timer_tracker_get().start_seconds(str(self) + "positioning",
-                                                   POSITIONING_TIMEOUT,
-                                                   self.positioning_callback)
+        if settings.get_allow_floating():
+            trackers.timer_tracker_get().cancel(str(self) + "positioning")
+            trackers.timer_tracker_get().start_seconds(str(self) + "positioning",
+                                                       POSITIONING_TIMEOUT,
+                                                       self.positioning_callback)
 
     def stop_positioning(self):
-        trackers.timer_tracker_get().cancel(str(self) + "positioning")
+        if settings.get_allow_floating():
+            trackers.timer_tracker_get().cancel(str(self) + "positioning")
 
     def positioning_callback(self):
         self.unreveal()
