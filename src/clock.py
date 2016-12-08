@@ -23,6 +23,9 @@ class ClockWidget(Floating, BaseWindow):
         self.get_style_context().add_class("clock")
         self.set_halign(Gtk.Align.START)
 
+        if not settings.get_show_clock():
+            return
+
         self.away_message = away_message
 
         self.label = Gtk.Label()
