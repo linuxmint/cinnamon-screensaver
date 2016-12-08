@@ -10,6 +10,7 @@ import signal
 import gettext
 import argparse
 import os
+import setproctitle
 
 import config
 import status
@@ -105,6 +106,8 @@ class Main:
                 Gtk.StyleContext.reset_widgets(Gdk.Screen.get_default())
 
 if __name__ == "__main__":
+    setproctitle.setproctitle('cinnamon-screensaver')
+
     main = Main()
 
 
