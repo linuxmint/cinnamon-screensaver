@@ -11,7 +11,8 @@ import config
 
 class AuthClient(GObject.Object):
     """
-    
+    The AuthClient manages spawning of our pam helper process, and
+    communication with it.
     """
     __gsignals__ = {
         'auth-success': (GObject.SignalFlags.RUN_LAST, None, ()),
