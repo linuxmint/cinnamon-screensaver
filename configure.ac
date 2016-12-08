@@ -37,10 +37,9 @@ AC_CHECK_HEADERS(unistd.h)
 AC_CHECK_HEADERS(crypt.h sys/select.h)
 AC_CHECK_FUNCS(select fcntl uname nice setpriority getcwd getwd putenv sbrk)
 AC_CHECK_FUNCS(sigaction syslog realpath setrlimit)
-AC_CHECK_FUNCS(getresuid)
 AC_TYPE_UID_T
 
-AC_CHECK_FUNCS([setresuid setenv unsetenv clearenv])
+AC_CHECK_FUNCS([setenv unsetenv clearenv])
 
 GETTEXT_PACKAGE=cinnamon-screensaver
 AC_SUBST(GETTEXT_PACKAGE)
@@ -95,6 +94,29 @@ elif test "$enable_locking" = no; then
 else
   echo "error: must be yes or no: --enable-locking=$enable_locking"
   exit 1
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl - The --enable-setres option
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(setres,[
+setres option:
+
+  --enable-setres   Use setresuid/setresgid in the setuid.c helper
+  --disable-setres   Don't use setresuid/setresgid (this is the default behavior)],
+  [enable_setres="$enableval"],[enable_setres=no])
+if test "$enable_setres" = yes; then
+  echo "****************************************"
+  AC_CHECK_FUNC(setresuid, [have_setresuid=yes], [have_setresuid=no])
+  AC_CHECK_FUNC(setresgid, [have_setresgid=yes], [have_setresgid=no])
+  if test "x$have_setresuid" = "xyes" -a "x$have_setresgid" = "xyes"; then
+    AC_DEFINE(USE_SETRES, 1, [Define to have the setuid helper use setresuid/setresgid instead of setuid/setgid.])
+  else
+    AC_MSG_ERROR("setres requested but not available so we are ignoring the option")
+  fi
+elif test "$enable_setres" = no; then
+  true
 fi
 
 dnl ---------------------------------------------------------------------------

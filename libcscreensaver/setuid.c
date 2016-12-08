@@ -15,6 +15,10 @@
 
 #include "config.h"
 
+#ifdef USE_SETRES
+#define _GNU_SOURCE
+#endif /* USE_SETRES */
+
 #include <errno.h>
 
 #include <stdio.h>
@@ -70,6 +74,7 @@ set_ids_by_number (uid_t  uid,
         if (gid == (gid_t) -1) gid = (gid_t) -2;
         if (uid == (uid_t) -1) uid = (uid_t) -2;
 
+#ifndef USE_SETRES
          errno = 0;
          if (setgroups (1, &gid) < 0)
                  sgs_errno = errno ? errno : -1;
@@ -81,6 +86,15 @@ set_ids_by_number (uid_t  uid,
         errno = 0;
         if (setuid (uid) != 0)
                 uid_errno = errno ? errno : -1;
+#else /* !USE_SETRES */
+        errno = 0;
+        if (setresgid (gid, gid, gid) != 0)
+                gid_errno = errno ? errno : -1;
+
+        errno = 0;
+        if (setresuid (uid, uid, uid) != 0)
+                uid_errno = errno ? errno : -1;
+#endif /* USE_SETRES */
 
         if (uid_errno == 0 && gid_errno == 0 && sgs_errno == 0) {
                 static char *reason;
@@ -209,7 +223,11 @@ hack_uid (char **nolock_reason,
                 }
 #else /* !HAVE_BSDAUTH */
                 if (uid != euid || gid != egid) {
+#ifndef USE_SETRES
                         if (! set_ids_by_number (uid, gid, uid_message)) {
+#else /* !USE_SETRES */
+                        if (! set_ids_by_number (euid == 0 ? uid : euid, egid == 0 ? gid : egid, uid_message)) {
+#endif /* USE_SETRES */
                                 reason = g_strdup ("unable to discard privileges.");
 
                                 ret = FALSE;
