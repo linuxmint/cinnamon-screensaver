@@ -16,6 +16,7 @@ Build-Depends: autoconf-archive,
                libglib2.0-dev,
                libxext-dev,
                libgirepository1.0-dev,
+               libpam0g-dev,
                gobject-introspection,
                intltool (>= 0.40.0),
                gnome-pkg-tools (>= 0.10)
@@ -40,6 +41,7 @@ Depends: cinnamon-desktop-data (>= 3.0.0),
          ${misc:Depends},
          ${python:Depends},
          ${shlibs:Depends}
+Recommends: libpam-gnome-keyring
 Suggests: cinnamon-screensaver-x-plugin,
           cinnamon-screensaver-webkit-plugin
 Description: Cinnamon screen saver and locker

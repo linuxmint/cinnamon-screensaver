@@ -21,6 +21,7 @@ class ClockWidget(Floating, BaseWindow):
         super(ClockWidget, self).__init__(initial_monitor)
         self.screen = screen
         self.get_style_context().add_class("clock")
+        self.set_halign(Gtk.Align.START)
 
         self.away_message = away_message
 

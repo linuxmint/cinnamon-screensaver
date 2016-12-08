@@ -725,26 +725,27 @@ class Stage(Gtk.Window):
 
                 child.set_valign(Gtk.Align.CENTER)
             else:
-                for floater in self.floaters:
-                    """
-                    Don't let our floating widgets end up in the same spot.
-                    """
-                    if floater is child:
-                        continue
-                    if floater.get_halign() != child.get_halign() and floater.get_valign() != child.get_valign():
-                        continue
+                if settings.get_allow_floating():
+                    for floater in self.floaters:
+                        """
+                        Don't let our floating widgets end up in the same spot.
+                        """
+                        if floater is child:
+                            continue
+                        if floater.get_halign() != child.get_halign() and floater.get_valign() != child.get_valign():
+                            continue
 
-                    fa = floater.get_halign()
-                    ca = child.get_halign()
-                    while fa == ca:
-                        ca = ALIGNMENTS[random.randint(0, 2)]
-                    child.set_halign(ca)
+                        fa = floater.get_halign()
+                        ca = child.get_halign()
+                        while fa == ca:
+                            ca = ALIGNMENTS[random.randint(0, 2)]
+                        child.set_halign(ca)
 
-                    fa = floater.get_valign()
-                    ca = child.get_valign()
-                    while fa == ca:
-                        ca = ALIGNMENTS[random.randint(0, 2)]
-                    child.set_valign(ca)
+                        fa = floater.get_valign()
+                        ca = child.get_valign()
+                        while fa == ca:
+                            ca = ALIGNMENTS[random.randint(0, 2)]
+                        child.set_valign(ca)
 
             # Restrict the widget size to 1/3 width and height of the current monitor
             allocation.width = min(nat_rect.width, region_w)

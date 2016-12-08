@@ -32,6 +32,7 @@ SHOW_ALBUMART = "show-album-art"
 ALLOW_SHORTCUTS = "allow-keyboard-shortcuts"
 ALLOW_MEDIA_CONTROL = "allow-media-control"
 SHOW_INFO_PANEL = "show-info-panel"
+FLOATING_WIDGETS = "floating-widgets"
 
 # Interface settings - the same logic applies here as above - we don't
 # need to listen to changes to these.
@@ -142,3 +143,6 @@ def get_allow_media_control():
 
 def get_show_info_panel():
     return ss_settings.get_boolean(SHOW_INFO_PANEL)
+
+def get_allow_floating():
+    return ss_settings.get_boolean(FLOATING_WIDGETS)
