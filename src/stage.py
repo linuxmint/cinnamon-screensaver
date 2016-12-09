@@ -75,6 +75,9 @@ class Stage(Gtk.Window):
                         Gdk.EventMask.LEAVE_NOTIFY_MASK |
                         Gdk.EventMask.FOCUS_CHANGE_MASK)
 
+        c = Gdk.RGBA(0, 0, 0, 0)
+        self.override_background_color (Gtk.StateFlags.NORMAL, c);
+
         self.update_geometry()
         self.set_opacity(0.0)
 

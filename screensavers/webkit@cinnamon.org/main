@@ -29,6 +29,9 @@ class WebkitPlugin:
         else:
             self.plug = Gtk.Plug()
 
+        c = Gdk.RGBA(0, 0, 0, 0)
+        self.plug.override_background_color (Gtk.StateFlags.NORMAL, c);
+
         self.plug.show_all()
         self.plug.connect("delete-event", Gtk.main_quit)
 
