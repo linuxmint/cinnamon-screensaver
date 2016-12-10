@@ -7,6 +7,7 @@
 /usr/share/cinnamon-screensaver/dbusdepot/__pycache__
 /usr/share/cinnamon-screensaver/pamhelper/*.py
 /usr/share/cinnamon-screensaver/pamhelper/__pycache__
+/usr/share/cinnamon-screensaver/pamhelper/cinnamon-screensaver-pam-helper
 /usr/share/cinnamon-screensaver/util/*.py
 /usr/share/cinnamon-screensaver/util/__pycache__
 /usr/share/cinnamon-screensaver/widgets/*.py
