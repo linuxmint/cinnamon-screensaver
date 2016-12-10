@@ -1,3 +1,42 @@
+cinnamon-screensaver (3.2.7) serena; urgency=medium
+
+  [ leigh123linux ]
+  * Change shebang
+  * Change shebang
+
+  [ Michael Webster ]
+  * stage.py: Keep floating widgets centered within their GtkAlign region instead of using the padding CSS property - this can only ever work by taking monitor size into account.
+  * stage - the unlock dialog can take up more than 1/3 the width of the screen, so account for its width when positioning floating widgets during Awake state.
+
+  [ leigh123linux ]
+  * Add missing -lXext
+  * remove spaces
+
+  [ Clement Lefebvre ]
+  * Volume control: Don't crash when PA returns no default sink
+  * l10n: Update POT file
+
+  [ Michael Webster ]
+  * stage.py: Regrab the stage if grab is broken (notably by fingerprint-helper's gui.)
+  * Fix pam authentication to work with multi-factor, fingerprint, etc..
+  * floating.py: Increase positioning delay to 30 seconds.
+  * audioPanel.py: Don't show panel at all if no players are active.
+  * Couple fixes: show floating widgets immediately upon sleep, add a description for AuthClient, send a failure notice when we fail.
+
+  [ Dustin Falgout ]
+  * Update pam config for multi-distro compatibility
+
+  [ Michael Webster ]
+  * Add preference to disable floating widgets...
+  * clock.py: Make clock preference apply everywhere (like our other prefs)
+  * cinnamon-screensaver-main.py: use setproctitle to set the process name as "cinnamon-screensaver"
+  * configure.ac: Fix regression from git conflict - originally from aad72c98f1df63
+  * Add a build option to enable/disable use of setresuid/setresgid in the setuid.c file for some distributions.  The default behavior remains to *not* use this.
+  * Override the background color to transparent for various 'primary' widgets, this reduces (but does not eliminate) the tendency to get a 'flash' when the screensaver spawns its window.
+  * mediaPlayerWatcher.py: handle metadata more gracefully - some players can return arrays of artist info, some a string - handle either.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 10 Dec 2016 11:48:37 +0000
+
 cinnamon-screensaver (3.2.6) serena; urgency=medium
 
   * Remove import on BlinkLabel
