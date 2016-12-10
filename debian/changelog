@@ -1,3 +1,10 @@
+cinnamon-screensaver (3.2.8) serena; urgency=medium
+
+  [ Michael Webster ]
+  * debian/cinnamon-screensaver.install: fix packaging of cinnamon- screensaver-pam-helper.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 10 Dec 2016 14:05:34 +0000
+
 cinnamon-screensaver (3.2.7) serena; urgency=medium
 
   [ leigh123linux ]
