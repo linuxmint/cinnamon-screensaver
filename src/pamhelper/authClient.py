@@ -97,8 +97,11 @@ class AuthClient(GObject.Object):
         self.proc = None
 
     def message_to_child(self, string):
+        if not self.initialized:
+            return
+
         try:
-            b = GLib.Bytes(string.encode())
+            b = GLib.Bytes.new(string.encode())
             status = self.in_pipe.write_bytes(b)
 
             self.in_pipe.flush(None)
