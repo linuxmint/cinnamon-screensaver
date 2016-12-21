@@ -171,6 +171,7 @@ auth_message_handler (CsAuthMessageStyle style,
                 while (password_ptr == NULL)
                 {
                     gtk_main_iteration_do (FALSE);
+                    usleep (100 * 1000);
                 }
 
                 g_mutex_lock (&password_mutex);

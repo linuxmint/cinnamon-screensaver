@@ -105,6 +105,7 @@ class ScreensaverManager(GObject.Object):
             if self.stage:
                 self.despawn_stage(c.STAGE_DESPAWN_TRANSITION, self.on_despawn_stage_complete)
                 status.focusWidgets = []
+            self.stage.cancel_unlocking()
             self.grab_helper.release()
             return True
         return False
