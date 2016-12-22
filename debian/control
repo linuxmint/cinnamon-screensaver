@@ -41,13 +41,18 @@ Depends: cinnamon-desktop-data (>= 3.0.0),
          iso-flag-png,
          ${misc:Depends},
          ${python:Depends},
-         ${shlibs:Depends}
+         ${shlibs:Depends},
+         cinnamon-screensaver-pam-helper
 Recommends: libpam-gnome-keyring
 Suggests: cinnamon-screensaver-x-plugin,
           cinnamon-screensaver-webkit-plugin
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
+
+Package: cinnamon-screensaver-pam-helper
+Architecture: any
+Description: PAM helper for cinnamon-screensaver
 
 Package: cinnamon-screensaver-x-plugin
 Architecture: all
