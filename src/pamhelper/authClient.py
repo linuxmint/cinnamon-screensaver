@@ -5,9 +5,9 @@ from gi.repository import Gio, GObject, GLib, CScreensaver
 import re
 import os
 import signal
-
+import platform
 import status
-import config
+import sys
 
 class AuthClient(GObject.Object):
     """
@@ -35,15 +35,37 @@ class AuthClient(GObject.Object):
             return True
 
         try:
-            path = os.path.join(config.libexecdir, "cinnamon-screensaver-pam-helper")
+            helper_path = None
+            architecture = platform.machine()
+            paths = ["/usr/lib"]
+
+            # On x86 archs, iterate through multiple paths
+            # For instance, on a Mint i686 box, the path is actually /usr/lib/i386-linux-gnu
+            x86archs = ["i386", "i486", "i586", "i686"]
+            if architecture in x86archs:
+                for arch in x86archs:
+                    paths += ["/usr/lib/%s" % arch, "/usr/lib/%s-linux-gnu" % arch]
+            elif architecture == "x86_64":
+                paths += ["/usr/lib/x86_64", "/usr/lib/x86_64-linux-gnu", "/usr/lib64"]
+            else:
+                paths += ["/usr/lib/%s" % architecture, "/usr/lib/%s-linux-gnu" % architecture]
+
+            for path in paths:
+                full_path = os.path.join(path, "cinnamon-screensaver-pam-helper")
+                if os.path.exists(full_path):
+                    helper_path = full_path
+                    break
+
+            if helper_path is None:
+                print ("Critical error: PAM Helper cound not be found!")
 
             if status.Debug:
-                argv = (path, "--debug", None)
+                argv = (helper_path, "--debug", None)
                 self.proc = Gio.Subprocess.new(argv,
                                                Gio.SubprocessFlags.STDIN_PIPE  |
                                                Gio.SubprocessFlags.STDOUT_PIPE)
             else:
-                argv = (path, None)
+                argv = (helper_path, None)
                 self.proc = Gio.Subprocess.new(argv,
                                                Gio.SubprocessFlags.STDIN_PIPE  |
                                                Gio.SubprocessFlags.STDOUT_PIPE |
