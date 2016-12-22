@@ -1,3 +1,14 @@
+cinnamon-screensaver (3.2.10) serena; urgency=medium
+
+  [ leigh123linux ]
+  * Fix FSF address
+
+  [ Michael Webster ]
+  * cinnamon-screensaver-pam-helper: Add a sleep to the stdin wait loop, make sure the helper is killed whenever the screensaver is deactivated.
+  * manager.py: only try to cancel_unlocking if there is a stage.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Dec 2016 11:50:00 +0000
+
 cinnamon-screensaver (3.2.9) serena; urgency=medium
 
   [ Michael Webster ]
