@@ -1,3 +1,9 @@
+cinnamon-screensaver (3.2.12) serena; urgency=medium
+
+  * AuthClient: Find path for pam-helper according to runtime info
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Dec 2016 17:24:46 +0000
+
 cinnamon-screensaver (3.2.11) serena; urgency=medium
 
   [ Vladimir Didenko ]
