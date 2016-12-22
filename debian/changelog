@@ -1,3 +1,13 @@
+cinnamon-screensaver (3.2.11) serena; urgency=medium
+
+  [ Vladimir Didenko ]
+  * Move pam-helper binary to libexec directory - some distros forbid ELF binaries in /usr/share
+
+  [ Clement Lefebvre ]
+  * packaging: Move cinnamon-screensaver-pam-helper to its own package
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Dec 2016 15:43:30 +0000
+
 cinnamon-screensaver (3.2.10) serena; urgency=medium
 
   [ leigh123linux ]
