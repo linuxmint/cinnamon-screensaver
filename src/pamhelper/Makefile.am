@@ -11,7 +11,7 @@ pamhelper_PYTHON = \
     authClient.py \
     $(NULL)
 
-pamhelper_PROGRAMS = \
+libexec_PROGRAMS = \
     cinnamon-screensaver-pam-helper \
     $(NULL)
 

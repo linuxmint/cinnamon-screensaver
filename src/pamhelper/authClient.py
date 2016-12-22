@@ -35,7 +35,7 @@ class AuthClient(GObject.Object):
             return True
 
         try:
-            path = os.path.join(config.pkgdatadir, "pamhelper", "cinnamon-screensaver-pam-helper")
+            path = os.path.join(config.libexecdir, "cinnamon-screensaver-pam-helper")
 
             if status.Debug:
                 argv = (path, "--debug", None)
