@@ -57,7 +57,7 @@ class AuthClient(GObject.Object):
                     break
 
             if helper_path is None:
-                print ("Critical error: PAM Helper cound not be found!")
+                print ("Critical Error: PAM Helper could not be found!")
 
             if status.Debug:
                 argv = (helper_path, "--debug", None)
