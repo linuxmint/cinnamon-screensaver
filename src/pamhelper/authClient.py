@@ -37,7 +37,7 @@ class AuthClient(GObject.Object):
         try:
             helper_path = None
             architecture = platform.machine()
-            paths = ["/usr/lib"]
+            paths = ["/usr/lib", "/usr/lib/cinnamon-screensaver"]
 
             # On x86 archs, iterate through multiple paths
             # For instance, on a Mint i686 box, the path is actually /usr/lib/i386-linux-gnu
@@ -57,7 +57,7 @@ class AuthClient(GObject.Object):
                     break
 
             if helper_path is None:
-                print ("Critical error: PAM Helper cound not be found!")
+                print ("Critical Error: PAM Helper could not be found!")
 
             if status.Debug:
                 argv = (helper_path, "--debug", None)
