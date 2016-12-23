@@ -88,7 +88,7 @@ class UnlockDialog(BaseWindow):
         self.entry_box.pack_end(button_box, False, False, 0)
 
         self.auth_unlock_button = TransparentButton("screensaver-unlock-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
-
+        self.auth_unlock_button.set_tooltip_text(_("Unlock"))
         trackers.con_tracker_get().connect(self.auth_unlock_button,
                                            "clicked",
                                            self.on_unlock_clicked)
@@ -96,6 +96,8 @@ class UnlockDialog(BaseWindow):
         button_box.pack_start(self.auth_unlock_button, False, False, 4)
 
         self.auth_switch_button = TransparentButton("screensaver-switch-users-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        self.auth_switch_button.set_tooltip_text(_("Switch users"))
+
         trackers.con_tracker_get().connect(self.auth_switch_button,
                                            "clicked",
                                            self.on_switch_user_clicked)

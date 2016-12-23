@@ -178,6 +178,28 @@ method return sender=:1.386 -> dest=:1.477 reply_serial=2
       </doc:doc>
     </property>
 
+    <property name="Percentage" type="d" access="read">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            The amount of energy left in the power source expressed as
+            a percentage between 0 and 100. Typically this is the same as
+            (<doc:ref type="property" to="Source:Energy">energy</doc:ref> -
+            <doc:ref type="property" to="Source:EnergyEmpty">energy-empty</doc:ref>) /
+            (<doc:ref type="property" to="Source:EnergyFull">energy-full</doc:ref> -
+            <doc:ref type="property" to="Source:EnergyEmpty">energy-empty</doc:ref>).
+            However, some primitive power sources are capable of only
+            reporting percentages and in this case the energy-*
+            properties will be unset while this property is set.
+          </doc:para><doc:para>
+            This property is only valid if the property
+            <doc:ref type="property" to="Source:Type">type</doc:ref>
+            has the value "battery".
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+
     <property name="Online" type="b" access="read">
       <doc:doc>
         <doc:description>

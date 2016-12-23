@@ -33,15 +33,29 @@ class PowerWidget(Gtk.Frame):
                                            "power-state-changed",
                                            self.on_power_state_changed)
 
+        trackers.con_tracker_get().connect(self.power_client,
+                                           "percentage-changed",
+                                           self.on_percentage_changed)
+
         self.power_client.rescan_devices()
 
     def on_power_state_changed(self, client):
         for widget in self.box.get_children():
             widget.destroy()
 
+        self.path_widget_pairs = []
+
         self.construct_icons()
 
         self.emit("power-state-changed")
+
+    def on_percentage_changed(self, client, battery):
+        battery_path = battery.get_object_path()
+
+        for path, widget in self.path_widget_pairs:
+            if path == battery_path:
+                self.update_battery_tooltip(widget, battery)
+                break
 
     def construct_icons(self):
         """
@@ -51,12 +65,26 @@ class PowerWidget(Gtk.Frame):
 
         for path, battery in batteries:
             image = Gtk.Image.new_from_icon_name(battery.get_property("icon-name"), Gtk.IconSize.LARGE_TOOLBAR)
+            self.update_battery_tooltip(image, battery)
 
             self.box.pack_start(image, False, False, 4)
             self.path_widget_pairs.append((path, image))
 
         self._should_show = True
         self.box.show_all()
+
+    def update_battery_tooltip(self, widget, battery):
+        text = ""
+
+        try:
+            pct = int(battery.get_property("percentage"))
+
+            if pct > 0:
+                text = _("%d%%" % pct)
+        except Exception as e:
+            pass
+
+        widget.set_tooltip_text(text)
 
     def should_show(self):
         return not self.power_client.full_and_on_ac_or_no_batteries()
