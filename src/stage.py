@@ -464,6 +464,7 @@ class Stage(Gtk.Window):
         our other reveals after its transition is complete.
         """
         self.reset_timeout()
+        utils.clear_clipboards(self.unlock_dialog)
 
         if status.Awake:
             return
@@ -511,6 +512,7 @@ class Stage(Gtk.Window):
             return
 
         self.set_timeout_active(None, False)
+        utils.clear_clipboards(self.unlock_dialog)
 
         trackers.con_tracker_get().connect(self.unlock_dialog,
                                            "notify::child-revealed",
