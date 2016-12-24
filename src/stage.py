@@ -317,8 +317,9 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if not settings.should_show_plugin() and settings.get_show_clock():
-            self.clock_widget.start_positioning()
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+            if settings.get_show_clock():
+                self.clock_widget.start_positioning()
 
     def setup_albumart(self):
         """
@@ -334,8 +335,9 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if not settings.should_show_plugin() and settings.get_show_albumart():
-            self.albumart_widget.start_positioning()
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+            if settings.get_show_albumart():
+                self.albumart_widget.start_positioning()
 
     def setup_unlock(self):
         """
@@ -557,7 +559,7 @@ class Stage(Gtk.Window):
 
         self.info_panel.update_revealed()
 
-        if not status.PluginRunning:
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
             if settings.get_show_clock():
                 self.clock_widget.start_positioning()
             if settings.get_show_albumart():
@@ -569,6 +571,19 @@ class Stage(Gtk.Window):
         or Awake states.
         """
         low_power = not self.power_client.plugged_in
+
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+            if self.clock_widget != None and settings.get_show_clock():
+                self.clock_widget.start_positioning()
+            if self.albumart_widget != None and settings.get_show_albumart():
+                self.albumart_widget.start_positioning()
+        else:
+            if self.clock_widget != None:
+                self.clock_widget.stop_positioning()
+                self.clock_widget.hide()
+            if self.albumart_widget != None:
+                self.albumart_widget.stop_positioning()
+                self.albumart_widget.hide()
 
         for monitor in self.monitors:
             monitor.update_view(status.Awake, low_power)
