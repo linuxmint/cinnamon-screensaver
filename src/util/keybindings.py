@@ -101,6 +101,9 @@ class KeyBindings(GObject.GObject):
                 self.manager.cancel_unlock_widget()
                 return True
 
+        if event.keyval == Gdk.KEY_Menu:
+            return True
+
         if status.Awake:
             if (event.keyval in (Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab)):
                 if event.keyval == Gdk.KEY_ISO_Left_Tab:
