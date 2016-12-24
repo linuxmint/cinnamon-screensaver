@@ -178,7 +178,7 @@ auth_message_handler (CsAuthMessageStyle style,
 
                 resp = g_strdup (password_ptr);
 
-                DEBUG ("auth_message_handler processing response string: '%s'\n", resp);
+                DEBUG ("auth_message_handler processing response string\n");
 
                 if (!received_quit (resp))
                 {
