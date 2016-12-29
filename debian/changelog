@@ -1,3 +1,24 @@
+cinnamon-screensaver (3.2.13) serena; urgency=medium
+
+  [ Dustin Falgout ]
+  * AuthClient: Check for pam helper in subdirectory
+  * fix typo
+
+  [ Michael Webster ]
+  * cinnamon-screensaver-pam-helper.c: debug mode - don't print message strings, they may contain the password.
+
+  [ leigh123linux ]
+  * add libexec path
+
+  [ Michael Webster ]
+  * manager.py: Fix pam helper cancellation in LMDE - we have an existing workaround for LMDE that skips the fade-out when unlocking, due to another issue.  This causes our despawn_stage callback to be called immediately, which sets self.stage to None, before cancel_unlocking can be run.
+  * keybindings.py: Don't allow the keyboard popup menu key to slip thru.
+  * stage: Clear the clipboard if we're locked (should be inaccessible anyhow but...)
+  * Add some tooltips to a few ui elements.
+  * stage.py: Fix logic surrounding hiding/showing the floating widgets when power states change, or when a plugin is unable to run due to the power state.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 29 Dec 2016 15:03:13 +0000
+
 cinnamon-screensaver (3.2.12) serena; urgency=medium
 
   * AuthClient: Find path for pam-helper according to runtime info
