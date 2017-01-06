@@ -10,6 +10,7 @@ import signal
 import gettext
 import argparse
 import os
+import setproctitle
 
 import config
 import status
@@ -43,6 +44,7 @@ class Main:
             quit()
 
         status.LockEnabled = not args.lock_disabled
+        status.Debug = args.debug
 
         if args.lock_disabled:
             print("Locking disabled")
@@ -104,6 +106,8 @@ class Main:
                 Gtk.StyleContext.reset_widgets(Gdk.Screen.get_default())
 
 if __name__ == "__main__":
+    setproctitle.setproctitle('cinnamon-screensaver')
+
     main = Main()
 
 

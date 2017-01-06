@@ -41,8 +41,10 @@ class AudioPanel(BaseWindow):
 
         self.player_widget = PlayerControl()
         hbox.pack_start(self.player_widget, False, False, 0)
-        self.player_widget.set_no_show_all(True)
 
-        self.player_widget.set_visible(self.player_widget.should_show())
+        should_show = self.player_widget.should_show()
 
-        self.show_all()
+        if should_show:
+            self.show_all()
+        else:
+            self.disabled = True

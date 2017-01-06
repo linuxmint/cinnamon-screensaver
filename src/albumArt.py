@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gio
+from gi.repository import Gio, Gtk
 
 from util import trackers, settings
 from baseWindow import BaseWindow
@@ -24,6 +24,7 @@ class AlbumArt(Floating, BaseWindow):
         super(AlbumArt, self).__init__(initial_monitor)
         self.screen = screen
         self.get_style_context().add_class("albumart")
+        self.set_halign(Gtk.Align.END)
 
         if not settings.get_show_albumart():
             return

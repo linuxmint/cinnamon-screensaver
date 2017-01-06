@@ -9,30 +9,13 @@ NULL =
         -e s!\@datadir\@!$(datadir)!        \
         < $< > $@
 
-all-local: cinnamon-screensaver-command
+all-local: cinnamon-screensaver cinnamon-screensaver-command
 
-bin_SCRIPTS = cinnamon-screensaver-command
-
-bin_PROGRAMS = cinnamon-screensaver
-
-cinnamon_screensaver_SOURCES =  \
-    cinnamon-screensaver.c \
-    setuid.h \
-    setuid.c \
-    $(NULL)
-
-cinnamon_screensaver_LDADD =    \
-    $(SCREENSAVER_MAIN_LIBS)    \
-    $(NULL)
-
-cinnamon_screensaver_CPPFLAGS =            \
-    $(WARN_CFLAGS)          \
-    $(SCREENSAVER_MAIN_CFLAGS)           \
-    -I$(srcdir)         \
-    $(NULL)
+bin_SCRIPTS = cinnamon-screensaver cinnamon-screensaver-command
 
 EXTRA_DIST =                \
     cinnamon-screensaver.in \
+    cinnamon-screensaver-command.in \
     $(NULL)
 
 MAINTAINERCLEANFILES =          \

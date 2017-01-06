@@ -2,7 +2,7 @@ dnl -*- mode: m4 -*-
 
 AC_PREREQ(2.60)
 AC_INIT([cinnamon-screensaver],
-        [3.2.6],
+        [3.2.13],
         [https://github.com/linuxmint/cinnamon-screensaver/issues])
 
 PKG_PROG_PKG_CONFIG([0.26])
@@ -33,6 +33,14 @@ AC_CONFIG_MACRO_DIRS([m4])
 dnl put the ACLOCAL flags in the makefile
 ACLOCAL="$ACLOCAL $ACLOCAL_FLAGS"
 
+AC_CHECK_HEADERS(unistd.h)
+AC_CHECK_HEADERS(crypt.h sys/select.h)
+AC_CHECK_FUNCS(select fcntl uname nice setpriority getcwd getwd putenv sbrk)
+AC_CHECK_FUNCS(sigaction syslog realpath setrlimit)
+AC_TYPE_UID_T
+
+AC_CHECK_FUNCS([setenv unsetenv clearenv])
+
 GETTEXT_PACKAGE=cinnamon-screensaver
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
@@ -48,11 +56,194 @@ AC_DEFUN([AC_CHECK_X_HEADER], [
   AC_CHECK_HEADER([$1],[$2],[$3],[$4])
   CPPFLAGS="$ac_save_CPPFLAGS"])
 
+# Like AC_TRY_COMPILE, but it uses the already-computed -I directories.
+#
+AC_DEFUN([AC_TRY_X_COMPILE], [
+  ac_save_CPPFLAGS="$CPPFLAGS"
+  if test \! -z "$includedir" ; then 
+    CPPFLAGS="$CPPFLAGS -I$includedir"
+  fi
+  CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+  AC_TRY_COMPILE([$1], [$2], [$3], [$4])
+  CPPFLAGS="$ac_save_CPPFLAGS"])
+
 AM_PATH_PYTHON(3.4)
 
-PKG_CHECK_MODULES(SCREENSAVER_MAIN, glib-2.0)
+PKG_CHECK_MODULES(SCREENSAVER_PAM, gtk+-3.0 glib-2.0)
+AC_SUBST(SCREENSAVER_PAM_CFLAGS)
+AC_SUBST(SCREENSAVER_PAM_LIBS)
 
-PKG_CHECK_MODULES(CSCREENSAVER, gobject-2.0 gtk+-3.0 gdk-x11-3.0 x11 glib-2.0 gio-2.0)
+PKG_CHECK_MODULES(CSCREENSAVER, gobject-2.0 gtk+-3.0 gdk-x11-3.0 x11 xext glib-2.0 gio-2.0 gthread-2.0)
+AC_SUBST(CSCREENSAVER_CFLAGS)
+AC_SUBST(CSCREENSAVER_LIBS)
+
+dnl ---------------------------------------------------------------------------
+dnl - The --enable-locking option
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(locking,[
+Screen locking options:
+
+  --enable-locking        Compile in support for locking the display.
+  --disable-locking       Do not allow locking at all.],
+  [enable_locking="$enableval"],[enable_locking=yes])
+if test "$enable_locking" = yes; then
+  true
+elif test "$enable_locking" = no; then
+  AC_DEFINE(NO_LOCKING, 1, [Define if screen locking support is disabled])
+else
+  echo "error: must be yes or no: --enable-locking=$enable_locking"
+  exit 1
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl - The --enable-setres option
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(setres,[
+setres option:
+
+  --enable-setres   Use setresuid/setresgid in the setuid.c helper
+  --disable-setres   Don't use setresuid/setresgid (this is the default behavior)],
+  [enable_setres="$enableval"],[enable_setres=no])
+if test "$enable_setres" = yes; then
+  echo "****************************************"
+  AC_CHECK_FUNC(setresuid, [have_setresuid=yes], [have_setresuid=no])
+  AC_CHECK_FUNC(setresgid, [have_setresgid=yes], [have_setresgid=no])
+  if test "x$have_setresuid" = "xyes" -a "x$have_setresgid" = "xyes"; then
+    AC_DEFINE(USE_SETRES, 1, [Define to have the setuid helper use setresuid/setresgid instead of setuid/setgid.])
+  else
+    AC_MSG_ERROR("setres requested but not available so we are ignoring the option")
+  fi
+elif test "$enable_setres" = no; then
+  true
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl - Check for bsd_auth(3) (OpenBSD)
+dnl ---------------------------------------------------------------------------
+
+have_bsdauth=no
+with_bsdauth_req=unspecified
+NEED_SETUID=no
+
+case "$host" in                                                                                       
+  *-openbsd*)                                                                                         
+    with_bsdauth=yes
+    AUTH_SCHEME=bsdauth
+    NEED_SETUID=no
+    if test "x$enable_locking" = "xyes"; then
+      with_bsdauth_req=yes
+      NEED_SETUID=yes
+    fi
+esac  
+
+if test "$with_bsdauth" = yes ; then
+  AC_CACHE_CHECK([for BSD Authentication], ac_cv_bsdauth,
+    [AC_TRY_X_COMPILE([#include <stdlib.h>
+                       #include <unistd.h>
+                       #include <sys/types.h>
+                       #include <bsd_auth.h>],
+      [int ok = auth_userokay("x", 0, "x", "x");],
+      [ac_cv_bsdauth=yes],
+      [ac_cv_bsdauth=no])])
+  if test "$ac_cv_bsdauth" = yes; then
+    have_bsdauth=yes
+  fi
+fi
+
+if test "$have_bsdauth" = yes; then
+  AC_DEFINE(HAVE_BSDAUTH, 1, [Define to 1 if using bsd_auth(3) authentication])
+fi
+
+AC_SUBST(NEED_SETUID)
+dnl ---------------------------------------------------------------------------
+dnl - Check for PAM
+dnl ---------------------------------------------------------------------------
+
+withval=""
+AC_ARG_WITH(pam-prefix,
+            AS_HELP_STRING([--with-pam-prefix=<prefix>],
+                           [specify where pam files go]),
+            [if test x$withval != x; then
+               AC_MSG_RESULT("PAM files will be installed in prefix ${withval}.")
+             fi])
+
+if test x$withval != x; then
+    PAM_PREFIX="$withval"
+else
+    PAM_PREFIX='${sysconfdir}'
+fi
+AC_SUBST(PAM_PREFIX)
+
+have_pam=no
+if test "x$enable_locking" = "xyes" -a "x$have_bsdauth" = "xno"; then
+AC_CHECK_LIB(pam, pam_start, have_pam=yes)
+fi
+
+if test "x$have_pam" = "xyes"; then
+        AUTH_LIBS="${AUTH_LIBS} -lpam"
+        AUTH_SCHEME=pam
+        # On Linux, sigtimedwait() is in libc; on Solaris, it's in librt.
+        have_timedwait=no
+        AC_CHECK_LIB(c, sigtimedwait, [have_timedwait=yes])
+        if test "$have_timedwait" = no ; then
+                AC_CHECK_LIB(rt, sigtimedwait, [AUTH_LIBS="${AUTH_LIBS} -lrt"])
+        fi
+
+        AC_MSG_CHECKING(how to call pam_strerror)
+        AC_CACHE_VAL(ac_cv_pam_strerror_args,
+         [AC_TRY_COMPILE([#include <stdio.h>
+                          #include <stdlib.h>
+                          #include <security/pam_appl.h>],
+                         [pam_handle_t *pamh = 0;
+                          char *s = pam_strerror(pamh, PAM_SUCCESS);],
+                         [ac_pam_strerror_args=2],
+                         [AC_TRY_COMPILE([#include <stdio.h>
+                                          #include <stdlib.h>
+                                          #include <security/pam_appl.h>],
+                                         [char *s =
+                                           pam_strerror(PAM_SUCCESS);],
+                                         [ac_pam_strerror_args=1],
+                                         [ac_pam_strerror_args=0])])
+          ac_cv_pam_strerror_args=$ac_pam_strerror_args])
+        ac_pam_strerror_args=$ac_cv_pam_strerror_args
+        if test "$ac_pam_strerror_args" = 1 ; then
+          AC_MSG_RESULT(one argument)
+        elif test "$ac_pam_strerror_args" = 2 ; then
+          AC_DEFINE(PAM_STRERROR_TWO_ARGS, 1, [Define if pam_strerror takes two arguments])
+          AC_MSG_RESULT(two arguments)
+        else
+          AC_MSG_RESULT(unknown)
+        fi
+
+elif test "x$have_bsdauth" = "xno"; then
+    AC_MSG_ERROR("PAM libraries not found")
+fi
+AC_SUBST(HAVE_PAM)
+AC_SUBST(AUTH_LIBS)
+AC_SUBST(AUTH_SCHEME)
+
+if test "x$have_pam" = "xyes"; then
+  AC_CHECK_HEADERS([security/pam_modutil.h security/pam_ext.h])
+  AC_CHECK_LIB(pam, pam_syslog, [AC_DEFINE(HAVE_PAM_SYSLOG, [], [Define to 1 if you have the pam_syslog function])])
+fi
+
+dnl test whether struct pam_message is const (Linux) or not (Sun)
+if test "x$have_pam" = "xyes"; then
+   pam_appl_h="$ac_pam_includes/security/pam_appl.h"
+   AC_MSG_CHECKING(for const pam_message)
+   AC_EGREP_HEADER([struct pam_message],
+      $pam_appl_h,
+      [ AC_EGREP_HEADER([const struct pam_message],
+                        $pam_appl_h,
+                        [AC_MSG_RESULT(["const: Linux-type PAM"]) ],
+                        [AC_MSG_RESULT(["nonconst: Sun-type PAM"])
+                        AC_DEFINE(PAM_MESSAGE_NONCONST, 1, [Define if your PAM support takes non-const arguments (Solaris)])]
+                        )],
+       [AC_MSG_RESULT(["not found - assume const, Linux-type PAM"])]
+       )
+fi
 
 have_shape=no
 AC_CHECK_X_HEADER(X11/extensions/shape.h, [have_shape=yes],,
@@ -93,6 +284,9 @@ AC_SUBST(EXPANDED_BINDIR)
 prefix=$old_prefix
 exec_prefix=$old_exec_prefix
 
+AC_SUBST(AUTH_LIBS)
+AC_SUBST(CSCREENSAVER_LIBS)
+
 # Files
 
 AC_OUTPUT([
@@ -115,4 +309,5 @@ src/binfiles/Makefile
 src/dbusdepot/Makefile
 src/widgets/Makefile
 src/util/Makefile
+src/pamhelper/Makefile
 ])

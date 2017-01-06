@@ -124,6 +124,10 @@ cs-media-player-proxy.h : Makefile.am org.mpris.MediaPlayer2.Player.xml
         $(NULL)
 cs-media-player-proxy.c : cs-media-player-proxy.h
 
+AUTH_SOURCES =              \
+    cs-auth-@AUTH_SCHEME@.c     \
+    $(NULL)
+
 libcscreensaver_la_CPPFLAGS =            \
     $(WARN_CFLAGS)          \
     $(CSCREENSAVER_CFLAGS)           \
@@ -131,21 +135,57 @@ libcscreensaver_la_CPPFLAGS =            \
     -DWITH_INTROSPECTION        \
     -DG_LOG_DOMAIN="\"CScreensaver\""
 
+libcscreensaver_ladir = $(includedir)/cinnamon-screensaver/libcscreensaver
+libcscreensaver_la_HEADERS =             \
+    cs-auth.h \
+    setuid.h \
+    $(NULL)
+
 libcscreensaver_la_gir_sources =             \
-    cs-gdk-event-filter.c \
     cs-gdk-event-filter.h \
-    cs-notification-watcher.c \
+    cs-gdk-event-filter.c \
     cs-notification-watcher.h \
+    cs-notification-watcher.c \
     $(dbus_built_sources) \
     $(NULL)
 
 libcscreensaver_la_SOURCES =             \
     $(libcscreensaver_la_gir_sources)        \
+    $(AUTH_SOURCES) \
+    subprocs.c \
+    subprocs.h \
+    setuid.c            \
     $(NULL)
 
 libcscreensaver_la_LIBADD =  \
     $(CSCREENSAVER_LIBS) \
+    $(AUTH_LIBS)            \
     $(NULL)
+
+noinst_PROGRAMS =   \
+    test-passwd \
+    $(NULL)
+
+test_passwd_SOURCES =           \
+    test-passwd.c           \
+    cs-auth.h           \
+    $(AUTH_SOURCES)         \
+    setuid.c            \
+    setuid.h            \
+    subprocs.c          \
+    subprocs.h          \
+    $(NULL)
+
+test_passwd_LDADD =         \
+    $(CSCREENSAVER_LIBS)\
+    $(AUTH_LIBS)            \
+    $(NULL)
+
+test_passwd_CPPFLAGS =            \
+    $(WARN_CFLAGS)          \
+    $(CSCREENSAVER_CFLAGS)           \
+    $(NULL)
+
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = cscreensaver.pc

@@ -3,8 +3,9 @@
 
 import gi
 
-gi.require_version('CinnamonDesktop', '3.0')
-from gi.repository import Gtk, Gdk, GObject, CinnamonDesktop
+from gi.repository import Gtk, Gdk, GObject, CScreensaver
+import traceback
+
 
 from util import utils, trackers
 import status
@@ -12,6 +13,7 @@ import singletons
 from baseWindow import BaseWindow
 from widgets.framedImage import FramedImage
 from passwordEntry import PasswordEntry
+from pamhelper.authClient import AuthClient
 from widgets.transparentButton import TransparentButton
 
 class UnlockDialog(BaseWindow):
@@ -30,8 +32,9 @@ class UnlockDialog(BaseWindow):
     __gsignals__ = {
         'inhibit-timeout': (GObject.SignalFlags.RUN_LAST, None, ()),
         'uninhibit-timeout': (GObject.SignalFlags.RUN_LAST, None, ()),
-        'auth-success': (GObject.SignalFlags.RUN_LAST, None, ()),
-        'auth-failure': (GObject.SignalFlags.RUN_LAST, None, ())
+        'authenticate-success': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'authenticate-failure': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'authenticate-cancel': (GObject.SignalFlags.RUN_LAST, None, ())
     }
 
     def __init__(self):
@@ -85,8 +88,7 @@ class UnlockDialog(BaseWindow):
         self.entry_box.pack_end(button_box, False, False, 0)
 
         self.auth_unlock_button = TransparentButton("screensaver-unlock-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
-        self.auth_unlock_button.set_sensitive(False)
-
+        self.auth_unlock_button.set_tooltip_text(_("Unlock"))
         trackers.con_tracker_get().connect(self.auth_unlock_button,
                                            "clicked",
                                            self.on_unlock_clicked)
@@ -94,6 +96,8 @@ class UnlockDialog(BaseWindow):
         button_box.pack_start(self.auth_unlock_button, False, False, 4)
 
         self.auth_switch_button = TransparentButton("screensaver-switch-users-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        self.auth_switch_button.set_tooltip_text(_("Switch User"))
+
         trackers.con_tracker_get().connect(self.auth_switch_button,
                                            "clicked",
                                            self.on_switch_user_clicked)
@@ -141,6 +145,69 @@ class UnlockDialog(BaseWindow):
                                                  "notify::child-revealed",
                                                  self.on_revealed)
 
+        self.auth_client = AuthClient()
+
+        trackers.con_tracker_get().connect(self.auth_client,
+                                           "auth-success",
+                                           self.on_authentication_success)
+        trackers.con_tracker_get().connect(self.auth_client,
+                                           "auth-failure",
+                                           self.on_authentication_failure)
+        trackers.con_tracker_get().connect(self.auth_client,
+                                           "auth-cancel",
+                                           self.on_authentication_cancelled)
+        trackers.con_tracker_get().connect(self.auth_client,
+                                           "auth-busy",
+                                           self.on_authentication_busy_changed)
+        trackers.con_tracker_get().connect(self.auth_client,
+                                           "auth-prompt",
+                                           self.on_authentication_prompt_changed)
+
+    def initialize_auth_client(self):
+        return self.auth_client.initialize()
+
+    def cancel_auth_client(self):
+        self.auth_client.cancel()
+
+    def on_authentication_success(self, auth_client):
+        self.clear_entry()
+        self.emit("authenticate-success")
+
+    def on_authentication_failure(self, auth_client):
+        """
+        Called upon authentication failure, clears the password, sets an error message,
+        and refocuses the password entry.
+        """
+        self.clear_entry()
+        self.auth_message_label.set_text(_("Incorrect password"))
+
+        self.emit("authenticate-failure")
+        self.emit("uninhibit-timeout")
+
+    def on_authentication_cancelled(self, auth_client):
+        self.emit("authenticate-cancel")
+
+    def on_authentication_busy_changed(self, auth_client, busy):
+        if busy:
+            self.auth_message_label.set_text("")
+            self.clear_entry()
+            self.entry_box.set_sensitive(False)
+            self.password_entry.start_progress()
+            self.password_entry.set_placeholder_text (_("Checking..."))
+        else:
+            self.entry_box.set_sensitive(True)
+            self.password_entry.stop_progress()
+            self.password_entry.set_placeholder_text (self.password_entry.placeholder_text)
+
+    def on_authentication_prompt_changed(self, auth_client, prompt):
+        if "password:" in prompt.lower():
+            prompt = _("Please enter your password...")
+        else:
+            prompt = prompt.replace(":", "")
+
+        self.password_entry.placeholder_text = prompt
+        self.password_entry.set_placeholder_text(self.password_entry.placeholder_text)
+
     def cancel(self):
         """
         Clears the auth message text if we have any.
@@ -163,6 +230,7 @@ class UnlockDialog(BaseWindow):
         """
         if not self.password_entry.get_realized():
             self.password_entry.realize()
+            self.password_entry.grab_focus()
 
         self.password_entry.event(event)
 
@@ -193,9 +261,9 @@ class UnlockDialog(BaseWindow):
         of the unlock button, as well as returning visual focus to the entry any time
         a key event is received.
         """
+
         if not self.password_entry.has_focus():
             self.password_entry.grab_focus()
-        self.auth_unlock_button.set_sensitive(editable.get_text() != "")
 
     def on_password_entry_button_press(self, widget, event):
         """
@@ -217,17 +285,16 @@ class UnlockDialog(BaseWindow):
 
         text = self.password_entry.get_text()
 
-        self.password_entry.start_progress()
-        self.password_entry.set_placeholder_text (_("Checking..."))
+        # We must end with a newline, fgets relies upon that to continue.
+        if text[-1:] != "\n":
+            text += "\n"
 
-        self.authenticate(text)
+        self.auth_client.message_to_child(text)
 
     def on_auth_enter_key(self, widget):
         """
         Implicitly activates the unlock button when the Enter/Return key is pressed.
         """
-        if widget.get_text() == "":
-            return
 
         self.on_unlock_clicked()
 
@@ -249,38 +316,3 @@ class UnlockDialog(BaseWindow):
         """
         self.realname_label.set_text(self.real_name)
 
-    def authenticate(self, password):
-        """
-        Authenticates the entered password against the system PAM provider.
-        """
-        CinnamonDesktop.desktop_check_user_password(self.user_name,
-                                                    password,
-                                                    self.authenticate_callback)
-
-    def authenticate_callback(self, success, data=None):
-        """
-        Callback for check_user_password.  Send this back to the Stage so it can
-        react how it needs to (destroying itself or flashing the unlock widget on failure.)
-        """
-        self.password_entry.stop_progress()
-
-        if success:
-            self.clear_entry()
-            self.emit("auth-success")
-        else:
-            self.authentication_failed()
-            self.emit("auth-failure")
-
-    def authentication_failed(self):
-        """
-        Called upon authentication failure, clears the password, sets an error message,
-        and refocuses the password entry.
-        """
-        self.clear_entry()
-
-        self.password_entry.set_placeholder_text (_("Please enter your password..."))
-        self.auth_message_label.set_text(_("Incorrect password"))
-
-        self.password_entry.grab_focus()
-
-        self.emit("uninhibit-timeout")

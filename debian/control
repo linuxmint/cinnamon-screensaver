@@ -7,6 +7,7 @@ Build-Depends: autoconf-archive,
                devscripts,
                dh-autoreconf,
                dh-python,
+               dh-exec,
                librsvg2-bin,
                python-rsvg,
                libglib2.0-dev,
@@ -15,6 +16,7 @@ Build-Depends: autoconf-archive,
                libglib2.0-dev,
                libxext-dev,
                libgirepository1.0-dev,
+               libpam0g-dev,
                gobject-introspection,
                intltool (>= 0.40.0),
                gnome-pkg-tools (>= 0.10)
@@ -28,6 +30,7 @@ Depends: cinnamon-desktop-data (>= 3.0.0),
          python3-xlib | debian-system-adjustments,
          python3-gi,
          python3-gi-cairo,
+         python3-setproctitle,
          gir1.2-cinnamondesktop-3.0,
          gir1.2-gkbd-3.0,
          gir1.2-glib-2.0,
@@ -38,12 +41,18 @@ Depends: cinnamon-desktop-data (>= 3.0.0),
          iso-flag-png,
          ${misc:Depends},
          ${python:Depends},
-         ${shlibs:Depends}
+         ${shlibs:Depends},
+         cinnamon-screensaver-pam-helper
+Recommends: libpam-gnome-keyring
 Suggests: cinnamon-screensaver-x-plugin,
           cinnamon-screensaver-webkit-plugin
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
+
+Package: cinnamon-screensaver-pam-helper
+Architecture: any
+Description: PAM helper for cinnamon-screensaver
 
 Package: cinnamon-screensaver-x-plugin
 Architecture: all

@@ -123,12 +123,15 @@ class Stage(Gtk.Window):
                                            "grab-broken-event",
                                            self.on_grab_broken_event)
 
+<<<<<<< HEAD
     def mplayer_cb(self):
         self.mplayer = None
         self.setup_clock()
         self.set_opacity(1.0)
         self.queue_draw()
 
+=======
+>>>>>>> af0c2428fa5d66618d3bf5057a8b406e89dce263
     def on_screen_changed(self, screen, data=None):
         self.update_geometry()
         self.size_to_screen()
@@ -341,7 +344,11 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
+<<<<<<< HEAD
         if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in) and not self.mplayer:
+=======
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+>>>>>>> af0c2428fa5d66618d3bf5057a8b406e89dce263
             if settings.get_show_clock():
                 self.clock_widget.start_positioning()
 
@@ -359,7 +366,11 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
+<<<<<<< HEAD
         if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in) and not self.mplayer:
+=======
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+>>>>>>> af0c2428fa5d66618d3bf5057a8b406e89dce263
             if settings.get_show_albumart():
                 self.albumart_widget.start_positioning()
 

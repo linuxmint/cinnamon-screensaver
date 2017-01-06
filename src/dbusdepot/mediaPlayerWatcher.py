@@ -126,35 +126,35 @@ class MprisClient(BaseClient):
     def on_failure(self, *args):
         pass
 
+    def return_best_string(self, item):
+        if type(item) == list:
+            return ", ".join(item)
+        elif type(item) == str:
+            return item
+        else:
+            return ""
+
     def ensure_metadata(self):
         if not self.metadata:
             self.metadata = self.proxy.get_property("metadata")
             if self.metadata:
                 try:
-                    self.track_name = self.metadata["xesam:title"]
+                    self.track_name = self.return_best_string(self.metadata["xesam:title"])
                 except KeyError:
                     self.track_name = ""
                 try:
-                    self.album_name = self.metadata["xesam:album"]
+                    self.album_name = self.return_best_string(self.metadata["xesam:album"])
                 except KeyError:
                     self.album_name = ""
                 try:
-                    self.artist_name = self.metadata["xesam:albumArtist"][0]
+                    self.artist_name = self.return_best_string(self.metadata["xesam:albumArtist"])
                 except KeyError:
                     try:
-                        self.artist_name = self.metadata["xesam:artist"][0]
+                        self.artist_name = self.return_best_string(self.metadata["xesam:artist"])
                     except:
                         self.artist_name = ""
-                except IndexError:
-                    try:
-                        self.artist_name = self.metadata["xesam:albumArtist"]
-                    except KeyError:
-                        try:
-                            self.artist_name = self.metadata["xesam:artist"]
-                        except:
-                            self.artist_name = ""
                 try:
-                    self.albumart_url = self.metadata["mpris:artUrl"]
+                    self.albumart_url = self.return_best_string(self.metadata["mpris:artUrl"])
                 except KeyError:
                     self.albumart_url = ""
 

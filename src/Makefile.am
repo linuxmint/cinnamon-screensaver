@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = 1.7
 
 NULL =
 
-SUBDIRS = binfiles dbusdepot widgets util
+SUBDIRS = binfiles dbusdepot widgets util pamhelper
 
 appdir = $(datadir)/cinnamon-screensaver
 

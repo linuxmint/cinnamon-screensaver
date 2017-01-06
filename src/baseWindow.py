@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject, Gdk
 
 from util import trackers
 
@@ -15,6 +15,9 @@ class BaseWindow(Gtk.Revealer):
         super(BaseWindow, self).__init__()
 
         self.disabled = False
+
+        c = Gdk.RGBA(0, 0, 0, 0)
+        self.override_background_color (Gtk.StateFlags.NORMAL, c);
 
         self.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.set_transition_duration(self.REVEALER_DURATION)

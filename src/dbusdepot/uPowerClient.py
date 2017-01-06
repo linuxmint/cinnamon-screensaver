@@ -32,6 +32,7 @@ class UPowerClient(BaseClient):
     """
     __gsignals__ = {
         'power-state-changed': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'percentage-changed': (GObject.SignalFlags.RUN_LAST, None, (GObject.Object,))
     }
 
     UPOWER_SERVICE = "org.freedesktop.UPower"
@@ -117,8 +118,14 @@ class UPowerClient(BaseClient):
             self.update_state()
             self.emit_changed()
 
+        if pspec.name == "percentage":
+            self.emit_percentage_changed(proxy)
+
     def emit_changed(self):
         self.emit("power-state-changed")
+
+    def emit_percentage_changed(self, battery):
+        self.emit("percentage-changed", battery)
 
     def get_batteries(self):
         if len(self.relevant_devices) == 0:

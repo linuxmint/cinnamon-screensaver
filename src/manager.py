@@ -144,7 +144,7 @@ class ScreensaverManager(GObject.Object):
         if not status.Active:
             return
 
-        if status.Locked:
+        if status.Locked and self.stage.initialize_pam():
             self.stage.raise_unlock_widget()
             self.grab_helper.release_mouse()
             self.stage.maybe_update_layout()
@@ -174,6 +174,7 @@ class ScreensaverManager(GObject.Object):
         """
         Begin destruction of the stage.
         """
+        self.stage.cancel_unlocking()
         self.stage.transition_out(effect_time, callback)
 
     def on_spawn_stage_complete(self):
@@ -242,7 +243,7 @@ class ScreensaverManager(GObject.Object):
         which also restarts plugins if necessary.
         """
         self.grab_stage()
-        self.stage.cancel_unlock_widget();
+        self.stage.cancel_unlocking();
 
     def on_lock_delay_timeout(self):
         """

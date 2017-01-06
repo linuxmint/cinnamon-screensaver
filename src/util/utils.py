@@ -167,5 +167,14 @@ def have_gtk_version(version_string):
            Gtk.get_minor_version() >= eval(minor) and \
            Gtk.get_micro_version() >= eval(micro)
 
+def clear_clipboards(widget):
+    clipboard = widget.get_clipboard(Gdk.SELECTION_PRIMARY)
+    clipboard.clear()
+    clipboard.set_text("", -1)
+
+    clipboard = widget.get_clipboard(Gdk.SELECTION_CLIPBOARD)
+    clipboard.clear()
+    clipboard.set_text("", -1)
+
 def do_quit():
     Gtk.main_quit()

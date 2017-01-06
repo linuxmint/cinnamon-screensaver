@@ -1,3 +1,104 @@
+cinnamon-screensaver (3.2.13) serena; urgency=medium
+
+  [ Dustin Falgout ]
+  * AuthClient: Check for pam helper in subdirectory
+  * fix typo
+
+  [ Michael Webster ]
+  * cinnamon-screensaver-pam-helper.c: debug mode - don't print message strings, they may contain the password.
+
+  [ leigh123linux ]
+  * add libexec path
+
+  [ Michael Webster ]
+  * manager.py: Fix pam helper cancellation in LMDE - we have an existing workaround for LMDE that skips the fade-out when unlocking, due to another issue.  This causes our despawn_stage callback to be called immediately, which sets self.stage to None, before cancel_unlocking can be run.
+  * keybindings.py: Don't allow the keyboard popup menu key to slip thru.
+  * stage: Clear the clipboard if we're locked (should be inaccessible anyhow but...)
+  * Add some tooltips to a few ui elements.
+  * stage.py: Fix logic surrounding hiding/showing the floating widgets when power states change, or when a plugin is unable to run due to the power state.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 29 Dec 2016 15:03:13 +0000
+
+cinnamon-screensaver (3.2.12) serena; urgency=medium
+
+  * AuthClient: Find path for pam-helper according to runtime info
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Dec 2016 17:24:46 +0000
+
+cinnamon-screensaver (3.2.11) serena; urgency=medium
+
+  [ Vladimir Didenko ]
+  * Move pam-helper binary to libexec directory - some distros forbid ELF binaries in /usr/share
+
+  [ Clement Lefebvre ]
+  * packaging: Move cinnamon-screensaver-pam-helper to its own package
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Dec 2016 15:43:30 +0000
+
+cinnamon-screensaver (3.2.10) serena; urgency=medium
+
+  [ leigh123linux ]
+  * Fix FSF address
+
+  [ Michael Webster ]
+  * cinnamon-screensaver-pam-helper: Add a sleep to the stdin wait loop, make sure the helper is killed whenever the screensaver is deactivated.
+  * manager.py: only try to cancel_unlocking if there is a stage.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Dec 2016 11:50:00 +0000
+
+cinnamon-screensaver (3.2.9) serena; urgency=medium
+
+  [ Michael Webster ]
+  * authClient.py: Use a constructor for GBytes creation (needed in LMDE introspection), ignore a message sent prior to the auth client being initialized (user hit enter as a means of bringing up the unlock dialog.)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 12 Dec 2016 15:29:50 +0000
+
+cinnamon-screensaver (3.2.8) serena; urgency=medium
+
+  [ Michael Webster ]
+  * debian/cinnamon-screensaver.install: fix packaging of cinnamon- screensaver-pam-helper.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 10 Dec 2016 14:05:34 +0000
+
+cinnamon-screensaver (3.2.7) serena; urgency=medium
+
+  [ leigh123linux ]
+  * Change shebang
+  * Change shebang
+
+  [ Michael Webster ]
+  * stage.py: Keep floating widgets centered within their GtkAlign region instead of using the padding CSS property - this can only ever work by taking monitor size into account.
+  * stage - the unlock dialog can take up more than 1/3 the width of the screen, so account for its width when positioning floating widgets during Awake state.
+
+  [ leigh123linux ]
+  * Add missing -lXext
+  * remove spaces
+
+  [ Clement Lefebvre ]
+  * Volume control: Don't crash when PA returns no default sink
+  * l10n: Update POT file
+
+  [ Michael Webster ]
+  * stage.py: Regrab the stage if grab is broken (notably by fingerprint-helper's gui.)
+  * Fix pam authentication to work with multi-factor, fingerprint, etc..
+  * floating.py: Increase positioning delay to 30 seconds.
+  * audioPanel.py: Don't show panel at all if no players are active.
+  * Couple fixes: show floating widgets immediately upon sleep, add a description for AuthClient, send a failure notice when we fail.
+
+  [ Dustin Falgout ]
+  * Update pam config for multi-distro compatibility
+
+  [ Michael Webster ]
+  * Add preference to disable floating widgets...
+  * clock.py: Make clock preference apply everywhere (like our other prefs)
+  * cinnamon-screensaver-main.py: use setproctitle to set the process name as "cinnamon-screensaver"
+  * configure.ac: Fix regression from git conflict - originally from aad72c98f1df63
+  * Add a build option to enable/disable use of setresuid/setresgid in the setuid.c file for some distributions.  The default behavior remains to *not* use this.
+  * Override the background color to transparent for various 'primary' widgets, this reduces (but does not eliminate) the tendency to get a 'flash' when the screensaver spawns its window.
+  * mediaPlayerWatcher.py: handle metadata more gracefully - some players can return arrays of artist info, some a string - handle either.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 10 Dec 2016 11:48:37 +0000
+
 cinnamon-screensaver (3.2.6) serena; urgency=medium
 
   * Remove import on BlinkLabel
