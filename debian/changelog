@@ -1,3 +1,23 @@
+cinnamon-screensaver (3.2.6) serena; urgency=medium
+
+  * Remove import on BlinkLabel
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 24 Nov 2016 22:38:57 +0000
+
+cinnamon-screensaver (3.2.5) serena; urgency=medium
+
+  * Remove position bar and position labels in infobar
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 24 Nov 2016 18:55:32 +0000
+
+cinnamon-screensaver (3.2.4) serena; urgency=medium
+
+  [ Michael Webster ]
+  * Replace cinnamon-screensaver bin script with cinnamon-screensaver.c, to perform setuid checks and fixes prior to python and gtk starting.
+  * utils.py: remove liveuser check, it doesn't work as expected.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 23 Nov 2016 12:47:48 +0000
+
 cinnamon-screensaver (3.2.3) serena; urgency=medium
 
   [ Willy Sudiarto Raharjo ]

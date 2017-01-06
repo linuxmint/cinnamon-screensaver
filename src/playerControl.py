@@ -8,10 +8,8 @@ import datetime
 
 from util import trackers, utils
 from dbusdepot.mediaPlayerWatcher import PlaybackStatus
-from widgets.blinkingLabel import BlinkingLabel
 from widgets.marqueeLabel import MarqueeLabel
 from widgets.transparentButton import TransparentButton
-from widgets.positionBar import PositionBar
 import singletons
 import status
 
@@ -72,27 +70,6 @@ class PlayerControl(Gtk.Box):
                                                      self.play_pause_button,
                                                      self.next_button]
 
-        # Position labels and bar
-
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.pack_start(vbox, True, True, 4)
-
-        vbox.set_valign(Gtk.Align.CENTER)
-
-        position_length_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        vbox.pack_start(position_length_box, True, True, 2)
-
-        self.current_pos_label = BlinkingLabel("", 400)
-        self.current_pos_label.get_style_context().add_class("positionlabel")
-        position_length_box.pack_start(self.current_pos_label, False, False, 2)
-
-        self.max_pos_label = BlinkingLabel("", 400)
-        self.max_pos_label.get_style_context().add_class("positionlabel")
-        position_length_box.pack_end(self.max_pos_label, False, False, 2)
-
-        self.position_bar = PositionBar()
-        vbox.pack_end(self.position_bar, True, True, 2)
-
         # Track info
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -111,10 +88,6 @@ class PlayerControl(Gtk.Box):
         self.show_all()
 
         trackers.con_tracker_get().connect(self.player,
-                                           "position-changed",
-                                           self.on_position_changed)
-
-        trackers.con_tracker_get().connect(self.player,
                                            "status-changed",
                                            self.on_playback_status_changed)
 
@@ -128,8 +101,6 @@ class PlayerControl(Gtk.Box):
         trackers.con_tracker_get().connect(self,
                                            "destroy",
                                            self.on_widget_destroy)
-
-        self.update_position_timer(player_status)
 
     def on_previous_clicked(self, button, data=None):
         self.player.go_previous()
@@ -148,47 +119,13 @@ class PlayerControl(Gtk.Box):
 
         return icon_name
 
-    def position_to_time_string(self, position):
-        """
-        We receive track position and track length values in microseconds.
-        This function formats this into readable HH:MM:SS format, and handles
-        any invalid values.
-        """
-        delta = datetime.timedelta(microseconds=position)
-
-        duration = datetime.datetime.utcfromtimestamp(delta.total_seconds())
-
-        if duration.hour < 0:
-            return _("--:--")
-
-        if duration.hour < 1:
-            return duration.strftime(_("%M:%S"))
-        else:
-            return duration.strftime(_("%H:%M:%S"))
-
     def on_playback_status_changed(self, player, status, data=None):
         self.update_buttons(status)
-        self.update_position_timer(status)
-        self.update_position_display()
-
-        self.update_position_values_appearance(status)
-
-    def update_position_values_appearance(self, status):
-        """
-        When the player is paused, we blink the position/length values.
-        """
-        if status == PlaybackStatus.Paused:
-            self.max_pos_label.set_blinking(True)
-            self.current_pos_label.set_blinking(True)
-        else:
-            self.max_pos_label.set_blinking(False)
-            self.current_pos_label.set_blinking(False)
 
     def on_metadata_changed(self, player):
         """
-        Update max position and labels when the player metadata changes
+        Update labels when the player metadata changes
         """
-        self.max_pos_label.set_text(self.position_to_time_string(self.player.get_max_position()))
         self.update_labels()
 
     def update_labels(self):
@@ -224,43 +161,7 @@ class PlayerControl(Gtk.Box):
         image = Gtk.Image.new_from_icon_name(icon_name, size)
         self.play_pause_button.set_image(image)
 
-    def update_position_display(self):
-        """
-        Updates the position values and bar to reflect the current state.
-        """
-        if self.player.get_position() < self.player.get_max_position():
-            value = self.player.get_position() / self.player.get_max_position()
-        else:
-            value = 1.0
-        value = utils.CLAMP(value, 0.0, 1.0)
-        self.position_bar.set_fraction(value)
-
-        self.current_pos_label.set_text(self.position_to_time_string(self.player.get_position()))
-
-        return True
-
-    def update_position_timer(self, status):
-        """
-        Starts or stops the position update timer - this is based upon the provided rate
-        property of the player, which is defined as the recommended update frequency for position
-        data.
-        """
-        if status == PlaybackStatus.Playing:
-            trackers.timer_tracker_get().start("position-timer", self.player.get_rate() * 1000, self.update_position_display)
-        else:
-            trackers.timer_tracker_get().cancel("position-timer")
-
-    def on_position_changed(self, player, position, data=None):
-        """
-        Callback for an explicit position change from the player.
-        """
-        self.update_position_display()
-
     def on_widget_destroy(self, widget, data=None):
-        trackers.con_tracker_get().disconnect(self.player,
-                                              "position-changed",
-                                              self.on_position_changed)
-
         trackers.con_tracker_get().disconnect(self.player,
                                               "status-changed",
                                               self.on_playback_status_changed)
@@ -268,8 +169,6 @@ class PlayerControl(Gtk.Box):
         trackers.con_tracker_get().disconnect(self,
                                               "destroy",
                                               self.on_widget_destroy)
-
-        trackers.timer_tracker_get().cancel("position-timer")
 
     def should_show(self):
         """
