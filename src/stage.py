@@ -32,10 +32,16 @@ class Stage(Gtk.Window):
     ScreensaverManager.
     """
     def __init__(self, screen, manager, away_message):
-        Gtk.Window.__init__(self,
-                            type=Gtk.WindowType.POPUP,
-                            decorated=False,
-                            skip_taskbar_hint=True)
+        if status.InteractiveDebug:
+            Gtk.Window.__init__(self,
+                                type=Gtk.WindowType.TOPLEVEL,
+                                decorated=True,
+                                skip_taskbar_hint=False)
+        else:
+            Gtk.Window.__init__(self,
+                                type=Gtk.WindowType.POPUP,
+                                decorated=False,
+                                skip_taskbar_hint=True)
 
         self.get_style_context().add_class("csstage")
 
@@ -115,6 +121,9 @@ class Stage(Gtk.Window):
         trackers.con_tracker_get().connect(self,
                                            "grab-broken-event",
                                            self.on_grab_broken_event)
+
+        if status.InteractiveDebug:
+            self.set_interactive_debugging(True)
 
     def on_screen_changed(self, screen, data=None):
         self.update_geometry()
@@ -245,9 +254,15 @@ class Stage(Gtk.Window):
         """
         self.monitors = []
 
-        n = self.screen.get_n_monitors()
+        if status.InteractiveDebug:
+            monitors = (self.screen.get_primary_monitor(),)
+        else:
+            n = self.screen.get_n_monitors()
+            monitors = ()
+            for i in range(n):
+                monitors += (i,)
 
-        for index in range(n):
+        for index in monitors:
             monitor = MonitorView(self.screen, index)
 
             image = Gtk.Image()
@@ -415,7 +430,7 @@ class Stage(Gtk.Window):
         """
         Start or stop the dialog timer
         """
-        if active:
+        if active and not status.InteractiveDebug:
             trackers.timer_tracker_get().start("wake-timeout",
                                                c.UNLOCK_TIMEOUT * 1000,
                                                self.on_wake_timeout)
@@ -620,13 +635,26 @@ class Stage(Gtk.Window):
     def update_geometry(self):
         """
         Override BaseWindow.update_geometry() - the Stage should always be the
-        GdkScreen size
+        GdkScreen size, unless status.InteractiveDebug is True
         """
-        self.rect = Gdk.Rectangle()
-        self.rect.x = 0
-        self.rect.y = 0
-        self.rect.width = self.screen.get_width()
-        self.rect.height = self.screen.get_height()
+
+        if status.InteractiveDebug:
+            # Gdk 3.22 introduces GdkMonitor objects, and GdkScreen-reported
+            # monitor info is no-longer reliable
+
+            if utils.have_gtk_version("3.22.0"):
+                monitor = Gdk.Display.get_default().get_primary_monitor()
+                self.rect = monitor.get_geometry()
+            else:
+                monitor_n = self.screen.get_primary_monitor()
+                self.rect = self.screen.get_monitor_geometry(monitor_n)
+        else:
+            self.rect = Gdk.Rectangle()
+
+            self.rect.x = 0
+            self.rect.y = 0
+            self.rect.width = self.screen.get_width()
+            self.rect.height = self.screen.get_height()
 
         hints = Gdk.Geometry()
         hints.min_width = self.rect.width
