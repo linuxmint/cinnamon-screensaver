@@ -27,6 +27,7 @@ class Floating:
     def stop_positioning(self):
         if settings.get_allow_floating():
             trackers.timer_tracker_get().cancel(str(self) + "positioning")
+            trackers.timer_tracker_get().cancel(str(self) + "align-timeout")
 
     def positioning_callback(self):
         self.unreveal()

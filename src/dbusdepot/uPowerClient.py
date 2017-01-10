@@ -47,6 +47,9 @@ class UPowerClient(BaseClient):
         self.have_battery = False
         self.plugged_in = False
 
+        self.update_state_id = 0
+        self.devices_dirty = True
+
         self.relevant_devices = []
 
     def on_client_setup_complete(self):
@@ -54,14 +57,30 @@ class UPowerClient(BaseClient):
         self.proxy.connect("device-added", self.on_device_added_or_removed)
         self.proxy.connect("notify::on-battery", self.on_battery_changed)
 
-        self.rescan_devices()
+        self.queue_update_state()
 
     def on_device_added_or_removed(self, proxy, path):
-        self.rescan_devices()
+        self.devices_dirty = True
+        self.queue_update_state()
 
     def on_battery_changed(self, proxy, pspec, data=None):
-        self.update_state()
-        self.emit_changed()
+        self.queue_update_state()
+
+    def queue_update_state(self):
+        if self.update_state_id > 0:
+            GObject.source_remove(self.update_state_id)
+            self.update_state_id = 0
+
+        GObject.idle_add(self.idle_update_cb)
+
+    def idle_update_cb(self, data=None):
+        if self.devices_dirty:
+            self.rescan_devices()
+
+        self.devices_dirty = False
+
+        if self.update_state():
+            self.emit_changed()
 
     def rescan_devices(self):
         if len(self.relevant_devices) > 0:
@@ -91,10 +110,11 @@ class UPowerClient(BaseClient):
         except GLib.Error:
             print("UPowerClient had trouble enumerating through devices.  The battery indicator will be disabled")
 
-        self.update_state()
-        self.emit_changed()
+        self.queue_update_state()
 
     def update_state(self):
+        changes = False
+
         old_plugged_in = self.plugged_in
         old_have_battery = self.have_battery
 
@@ -110,13 +130,15 @@ class UPowerClient(BaseClient):
                 new_have_battery = True
 
         if (new_plugged_in != old_plugged_in) or (new_have_battery != old_have_battery):
+            changes = True
             self.have_battery = new_have_battery
             self.plugged_in = new_plugged_in
 
+        return changes
+
     def on_device_properties_changed(self, proxy, pspec, data=None):
         if pspec.name in ("online", "icon-name", "state"):
-            self.update_state()
-            self.emit_changed()
+            self.queue_update_state()
 
         if pspec.name == "percentage":
             self.emit_percentage_changed(proxy)

@@ -105,6 +105,10 @@ class Stage(Gtk.Window):
         # trigger changes to and from low-power mode (no plugins.)
         self.power_client = singletons.UPowerClient
 
+        trackers.con_tracker_get().connect(self.power_client,
+                                           "power-state-changed",
+                                           self.on_power_state_changed)
+
         # This filter suppresses any other windows that might share
         # our window group in muffin, from showing up over the Stage.
         # For instance: Chrome and Firefox native notifications.
@@ -135,7 +139,6 @@ class Stage(Gtk.Window):
         self.overlay.queue_resize()
 
     def on_grab_broken_event(self, widget, event, data=None):
-        print("grab broken")
         GObject.idle_add(self.manager.grab_stage)
 
         return False
@@ -402,10 +405,6 @@ class Stage(Gtk.Window):
         self.info_panel = InfoPanel(self.screen)
         self.add_child_widget(self.info_panel)
 
-        trackers.con_tracker_get().connect(self.power_client,
-                                           "power-state-changed",
-                                           self.on_power_state_changed)
-
     def queue_dialog_key_event(self, event):
         """
         Sent from our EventHandler via the ScreensaverManager, this catches
@@ -575,12 +574,6 @@ class Stage(Gtk.Window):
 
         self.info_panel.update_revealed()
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
-            if settings.get_show_clock():
-                self.clock_widget.start_positioning()
-            if settings.get_show_albumart():
-                self.albumart_widget.start_positioning()
-
     def update_monitor_views(self):
         """
         Updates all of our MonitorViews based on the power
@@ -588,7 +581,7 @@ class Stage(Gtk.Window):
         """
         low_power = not self.power_client.plugged_in
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and low_power):
             if self.clock_widget != None and settings.get_show_clock():
                 self.clock_widget.start_positioning()
             if self.albumart_widget != None and settings.get_show_albumart():
