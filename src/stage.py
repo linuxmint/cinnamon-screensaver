@@ -481,10 +481,11 @@ class Stage(Gtk.Window):
         our other reveals after its transition is complete.
         """
         self.reset_timeout()
-        utils.clear_clipboards(self.unlock_dialog)
 
         if status.Awake:
             return
+
+        utils.clear_clipboards(self.unlock_dialog)
 
         self.clock_widget.stop_positioning()
         self.albumart_widget.stop_positioning()
