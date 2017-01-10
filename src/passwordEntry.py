@@ -94,6 +94,9 @@ class PasswordEntry(Gtk.Entry):
                 name = name.upper()
 
             ctx = widget.get_style_context()
+            ctx.save()
+
+            ctx.set_state(Gtk.StateFlags.BACKDROP)
             font_size = ctx.get_property("font-size", Gtk.StateFlags.BACKDROP)
             family = ctx.get_property("font-family", Gtk.StateFlags.BACKDROP)
             cr.select_font_face(family[0], cairo.FONT_WEIGHT_NORMAL, cairo.FONT_SLANT_NORMAL)
@@ -117,6 +120,8 @@ class PasswordEntry(Gtk.Entry):
                        (y + (height / 2) + (h / 2)))
 
             cr.show_text(name)
+
+            ctx.restore()
 
         return False
 

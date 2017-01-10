@@ -44,12 +44,12 @@
 }
 
 .csstage .auth-message {
-    font-size: 12px;
+    font-size: 15px;
     color: red;
 }
 
 .csstage .caps-message {
-    font-size: 12px;
+    font-size: 15px;
     color: orange;
 }
 
@@ -72,11 +72,10 @@
     background-image: none;
     background-color: transparent;
     border-width: 1px;
-    padding: 0 0 0 5px;
     box-shadow: none;
 }
 
-.csstage .passwordentry.progressbar {
+.csstage .passwordentry progress {
     margin: 2px;
     padding: 0;
     border-radius: 0;
@@ -84,12 +83,19 @@
     border-color: alpha(@theme_selected_bg_color, .7);
 }
 
-.csstage .passwordentry.progressbar:focus {
+.csstage .passwordentry progress:focus {
     background-color: transparent;
 }
 
 .csstage .passwordentry image.left {
     padding-right: 10px;
+}
+
+/* Use :backdrop for alt-text keyboard layout */
+.csstage .passwordentry:backdrop {
+    font-family: monospace;
+    font-size: 14px;
+    color: @theme_selected_bg_color;
 }
 
 .csstage .transparentbutton {
