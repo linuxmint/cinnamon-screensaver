@@ -2,7 +2,6 @@
 
 from Xlib import display, X
 
-
 def nuke_focus():
     """
     Used by GrabHelper (only if python3-xlib is available) to help
@@ -13,4 +12,3 @@ def nuke_focus():
     ret = xdisplay.get_input_focus()
 
     xdisplay.set_input_focus(X.NONE, X.RevertToNone, X.CurrentTime, None)
-
