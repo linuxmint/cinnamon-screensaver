@@ -16,7 +16,7 @@ from floating import ALIGNMENTS
 from util import utils, trackers, settings
 from util.fader import Fader
 from util.eventHandler import EventHandler
-from util.x11 import Mplayer
+from util.mplayer import Mplayer
 
 class Stage(Gtk.Window):
     """
@@ -33,11 +33,7 @@ class Stage(Gtk.Window):
     ScreensaverManager.
     """
     def __init__(self, screen, manager, away_message):
-        if settings.get_allow_media_control():
-            self.mpl = Mplayer(self)
-            self.mplayer = self.mpl.wmclass
-        else:
-            self.mplayer = None
+        self.mplayer = Mplayer(self)
 
         Gtk.Window.__init__(self,
                             type=Gtk.WindowType.POPUP,
@@ -123,12 +119,6 @@ class Stage(Gtk.Window):
                                            "grab-broken-event",
                                            self.on_grab_broken_event)
 
-    def mplayer_cb(self):
-        self.mplayer = None
-        self.setup_clock()
-        self.set_opacity(1.0)
-        self.queue_draw()
-
     def on_screen_changed(self, screen, data=None):
         self.update_geometry()
         self.size_to_screen()
@@ -149,14 +139,15 @@ class Stage(Gtk.Window):
         This is the primary way of making the Stage visible.
         """
         self.realize()
-        if self.mplayer:
+        if self.mplayer.fs:
             self.set_opacity(0.01)
             self.set_visible(True)
             self.set_opacity(0.0)
             self.queue_draw()
             callback()
-        else:
-            self.fader.fade_in(effect_time, callback)
+            return
+
+        self.fader.fade_in(effect_time, callback)
 
     def transition_out(self, effect_time, callback):
         """
@@ -226,8 +217,7 @@ class Stage(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
-        if self.mplayer:
-            self.mpl.destroy = True
+        self.mplayer.destroy = True
 
         self.destroy_monitor_views()
 
@@ -273,14 +263,14 @@ class Stage(Gtk.Window):
         for index in range(n):
             monitor = MonitorView(self.screen, index)
 
-            if not self.mplayer:
-                image = Gtk.Image()
+            image = Gtk.Image()
 
+            if not self.mplayer.fs:
                 singletons.Backgrounds.create_and_set_gtk_image (image,
-                                                                 monitor.rect.width,
-                                                                 monitor.rect.height)
+                                                             monitor.rect.width,
+                                                             monitor.rect.height)
 
-                monitor.set_initial_wallpaper_image(image)
+            monitor.set_initial_wallpaper_image(image)
 
             self.monitors.append(monitor)
 
@@ -296,9 +286,10 @@ class Stage(Gtk.Window):
         for monitor in self.monitors:
             image = Gtk.Image()
 
-            singletons.Backgrounds.create_and_set_gtk_image (image,
-                                                  monitor.rect.width,
-                                                  monitor.rect.height)
+            if not self.mplayer.fs:
+                singletons.Backgrounds.create_and_set_gtk_image (image,
+                                                      monitor.rect.width,
+                                                      monitor.rect.height)
 
             monitor.set_next_wallpaper_image(image)
 
@@ -341,7 +332,9 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in) and not self.mplayer:
+        if self.mplayer.fs:
+            return
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
             if settings.get_show_clock():
                 self.clock_widget.start_positioning()
 
@@ -359,7 +352,9 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in) and not self.mplayer:
+        if self.mplayer.fs:
+            return
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
             if settings.get_show_albumart():
                 self.albumart_widget.start_positioning()
 
@@ -500,7 +495,7 @@ class Stage(Gtk.Window):
 
         status.Awake = True
 
-        if self.mplayer:
+        if self.mplayer.fs:
             self.set_opacity(0.6)
 
         # Connect to one of our monitorViews (we have at least one always), to wait for
@@ -551,7 +546,7 @@ class Stage(Gtk.Window):
         self.albumart_widget.unreveal()
         self.audio_panel.unreveal()
         self.info_panel.unreveal()
-        if self.mplayer:
+        if self.mplayer.fs:
             self.set_opacity(0.0)
 
     def after_unlock_unrevealed(self, obj, pspec):
@@ -587,7 +582,8 @@ class Stage(Gtk.Window):
                                               self.after_transitioned_back_to_sleep)
 
         self.info_panel.update_revealed()
-
+        if self.mplayer.fs:
+            return
         if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
             if settings.get_show_clock():
                 self.clock_widget.start_positioning()
@@ -601,7 +597,7 @@ class Stage(Gtk.Window):
         """
         low_power = not self.power_client.plugged_in
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in) and not self.mplayer.fs:
             if self.clock_widget != None and settings.get_show_clock():
                 self.clock_widget.start_positioning()
             if self.albumart_widget != None and settings.get_show_albumart():
@@ -735,7 +731,7 @@ class Stage(Gtk.Window):
             allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (allocation.width / 2)
             allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (allocation.height / 2)
 
-            if self.mplayer:
+            if self.mplayer.fs:
                 allocation.y = monitor_rect.height - nat_rect.height
 
             return True
@@ -762,7 +758,7 @@ class Stage(Gtk.Window):
             region_w = monitor_rect.width / 3
             region_h = monitor_rect.height / 3
 
-            if status.Awake or self.mplayer:
+            if status.Awake:
                 """
                 If we're Awake, force the clock to track to the active monitor, and be aligned to
                 the left-center.  The albumart widget aligns right-center.
@@ -775,12 +771,14 @@ class Stage(Gtk.Window):
                 else:
                     child.set_halign(Gtk.Align.END)
 
-                child.set_valign(Gtk.Align.CENTER)
-                if self.mplayer:
+
+                if self.mplayer.fs:
                     child.set_valign(Gtk.Align.END)
+                else:
+                    child.set_valign(Gtk.Align.CENTER)
 
             else:
-                if settings.get_allow_floating():
+                if settings.get_allow_floating() and not self.mplayer.fs:
                     for floater in self.floaters:
                         """
                         Don't let our floating widgets end up in the same spot.
