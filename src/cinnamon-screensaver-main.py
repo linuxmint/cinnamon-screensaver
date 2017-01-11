@@ -31,6 +31,8 @@ class Main:
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver')
         parser.add_argument('--debug', dest='debug', action='store_true',
                             help='Print out some extra debugging info')
+        parser.add_argument('--interactive-debug', dest='interactive', action='store_true',
+                            help='If multiple monitors are in use, only cover one monitor, and launch GtkInspector')
         parser.add_argument('--disable-locking', dest='lock_disabled', action='store_true',
                             help='Disable the lock screen')
         parser.add_argument('--version', dest='version', action='store_true',
@@ -45,6 +47,7 @@ class Main:
 
         status.LockEnabled = not args.lock_disabled
         status.Debug = args.debug
+        status.InteractiveDebug = args.interactive
 
         if args.lock_disabled:
             print("Locking disabled")

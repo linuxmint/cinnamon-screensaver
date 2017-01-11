@@ -67,8 +67,11 @@ class FramedImage(Gtk.Image):
         self.set_size_request(-1, self.get_theme_height())
 
         if self.path:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(self.path, -1, self.get_theme_height(), True)
-            self.set_from_pixbuf(pixbuf)
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(self.path, -1, self.get_theme_height(), True)
+                self.set_from_pixbuf(pixbuf)
+            except:
+                self.clear_image()
             self.emit("pixbuf-changed", pixbuf)
 
         elif self.file:
@@ -100,8 +103,11 @@ class FramedImage(Gtk.Image):
     def on_file_written(self, file, result, data=None):
         try:
             if file.replace_contents_finish(result):
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(file.get_path(), -1, self.get_theme_height(), True)
-                self.set_from_pixbuf(pixbuf)
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(file.get_path(), -1, self.get_theme_height(), True)
+                    self.set_from_pixbuf(pixbuf)
+                except:
+                    self.clear_image()
                 self.emit("pixbuf-changed", pixbuf)
         except GLib.Error:
             pass

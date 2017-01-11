@@ -126,16 +126,19 @@ def override_user_time(window):
 def debug_allocation(alloc):
     print("x:%d, y:%d, width:%d, height:%d" % (alloc.x, alloc.y, alloc.width, alloc.height))
 
-def get_mouse_monitor():
-    manager = Gdk.Display.get_default().get_device_manager()
-    pointer = manager.get_client_pointer()
-
-    screen, x, y = pointer.get_position()
-
-    return Gdk.Screen.get_default().get_monitor_at_point(x, y)
-
 def get_primary_monitor():
     return Gdk.Screen.get_default().get_primary_monitor()
+
+def get_mouse_monitor():
+    if status.InteractiveDebug:
+        return get_primary_monitor()
+    else:
+        manager = Gdk.Display.get_default().get_device_manager()
+        pointer = manager.get_client_pointer()
+
+        screen, x, y = pointer.get_position()
+
+        return Gdk.Screen.get_default().get_monitor_at_point(x, y)
 
 def lookup_plugin_path(name):
     if name == "":
