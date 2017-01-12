@@ -19,7 +19,7 @@ PluginRunning = False
 # as well as adjusting the UID if this process is started as root.
 LockEnabled = True
 
-# Enables extra PAM/authentication debugging
+# Enables extra PAM/authentication/notification debugging
 Debug = False
 
 # Forces the Stage to only cover a single monitor and launch a GtkInspector window.

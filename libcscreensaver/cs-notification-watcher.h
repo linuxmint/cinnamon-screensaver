@@ -21,6 +21,7 @@ typedef struct
 
     GDBusConnection *connection;
     gint             filter_id;
+    gboolean         debug;
 } CsNotificationWatcher;
 
 typedef struct
@@ -33,6 +34,9 @@ typedef struct
 GType                        cs_notification_watcher_get_type           (void);
 
 CsNotificationWatcher       *cs_notification_watcher_new (void);
+
+void                         cs_notification_watcher_set_debug_mode (CsNotificationWatcher *watcher,
+                                                                   gboolean enabled);
 
 G_END_DECLS
 

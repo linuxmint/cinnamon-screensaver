@@ -64,24 +64,76 @@ notification_filter_func (GDBusConnection *connection,
     if (incoming &&
         g_dbus_message_get_message_type (message) == G_DBUS_MESSAGE_TYPE_METHOD_CALL &&
         g_strcmp0 (g_dbus_message_get_interface (message), NOTIFICATIONS_INTERFACE) == 0 &&
-        g_strcmp0 (g_dbus_message_get_member (message), NOTIFY_METHOD) == 0) {
-
+        g_strcmp0 (g_dbus_message_get_member (message), NOTIFY_METHOD) == 0)
+    {
         GVariant *body = g_dbus_message_get_body (message);
 
         if (body != NULL &&
             g_variant_is_of_type (body, G_VARIANT_TYPE_TUPLE) &&
-            g_variant_n_children (body) >= 7) {
-
+            g_variant_n_children (body) >= 7)
+        {
             GVariant *hints, *sender;
+
+            if (watcher->debug)
+            {
+                GVariant *dbg_var = NULL;
+                const gchar *dbg_str;
+
+                g_printerr ("Notification received...\n");
+
+                dbg_var = g_variant_get_child_value (body, 0);
+
+                if (dbg_var != NULL && g_variant_is_of_type (dbg_var, G_VARIANT_TYPE_STRING))
+                {
+                    dbg_str = g_variant_get_string (dbg_var, NULL);
+
+                    if (dbg_str != NULL)
+                    {
+                        g_printerr ("Sender: %s\n", dbg_str);
+                    }
+                }
+
+                g_clear_pointer (&dbg_var, g_variant_unref);
+
+                dbg_var = g_variant_get_child_value (body, 3);
+
+                if (dbg_var != NULL && g_variant_is_of_type (dbg_var, G_VARIANT_TYPE_STRING))
+                {
+                    dbg_str = g_variant_get_string (dbg_var, NULL);
+
+                    if (dbg_str != NULL)
+                    {
+                        g_printerr ("Summary: %s\n", dbg_str);
+                    }
+                }
+
+                g_clear_pointer (&dbg_var, g_variant_unref);
+
+                dbg_var = g_variant_get_child_value (body, 4);
+
+                if (dbg_var != NULL && g_variant_is_of_type (dbg_var, G_VARIANT_TYPE_STRING))
+                {
+                    dbg_str = g_variant_get_string (dbg_var, NULL);
+
+                    if (dbg_str != NULL)
+                    {
+                        g_printerr ("Body: %s\n", dbg_str);
+                    }
+                }
+
+                g_clear_pointer (&dbg_var, g_variant_unref);
+            }
 
             hints = g_variant_get_child_value (body, 6);
 
-            if (hints != NULL && g_variant_is_of_type (hints, G_VARIANT_TYPE_DICTIONARY)) {
+            if (hints != NULL && g_variant_is_of_type (hints, G_VARIANT_TYPE_DICTIONARY))
+            {
                 GVariant *transient_hint;
 
                 transient_hint = g_variant_lookup_value (hints, "transient", NULL);
 
-                if (transient_hint) {
+                if (transient_hint)
+                {
                     transient = g_variant_get_int32 (transient_hint);
                 }
 
@@ -92,17 +144,21 @@ notification_filter_func (GDBusConnection *connection,
 
             sender = g_variant_get_child_value (body, 0);
 
-            if (sender) {
+            if (sender)
+            {
                 sender_str = g_variant_dup_string (sender, NULL);
             }
 
             g_clear_pointer (&sender, g_variant_unref);
         }
-    } else {
+    }
+    else
+    {
         ret = message;
     }
 
-    if (ret == NULL && !transient) {
+    if (ret == NULL && !transient)
+    {
         NotificationIdleData *data = g_slice_new0 (NotificationIdleData);
 
         data->watcher = watcher;
@@ -123,7 +179,8 @@ cs_notification_watcher_init (CsNotificationWatcher *watcher)
 
     watcher->connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 
-    if (!watcher->connection) {
+    if (!watcher->connection)
+    {
         g_printerr ("CsNotificationWatcher: Could not connect to session bus - %s\n", error->message);
         g_clear_error (&error);
         return;
@@ -143,7 +200,8 @@ cs_notification_watcher_init (CsNotificationWatcher *watcher)
                                           NULL,
                                           &error);
 
-    if (!result) {
+    if (!result)
+    {
         g_printerr ("CsNotificationWatcher: Could not add match rule to bus - %s\n", error->message);
         g_clear_error (&error);
         return;
@@ -155,7 +213,6 @@ cs_notification_watcher_init (CsNotificationWatcher *watcher)
                                                        NULL);
 }
 
-
 static void
 cs_notification_watcher_dispose (GObject *object)
 {
@@ -166,7 +223,8 @@ cs_notification_watcher_dispose (GObject *object)
 
     watcher = CS_NOTIFICATION_WATCHER (object);
 
-    if (watcher->filter_id > 0) {
+    if (watcher->filter_id > 0)
+    {
         g_dbus_connection_remove_filter (watcher->connection, watcher->filter_id);
         watcher->filter_id = 0;
     }
@@ -204,3 +262,9 @@ cs_notification_watcher_new (void)
     return CS_NOTIFICATION_WATCHER (result);
 }
 
+void
+cs_notification_watcher_set_debug_mode (CsNotificationWatcher *watcher,
+                                        gboolean enabled)
+{
+    watcher->debug = enabled;
+}
