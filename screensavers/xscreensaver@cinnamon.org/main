@@ -9,6 +9,7 @@ import shlex
 import argparse
 import syslog
 import signal
+import os
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -21,6 +22,8 @@ class XScreensaverPlugin:
         self.args = parser.parse_args()
 
         GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGTERM, self.on_terminate)
+
+        self.proc = None
 
         if self.args.standalone:
             self.plug = Gtk.Window()
@@ -61,12 +64,15 @@ class XScreensaverPlugin:
         for direc in directories:
             try:
                 path = shlex.split(direc + hack)
-                path.append("-window-id")
-                path.append(str(self.xid))
-                GLib.spawn_async(path)
-                success = True
-                break;
-            except:
+                if os.path.exists(path[0]):
+                    path.append("-window-id")
+                    path.append(str(self.xid))
+                    try:
+                        self.proc = Gio.Subprocess.new(path, Gio.SubprocessFlags.NONE)
+                        success = True
+                    except GLib.Error as e:
+                        print("Error spawning screensaver hack: %s" % e.message)
+            except Exception as e:
                 pass
 
         if not success:
@@ -81,7 +87,13 @@ class XScreensaverPlugin:
             label.show()
             self.plug.add(label)
 
+    def kill_plugin(self):
+        if self.proc:
+            self.proc.send_signal(signal.SIGTERM)
+            self.proc = None
+
     def on_terminate(self, data=None):
+        self.kill_plugin()
         self.plug.destroy()
         Gtk.main_quit()
 
