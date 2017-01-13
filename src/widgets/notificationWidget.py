@@ -50,6 +50,10 @@ class NotificationWidget(Gtk.Frame):
         if sender.lower() in players:
             return
 
+        for ignored in ("network",):
+            if ignored in sender.lower():
+                return
+
         self.notification_count += 1
 
         self.update_label()
