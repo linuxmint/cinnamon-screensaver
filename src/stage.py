@@ -61,7 +61,8 @@ class Stage(Gtk.Window):
         self.clock_widget = None
         self.albumart_widget = None
         self.unlock_dialog = None
-        self.status_bar = None
+        self.audio_panel = None
+        self.info_panel = None
 
         self.floaters = []
 
@@ -188,16 +189,95 @@ class Stage(Gtk.Window):
         utils.override_user_time(window)
         window.move_resize(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
 
+    def deactivate_after_timeout(self):
+        self.manager.set_active(False)
+
     def setup_children(self):
         """
         Creates all of our overlay children.  If a new 'widget' gets added,
         this should be the setup point for it.
+
+        We bail if something goes wrong on a critical widget - a monitor view or
+        unlock widget.
         """
-        self.setup_monitors()
-        self.setup_clock()
-        self.setup_albumart()
-        self.setup_unlock()
-        self.setup_status_bars()
+        total_failure = False
+
+        try:
+            self.setup_monitors()
+        except Exception as e:
+            print("Problem setting up monitor views: %s" % e)
+            total_failure = True
+
+        try:
+            self.setup_unlock()
+        except Exception as e:
+            print("Problem setting up unlock dialog: %s" % e)
+            total_failure = True
+
+        if not total_failure:
+            try:
+                self.setup_clock()
+            except Exception as e:
+                print("Problem setting up clock widget: %s" % e)
+                self.clock_widget = None
+
+            try:
+                self.setup_albumart()
+            except Exception as e:
+                print("Problem setting up albumart widget: %s" % e)
+                self.albumart_widget = None
+
+            try:
+                self.setup_status_bars()
+            except Exception as e:
+                print("Problem setting up status bars: %s" % e)
+                self.audio_panel = None
+                self.info_panel = None
+
+        if total_failure:
+            print("Total failure somewhere, deactivating screensaver.")
+            GObject.timeout_add_seconds(2, self.deactivate_after_timeout)
+
+    def destroy_children(self):
+        try:
+            self.destroy_monitor_views()
+        except Exception as e:
+            print(e)
+
+        try:
+            self.unlock_dialog.destroy()
+        except Exception as e:
+            print(e)
+
+        try:
+            self.clock_widget.destroy()
+        except Exception as e:
+            print(e)
+
+        try:
+            self.albumart_widget.destroy()
+        except Exception as e:
+            print(e)
+
+        try:
+            self.info_panel.destroy()
+        except Exception as e:
+            print(e)
+
+        try:
+            self.audio_panel.destroy()
+        except Exception as e:
+            print(e)
+
+        self.unlock_dialog = None
+        self.clock_widget = None
+        self.albumart_widget = None
+        self.info_panel = None
+        self.audio_panel = None
+        self.away_message = None
+
+        self.monitors = []
+        self.floaters = []
 
     def destroy_stage(self):
         """
@@ -218,24 +298,9 @@ class Stage(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
-        self.destroy_monitor_views()
+        self.destroy_children()
 
         self.fader = None
-
-        self.unlock_dialog.destroy()
-        self.clock_widget.destroy()
-        self.albumart_widget.destroy()
-        self.info_panel.destroy()
-        self.audio_panel.destroy()
-
-        self.unlock_dialog = None
-        self.clock_widget = None
-        self.albumart_widget = None
-        self.info_panel = None
-        self.audio_panel = None
-        self.away_message = None
-        self.monitors = []
-        self.floaters = []
 
         self.gdk_filter.stop()
         self.gdk_filter = None
@@ -514,7 +579,8 @@ class Stage(Gtk.Window):
         self.info_panel.update_revealed()
 
     def cancel_unlocking(self):
-        self.unlock_dialog.cancel_auth_client()
+        if self.unlock_dialog:
+            self.unlock_dialog.cancel_auth_client()
 
     def cancel_unlock_widget(self):
         """
@@ -535,10 +601,15 @@ class Stage(Gtk.Window):
                                            "notify::child-revealed",
                                            self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
-        self.clock_widget.unreveal()
-        self.albumart_widget.unreveal()
-        self.audio_panel.unreveal()
-        self.info_panel.unreveal()
+
+        if self.clock_widget != None:
+            self.clock_widget.unreveal()
+        if self.albumart_widget != None:
+            self.albumart_widget.unreveal()
+        if self.audio_panel != None:
+            self.audio_panel.unreveal()
+        if self.info_panel != None:
+            self.info_panel.unreveal()
 
     def after_unlock_unrevealed(self, obj, pspec):
         """
@@ -547,9 +618,13 @@ class Stage(Gtk.Window):
         """
         self.unlock_dialog.hide()
         self.unlock_dialog.cancel()
-        self.audio_panel.hide()
-        self.clock_widget.hide()
-        self.albumart_widget.hide()
+
+        if self.audio_panel != None:
+            self.audio_panel.hide()
+        if self.clock_widget != None:
+            self.clock_widget.hide()
+        if self.albumart_widget != None:
+            self.albumart_widget.hide()
 
         trackers.con_tracker_get().disconnect(self.unlock_dialog,
                                               "notify::child-revealed",
