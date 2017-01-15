@@ -21,6 +21,11 @@ class XScreensaverPlugin:
         parser.add_argument("--hack", action="store", help="xscreensaver hack to load")
         self.args = parser.parse_args()
 
+        try:
+            self.ensure_config_file()
+        except:
+            pass
+
         GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGTERM, self.on_terminate)
 
         self.proc = None
@@ -97,6 +102,55 @@ class XScreensaverPlugin:
         self.plug.destroy()
         Gtk.main_quit()
 
+    def ensure_config_file(self):
+        """
+        Check for a .xscreensaver file in the user home folder.  If it doesn't exist,
+        we'll place a simple one there.  This just ensures a few sane defaults (such as
+        where to grab random pictures from for hacks that use them, rather than using
+        test images.)
+        """
+        home = GLib.get_home_dir()
+        config_path = os.path.join(home, ".xscreensaver")
+
+        if os.path.exists(config_path):
+            return
+
+        images_path = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES)
+        if images_path == None:
+            images_path = home
+
+        from datetime import datetime
+
+        with open(config_path, "w") as f:
+            f.write("""
+# XScreenSaver Preferences File
+# Generated: %s
+# by the xscreensaver plugin for cinnamon-screensaver
+# Use xscreensaver-demo to customize
+
+visualID:   default
+installColormap:    True
+font:       *-medium-r-*-140-*-m-*
+
+grabDesktopImages:  False
+grabVideoFrames:    False
+chooseRandomImages: True
+imageDirectory: %s
+
+mode:       random
+selected:   -1
+
+textMode:   literal
+textLiteral:    Cinnamon
+textFile:
+textProgram:    fortune
+
+pointerPollTime:    0:00:05
+pointerHysteresis:  10
+GetViewPortIsFullOfLies:False
+procInterrupts: True
+
+""" % (str(datetime.now()), images_path))
 
 if __name__ == "__main__":
     XScreensaverPlugin()
