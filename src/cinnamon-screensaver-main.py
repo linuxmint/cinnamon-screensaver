@@ -49,6 +49,9 @@ class Main:
         status.Debug = args.debug
         status.InteractiveDebug = args.interactive
 
+        if status.Debug:
+            print("Debug mode active")
+
         if args.lock_disabled:
             print("Locking disabled")
 
