@@ -205,38 +205,38 @@ class Stage(Gtk.Window):
         try:
             self.setup_monitors()
         except Exception as e:
-            print("Problem setting up monitor views: %s" % e)
+            print("Problem setting up monitor views: %s" % str(e))
             total_failure = True
 
         try:
             self.setup_unlock()
         except Exception as e:
-            print("Problem setting up unlock dialog: %s" % e)
+            print("Problem setting up unlock dialog: %s" % str(e))
             total_failure = True
 
         if not total_failure:
             try:
                 self.setup_clock()
             except Exception as e:
-                print("Problem setting up clock widget: %s" % e)
+                print("Problem setting up clock widget: %s" % str(e))
                 self.clock_widget = None
 
             try:
                 self.setup_albumart()
             except Exception as e:
-                print("Problem setting up albumart widget: %s" % e)
+                print("Problem setting up albumart widget: %s" % str(e))
                 self.albumart_widget = None
 
             try:
                 self.setup_status_bars()
             except Exception as e:
-                print("Problem setting up status bars: %s" % e)
+                print("Problem setting up status bars: %s" % str(e))
                 self.audio_panel = None
                 self.info_panel = None
 
         if total_failure:
             print("Total failure somewhere, deactivating screensaver.")
-            GObject.timeout_add_seconds(2, self.deactivate_after_timeout)
+            GObject.idle_add(self.deactivate_after_timeout)
 
     def destroy_children(self):
         try:
@@ -245,27 +245,32 @@ class Stage(Gtk.Window):
             print(e)
 
         try:
-            self.unlock_dialog.destroy()
+            if self.unlock_dialog != None:
+                self.unlock_dialog.destroy()
         except Exception as e:
             print(e)
 
         try:
-            self.clock_widget.destroy()
+            if self.clock_widget != None:
+                self.clock_widget.destroy()
         except Exception as e:
             print(e)
 
         try:
-            self.albumart_widget.destroy()
+            if self.albumart_widget != None:
+                self.albumart_widget.destroy()
         except Exception as e:
             print(e)
 
         try:
-            self.info_panel.destroy()
+            if self.info_panel != None:
+                self.info_panel.destroy()
         except Exception as e:
             print(e)
 
         try:
-            self.audio_panel.destroy()
+            if self.info_panel != None:
+                self.audio_panel.destroy()
         except Exception as e:
             print(e)
 
@@ -517,8 +522,10 @@ class Stage(Gtk.Window):
         widget, depending on the outcome.
         """
         if success:
-            self.clock_widget.hide()
-            self.albumart_widget.hide()
+            if self.clock_widget != None:
+                self.clock_widget.hide()
+            if self.albumart_widget != None:
+                self.albumart_widget.hide()
             self.unlock_dialog.hide()
             self.manager.unlock()
         else:
@@ -531,7 +538,8 @@ class Stage(Gtk.Window):
         """
         Passes along an away-message to the clock.
         """
-        self.clock_widget.set_message(msg)
+        if self.clock_widget != None:
+            self.clock_widget.set_message(msg)
 
     def initialize_pam(self):
         return self.unlock_dialog.initialize_auth_client()
@@ -551,16 +559,20 @@ class Stage(Gtk.Window):
 
         utils.clear_clipboards(self.unlock_dialog)
 
-        self.clock_widget.stop_positioning()
-        self.albumart_widget.stop_positioning()
+        if self.clock_widget != None:
+            self.clock_widget.stop_positioning()
+        if self.albumart_widget != None:
+            self.albumart_widget.stop_positioning()
 
         status.Awake = True
 
         # Connect to one of our monitorViews (we have at least one always), to wait for
         # its transition to finish before running after_wallpaper_shown_for_unlock()
-        trackers.con_tracker_get().connect(self.monitors[0],
-                                           "current-view-change-complete",
-                                           self.after_wallpaper_shown_for_unlock)
+
+        if len(self.monitors) > 0:
+            trackers.con_tracker_get().connect(self.monitors[0],
+                                               "current-view-change-complete",
+                                               self.after_wallpaper_shown_for_unlock)
 
         self.update_monitor_views()
 
@@ -572,11 +584,17 @@ class Stage(Gtk.Window):
                                               "current-view-change-complete",
                                               self.after_wallpaper_shown_for_unlock)
 
-        self.clock_widget.reveal()
-        self.albumart_widget.reveal()
+        if self.clock_widget != None:
+            self.clock_widget.reveal()
+        if self.albumart_widget != None:
+            self.albumart_widget.reveal()
+
         self.unlock_dialog.reveal()
-        self.audio_panel.reveal()
-        self.info_panel.update_revealed()
+
+        if self.audio_panel != None:
+            self.audio_panel.reveal()
+        if self.info_panel != None:
+            self.info_panel.update_revealed()
 
     def cancel_unlocking(self):
         if self.unlock_dialog:
