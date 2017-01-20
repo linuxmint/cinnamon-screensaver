@@ -20,7 +20,7 @@ class InfoPanel(BaseWindow):
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
         self.screen = screen
-        self.monitor_index = utils.get_primary_monitor()
+        self.monitor_index = self.screen.get_primary_monitor()
 
         self.update_geometry()
 

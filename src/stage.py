@@ -31,7 +31,7 @@ class Stage(Gtk.Window):
     The Stage reponds pretty much only to the instructions of the
     ScreensaverManager.
     """
-    def __init__(self, screen, manager, away_message):
+    def __init__(self, manager, away_message):
         if status.InteractiveDebug:
             Gtk.Window.__init__(self,
                                 type=Gtk.WindowType.TOPLEVEL,
@@ -52,7 +52,7 @@ class Stage(Gtk.Window):
         self.destroying = False
 
         self.manager = manager
-        self.screen = screen
+        self.screen = CScreensaver.Screen.new(status.Debug)
         self.away_message = away_message
 
         self.monitors = []
@@ -116,11 +116,7 @@ class Stage(Gtk.Window):
         self.gdk_filter = CScreensaver.GdkEventFilter()
 
         trackers.con_tracker_get().connect(self.screen,
-                                           "monitors-changed",
-                                           self.on_screen_changed)
-
-        trackers.con_tracker_get().connect(self.screen,
-                                           "size-changed",
+                                           "changed",
                                            self.on_screen_changed)
 
         trackers.con_tracker_get().connect(self,
@@ -311,11 +307,7 @@ class Stage(Gtk.Window):
         self.gdk_filter = None
 
         trackers.con_tracker_get().disconnect(self.screen,
-                                              "monitors-changed",
-                                              self.on_screen_changed)
-
-        trackers.con_tracker_get().disconnect(self.screen,
-                                              "size-changed",
+                                              "changed",
                                               self.on_screen_changed)
 
         self.destroy()
@@ -400,7 +392,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.clock_widget = ClockWidget(self.screen, self.away_message, utils.get_mouse_monitor())
+        self.clock_widget = ClockWidget(self.screen, self.away_message, self.screen.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
         self.floaters.append(self.clock_widget)
@@ -418,7 +410,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.albumart_widget = AlbumArt(self.screen, self.away_message, utils.get_mouse_monitor())
+        self.albumart_widget = AlbumArt(self.screen, self.away_message, self.screen.get_mouse_monitor())
         self.add_child_widget(self.albumart_widget)
 
         self.floaters.append(self.clock_widget)
@@ -726,22 +718,10 @@ class Stage(Gtk.Window):
         """
 
         if status.InteractiveDebug:
-            # Gdk 3.22 introduces GdkMonitor objects, and GdkScreen-reported
-            # monitor info is no-longer reliable
-
-            if utils.have_gtk_version("3.22.0"):
-                monitor = Gdk.Display.get_default().get_primary_monitor()
-                self.rect = monitor.get_geometry()
-            else:
-                monitor_n = self.screen.get_primary_monitor()
-                self.rect = self.screen.get_monitor_geometry(monitor_n)
+            monitor_n = self.screen.get_primary_monitor()
+            self.rect = self.screen.get_monitor_geometry(monitor_n)
         else:
-            self.rect = Gdk.Rectangle()
-
-            self.rect.x = 0
-            self.rect.y = 0
-            self.rect.width = self.screen.get_width()
-            self.rect.height = self.screen.get_height()
+            self.rect = self.screen.get_screen_geometry()
 
         hints = Gdk.Geometry()
         hints.min_width = self.rect.width
@@ -755,12 +735,18 @@ class Stage(Gtk.Window):
 
 # Overlay window management
 
+    def get_mouse_monitor(self):
+        if status.InteractiveDebug:
+            return self.screen.get_primary_monitor()
+        else:
+            return self.screen.get_mouse_monitor()
+
     def maybe_update_layout(self):
         """
         Called on all user events, moves widgets to the currently
         focused monitor if it changes (whichever monitor the mouse is in)
         """
-        current_focus_monitor = utils.get_mouse_monitor()
+        current_focus_monitor = self.screen.get_mouse_monitor()
 
         if self.last_focus_monitor == -1:
             self.last_focus_monitor = current_focus_monitor
@@ -810,7 +796,7 @@ class Stage(Gtk.Window):
             UnlockDialog always shows on the currently focused monitor (the one the
             mouse is currently in), and is kept centered.
             """
-            monitor = utils.get_mouse_monitor()
+            monitor = self.screen.get_mouse_monitor()
             monitor_rect = self.screen.get_monitor_geometry(monitor)
 
             min_rect, nat_rect = child.get_preferred_size()
@@ -836,7 +822,7 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                current_monitor = utils.get_mouse_monitor()
+                current_monitor = self.screen.get_mouse_monitor()
             else:
                 current_monitor = child.current_monitor
 
@@ -917,7 +903,7 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                current_monitor = utils.get_mouse_monitor()
+                current_monitor = self.screen.get_mouse_monitor()
                 monitor_rect = self.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x
                 allocation.y = monitor_rect.y
@@ -942,7 +928,7 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                current_monitor = utils.get_mouse_monitor()
+                current_monitor = self.screen.get_mouse_monitor()
                 monitor_rect = self.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
                 allocation.y = monitor_rect.y

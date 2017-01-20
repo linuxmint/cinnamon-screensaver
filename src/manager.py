@@ -25,8 +25,6 @@ class ScreensaverManager(GObject.Object):
     def __init__(self):
         super(ScreensaverManager, self).__init__()
 
-        self.screen = Gdk.Screen.get_default()
-
         self.activated_timestamp = 0
 
         self.stage = None
@@ -161,7 +159,7 @@ class ScreensaverManager(GObject.Object):
         user-initiated activation, or slowly, when the session has gone idle.
         """
         try:
-            self.stage = Stage(self.screen, self, away_message)
+            self.stage = Stage(self, away_message)
             self.stage.transition_in(effect_time, callback)
         except Exception:
             print("Could not spawn screensaver stage:\n")
