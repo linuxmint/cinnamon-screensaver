@@ -1,6 +1,9 @@
 #! /usr/bin/python3
 
-from gi.repository import Gtk, Gdk, CScreensaver, GObject
+import gi
+gi.require_version('CDesktopEnums', '3.0')
+
+from gi.repository import Gtk, Gdk, CScreensaver, CDesktopEnums, GObject
 import random
 
 import status
@@ -318,8 +321,9 @@ class Stage(Gtk.Window):
         to cover them.
         """
         self.monitors = []
+        status.Spanned = settings.bg_settings.get_enum("picture-options") == CDesktopEnums.BackgroundStyle.SPANNED
 
-        if status.InteractiveDebug:
+        if status.InteractiveDebug or status.Spanned:
             monitors = (self.screen.get_primary_monitor(),)
         else:
             n = self.screen.get_n_monitors()

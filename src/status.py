@@ -24,3 +24,7 @@ Debug = False
 
 # Forces the Stage to only cover a single monitor and launch a GtkInspector window.
 InteractiveDebug = False
+
+# If the wallpaper aspect is 'spanned' we will only create one MonitorView and manage it slightly
+# differently.  This is an easy place to keep track of that.  This is set in singletons.py.
+Spanned = False
