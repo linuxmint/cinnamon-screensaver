@@ -36,7 +36,6 @@ class NotificationWidget(Gtk.Frame):
         box.show_all()
 
         self.notification_watcher = singletons.NotificationWatcher
-        self.notification_watcher.set_debug_mode(status.Debug)
 
         trackers.con_tracker_get().connect(self.notification_watcher,
                                            "notification-received",

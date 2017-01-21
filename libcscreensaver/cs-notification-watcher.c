@@ -29,6 +29,8 @@ G_DEFINE_TYPE (CsNotificationWatcher, cs_notification_watcher, G_TYPE_OBJECT);
 #define NOTIFICATIONS_INTERFACE "org.freedesktop.Notifications"
 #define NOTIFY_METHOD "Notify"
 
+static gboolean debug_mode = FALSE;
+
 typedef struct
 {
     CsNotificationWatcher *watcher;
@@ -74,7 +76,7 @@ notification_filter_func (GDBusConnection *connection,
         {
             GVariant *hints, *sender;
 
-            if (watcher->debug)
+            if (debug_mode)
             {
                 GVariant *dbg_var = NULL;
                 const gchar *dbg_str;
@@ -252,19 +254,14 @@ cs_notification_watcher_class_init (CsNotificationWatcherClass *klass)
 }
 
 CsNotificationWatcher *
-cs_notification_watcher_new (void)
+cs_notification_watcher_new (gboolean debug)
 {
     GObject     *result;
+
+    debug_mode = debug;
 
     result = g_object_new (CS_TYPE_NOTIFICATION_WATCHER,
                            NULL);
 
     return CS_NOTIFICATION_WATCHER (result);
-}
-
-void
-cs_notification_watcher_set_debug_mode (CsNotificationWatcher *watcher,
-                                        gboolean enabled)
-{
-    watcher->debug = enabled;
 }

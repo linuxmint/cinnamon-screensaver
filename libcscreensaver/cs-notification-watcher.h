@@ -33,10 +33,7 @@ typedef struct
 
 GType                        cs_notification_watcher_get_type           (void);
 
-CsNotificationWatcher       *cs_notification_watcher_new (void);
-
-void                         cs_notification_watcher_set_debug_mode (CsNotificationWatcher *watcher,
-                                                                   gboolean enabled);
+CsNotificationWatcher       *cs_notification_watcher_new (gboolean debug);
 
 G_END_DECLS
 

@@ -3,6 +3,7 @@
 import gi
 
 from util import trackers, settings
+import status
 
 # Our dbus proxies are abstracted out one level more than really necessary - we have
 # clients that the screensaver initializes, that can never fail.  The actual connection
@@ -29,8 +30,7 @@ AccountsServiceClient = _AccountsServiceClient()
 # don't work well via introspection.
 from gi.repository import CScreensaver
 
-NotificationWatcher = CScreensaver.NotificationWatcher()
-
+NotificationWatcher = CScreensaver.NotificationWatcher.new(status.Debug)
 
 # We only need one instance of CinnamonDesktop.BG - have it listen to bg gsettings changes
 # and we just connect to "changed" on the Backgrounds object from our user (the Stage)
