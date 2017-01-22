@@ -141,6 +141,30 @@ find_main_output_for_crtc (XRRScreenResources *resources,
 #endif
 
 static void
+apply_scale_factor (CsMonitorInfo *infos,
+                    gint           n_infos,
+                    gint           factor)
+{
+    gint i;
+
+    for (i = 0; i < n_infos; i++)
+    {
+        infos[i].rect.x /= factor;
+        infos[i].rect.y /= factor;
+        infos[i].rect.width /= factor;
+        infos[i].rect.height /= factor;
+
+        DEBUG ("Scale factor of %d applied.  Monitor %d is %d,%d %d x %d\n",
+               factor,
+               infos[i].number,
+               infos[i].rect.x,
+               infos[i].rect.y,
+               infos[i].rect.width,
+               infos[i].rect.height);
+    }
+}
+
+static void
 reload_monitor_infos (CsScreen *screen)
 {
     GdkDisplay *gdk_display;
@@ -317,6 +341,10 @@ reload_monitor_infos (CsScreen *screen)
   filter_mirrored_monitors (screen);
 
   screen->monitor_infos[screen->primary_monitor_index].is_primary = TRUE;
+
+  apply_scale_factor (screen->monitor_infos,
+                      screen->n_monitor_infos,
+                      gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0));
 
   g_assert (screen->n_monitor_infos > 0);
   g_assert (screen->monitor_infos != NULL);
@@ -525,6 +553,7 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
   int root_x_return, root_y_return;
   int win_x_return, win_y_return;
   unsigned int mask_return;
+  gint scale_factor;
 
   gint i;
   gint ret = 0;
@@ -545,6 +574,10 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
                  &win_y_return,
                  &mask_return);
   gdk_error_trap_pop_ignored ();
+
+  scale_factor = gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0);
+  root_x_return /= scale_factor;
+  root_y_return /= scale_factor;
 
   for (i = 0; i < screen->n_monitor_infos; i++)
     {
