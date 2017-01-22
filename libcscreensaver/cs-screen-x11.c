@@ -44,10 +44,10 @@ static gboolean
 cs_rectangle_equal (const GdkRectangle *src1,
                     const GdkRectangle *src2)
 {
-  return ((src1->x == src2->x) &&
-          (src1->y == src2->y) &&
-          (src1->width == src2->width) &&
-          (src1->height == src2->height));
+    return ((src1->x == src2->x) &&
+            (src1->y == src2->y) &&
+            (src1->width == src2->width) &&
+            (src1->height == src2->height));
 }
 
 /* The list of monitors reported by the windowing system might include
@@ -60,28 +60,28 @@ cs_rectangle_equal (const GdkRectangle *src1,
 static void
 filter_mirrored_monitors (CsScreen *screen)
 {
-  int i, j;
+    int i, j;
 
-  /* Currently always true and simplifies things */
-  g_assert (screen->primary_monitor_index == 0);
+    /* Currently always true and simplifies things */
+    g_assert (screen->primary_monitor_index == 0);
 
-  for (i = 1; i < screen->n_monitor_infos; i++)
+    for (i = 1; i < screen->n_monitor_infos; i++)
     {
-      /* In case we've filtered previous monitors */
-      screen->monitor_infos[i].number = i;
+        /* In case we've filtered previous monitors */
+        screen->monitor_infos[i].number = i;
 
-      for (j = 0; j < i; j++)
+        for (j = 0; j < i; j++)
         {
-          if (cs_rectangle_equal (&screen->monitor_infos[i].rect,
+            if (cs_rectangle_equal (&screen->monitor_infos[i].rect,
                                     &screen->monitor_infos[j].rect))
             {
-              memmove (&screen->monitor_infos[i],
-                       &screen->monitor_infos[i + 1],
-                       (screen->n_monitor_infos - i - 1) * sizeof (CsMonitorInfo));
-              screen->n_monitor_infos--;
-              i--;
+                memmove (&screen->monitor_infos[i],
+                         &screen->monitor_infos[i + 1],
+                         (screen->n_monitor_infos - i - 1) * sizeof (CsMonitorInfo));
+                screen->n_monitor_infos--;
+                i--;
 
-              continue;
+                continue;
             }
         }
     }
@@ -91,18 +91,21 @@ filter_mirrored_monitors (CsScreen *screen)
 static CsMonitorInfo *
 find_monitor_with_rect (CsScreen *screen, int x, int y, int w, int h)
 {
-  CsMonitorInfo *info;
-  int i;
+    CsMonitorInfo *info;
+    int i;
 
-  for (i = 0; i < screen->n_monitor_infos; i++)
+    for (i = 0; i < screen->n_monitor_infos; i++)
     {
-      info = &screen->monitor_infos[i];
-      if (x == info->rect.x &&
-          y == info->rect.y &&
-          w == info->rect.width &&
-          h == info->rect.height)
-        return info;
+        info = &screen->monitor_infos[i];
+        if (x == info->rect.x &&
+            y == info->rect.y &&
+            w == info->rect.width &&
+            h == info->rect.height)
+        {
+            return info;
+        }
     }
+
   return NULL;
 }
 
@@ -118,26 +121,28 @@ find_main_output_for_crtc (XRRScreenResources *resources,
                            Display            *xdisplay,
                            XID                 xroot)
 {
-  XRROutputInfo *output;
-  RROutput primary_output;
-  int i;
-  XID res;
+    XRROutputInfo *output;
+    RROutput primary_output;
+    int i;
+    XID res;
 
-  primary_output = XRRGetOutputPrimary (xdisplay, xroot);
+    primary_output = XRRGetOutputPrimary (xdisplay, xroot);
 
-  res = None;
-  for (i = 0; i < crtc->noutput; i++)
+    res = None;
+    for (i = 0; i < crtc->noutput; i++)
     {
-      output = XRRGetOutputInfo (xdisplay, resources, crtc->outputs[i]);
-      if (output->connection != RR_Disconnected &&
-          (res == None || crtc->outputs[i] == primary_output))
-        res = crtc->outputs[i];
-      XRRFreeOutputInfo (output);
+        output = XRRGetOutputInfo (xdisplay, resources, crtc->outputs[i]);
+        if (output->connection != RR_Disconnected &&
+            (res == None || crtc->outputs[i] == primary_output))
+        {
+            res = crtc->outputs[i];
+        }
+
+        XRRFreeOutputInfo (output);
     }
 
-  return res;
+    return res;
 }
-
 #endif
 
 static void
@@ -176,178 +181,183 @@ reload_monitor_infos (CsScreen *screen)
 
     xroot = gdk_x11_window_get_xid (gdk_screen_get_root_window (screen->gdk_screen));
 
-  /* Any previous screen->monitor_infos is freed by the caller */
+    /* Any previous screen->monitor_infos is freed by the caller */
 
-  screen->monitor_infos = NULL;
-  screen->n_monitor_infos = 0;
+    screen->monitor_infos = NULL;
+    screen->n_monitor_infos = 0;
 
-  /* Xinerama doesn't have a concept of primary monitor, however XRandR
-   * does. However, the XRandR xinerama compat code always sorts the
-   * primary output first, so we rely on that here. We could use the
-   * native XRandR calls instead of xinerama, but that would be
-   * slightly problematic for _NET_WM_FULLSCREEN_MONITORS support, as
-   * that is defined in terms of xinerama monitor indexes.
-   * So, since we don't need anything in xrandr except the primary
-   * we can keep using xinerama and use the first monitor as the
-   * primary.
-   */
-  screen->primary_monitor_index = 0;
+    /* Xinerama doesn't have a concept of primary monitor, however XRandR
+     * does. However, the XRandR xinerama compat code always sorts the
+     * primary output first, so we rely on that here. We could use the
+     * native XRandR calls instead of xinerama, but that would be
+     * slightly problematic for _NET_WM_FULLSCREEN_MONITORS support, as
+     * that is defined in terms of xinerama monitor indexes.
+     * So, since we don't need anything in xrandr except the primary
+     * we can keep using xinerama and use the first monitor as the
+     * primary.
+     */
+
+    screen->primary_monitor_index = 0;
 
 
 #ifdef HAVE_XFREE_XINERAMA
-  if (screen->n_monitor_infos == 0 &&
-      XineramaIsActive (xdisplay))
+    if (screen->n_monitor_infos == 0 &&
+        XineramaIsActive (xdisplay))
     {
-      XineramaScreenInfo *infos;
-      int n_infos;
-      int i;
-      
-      n_infos = 0;
-      infos = XineramaQueryScreens (xdisplay, &n_infos);
+        XineramaScreenInfo *infos;
+        int n_infos;
+        int i;
 
-      DEBUG ("Found %d Xinerama screens on display %s\n",
-             n_infos, gdk_display_get_name (gdk_display));
+        n_infos = 0;
+        infos = XineramaQueryScreens (xdisplay, &n_infos);
 
-      if (n_infos > 0)
+        DEBUG ("Found %d Xinerama screens on display %s\n",
+               n_infos, gdk_display_get_name (gdk_display));
+
+        if (n_infos > 0)
         {
-          screen->monitor_infos = g_new0 (CsMonitorInfo, n_infos);
-          screen->n_monitor_infos = n_infos;
-          
-          i = 0;
-          while (i < n_infos)
+            screen->monitor_infos = g_new0 (CsMonitorInfo, n_infos);
+            screen->n_monitor_infos = n_infos;
+
+            i = 0;
+            while (i < n_infos)
             {
-              screen->monitor_infos[i].number = infos[i].screen_number;
-              screen->monitor_infos[i].rect.x = infos[i].x_org;
-              screen->monitor_infos[i].rect.y = infos[i].y_org;
-              screen->monitor_infos[i].rect.width = infos[i].width;
-              screen->monitor_infos[i].rect.height = infos[i].height;
+                screen->monitor_infos[i].number = infos[i].screen_number;
+                screen->monitor_infos[i].rect.x = infos[i].x_org;
+                screen->monitor_infos[i].rect.y = infos[i].y_org;
+                screen->monitor_infos[i].rect.width = infos[i].width;
+                screen->monitor_infos[i].rect.height = infos[i].height;
 
-              DEBUG ("Monitor %d is %d,%d %d x %d\n",
-                     screen->monitor_infos[i].number,
-                     screen->monitor_infos[i].rect.x,
-                     screen->monitor_infos[i].rect.y,
-                     screen->monitor_infos[i].rect.width,
-                     screen->monitor_infos[i].rect.height);
+                DEBUG ("Monitor %d is %d,%d %d x %d\n",
+                       screen->monitor_infos[i].number,
+                       screen->monitor_infos[i].rect.x,
+                       screen->monitor_infos[i].rect.y,
+                       screen->monitor_infos[i].rect.width,
+                       screen->monitor_infos[i].rect.height);
 
-              ++i;
+                ++i;
             }
         }
 
-      cs_XFree (infos);
+        cs_XFree (infos);
 
 #ifdef HAVE_RANDR
-      {
+    {
         XRRScreenResources *resources;
 
         resources = XRRGetScreenResourcesCurrent (xdisplay, xroot);
+
         if (resources)
-          {
+        {
             for (i = 0; i < resources->ncrtc; i++)
-              {
+            {
                 XRRCrtcInfo *crtc;
                 CsMonitorInfo *info;
 
                 crtc = XRRGetCrtcInfo (xdisplay, resources, resources->crtcs[i]);
                 info = find_monitor_with_rect (screen, crtc->x, crtc->y, (int)crtc->width, (int)crtc->height);
+
                 if (info)
+                {
                   info->output = find_main_output_for_crtc (resources, crtc, xdisplay, xroot);
+                }
 
                 XRRFreeCrtcInfo (crtc);
-              }
+            }
+
             XRRFreeScreenResources (resources);
-          }
-      }
+        }
+    }
 #endif
     }
-  else if (screen->n_monitor_infos > 0)
+    else if (screen->n_monitor_infos > 0)
     {
-      DEBUG ("No XFree86 Xinerama extension or XFree86 Xinerama inactive on display %s\n",
-             gdk_display_get_name (gdk_display));
+        DEBUG ("No XFree86 Xinerama extension or XFree86 Xinerama inactive on display %s\n",
+               gdk_display_get_name (gdk_display));
     }
 #else
-  DEBUG ("Muffin compiled without XFree86 Xinerama support\n");
+    DEBUG ("Muffin compiled without XFree86 Xinerama support\n");
 #endif /* HAVE_XFREE_XINERAMA */
 
 #ifdef HAVE_SOLARIS_XINERAMA
-  /* This code from GDK, Copyright (C) 2002 Sun Microsystems */
-  if (screen->n_monitor_infos == 0 &&
-      XineramaGetState (xdisplay,
-                        gdk_screen_get_number (screen->gdk_screen)))
+    /* This code from GDK, Copyright (C) 2002 Sun Microsystems */
+    if (screen->n_monitor_infos == 0 &&
+        XineramaGetState (xdisplay,
+                          gdk_screen_get_number (screen->gdk_screen)))
     {
-      XRectangle monitors[MAXFRAMEBUFFERS];
-      unsigned char hints[16];
-      int result;
-      int n_monitors;
-      int i;
+        XRectangle monitors[MAXFRAMEBUFFERS];
+        unsigned char hints[16];
+        int result;
+        int n_monitors;
+        int i;
 
-      n_monitors = 0;
-      result = XineramaGetInfo (xdisplay,
-                                gdk_screen_get_number (screen->gdk_screen),
-                                monitors, hints,
-                                &n_monitors);
-      /* Yes I know it should be Success but the current implementation 
-       * returns the num of monitor
-       */
-      if (result > 0)
-    {
-          g_assert (n_monitors > 0);
-          
-          screen->monitor_infos = g_new0 (CsMonitorInfo, n_monitors);
-          screen->n_monitor_infos = n_monitors;
-          
-          i = 0;
-          while (i < n_monitors)
+        n_monitors = 0;
+        result = XineramaGetInfo (xdisplay,
+                                  gdk_screen_get_number (screen->gdk_screen),
+                                  monitors, hints,
+                                  &n_monitors);
+        /* Yes I know it should be Success but the current implementation
+         * returns the num of monitor
+         */
+        if (result > 0)
+        {
+            g_assert (n_monitors > 0);
+
+            screen->monitor_infos = g_new0 (CsMonitorInfo, n_monitors);
+            screen->n_monitor_infos = n_monitors;
+
+            i = 0;
+            while (i < n_monitors)
             {
-              screen->monitor_infos[i].number = i;
-              screen->monitor_infos[i].rect.x = monitors[i].x;
-              screen->monitor_infos[i].rect.y = monitors[i].y;
-              screen->monitor_infos[i].rect.width = monitors[i].width;
-              screen->monitor_infos[i].rect.height = monitors[i].height;
+                screen->monitor_infos[i].number = i;
+                screen->monitor_infos[i].rect.x = monitors[i].x;
+                screen->monitor_infos[i].rect.y = monitors[i].y;
+                screen->monitor_infos[i].rect.width = monitors[i].width;
+                screen->monitor_infos[i].rect.height = monitors[i].height;
 
-              DEBUG ("Monitor %d is %d,%d %d x %d\n",
-                     screen->monitor_infos[i].number,
-                     screen->monitor_infos[i].rect.x,
-                     screen->monitor_infos[i].rect.y,
-                     screen->monitor_infos[i].rect.width,
-                     screen->monitor_infos[i].rect.height);
-              ++i;
+                DEBUG ("Monitor %d is %d,%d %d x %d\n",
+                       screen->monitor_infos[i].number,
+                       screen->monitor_infos[i].rect.x,
+                       screen->monitor_infos[i].rect.y,
+                       screen->monitor_infos[i].rect.width,
+                       screen->monitor_infos[i].rect.height);
+                ++i;
             }
+        }
     }
-    }
-  else if (screen->n_monitor_infos == 0)
+    else if (screen->n_monitor_infos == 0)
     {
-      DEBUG ("No Solaris Xinerama extension or Solaris Xinerama inactive on display %s\n",
-             gdk_display_get_name (gdk_display));
+        DEBUG ("No Solaris Xinerama extension or Solaris Xinerama inactive on display %s\n",
+               gdk_display_get_name (gdk_display));
     }
 #else
-  DEBUG ("Cinnamon Screensaver compiled without Solaris Xinerama support\n");
+    DEBUG ("Cinnamon Screensaver compiled without Solaris Xinerama support\n");
 #endif /* HAVE_SOLARIS_XINERAMA */
 
-  
-  /* If no Xinerama, fill in the single screen info so
-   * we can use the field unconditionally
-   */
-  if (screen->n_monitor_infos == 0)
+    /* If no Xinerama, fill in the single screen info so
+     * we can use the field unconditionally
+    */
+    if (screen->n_monitor_infos == 0)
     {
-      DEBUG ("No Xinerama screens, using default screen info\n");
+        DEBUG ("No Xinerama screens, using default screen info\n");
 
-      screen->monitor_infos = g_new0 (CsMonitorInfo, 1);
-      screen->n_monitor_infos = 1;
-          
-      screen->monitor_infos[0].number = 0;
-      screen->monitor_infos[0].rect = screen->rect;
+        screen->monitor_infos = g_new0 (CsMonitorInfo, 1);
+        screen->n_monitor_infos = 1;
+
+        screen->monitor_infos[0].number = 0;
+        screen->monitor_infos[0].rect = screen->rect;
     }
 
-  filter_mirrored_monitors (screen);
+    filter_mirrored_monitors (screen);
 
-  screen->monitor_infos[screen->primary_monitor_index].is_primary = TRUE;
+    screen->monitor_infos[screen->primary_monitor_index].is_primary = TRUE;
 
-  apply_scale_factor (screen->monitor_infos,
-                      screen->n_monitor_infos,
-                      gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0));
+    apply_scale_factor (screen->monitor_infos,
+                        screen->n_monitor_infos,
+                        gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0));
 
-  g_assert (screen->n_monitor_infos > 0);
-  g_assert (screen->monitor_infos != NULL);
+    g_assert (screen->n_monitor_infos > 0);
+    g_assert (screen->monitor_infos != NULL);
 }
 
 static void
@@ -440,17 +450,16 @@ cs_screen_finalize (GObject *object)
 static void
 cs_screen_class_init (CsScreenClass *klass)
 {
-        GObjectClass   *object_class = G_OBJECT_CLASS (klass);
+    GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-        object_class->finalize     = cs_screen_finalize;
+    object_class->finalize = cs_screen_finalize;
 
-       signals[CHANGED] =
-        g_signal_new ("changed",
-                  G_TYPE_FROM_CLASS (object_class),
-                  G_SIGNAL_RUN_LAST,
-                  0,
-                  NULL, NULL, NULL,
-                  G_TYPE_NONE, 0);
+    signals[CHANGED] = g_signal_new ("changed",
+                                     G_TYPE_FROM_CLASS (object_class),
+                                     G_SIGNAL_RUN_LAST,
+                                     0,
+                                     NULL, NULL, NULL,
+                                     G_TYPE_NONE, 0);
 }
 
 CsScreen *
@@ -479,11 +488,11 @@ cs_screen_get_monitor_geometry (CsScreen     *screen,
                                 gint          monitor,
                                 GdkRectangle *geometry)
 {
-  g_return_if_fail (CS_IS_SCREEN (screen));
-  g_return_if_fail (monitor >= 0 && monitor < screen->n_monitor_infos);
-  g_return_if_fail (geometry != NULL);
+    g_return_if_fail (CS_IS_SCREEN (screen));
+    g_return_if_fail (monitor >= 0 && monitor < screen->n_monitor_infos);
+    g_return_if_fail (geometry != NULL);
 
-  *geometry = screen->monitor_infos[monitor].rect;
+    *geometry = screen->monitor_infos[monitor].rect;
 }
 
 /**
@@ -497,10 +506,10 @@ void
 cs_screen_get_screen_geometry (CsScreen     *screen,
                                GdkRectangle *geometry)
 {
-  g_return_if_fail (CS_IS_SCREEN (screen));
-  g_return_if_fail (geometry != NULL);
+    g_return_if_fail (CS_IS_SCREEN (screen));
+    g_return_if_fail (geometry != NULL);
 
-  *geometry = screen->rect;
+    *geometry = screen->rect;
 }
 
 /**
@@ -514,9 +523,9 @@ cs_screen_get_screen_geometry (CsScreen     *screen,
 gint
 cs_screen_get_primary_monitor (CsScreen *screen)
 {
-  g_return_val_if_fail (CS_IS_SCREEN (screen), 0);
+    g_return_val_if_fail (CS_IS_SCREEN (screen), 0);
 
-  return screen->primary_monitor_index;
+    return screen->primary_monitor_index;
 }
 
 /**
@@ -530,9 +539,9 @@ cs_screen_get_primary_monitor (CsScreen *screen)
 gint
 cs_screen_get_n_monitors (CsScreen *screen)
 {
-  g_return_val_if_fail (CS_IS_SCREEN (screen), 0);
+    g_return_val_if_fail (CS_IS_SCREEN (screen), 0);
 
-  return screen->n_monitor_infos;
+    return screen->n_monitor_infos;
 }
 
 /**
@@ -547,39 +556,39 @@ cs_screen_get_n_monitors (CsScreen *screen)
 gint
 cs_screen_get_mouse_monitor (CsScreen *screen)
 {
-  GdkDisplay *gdk_display;
+    GdkDisplay *gdk_display;
 
-  Window xroot, root_return, child_return;
-  int root_x_return, root_y_return;
-  int win_x_return, win_y_return;
-  unsigned int mask_return;
-  gint scale_factor;
+    Window xroot, root_return, child_return;
+    int root_x_return, root_y_return;
+    int win_x_return, win_y_return;
+    unsigned int mask_return;
+    gint scale_factor;
 
-  gint i;
-  gint ret = 0;
+    gint i;
+    gint ret = 0;
 
-  g_return_val_if_fail (CS_IS_SCREEN (screen), 0);
+    g_return_val_if_fail (CS_IS_SCREEN (screen), 0);
 
-  gdk_display = gdk_screen_get_display (screen->gdk_screen);
-  xroot = gdk_x11_window_get_xid (gdk_screen_get_root_window (screen->gdk_screen));
+    gdk_display = gdk_screen_get_display (screen->gdk_screen);
+    xroot = gdk_x11_window_get_xid (gdk_screen_get_root_window (screen->gdk_screen));
 
-  gdk_error_trap_push ();
-  XQueryPointer (gdk_x11_display_get_xdisplay (gdk_display),
-                 xroot,
-                 &root_return,
-                 &child_return,
-                 &root_x_return,
-                 &root_y_return,
-                 &win_x_return,
-                 &win_y_return,
-                 &mask_return);
-  gdk_error_trap_pop_ignored ();
+    gdk_error_trap_push ();
+    XQueryPointer (gdk_x11_display_get_xdisplay (gdk_display),
+                   xroot,
+                   &root_return,
+                   &child_return,
+                   &root_x_return,
+                   &root_y_return,
+                   &win_x_return,
+                   &win_y_return,
+                   &mask_return);
+    gdk_error_trap_pop_ignored ();
 
-  scale_factor = gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0);
-  root_x_return /= scale_factor;
-  root_y_return /= scale_factor;
+    scale_factor = gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0);
+    root_x_return /= scale_factor;
+    root_y_return /= scale_factor;
 
-  for (i = 0; i < screen->n_monitor_infos; i++)
+    for (i = 0; i < screen->n_monitor_infos; i++)
     {
         GdkRectangle iter = screen->monitor_infos[i].rect;
 
@@ -591,5 +600,5 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
         }
     }
 
-  return ret;
+    return ret;
 }
