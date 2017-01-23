@@ -89,7 +89,6 @@ class Stage(Gtk.Window):
         self.override_background_color (Gtk.StateFlags.NORMAL, c);
 
         self.update_geometry()
-        self.set_opacity(0.0)
 
         self.overlay = Gtk.Overlay()
         self.fader = Fader(self)
@@ -147,8 +146,16 @@ class Stage(Gtk.Window):
         """
         This is the primary way of making the Stage visible.
         """
-        self.realize()
-        self.fader.fade_in(effect_time, callback)
+        if effect_time == 0:
+            self.set_opacity(1.0)
+
+            self.show()
+            callback()
+        else:
+            self.set_opacity(0.0)
+
+            self.realize()
+            self.fader.fade_in(effect_time, callback)
 
     def transition_out(self, effect_time, callback):
         """

@@ -57,7 +57,7 @@ class ScreensaverManager(GObject.Object):
         Initiate locking (activating first if necessary.)
         """
         if not status.Active:
-            if self.set_active(True, msg):
+            if self.set_active(True, True, msg):
                 self.stop_lock_delay()
                 if utils.user_can_lock():
                     status.Locked = True
@@ -74,7 +74,7 @@ class ScreensaverManager(GObject.Object):
         status.Locked = False
         status.Awake = False
 
-    def set_active(self, active, msg=None):
+    def set_active(self, active, immediate=False, msg=None):
         """
         Activates or deactivates the screensaver.  Activation involves:
             - sending a request to Cinnamon to exit Overview or Expo - 
@@ -91,7 +91,11 @@ class ScreensaverManager(GObject.Object):
                 self.cinnamon_client.exit_expo_and_overview()
                 if self.grab_helper.grab_root(False):
                     if not self.stage:
-                        self.spawn_stage(msg, c.STAGE_SPAWN_TRANSITION, self.on_spawn_stage_complete)
+                        if immediate:
+                            transition = 0
+                        else:
+                            transition = c.STAGE_SPAWN_TRANSITION
+                        self.spawn_stage(msg, transition, self.on_spawn_stage_complete)
                     return True
                 else:
                     status.Active = False
