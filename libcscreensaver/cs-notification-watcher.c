@@ -58,7 +58,7 @@ notification_filter_func (GDBusConnection *connection,
                           gpointer         user_data)
 {
     GDBusMessage *ret = NULL;
-    gint32 transient = 0;
+    gboolean transient = FALSE;
     gchar *sender_str = NULL;
 
     CsNotificationWatcher *watcher = CS_NOTIFICATION_WATCHER (user_data);
@@ -136,7 +136,7 @@ notification_filter_func (GDBusConnection *connection,
 
                 if (transient_hint)
                 {
-                    transient = g_variant_get_int32 (transient_hint);
+                    transient = g_variant_get_boolean (transient_hint);
                 }
 
                 g_clear_pointer (&transient_hint, g_variant_unref);
