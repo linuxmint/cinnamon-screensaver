@@ -16,8 +16,7 @@ app_PYTHON = \
         keybindings.py \
         settings.py \
         trackers.py \
-        utils.py \
-        x11.py
+        utils.py
 
 MAINTAINERCLEANFILES =          \
     *~              \

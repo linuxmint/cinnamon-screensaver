@@ -602,3 +602,19 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
 
     return ret;
 }
+
+void
+cs_screen_nuke_focus (void)
+{
+    Window focus = 0;
+    int    rev = 0;
+
+    DEBUG ("Nuking focus");
+
+    gdk_error_trap_push ();
+
+    XGetInputFocus (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &focus, &rev);
+    XSetInputFocus (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), None, RevertToNone, CurrentTime);
+
+    gdk_error_trap_pop_ignored ();
+}
