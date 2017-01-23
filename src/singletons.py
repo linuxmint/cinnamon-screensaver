@@ -120,19 +120,19 @@ class LoginClientResolver:
                                            "active",
                                            self.on_session_manager_active)
 
-    def on_session_manager_lock(self):
+    def on_session_manager_lock(self, client):
         if status.Debug:
             print("Received Lock from session manager")
 
         self.manager.lock()
 
-    def on_session_manager_unlock(self):
+    def on_session_manager_unlock(self, client):
         if status.Debug:
             print("Received Unlock from session manager")
 
         self.manager.unlock()
 
-    def on_session_manager_active(self):
+    def on_session_manager_active(self, client):
         if status.Debug:
             print("Received Active changed from session manager")
 
