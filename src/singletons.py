@@ -112,10 +112,28 @@ class LoginClientResolver:
     def setup_manager_connections(self):
         trackers.con_tracker_get().connect(self.login_client,
                                            "lock",
-                                           lambda proxy: self.manager.lock())
+                                           self.on_session_manager_lock)
         trackers.con_tracker_get().connect(self.login_client,
                                            "unlock",
-                                           lambda proxy: self.manager.unlock())
+                                           self.on_session_manager_unlock)
         trackers.con_tracker_get().connect(self.login_client,
                                            "active",
-                                           lambda proxy: self.manager.simulate_user_activity())
+                                           self.on_session_manager_active)
+
+    def on_session_manager_lock(self):
+        if status.Debug:
+            print("Received Lock from session manager")
+
+        self.manager.lock()
+
+    def on_session_manager_unlock(self):
+        if status.Debug:
+            print("Received Unlock from session manager")
+
+        self.manager.unlock()
+
+    def on_session_manager_active(self):
+        if status.Debug:
+            print("Received Active changed from session manager")
+
+        self.manager.simulate_user_activity()
