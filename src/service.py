@@ -92,9 +92,9 @@ class ScreensaverService(GObject.Object):
 
 # Interface handlers
     def handle_lock(self, iface, inv, msg):
-        self.manager.lock(msg)
-
         self.lock_queue.append(inv)
+
+        self.manager.lock(msg)
 
         return True
 
