@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-from gi.repository import Gdk, Gtk, GdkX11
+from gi.repository import Gdk, Gtk, GdkX11, CScreensaver
 import time
 
 from util.eventHandler import EventHandler
@@ -62,8 +62,7 @@ class GrabHelper:
 
         if not got_keyboard:
             try:
-                import x11
-                x11.nuke_focus()
+                CScreensaver.Screen.nuke_focus()
             except:
                 pass
             got_keyboard = try_grab(self.grab_keyboard, window)

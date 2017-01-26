@@ -3,6 +3,7 @@
 from gi.repository import Gtk, GObject
 
 import singletons
+import status
 from util import trackers
 
 class NotificationWidget(Gtk.Frame):
@@ -35,6 +36,7 @@ class NotificationWidget(Gtk.Frame):
         box.show_all()
 
         self.notification_watcher = singletons.NotificationWatcher
+
         trackers.con_tracker_get().connect(self.notification_watcher,
                                            "notification-received",
                                            self.on_notification_received)
@@ -46,6 +48,10 @@ class NotificationWidget(Gtk.Frame):
 
         if sender.lower() in players:
             return
+
+        for ignored in ("network",):
+            if ignored in sender.lower():
+                return
 
         self.notification_count += 1
 

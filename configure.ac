@@ -67,6 +67,75 @@ AC_DEFUN([AC_TRY_X_COMPILE], [
   AC_TRY_COMPILE([$1], [$2], [$3], [$4])
   CPPFLAGS="$ac_save_CPPFLAGS"])
 
+ALL_X_LIBS="$X_LIBS $X_PRE_LIBS -lX11 $X_EXTRA_LIBS"
+
+# Check for Xinerama extension (Solaris impl or Xfree impl)
+cs_save_cppflags="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+
+AC_ARG_ENABLE(xinerama,
+  AC_HELP_STRING([--disable-xinerama],
+                 [disable use of the Xinerama extension]),
+  try_xinerama=$enable_xinerama,try_xinerama=yes)
+dnl '
+
+use_solaris_xinerama=no
+use_xfree_xinerama=no
+if test "${try_xinerama}" != no; then
+    case "$host" in
+        *-*-solaris*)
+            # Check for solaris
+            use_solaris_xinerama=yes
+            AC_CHECK_LIB(Xext, XineramaGetInfo,
+                         use_solaris_xinerama=yes, use_solaris_xinerama=no,
+                         $ALL_X_LIBS)
+            if test "x$use_solaris_xinerama" = "xyes"; then
+                AC_CHECK_HEADER(X11/extensions/xinerama.h,
+                                if test -z "`echo $ALL_X_LIBS | grep "\-lXext" 2> /dev/null`"; then
+                                    X_EXTRA_LIBS="-lXext $X_EXTRA_LIBS"
+                                fi
+                                AC_DEFINE(HAVE_SOLARIS_XINERAMA, , [Have Solaris-style Xinerama])
+                                AC_DEFINE(HAVE_XINERAMA, , [Have some version of Xinerama]),
+                                use_solaris_xinerama=no,
+                                [#include <X11/Xlib.h>])
+            fi
+            AC_MSG_CHECKING(for Xinerama support on Solaris)
+            AC_MSG_RESULT($use_solaris_xinerama);
+            ;;
+        *)
+            # Check for XFree
+            use_xfree_xinerama=yes
+            AC_CHECK_LIB(Xinerama, XineramaQueryExtension,
+                [AC_CHECK_HEADER(X11/extensions/Xinerama.h,
+                                 X_EXTRA_LIBS="-lXinerama $X_EXTRA_LIBS"
+                                 if test -z "`echo $ALL_X_LIBS | grep "\-lXext" 2> /dev/null`"; then
+                                     X_EXTRA_LIBS="-lXext $X_EXTRA_LIBS"
+                                 fi
+                                 AC_DEFINE(HAVE_XFREE_XINERAMA, , [Have XFree86-style Xinerama])
+                                 AC_DEFINE(HAVE_XINERAMA,, [Have some version of Xinerama]),
+                                 use_xfree_xinerama=no,
+                                 [#include <X11/Xlib.h>])],
+                use_xfree_xinerama=no, -lXext $ALL_X_LIBS)
+            AC_MSG_CHECKING(for Xinerama support on XFree86)
+            AC_MSG_RESULT($use_xfree_xinerama);
+            ;;
+    esac
+fi
+
+CPPFLAGS="$cs_save_cppflags"
+
+RANDR_LIBS=
+found_randr=no
+AC_CHECK_LIB(Xrandr, XRRUpdateConfiguration,
+               [AC_CHECK_HEADER(X11/extensions/Xrandr.h,
+                                RANDR_LIBS=-lXrandr found_randr=yes,,
+                [#include <X11/Xlib.h>])],
+               , -lXrender -lXext $ALL_X_LIBS)
+
+if test "x$found_randr" = "xyes"; then
+   AC_DEFINE(HAVE_RANDR, , [Have the Xrandr extension library])
+fi
+
 AM_PATH_PYTHON(3.4)
 
 PKG_CHECK_MODULES(SCREENSAVER_PAM, gtk+-3.0 glib-2.0)
@@ -74,8 +143,11 @@ AC_SUBST(SCREENSAVER_PAM_CFLAGS)
 AC_SUBST(SCREENSAVER_PAM_LIBS)
 
 PKG_CHECK_MODULES(CSCREENSAVER, gobject-2.0 gtk+-3.0 gdk-x11-3.0 x11 xext glib-2.0 gio-2.0 gthread-2.0)
+
 AC_SUBST(CSCREENSAVER_CFLAGS)
 AC_SUBST(CSCREENSAVER_LIBS)
+
+CSCREENSAVER_LIBS="$CSCREENSAVER_LIBS $RANDR_LIBS $X_PRE_LIBS $X_EXTRA_LIBS -lm"
 
 dnl ---------------------------------------------------------------------------
 dnl - The --enable-locking option

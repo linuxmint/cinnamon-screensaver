@@ -69,13 +69,32 @@ class ScreensaverService(GObject.Object):
         self.manager = ScreensaverManager()
         self.manager.connect("active-changed", self.on_active_changed)
 
+        """
+        The stage constructs itself and fades in asynchronously, and most importantly,
+        as an idle callback.  This can cause the screensaver to not be fully active when
+        a call to suspend is made.  Cinnamon-session calls to lock the screensaver
+        synchronously, and if we don't completely finish construction before returning
+        the dbus call completion, there's a chance the idle callback won't run until
+        after the computer is resumed.
+
+        We get an active-changed signal whenever the screensaver becomes completely active
+        or inactive, so we'll queue up running iface.complete_lock() until we receive that signal.
+
+        This allows the screensaver to be fully activated prior to cinnamon-session allowing
+        the suspend/hibernate/whatever process to continue.
+
+        For reference, this is called in cinnamon-session's csm-manager.c "manager_perhaps_lock"
+        method.
+        """
+        self.lock_queue = []
+
         self.interface.export(self.bus, c.SS_PATH)
 
 # Interface handlers
     def handle_lock(self, iface, inv, msg):
-        self.manager.lock(msg)
+        self.lock_queue.append(inv)
 
-        iface.complete_lock(inv)
+        self.manager.lock(msg)
 
         return True
 
@@ -118,4 +137,15 @@ class ScreensaverService(GObject.Object):
         return True
 
     def on_active_changed(self, manager, state, data=None):
+        GObject.idle_add(self.on_active_changed_idle, state)
+
+    def on_active_changed_idle(self, state):
+        self.lock_queue.reverse()
+
+        while len(self.lock_queue) > 0:
+            invocation = self.lock_queue.pop()
+            self.interface.complete_lock(invocation)
+
+        self.lock_queue = []
+
         self.interface.emit_active_changed(state)

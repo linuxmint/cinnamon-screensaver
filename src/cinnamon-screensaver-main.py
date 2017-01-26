@@ -15,7 +15,6 @@ import setproctitle
 import config
 import status
 from util import utils
-from service import ScreensaverService
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
@@ -49,8 +48,15 @@ class Main:
         status.Debug = args.debug
         status.InteractiveDebug = args.interactive
 
+        if status.Debug:
+            print("Debug mode active")
+
         if args.lock_disabled:
             print("Locking disabled")
+
+        from service import ScreensaverService
+        # This is here mainly to allow the notification watcher to have a valid status.Debug value
+        import singletons
 
         Gtk.icon_size_register("audio-button", 20, 20)
 

@@ -143,9 +143,11 @@ libcscreensaver_la_HEADERS =             \
 
 libcscreensaver_la_gir_sources =             \
     cs-gdk-event-filter.h \
-    cs-gdk-event-filter.c \
+    cs-gdk-event-filter-x11.c \
     cs-notification-watcher.h \
     cs-notification-watcher.c \
+    cs-screen.h \
+    cs-screen-x11.c \
     $(dbus_built_sources) \
     $(NULL)
 

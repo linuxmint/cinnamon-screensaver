@@ -3,6 +3,7 @@
 import gi
 
 from util import trackers, settings
+import status
 
 # Our dbus proxies are abstracted out one level more than really necessary - we have
 # clients that the screensaver initializes, that can never fail.  The actual connection
@@ -29,8 +30,7 @@ AccountsServiceClient = _AccountsServiceClient()
 # don't work well via introspection.
 from gi.repository import CScreensaver
 
-NotificationWatcher = CScreensaver.NotificationWatcher()
-
+NotificationWatcher = CScreensaver.NotificationWatcher.new(status.Debug)
 
 # We only need one instance of CinnamonDesktop.BG - have it listen to bg gsettings changes
 # and we just connect to "changed" on the Backgrounds object from our user (the Stage)
@@ -112,10 +112,28 @@ class LoginClientResolver:
     def setup_manager_connections(self):
         trackers.con_tracker_get().connect(self.login_client,
                                            "lock",
-                                           lambda proxy: self.manager.lock())
+                                           self.on_session_manager_lock)
         trackers.con_tracker_get().connect(self.login_client,
                                            "unlock",
-                                           lambda proxy: self.manager.unlock())
+                                           self.on_session_manager_unlock)
         trackers.con_tracker_get().connect(self.login_client,
                                            "active",
-                                           lambda proxy: self.manager.simulate_user_activity())
+                                           self.on_session_manager_active)
+
+    def on_session_manager_lock(self, client):
+        if status.Debug:
+            print("Received Lock from session manager")
+
+        self.manager.lock()
+
+    def on_session_manager_unlock(self, client):
+        if status.Debug:
+            print("Received Unlock from session manager")
+
+        self.manager.unlock()
+
+    def on_session_manager_active(self, client):
+        if status.Debug:
+            print("Received Active changed from session manager")
+
+        self.manager.simulate_user_activity()

@@ -3,6 +3,7 @@
 from gi.repository import Gtk, GObject, Gdk
 
 from util import trackers
+import status
 
 class BaseWindow(Gtk.Revealer):
     """
@@ -61,4 +62,7 @@ class BaseWindow(Gtk.Revealer):
         self.destroy()
 
     def update_geometry(self):
-        self.rect = self.screen.get_monitor_geometry(self.monitor_index)
+        if status.Spanned:
+            self.rect = self.screen.get_screen_geometry()
+        else:
+            self.rect = self.screen.get_monitor_geometry(self.monitor_index)

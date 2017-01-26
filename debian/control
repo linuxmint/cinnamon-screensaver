@@ -27,7 +27,6 @@ Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: cinnamon-desktop-data (>= 3.0.0),
          python3,
-         python3-xlib | debian-system-adjustments,
          python3-gi,
          python3-gi-cairo,
          python3-setproctitle,
@@ -80,3 +79,13 @@ Depends: ${misc:Depends},
          ${shlibs:Depends}
 Description: library and introspection data used only by cinnamon-screensaver
  to work around currently un-introspectable functions in Gdk-3.0
+
+Package: libcscreensaver-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: libcscreensaver0 (= ${binary:Version}), ${misc:Depends}
+Description: Cinnamon Screensaver library - debug symbols
+ This package contains the symbols files needed to debug the Cinnamon Screensaver library.
