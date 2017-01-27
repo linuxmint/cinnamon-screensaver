@@ -12,6 +12,7 @@ class Fader:
         self.widget = widget
         self.finished_cb = None
 
+        self.starting_opacity = 0.0
         self.current_opacity = 0.0
         self.target_opacity = 0.0
 
@@ -33,11 +34,8 @@ class Fader:
 
     def _fade_in_idle(self, ms, finished_cb=None):
         self.finished_cb = finished_cb
-        self.current_opacity = self.widget.get_opacity()
+        self.current_opacity = self.starting_opacity = self.widget.get_opacity()
         self.target_opacity = 1.0
-
-        if not self.widget.get_visible():
-            self.widget.set_visible(True)
 
         if self.widget.get_mapped():
             self.start_time = self.widget.get_frame_clock().get_frame_time()
@@ -52,7 +50,7 @@ class Fader:
 
     def _fade_out_idle(self, ms, finished_cb=None):
         self.finished_cb = finished_cb
-        self.current_opacity = self.widget.get_opacity()
+        self.current_opacity = self.starting_opacity = self.widget.get_opacity()
         self.target_opacity = 0.0
 
         if self.widget.get_mapped():
@@ -80,14 +78,13 @@ class Fader:
 
     def _fade_in_step(self, now):
         if now < self.end_time:
-            t = (now - self.start_time) / (self.end_time - self.start_time)
+            t = ((now - self.start_time) / (self.end_time - self.start_time) * self.target_opacity)
         else:
-            t = 1.0
+            t = self.target_opacity
 
         self.current_opacity = t
 
         self.widget.set_opacity(self.current_opacity)
-        self.widget.queue_draw()
 
     def _on_frame_tick_fade_out(self, widget, clock, data=None):
         now = clock.get_frame_time()
@@ -103,11 +100,10 @@ class Fader:
 
     def _fade_out_step(self, now):
         if now < self.end_time:
-            t = 1.0 - ((now - self.start_time) / (self.end_time - self.start_time))
+            t = self.starting_opacity - (((now - self.start_time) / (self.end_time - self.start_time)) * self.starting_opacity)
         else:
-            t = 0.0
+            t = self.target_opacity
 
         self.current_opacity = t
 
         self.widget.set_opacity(self.current_opacity)
-        self.widget.queue_draw()

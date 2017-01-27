@@ -89,6 +89,7 @@ class Stage(Gtk.Window):
         self.override_background_color (Gtk.StateFlags.NORMAL, c);
 
         self.update_geometry()
+        self.move_offscreen()
 
         self.overlay = Gtk.Overlay()
         self.fader = Fader(self)
@@ -148,13 +149,15 @@ class Stage(Gtk.Window):
         """
         if effect_time == 0:
             self.set_opacity(1.0)
-
+            self.move_onscreen()
             self.show()
+
             callback()
         else:
-            self.set_opacity(0.0)
+            self.set_opacity(0.01)
+            self.show()
+            self.move_onscreen()
 
-            self.realize()
             self.fader.fade_in(effect_time, callback)
 
     def transition_out(self, effect_time, callback):
@@ -184,16 +187,20 @@ class Stage(Gtk.Window):
         From here we also proceed to construct all overlay children and
         activate our window suppressor.
         """
-        self.size_to_screen()
+        window = self.get_window()
+        utils.override_user_time(window)
+
         self.setup_children()
 
         self.gdk_filter.start(self)
 
-    def size_to_screen(self):
-        window = self.get_window()
+    def move_onscreen(self):
+        self.move(self.rect.x, self.rect.y)
+        self.resize(self.rect.width, self.rect.height)
 
-        utils.override_user_time(window)
-        window.move_resize(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
+    def move_offscreen(self):
+        self.move(-self.rect.width, -self.rect.height)
+        self.resize(self.rect.width, self.rect.height)
 
     def deactivate_after_timeout(self):
         self.manager.set_active(False)
