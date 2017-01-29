@@ -154,11 +154,10 @@ class Stage(Gtk.Window):
 
             callback()
         else:
-            self.set_opacity(0.01)
+            self.set_opacity(0.0)
             self.show()
-            self.move_onscreen()
 
-            self.fader.fade_in(effect_time, callback)
+            self.fader.fade_in(effect_time, self.move_onscreen, callback)
 
     def transition_out(self, effect_time, callback):
         """

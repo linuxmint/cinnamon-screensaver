@@ -12,6 +12,8 @@ class Fader:
         self.widget = widget
         self.finished_cb = None
 
+        self.repositioned = False
+
         self.starting_opacity = 0.0
         self.current_opacity = 0.0
         self.target_opacity = 0.0
@@ -21,8 +23,8 @@ class Fader:
         self.start_time = 0
         self.end_time = 0
 
-    def fade_in(self, ms, finished_cb=None):
-        GObject.idle_add(self._fade_in_idle, ms, finished_cb)
+    def fade_in(self, ms, reposition_cb=None, finished_cb=None):
+        GObject.idle_add(self._fade_in_idle, ms, reposition_cb, finished_cb)
 
     def fade_out(self, ms, finished_cb=None):
         GObject.idle_add(self._fade_out_idle, ms, finished_cb)
@@ -32,8 +34,9 @@ class Fader:
             self.widget.remove_tick_callback(self.tick_id)
             self.tick_id = 0
 
-    def _fade_in_idle(self, ms, finished_cb=None):
+    def _fade_in_idle(self, ms, reposition_cb=None, finished_cb=None):
         self.finished_cb = finished_cb
+        self.reposition_cb = reposition_cb
         self.current_opacity = self.starting_opacity = self.widget.get_opacity()
         self.target_opacity = 1.0
 
@@ -68,6 +71,10 @@ class Fader:
         now = clock.get_frame_time()
 
         self._fade_in_step(now)
+
+        if not self.repositioned and self.current_opacity > .03:
+            self.repositioned = True
+            self.reposition_cb()
 
         if self.current_opacity == self.target_opacity:
             self.tick_id = 0
