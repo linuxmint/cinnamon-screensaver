@@ -653,7 +653,7 @@ cs_auth_pam_verify_user (pam_handle_t *handle,
         auth_status = GPOINTER_TO_INT (g_thread_join (auth_thread));
 
  out:
-        if (watch_id != 0) {
+        if (watch_id != 0 && !thread_done) {
                 g_source_remove (watch_id);
                 watch_id = 0;
         }
