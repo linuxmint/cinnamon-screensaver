@@ -20,20 +20,10 @@ class VolumeControl(Gtk.Box):
         self.output = None
         self.controller = None
 
-        self.volume_slider = VolumeSlider();
+        self.volume_slider = VolumeSlider()
+        self.volume_slider.show_all()
 
-        trackers.con_tracker_get().connect(self.volume_slider,
-                                           "value-changed",
-                                           self.on_volume_slider_changed)
-
-        trackers.con_tracker_get().connect(self.volume_slider,
-                                           "button-press-event",
-                                           self.on_button_press_event)
-
-        if not utils.have_gtk_version("3.18.0"):
-            trackers.con_tracker_get().connect(self.volume_slider,
-                                               "scroll-event",
-                                               self.on_scroll_event)
+        self.set_no_show_all(True)
 
         self.pack_start(self.volume_slider, False, False, 6)
 
@@ -72,8 +62,22 @@ class VolumeControl(Gtk.Box):
                 trackers.con_tracker_get().connect(self.output,
                                                    "notify::volume",
                                                    self.on_volume_changed)
+                trackers.con_tracker_get().connect(self.volume_slider,
+                                                   "value-changed",
+                                                   self.on_volume_slider_changed)
+                trackers.con_tracker_get().connect(self.volume_slider,
+                                                   "button-press-event",
+                                                   self.on_button_press_event)
+                if not utils.have_gtk_version("3.18.0"):
+                    trackers.con_tracker_get().connect(self.volume_slider,
+                                                       "scroll-event",
+                                                       self.on_scroll_event)
 
                 self.on_volume_changed(None, None)
+                self.show()
+                return
+
+        self.hide()
 
     def on_volume_changed(self, output, pspec):
         vol = self.output.props.volume
