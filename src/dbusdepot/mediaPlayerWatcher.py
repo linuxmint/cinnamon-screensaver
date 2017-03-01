@@ -75,7 +75,7 @@ class MprisClient(BaseClient):
 
     def play_pause(self):
         if self.ensure_proxy_alive():
-            self.proxy.call_play_pause_sync()
+            self.proxy.call_play_pause()
 
     def get_can_go_next(self):
         if self.ensure_proxy_alive():
@@ -85,7 +85,7 @@ class MprisClient(BaseClient):
 
     def go_next(self):
         if self.ensure_proxy_alive():
-            self.proxy.call_next_sync()
+            self.proxy.call_next()
 
     def get_can_go_previous(self):
         if self.ensure_proxy_alive():
@@ -95,7 +95,7 @@ class MprisClient(BaseClient):
 
     def go_previous(self):
         if self.ensure_proxy_alive():
-            self.proxy.call_previous_sync()
+            self.proxy.call_previous()
 
     def get_name(self):
         if self.ensure_proxy_alive():
