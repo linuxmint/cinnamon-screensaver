@@ -31,6 +31,7 @@ class PasswordEntry(Gtk.Entry):
         self.placeholder_text = placeholder_text
         self.current_icon_name = None
         self.current_flag_id = 0
+        self.original_group = 0
 
         self.keyboard_controller = singletons.KeyboardLayoutController
         self.set_lockscreen_keyboard_layout()
@@ -46,6 +47,9 @@ class PasswordEntry(Gtk.Entry):
         update_layout_icon(), just so GtkEntry thinks there's an icon there,
         that way it allocates space for it, and responds to clicks in the area.
         """
+        if not self.keyboard_controller.get_enabled():
+            return False
+
         icon_rect = widget.get_icon_area(Gtk.EntryIconPosition.PRIMARY)
         x = icon_rect.x
         y = icon_rect.y + 2
