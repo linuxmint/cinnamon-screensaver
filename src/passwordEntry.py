@@ -34,6 +34,14 @@ class PasswordEntry(Gtk.Entry):
         self.original_group = 0
 
         self.keyboard_controller = singletons.KeyboardLayoutController
+        trackers.con_tracker_get().connect(self.keyboard_controller,
+                                           "config-changed",
+                                           self.on_config_changed)
+
+        trackers.con_tracker_get().connect(self.keyboard_controller,
+                                           "layout-changed",
+                                           self.on_layout_changed)
+
         self.set_lockscreen_keyboard_layout()
 
         trackers.con_tracker_get().connect(self,
@@ -150,6 +158,9 @@ class PasswordEntry(Gtk.Entry):
         self.grab_focus()
         self.update_layout_icon()
 
+    def on_config_changed(self, controller):
+        self.set_lockscreen_keyboard_layout()
+
     def on_icon_pressed(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.PRIMARY:
             self.keyboard_controller.next_group()
@@ -166,6 +177,14 @@ class PasswordEntry(Gtk.Entry):
         self.update_saved_group(self.keyboard_controller.get_current_group())
 
     def on_destroy(self, widget, data=None):
+        trackers.con_tracker_get().disconnect(self.keyboard_controller,
+                                              "config-changed",
+                                              self.on_config_changed)
+
+        trackers.con_tracker_get().disconnect(self.keyboard_controller,
+                                              "layout-changed",
+                                              self.on_layout_changed)
+
         self.restore_original_layout()
 
     def set_lockscreen_keyboard_layout(self):
@@ -199,10 +218,6 @@ class PasswordEntry(Gtk.Entry):
                                            "draw",
                                            self.on_draw)
 
-        trackers.con_tracker_get().connect(self.keyboard_controller,
-                                           "layout-changed",
-                                           self.on_layout_changed)
-
     def update_saved_group(self, group):
         settings.set_kb_group(group)
 
@@ -213,10 +228,6 @@ class PasswordEntry(Gtk.Entry):
         """
         if not self.keyboard_controller.get_enabled():
             return
-
-        trackers.con_tracker_get().disconnect(self.keyboard_controller,
-                                              "layout-changed",
-                                              self.on_layout_changed)
 
         self.keyboard_controller.set_current_group(self.original_group)
 
