@@ -4,6 +4,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
+#include <gdk/gdkx.h>
 
 G_BEGIN_DECLS
 
@@ -15,8 +16,6 @@ G_BEGIN_DECLS
 #define CS_SCREEN_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), CS_TYPE_SCREEN, CsScreenClass))
 
 typedef struct _CsMonitorInfo CsMonitorInfo;
-
-typedef unsigned long int XID;
 
 struct _CsMonitorInfo
 {

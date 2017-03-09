@@ -11,7 +11,6 @@
 #include "cs-screen.h"
 
 #include <string.h>
-#include <gdk/gdkx.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
