@@ -131,7 +131,7 @@ class Stage(Gtk.Window):
 
     def on_screen_changed(self, screen, data=None):
         self.update_geometry()
-        self.size_to_screen()
+        self.move_onscreen()
 
         for monitor in self.monitors:
             monitor.update_geometry()
