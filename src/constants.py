@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 
 # Idle time in seconds before the unlock dialog will disappear and we go back to sleep.
 UNLOCK_TIMEOUT = 30

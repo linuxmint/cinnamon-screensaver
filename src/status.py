@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 
 # Our global state vars
 Active = False    # Screensaver visible or not - False when it's completely idle.

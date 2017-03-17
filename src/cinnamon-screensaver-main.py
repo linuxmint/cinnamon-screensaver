@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 
 import gi
 gi.require_version('Gtk', '3.0')

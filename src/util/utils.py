@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 
 from gi.repository import GLib, Gio, Gdk, Gtk
 import os
