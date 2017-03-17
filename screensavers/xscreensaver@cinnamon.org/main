@@ -51,6 +51,7 @@ class XScreensaverPlugin:
         self.plug.disconnect(self.plug.draw_id)
 
         directories = ["/usr/lib/xscreensaver/",
+                       "/usr/lib/misc/xscreensaver/",
                        "/usr/libexec/xscreensaver/",
                        "/usr/local/lib/xscreensaver/",
                        "/usr/local/libexec/xscreensaver/"]
