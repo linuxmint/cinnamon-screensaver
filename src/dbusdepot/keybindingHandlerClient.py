@@ -10,7 +10,7 @@ class KeybindingHandlerClient(BaseClient):
     This calls the keybinding handler for shortcuts received by the
     Keybindings object.
     """
-    KEYBINDING_HANDLER_SERVICE = "org.cinnamon.SettingsDaemon"
+    KEYBINDING_HANDLER_SERVICE = "org.cinnamon.SettingsDaemon.KeybindingHandler"
     KEYBINDING_HANDLER_PATH     = "/org/cinnamon/SettingsDaemon/KeybindingHandler"
 
     def __init__(self):
