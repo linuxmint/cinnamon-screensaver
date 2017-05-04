@@ -1,3 +1,66 @@
+cinnamon-screensaver (3.4.0) sonya; urgency=medium
+
+  [ leigh123linux ]
+  * add libexec path
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT file
+
+  [ Michael Webster ]
+  * Add --interactive-debug startup switch.  This turns on GtkInspector, restricts the screensaver stage to a single monitor, and some other things to allow interaction with ui elements using the inspector tools.
+  * mediaPlayerWatcher.py: catch SyntaxError exception when evaluating PlaybackStatus property.
+  * framedImage.py:  Just silently fail if a downloaded image fails to be loaded into a pixbuf.
+  * some theme fixes for gtk 3.20+
+  * stage.py: clear clipboards only once, when waking.  raise_unlock_widget gets called repeatedly when there is input (to refresh other things) - having it repeatedly clear the clipboard was unnecessary, and prevented keyboard navigation actions that included selection of characters - such as ctrl-a, shift-home and -end.
+  * uPowerClient.py: aggregate the proxy's signal emissions into a single power-state-changed event for the power client.  This prevents confusion at the stage level when updating for power events.
+  * notifications: Add some debugging help.
+  * notificationWidget.py: ignore network notifications - these occur often around suspend/resume time, and we don't want them artificially padding the notification count.
+  * xscreensaver plugin: Use GSubprocess instead of g_spawn_async for hacks.
+  * stage.py:  Add some error-handling for widget creation, with exit strategy, in case something goes wrong.  We don't want to leave the user with an inaccessible desktop.
+  * xscreensaver plugin: provide a default .xscreensaver file if one doesn't already exist.
+
+  [ Sparky Bluefang ]
+  * Add /usr/lib/misc/xscreensaver/ to the xscreensaver search directories.
+
+  [ Michael Webster ]
+  * stage.py: More error-handling fixes.  Add a debug package to the debian build.
+  * authClient.py: Add some debugging info.
+  * Add a CsScreen object:  GdkScreen is unreliable for figuring out monitor sizes and resolutions, particularly in non-default configurations.
+  * Enable notification watcher's debug code upon startup, rather than during widget construction.
+  * Respect the "spanned" setting for wallpapers.  Note, this will currently also affect the plugins as well, but I didn't see this as a serious drawback.
+  * cs-screen-x11.c: Account for monitor scale factor.  GTK expects the values to be scaled already.
+  * cs-screen-x11.c: code cleanup (sorry git!)
+  * singletons.py: Add some debugging for login manager commands.
+  * Remove x11.py, move code to CsScreen class, remove python3-xlib dependency.
+  * service.py: Wait to respond to the Lock command until the screensaver has called back that it is now active.
+  * manager/stage: Lock immediately, without fade-in.  This and the previous commit allow the screensaver to be activated synchronously from cinnamon-session in response to suspend/hibernate actions, and ensure it's fully active already when resuming.
+  * cinnamon-screensaver-main.py: don't import the ScreensaverService until we're sure we'll need it.  This prevents singletons from getting initialized too early, and we lose the correct state of status.Debug
+  * cs-notification-watcher.c: transient hint should be a boolean type, not int.
+  * service.py: Add the invocation to the queue prior to calling on the manager to lock.  The active signal could be sent back before it gets added otherwise, causing us to leave the calling command hanging.
+  * stage/fader: Realize the stage offscreen, then reposition it before starting our fade in.  This prevents the initial flash sometimes seen when the idle fade kicks in.
+  * cs-screen-x11.c: Use PointerRoot instead of None for XSetInputFocus. This does a better job of reacquiring keyboard control, and allows the screensaver to activate when a virtualbox guest window is focused.
+  * stage/fader: Add the reposition call to the fader cycle, this ensures it gets reliably called in sync with redraws, otherwise we can still get a flash on realizing the window.
+  * cs-auth-pam.c: Only attempt to remove the io watch if thread_done is FALSE.  It is set to TRUE in the GIOFunc cs_auth_loop_quit, which also returns FALSE, signalling to remove the source.  We can't zero out watch_id there, which was causing a warning when cs_auth_pam_verify_user exited.
+  * volumeControl.py: Don't show if we can't get a valid CvcMixerControl, and only connect signals if we do.
+  * mediaPlayerWatcher.py: use the async versions of the play/pause, previous and next methods.  This prevents a dbus sync deadlock from freezing the screensaver.  Observed issue using Google Play Desktop Music Player.  (https://www.googleplaymusicdesktopplayer.com)
+  * passwordEntry.py: Initialize self.original_group, don't perform draw callback without a live controller (this disparity can occur after session interruptions - sleep, switch user, etc... - but not consistently.)
+  * passwordEntry.py: Reload the keyboard layout if the xkb configuration changes.
+  * stage.py: fix screen changed callback
+
+  [ leigh123linux ]
+  * autogen.sh: don't run aclocal
+
+  [ Michael Webster ]
+  * cs-screen.h: remove XID typedef, include gdkx.h instead, which will include xlib.
+
+  [ leigh123linux ]
+  * Fix python shebang
+
+  [ Clement Lefebvre ]
+  * Fix csd-media-keys DBUS name
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 04 May 2017 14:02:08 +0100
+
 cinnamon-screensaver (3.2.13) serena; urgency=medium
 
   [ Dustin Falgout ]
