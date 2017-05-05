@@ -16,6 +16,7 @@ app_PYTHON = \
         keybindings.py \
         settings.py \
         trackers.py \
+        mplayer.py \
         utils.py
 
 MAINTAINERCLEANFILES =          \
