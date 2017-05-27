@@ -707,6 +707,7 @@ class Stage(Gtk.Window):
         Destroy all MonitorViews
         """
         for monitor in self.monitors:
+            monitor.kill_plugin()
             monitor.destroy()
             del monitor
 
