@@ -855,7 +855,13 @@ class Stage(Gtk.Window):
                 the left-center.  The albumart widget aligns right-center.
                 """
                 unlock_mw, unlock_nw = self.unlock_dialog.get_preferred_width()
-                region_w = (monitor_rect.width - unlock_nw) / 2
+                """
+                If, for whatever reason, we need more than 1/3 of the screen to fully display
+                the unlock dialog, reduce our available region width to accomodate it, reducing
+                the allocation for the floating widgets as required.
+                """
+                if (unlock_nw > region_w):
+                    region_w = (monitor_rect.width - unlock_nw) / 2
 
                 if isinstance(child, ClockWidget):
                     child.set_halign(Gtk.Align.START)
@@ -886,7 +892,7 @@ class Stage(Gtk.Window):
                             ca = ALIGNMENTS[random.randint(0, 2)]
                         child.set_valign(ca)
 
-            # Restrict the widget size to 1/3 width and height of the current monitor
+            # Restrict the widget size to the allowable region sizes if necessary.
             allocation.width = min(nat_rect.width, region_w)
             allocation.height = min(nat_rect.height, region_h)
 
