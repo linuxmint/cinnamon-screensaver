@@ -33,7 +33,7 @@ class FramedImage(Gtk.Image):
 
         trackers.con_tracker_get().connect(self, "realize", self.on_realized)
 
-    def get_theme_height(self):
+    def get_theme_max_height(self):
         ctx = self.get_style_context()
 
         if utils.have_gtk_version("3.20.0"):
@@ -63,17 +63,34 @@ class FramedImage(Gtk.Image):
         if self.get_realized():
             self.generate_image()
 
+    def set_image_internal(self, path):
+        pixbuf = None
+
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+        except GLib.Error as e:
+            message = "Could not load pixbuf from '%s' for FramedImage: %s" % (path, e.message)
+            error = True
+
+        if pixbuf != None:
+            if pixbuf.get_height() > self.get_theme_max_height():
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, self.get_theme_max_height())
+                except GLib.Error as e:
+                    message = "Could not scale pixbuf from '%s' for FramedImage: %s" % (path, e.message)
+                    error = True
+
+        if pixbuf:
+            self.set_from_pixbuf(pixbuf)
+        else:
+            print(message)
+            self.clear_image()
+
+        self.emit("pixbuf-changed", pixbuf)
+
     def generate_image(self):
-        self.set_size_request(-1, self.get_theme_height())
-
         if self.path:
-            try:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(self.path, -1, self.get_theme_height(), True)
-                self.set_from_pixbuf(pixbuf)
-            except:
-                self.clear_image()
-            self.emit("pixbuf-changed", pixbuf)
-
+            self.set_image_internal(self.path)
         elif self.file:
             if self.cancellable != None:
                 self.cancellable.cancel()
@@ -103,11 +120,6 @@ class FramedImage(Gtk.Image):
     def on_file_written(self, file, result, data=None):
         try:
             if file.replace_contents_finish(result):
-                try:
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(file.get_path(), -1, self.get_theme_height(), True)
-                    self.set_from_pixbuf(pixbuf)
-                except:
-                    self.clear_image()
-                self.emit("pixbuf-changed", pixbuf)
+                self.set_image_internal(file.get_path())
         except GLib.Error:
             pass

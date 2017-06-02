@@ -42,7 +42,6 @@ class UnlockDialog(BaseWindow):
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
-        self.set_size_request(350, -1)
 
         self.real_name = None
         self.user_name = None

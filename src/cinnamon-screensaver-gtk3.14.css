@@ -22,8 +22,8 @@
     border: 2px solid;
     border-color: #eeeeee;
     box-shadow: 1px 1px alpha(black, 0.8);
-    /* substitute for min-height - replace with min-height in Gtk 3.20+*/
-    color: rgba(250, 0, 0, 0);
+    /* substitute for max-height - replace with max-height in Gtk 3.20+*/
+    color: rgba(160, 160, 0, 0);
 }
 
 .csstage .toppanel {
