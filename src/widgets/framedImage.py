@@ -10,8 +10,10 @@ from util import utils, trackers
 
 class FramedImage(Gtk.Image):
     """
-    Widget to hold the user face image.  It can be sized using CSS color.red value
-    (up to 255px) in Gtk 3.18, and using the min-height style property in gtk 3.20+.
+    Widget to hold the user face image.  It attempts to display an image at
+    its native size, up to a max height.  The max can be set in CSS using a
+    color RGBA value in Gtk 3.18, and using the max-height style property
+    in gtk 3.20+.
     """
     __gsignals__ = {
         "pixbuf-changed": (GObject.SignalFlags.RUN_LAST, None, (object,))
@@ -24,12 +26,6 @@ class FramedImage(Gtk.Image):
 
         self.file = None
         self.path = None
-        self.loader = None
-
-        self.current_pixbuf = None
-        self.next_pixbuf = None
-
-        self.min_height = 50
 
         trackers.con_tracker_get().connect(self, "realize", self.on_realized)
 
@@ -37,7 +33,7 @@ class FramedImage(Gtk.Image):
         ctx = self.get_style_context()
 
         if utils.have_gtk_version("3.20.0"):
-            return ctx.get_property("min-height", Gtk.StateFlags.NORMAL)
+            return ctx.get_property("max-height", Gtk.StateFlags.NORMAL)
         else:
             color = ctx.get_color(Gtk.StateFlags.NORMAL)
             return (color.red * 255) + (color.green * 255) + (color.blue * 255)
