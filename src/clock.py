@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from gi.repository import CinnamonDesktop, GLib, Gtk, Gio
+from gi.repository import CinnamonDesktop, CDesktopEnums, GLib, Gtk, Gio
 
 from util import utils, trackers, settings
 from baseWindow import BaseWindow
@@ -33,6 +33,7 @@ class ClockWidget(Floating, BaseWindow):
         self.add(self.label)
 
         self.clock_tracker = CinnamonDesktop.WallClock()
+        self.set_clock_interval()
 
         trackers.con_tracker_get().connect(self.clock_tracker,
                                            "notify::clock",
@@ -45,7 +46,32 @@ class ClockWidget(Floating, BaseWindow):
                                            "changed",
                                            self.on_tz_changed)
 
+        trackers.con_tracker_get().connect(self,
+                                           "destroy",
+                                           self.on_destroy)
+
         self.update_clock()
+
+    def set_clock_interval(self):
+        interval = CDesktopEnums.ClockInterval.SETTING
+
+        if settings.get_use_custom_format():
+            date_format = settings.get_custom_date_format()
+            time_format = settings.get_custom_time_format()
+
+            use_seconds = False
+
+            for token in ("%S", "%c", "%T", "%X"):
+                if token in date_format or token in time_format:
+                    use_seconds = True
+                    break
+
+            if use_seconds:
+                interval = CDesktopEnums.ClockInterval.SECOND
+            else:
+                interval = CDesktopEnums.ClockInterval.MINUTE
+
+        self.clock_tracker.set_update_interval(interval)
 
     def on_clock_changed(self, clock, pspec):
         self.update_clock()
@@ -100,5 +126,19 @@ class ClockWidget(Floating, BaseWindow):
         self.away_message = msg
         self.update_clock()
 
+    def on_destroy(self, data=None):
+        trackers.con_tracker_get().disconnect(self.clock_tracker,
+                                              "notify::clock",
+                                              self.on_clock_changed)
 
+        trackers.con_tracker_get().disconnect(self.tz_monitor,
+                                              "changed",
+                                              self.on_tz_changed)
+
+        trackers.con_tracker_get().disconnect(self,
+                                              "destroy",
+                                              self.on_destroy)
+
+        self.clock_tracker = None
+        self.tz_monitor = None
 
