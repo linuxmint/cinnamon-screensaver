@@ -4,6 +4,7 @@ from gi.repository import GLib, Gio, Gdk, Gtk
 import os
 import grp
 import subprocess
+import xapp.os
 
 import config
 import status
@@ -67,6 +68,10 @@ def user_can_lock():
             return False
     except KeyError:
         pass
+
+    # Don't lock the screensaver in guest or live sessions
+    if xapp.os.is_live_session() or xapp.os.is_guest_session():
+        return False
 
     return True
 
