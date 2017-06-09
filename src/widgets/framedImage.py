@@ -8,12 +8,12 @@ from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject
 
 from util import utils, trackers
 
+MAX_IMAGE_SIZE = 320
+
 class FramedImage(Gtk.Image):
     """
     Widget to hold the user face image.  It attempts to display an image at
-    its native size, up to a max height.  The max can be set in CSS using a
-    color RGBA value in Gtk 3.18, and using the max-height style property
-    in gtk 3.20+.
+    its native size, up to a max sane size.
     """
     __gsignals__ = {
         "pixbuf-changed": (GObject.SignalFlags.RUN_LAST, None, (object,))
@@ -28,15 +28,6 @@ class FramedImage(Gtk.Image):
         self.path = None
 
         trackers.con_tracker_get().connect(self, "realize", self.on_realized)
-
-    def get_theme_max_height(self):
-        ctx = self.get_style_context()
-
-        if utils.have_gtk_version("3.20.0"):
-            return ctx.get_property("max-height", Gtk.StateFlags.NORMAL)
-        else:
-            color = ctx.get_color(Gtk.StateFlags.NORMAL)
-            return (color.red * 255) + (color.green * 255) + (color.blue * 255)
 
     def on_realized(self, widget):
         self.generate_image()
@@ -69,9 +60,9 @@ class FramedImage(Gtk.Image):
             error = True
 
         if pixbuf != None:
-            if pixbuf.get_height() > self.get_theme_max_height():
+            if pixbuf.get_height() > MAX_IMAGE_SIZE or pixbuf.get_width() > MAX_IMAGE_SIZE:
                 try:
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, self.get_theme_max_height())
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE)
                 except GLib.Error as e:
                     message = "Could not scale pixbuf from '%s' for FramedImage: %s" % (path, e.message)
                     error = True
