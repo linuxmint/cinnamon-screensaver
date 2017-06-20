@@ -1,3 +1,24 @@
+cinnamon-screensaver (3.4.1) sonya; urgency=medium
+
+  [ Michael Webster ]
+  * stage.py: Kill any screensaver plugins when destroying all of the widgets - this will leave unfinished plugin processes.
+  * framedImage: render images at their native size using the theme value as the maximum size, rather than desired size.  This ensures the image displays at its best possible size for quality, but still makes sure an oversize image doesn't break anything.
+  * stage.py: Don't re-allocate the floating widgets unless necessary to prevent obscuring of the unlock widget.  This prevents the small jump of the clock when waking the computer, depending on settings.
+  * framedImage: Remove some dead lines, use the correct css property, update commenting.
+  * fix typo in 3.20 css file
+  * clock: Update to use new wall-clock api to set the correct update interval depending on the provided date/time format.
+
+  [ Clement Lefebvre ]
+  * Don't lock the screen in live or guest sessions
+
+  [ Michael Webster ]
+  * framedImage.py: Stop using CSS for image size - since we now use the image's native size if it is reasonable to do so, there's no need for a theme to be involved.  Just hardcode a sane maximum and keep images that size or less. is not valid CSS (even though that's what we're using min-height for here)
+
+  [ leigh123linux ]
+  * remove old webkit2-3.0 support
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 20 Jun 2017 15:39:58 +0200
+
 cinnamon-screensaver (3.4.0) sonya; urgency=medium
 
   [ leigh123linux ]
