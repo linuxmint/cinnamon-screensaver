@@ -19,6 +19,7 @@ from floating import ALIGNMENTS
 from util import utils, trackers, settings
 from util.fader import Fader
 from util.eventHandler import EventHandler
+from util.mplayer import Mplayer
 
 class Stage(Gtk.Window):
     """
@@ -34,7 +35,11 @@ class Stage(Gtk.Window):
     The Stage reponds pretty much only to the instructions of the
     ScreensaverManager.
     """
+
     def __init__(self, manager, away_message):
+
+        self.mplayer = Mplayer(self)
+
         if status.InteractiveDebug:
             Gtk.Window.__init__(self,
                                 type=Gtk.WindowType.TOPLEVEL,
@@ -147,6 +152,15 @@ class Stage(Gtk.Window):
         """
         This is the primary way of making the Stage visible.
         """
+        if self.mplayer.fs:
+            self.realize()
+            self.set_opacity(0.01)
+            self.set_visible(True)
+            self.set_opacity(0.0)
+            self.queue_draw()
+            callback()
+            return
+
         if effect_time == 0:
             self.set_opacity(1.0)
             self.move_onscreen()
@@ -315,6 +329,8 @@ class Stage(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
+        self.mplayer.destroy = True
+
         self.destroy_children()
 
         self.fader = None
@@ -349,7 +365,8 @@ class Stage(Gtk.Window):
 
             image = Gtk.Image()
 
-            singletons.Backgrounds.create_and_set_gtk_image (image,
+            if not self.mplayer.fs:
+                singletons.Backgrounds.create_and_set_gtk_image (image,
                                                              monitor.rect.width,
                                                              monitor.rect.height)
 
@@ -369,9 +386,10 @@ class Stage(Gtk.Window):
         for monitor in self.monitors:
             image = Gtk.Image()
 
-            singletons.Backgrounds.create_and_set_gtk_image (image,
-                                                  monitor.rect.width,
-                                                  monitor.rect.height)
+            if not self.mplayer.fs:
+                singletons.Backgrounds.create_and_set_gtk_image (image,
+                                                      monitor.rect.width,
+                                                      monitor.rect.height)
 
             monitor.set_next_wallpaper_image(image)
 
@@ -414,6 +432,8 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
+        if self.mplayer.fs:
+            return
         if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
             if settings.get_show_clock():
                 self.clock_widget.start_positioning()
@@ -432,6 +452,8 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
+        if self.mplayer.fs:
+            return
         if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
             if settings.get_show_albumart():
                 self.albumart_widget.start_positioning()
@@ -575,6 +597,9 @@ class Stage(Gtk.Window):
 
         status.Awake = True
 
+        if self.mplayer.fs:
+            self.set_opacity(0.6)
+
         # Connect to one of our monitorViews (we have at least one always), to wait for
         # its transition to finish before running after_wallpaper_shown_for_unlock()
 
@@ -628,7 +653,8 @@ class Stage(Gtk.Window):
                                            "notify::child-revealed",
                                            self.after_unlock_unrevealed)
         self.unlock_dialog.unreveal()
-
+        if self.mplayer.fs:
+            self.set_opacity(0.0)
         if self.clock_widget != None:
             self.clock_widget.unreveal()
         if self.albumart_widget != None:
@@ -682,8 +708,7 @@ class Stage(Gtk.Window):
         or Awake states.
         """
         low_power = not self.power_client.plugged_in
-
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and low_power):
+        if ((not settings.should_show_plugin()) or (settings.should_show_plugin() and low_power)) and not self.mplayer.fs:
             if self.clock_widget != None and settings.get_show_clock():
                 self.clock_widget.start_positioning()
             if self.albumart_widget != None and settings.get_show_albumart():
@@ -825,6 +850,9 @@ class Stage(Gtk.Window):
             allocation.x = monitor_rect.x + (monitor_rect.width / 2) - (allocation.width / 2)
             allocation.y = monitor_rect.y + (monitor_rect.height / 2) - (allocation.height / 2)
 
+            if self.mplayer.fs:
+                allocation.y = monitor_rect.height - nat_rect.height
+
             return True
 
         if isinstance(child, ClockWidget) or isinstance(child, AlbumArt):
@@ -868,9 +896,14 @@ class Stage(Gtk.Window):
                 else:
                     child.set_halign(Gtk.Align.END)
 
-                child.set_valign(Gtk.Align.CENTER)
+
+                if self.mplayer.fs:
+                    child.set_valign(Gtk.Align.END)
+                else:
+                    child.set_valign(Gtk.Align.CENTER)
+
             else:
-                if settings.get_allow_floating():
+                if settings.get_allow_floating() and not self.mplayer.fs:
                     for floater in self.floaters:
                         """
                         Don't let our floating widgets end up in the same spot.
