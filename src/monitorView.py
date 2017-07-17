@@ -98,10 +98,9 @@ class MonitorView(BaseWindow):
     __gsignals__ = {
         'current-view-change-complete': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
-    def __init__(self, screen, index):
+    def __init__(self, index):
         super(MonitorView, self).__init__()
 
-        self.screen = screen
         self.monitor_index = index
 
         self.proc = None

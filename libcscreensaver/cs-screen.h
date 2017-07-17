@@ -40,8 +40,6 @@ typedef struct
 
     gulong monitors_changed_id;
     gulong screen_size_changed_id;
-
-    guint idle_changed_id;
 } CsScreen;
 
 typedef struct

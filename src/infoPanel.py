@@ -15,12 +15,11 @@ class InfoPanel(BaseWindow):
     relevant to say, regardless of our Awake state (*except* when a plugin is
     running, due to graphical issues.)
     """
-    def __init__(self, screen):
+    def __init__(self):
         super(InfoPanel, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
-        self.screen = screen
-        self.monitor_index = self.screen.get_primary_monitor()
+        self.monitor_index = status.screen.get_primary_monitor()
 
         self.update_geometry()
 

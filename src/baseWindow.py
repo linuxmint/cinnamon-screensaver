@@ -63,6 +63,6 @@ class BaseWindow(Gtk.Revealer):
 
     def update_geometry(self):
         if status.Spanned:
-            self.rect = self.screen.get_screen_geometry()
+            self.rect = status.screen.get_screen_geometry()
         else:
-            self.rect = self.screen.get_monitor_geometry(self.monitor_index)
+            self.rect = status.screen.get_monitor_geometry(self.monitor_index)

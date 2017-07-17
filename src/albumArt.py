@@ -20,9 +20,8 @@ class AlbumArt(Floating, BaseWindow):
     using a timer which randomizes its halign and valign properties
     as well as its current monitor.
     """
-    def __init__(self, screen, away_message=None, initial_monitor=0):
+    def __init__(self, away_message=None, initial_monitor=0):
         super(AlbumArt, self).__init__(initial_monitor)
-        self.screen = screen
         self.get_style_context().add_class("albumart")
         self.set_halign(Gtk.Align.END)
 

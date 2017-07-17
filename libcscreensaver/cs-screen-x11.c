@@ -26,7 +26,8 @@
 #endif
 
 enum {
-        CHANGED,
+        MONITORS_CHANGED,
+        SCREEN_CHANGED,
         LAST_SIGNAL
 };
 
@@ -38,6 +39,8 @@ static gboolean debug_mode = FALSE;
 #define DEBUG(...) if (debug_mode) g_printerr (__VA_ARGS__)
 
 #define cs_XFree(p) do { if ((p)) XFree ((p)); } while (0)
+
+#define PRIMARY_MONITOR 0
 
 static gboolean
 cs_rectangle_equal (const GdkRectangle *src1,
@@ -196,7 +199,7 @@ reload_monitor_infos (CsScreen *screen)
      * primary.
      */
 
-    screen->primary_monitor_index = 0;
+    screen->primary_monitor_index = PRIMARY_MONITOR;
 
 
 #ifdef HAVE_XFREE_XINERAMA
@@ -353,7 +356,7 @@ reload_monitor_infos (CsScreen *screen)
 
     apply_scale_factor (screen->monitor_infos,
                         screen->n_monitor_infos,
-                        gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0));
+                        gdk_screen_get_monitor_scale_factor (screen->gdk_screen, PRIMARY_MONITOR));
 
     g_assert (screen->n_monitor_infos > 0);
     g_assert (screen->monitor_infos != NULL);
@@ -363,45 +366,46 @@ static void
 reload_screen_info (CsScreen *screen)
 {
     Screen *xscreen;
+    gint scale_factor;
 
     xscreen = gdk_x11_screen_get_xscreen (screen->gdk_screen);
 
     screen->rect.x = screen->rect.y = 0;
     screen->rect.width = WidthOfScreen (xscreen);
     screen->rect.height = HeightOfScreen (xscreen);
+
+    scale_factor = gdk_screen_get_monitor_scale_factor (screen->gdk_screen, PRIMARY_MONITOR);
+    screen->rect.width /= scale_factor;
+    screen->rect.height /= scale_factor;
 }
 
-static gboolean
-on_screen_changed_idle (gpointer user_data)
+static void
+on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
     CsMonitorInfo *old_monitor_infos;
+    CsScreen *screen;
 
-    CsScreen *screen = CS_SCREEN (user_data);
-
-    reload_screen_info (screen);
+    screen = CS_SCREEN (user_data);
 
     old_monitor_infos = screen->monitor_infos;
+
     reload_monitor_infos (screen);
+
     g_free (old_monitor_infos);
 
-    g_signal_emit (screen, signals[CHANGED], 0);
-
-    screen->idle_changed_id = 0;
-    return FALSE;
+    g_signal_emit (screen, signals[MONITORS_CHANGED], 0);
 }
 
 static void
 on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
-    CsScreen *screen = CS_SCREEN (user_data);
+    CsScreen *screen;
 
-    if (screen->idle_changed_id > 0)
-    {
-        g_source_remove (screen->idle_changed_id);
-        screen->idle_changed_id = 0;
-    }
+    screen = CS_SCREEN (user_data);
 
-    g_idle_add ((GSourceFunc) on_screen_changed_idle, screen);
+    reload_screen_info (screen);
+
+    g_signal_emit (screen, signals[SCREEN_CHANGED], 0);
 }
 
 static void
@@ -409,7 +413,7 @@ cs_screen_init (CsScreen *screen)
 {
     screen->gdk_screen = gdk_screen_get_default ();
 
-    screen->monitors_changed_id = g_signal_connect (screen->gdk_screen, "monitors-changed", G_CALLBACK (on_screen_changed), screen);
+    screen->monitors_changed_id = g_signal_connect (screen->gdk_screen, "monitors-changed", G_CALLBACK (on_monitors_changed), screen);
     screen->screen_size_changed_id = g_signal_connect (screen->gdk_screen, "size-changed", G_CALLBACK (on_screen_changed), screen);
 
     reload_screen_info (screen);
@@ -418,6 +422,26 @@ cs_screen_init (CsScreen *screen)
 
 static void
 cs_screen_finalize (GObject *object)
+{
+    CsScreen *screen;
+
+    g_return_if_fail (object != NULL);
+    g_return_if_fail (CS_IS_SCREEN (object));
+
+    screen = CS_SCREEN (object);
+
+    if (screen->monitor_infos)
+    {
+        g_free (screen->monitor_infos);
+    }
+
+    DEBUG ("CsScreen finalize\n");
+
+    G_OBJECT_CLASS (cs_screen_parent_class)->finalize (object);
+}
+
+static void
+cs_screen_dispose (GObject *object)
 {
     CsScreen *screen;
 
@@ -438,12 +462,9 @@ cs_screen_finalize (GObject *object)
         screen->screen_size_changed_id = 0;
     }
 
-    if (screen->monitor_infos)
-    {
-        g_free (screen->monitor_infos);
-    }
+    DEBUG ("CsScreen dispose\n");
 
-    G_OBJECT_CLASS (cs_screen_parent_class)->finalize (object);
+    G_OBJECT_CLASS (cs_screen_parent_class)->dispose (object);
 }
 
 static void
@@ -452,13 +473,21 @@ cs_screen_class_init (CsScreenClass *klass)
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
     object_class->finalize = cs_screen_finalize;
+    object_class->dispose = cs_screen_dispose;
 
-    signals[CHANGED] = g_signal_new ("changed",
-                                     G_TYPE_FROM_CLASS (object_class),
-                                     G_SIGNAL_RUN_LAST,
-                                     0,
-                                     NULL, NULL, NULL,
-                                     G_TYPE_NONE, 0);
+    signals[MONITORS_CHANGED] = g_signal_new ("monitors-changed",
+                                              G_TYPE_FROM_CLASS (object_class),
+                                              G_SIGNAL_RUN_LAST,
+                                              0,
+                                              NULL, NULL, NULL,
+                                              G_TYPE_NONE, 0);
+
+    signals[SCREEN_CHANGED] = g_signal_new ("size-changed",
+                                            G_TYPE_FROM_CLASS (object_class),
+                                            G_SIGNAL_RUN_LAST,
+                                            0,
+                                            NULL, NULL, NULL,
+                                            G_TYPE_NONE, 0);
 }
 
 CsScreen *
@@ -468,8 +497,7 @@ cs_screen_new (gboolean debug)
 
     debug_mode = debug;
 
-    result = g_object_new (CS_TYPE_SCREEN,
-                           NULL);
+    result = g_object_new (CS_TYPE_SCREEN, NULL);
 
     return CS_SCREEN (result);
 }
@@ -491,7 +519,10 @@ cs_screen_get_monitor_geometry (CsScreen     *screen,
     g_return_if_fail (monitor >= 0 && monitor < screen->n_monitor_infos);
     g_return_if_fail (geometry != NULL);
 
-    *geometry = screen->monitor_infos[monitor].rect;
+    geometry->x = screen->monitor_infos[monitor].rect.x;
+    geometry->y = screen->monitor_infos[monitor].rect.y;
+    geometry->width = screen->monitor_infos[monitor].rect.width;
+    geometry->height = screen->monitor_infos[monitor].rect.height;
 }
 
 /**
@@ -508,7 +539,10 @@ cs_screen_get_screen_geometry (CsScreen     *screen,
     g_return_if_fail (CS_IS_SCREEN (screen));
     g_return_if_fail (geometry != NULL);
 
-    *geometry = screen->rect;
+    geometry->x = screen->rect.x;
+    geometry->y = screen->rect.y;
+    geometry->width = screen->rect.width;
+    geometry->height = screen->rect.height;
 }
 
 /**

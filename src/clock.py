@@ -17,9 +17,8 @@ class ClockWidget(Floating, BaseWindow):
     using a timer which randomizes its halign and valign properties
     as well as its current monitor.
     """
-    def __init__(self, screen, away_message=None, initial_monitor=0):
+    def __init__(self, away_message=None, initial_monitor=0):
         super(ClockWidget, self).__init__(initial_monitor)
-        self.screen = screen
         self.get_style_context().add_class("clock")
         self.set_halign(Gtk.Align.START)
 

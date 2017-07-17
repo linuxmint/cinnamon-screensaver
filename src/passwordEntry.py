@@ -177,6 +177,8 @@ class PasswordEntry(Gtk.Entry):
         self.update_saved_group(self.keyboard_controller.get_current_group())
 
     def on_destroy(self, widget, data=None):
+        self.stop_progress()
+
         trackers.con_tracker_get().disconnect(self.keyboard_controller,
                                               "config-changed",
                                               self.on_config_changed)

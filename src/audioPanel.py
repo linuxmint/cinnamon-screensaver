@@ -6,9 +6,10 @@ from baseWindow import BaseWindow
 from volumeControl import VolumeControl
 from playerControl import PlayerControl
 from util import utils, settings
+import status
 
 class AudioPanel(BaseWindow):
-    def __init__(self, screen):
+    def __init__(self):
         """
         Upper left panel - only shows when Awake.  Will always show the
         volume slider, and will only show the player controls if there is
@@ -17,8 +18,7 @@ class AudioPanel(BaseWindow):
         super(AudioPanel, self).__init__()
         self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
-        self.screen = screen
-        self.monitor_index = self.screen.get_primary_monitor()
+        self.monitor_index = status.screen.get_primary_monitor()
 
         self.update_geometry()
 

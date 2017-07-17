@@ -2,6 +2,7 @@
 
 from gi.repository import Gtk
 import random
+import status
 
 from util import trackers
 from util import settings
@@ -54,9 +55,9 @@ class Floating:
         self.set_halign(Gtk.Align(horizontal))
         self.set_valign(Gtk.Align(vertical))
 
-        if self.screen.get_n_monitors() > 1:
+        if status.screen.get_n_monitors() > 1:
             new_monitor = self.current_monitor
-            n = self.screen.get_n_monitors()
+            n = status.screen.get_n_monitors()
 
             while new_monitor == self.current_monitor:
                 new_monitor = random.randint(0, n - 1)

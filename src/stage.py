@@ -55,7 +55,7 @@ class Stage(Gtk.Window):
         self.destroying = False
 
         self.manager = manager
-        self.screen = CScreensaver.Screen.new(status.Debug)
+        status.screen = CScreensaver.Screen.new(status.Debug)
         self.away_message = away_message
 
         self.monitors = []
@@ -118,9 +118,13 @@ class Stage(Gtk.Window):
         # For instance: Chrome and Firefox native notifications.
         self.gdk_filter = CScreensaver.GdkEventFilter()
 
-        trackers.con_tracker_get().connect(self.screen,
-                                           "changed",
-                                           self.on_screen_changed)
+        trackers.con_tracker_get().connect(status.screen,
+                                           "size-changed",
+                                           self.on_screen_size_changed)
+
+        trackers.con_tracker_get().connect(status.screen,
+                                           "monitors-changed",
+                                           self.on_monitors_changed)
 
         trackers.con_tracker_get().connect(self,
                                            "grab-broken-event",
@@ -129,12 +133,21 @@ class Stage(Gtk.Window):
         if status.InteractiveDebug:
             self.set_interactive_debugging(True)
 
-    def on_screen_changed(self, screen, data=None):
+    def on_screen_size_changed(self, screen, data=None):
         self.update_geometry()
         self.move_onscreen()
 
-        for monitor in self.monitors:
-            monitor.update_geometry()
+        self.overlay.queue_resize()
+
+    def on_monitors_changed(self, screen, data=None):
+        self.destroy_monitor_views()
+
+        try:
+            self.setup_monitors()
+            for monitor in self.monitors:
+                self.sink_child_widget(monitor)
+        except Exception as e:
+            print("Problem setting up monitor views during monitor change event: %s" % str(e))
 
         self.overlay.queue_resize()
 
@@ -264,12 +277,14 @@ class Stage(Gtk.Window):
 
         try:
             if self.clock_widget != None:
+                self.clock_widget.stop_positioning()
                 self.clock_widget.destroy()
         except Exception as e:
             print(e)
 
         try:
             if self.albumart_widget != None:
+                self.albumart_widget.stop_positioning()
                 self.albumart_widget.destroy()
         except Exception as e:
             print(e)
@@ -322,9 +337,15 @@ class Stage(Gtk.Window):
         self.gdk_filter.stop()
         self.gdk_filter = None
 
-        trackers.con_tracker_get().disconnect(self.screen,
-                                              "changed",
-                                              self.on_screen_changed)
+        trackers.con_tracker_get().disconnect(status.screen,
+                                              "size-changed",
+                                              self.on_screen_size_changed)
+
+        trackers.con_tracker_get().disconnect(status.screen,
+                                              "monitors-changed",
+                                              self.on_monitors_changed)
+
+        status.screen = None
 
         self.destroy()
 
@@ -337,15 +358,15 @@ class Stage(Gtk.Window):
         status.Spanned = settings.bg_settings.get_enum("picture-options") == CDesktopEnums.BackgroundStyle.SPANNED
 
         if status.InteractiveDebug or status.Spanned:
-            monitors = (self.screen.get_primary_monitor(),)
+            monitors = (status.screen.get_primary_monitor(),)
         else:
-            n = self.screen.get_n_monitors()
+            n = status.screen.get_n_monitors()
             monitors = ()
             for i in range(n):
                 monitors += (i,)
 
         for index in monitors:
-            monitor = MonitorView(self.screen, index)
+            monitor = MonitorView(index)
 
             image = Gtk.Image()
 
@@ -409,7 +430,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.clock_widget = ClockWidget(self.screen, self.away_message, self.screen.get_mouse_monitor())
+        self.clock_widget = ClockWidget(self.away_message, status.screen.get_mouse_monitor())
         self.add_child_widget(self.clock_widget)
 
         self.floaters.append(self.clock_widget)
@@ -427,7 +448,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.albumart_widget = AlbumArt(self.screen, self.away_message, self.screen.get_mouse_monitor())
+        self.albumart_widget = AlbumArt(self.away_message, status.screen.get_mouse_monitor())
         self.add_child_widget(self.albumart_widget)
 
         self.floaters.append(self.clock_widget)
@@ -478,10 +499,10 @@ class Stage(Gtk.Window):
         """
         Constructs the AudioPanel and InfoPanel and adds them to the overlay.
         """
-        self.audio_panel = AudioPanel(self.screen)
+        self.audio_panel = AudioPanel()
         self.add_child_widget(self.audio_panel)
 
-        self.info_panel = InfoPanel(self.screen)
+        self.info_panel = InfoPanel()
         self.add_child_widget(self.info_panel)
 
     def queue_dialog_key_event(self, event):
@@ -682,19 +703,19 @@ class Stage(Gtk.Window):
         or Awake states.
         """
         low_power = not self.power_client.plugged_in
-
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and low_power):
-            if self.clock_widget != None and settings.get_show_clock():
-                self.clock_widget.start_positioning()
-            if self.albumart_widget != None and settings.get_show_albumart():
-                self.albumart_widget.start_positioning()
-        else:
-            if self.clock_widget != None:
-                self.clock_widget.stop_positioning()
-                self.clock_widget.hide()
-            if self.albumart_widget != None:
-                self.albumart_widget.stop_positioning()
-                self.albumart_widget.hide()
+        if not status.Awake:
+            if (not settings.should_show_plugin()) or (settings.should_show_plugin() and low_power):
+                if self.clock_widget != None and settings.get_show_clock():
+                    self.clock_widget.start_positioning()
+                if self.albumart_widget != None and settings.get_show_albumart():
+                    self.albumart_widget.start_positioning()
+            else:
+                if self.clock_widget != None:
+                    self.clock_widget.stop_positioning()
+                    self.clock_widget.hide()
+                if self.albumart_widget != None:
+                    self.albumart_widget.stop_positioning()
+                    self.albumart_widget.hide()
 
         for monitor in self.monitors:
             monitor.update_view(status.Awake, low_power)
@@ -736,10 +757,10 @@ class Stage(Gtk.Window):
         """
 
         if status.InteractiveDebug:
-            monitor_n = self.screen.get_primary_monitor()
-            self.rect = self.screen.get_monitor_geometry(monitor_n)
+            monitor_n = status.screen.get_primary_monitor()
+            self.rect = status.screen.get_monitor_geometry(monitor_n)
         else:
-            self.rect = self.screen.get_screen_geometry()
+            self.rect = status.screen.get_screen_geometry()
 
         hints = Gdk.Geometry()
         hints.min_width = self.rect.width
@@ -755,16 +776,16 @@ class Stage(Gtk.Window):
 
     def get_mouse_monitor(self):
         if status.InteractiveDebug:
-            return self.screen.get_primary_monitor()
+            return status.screen.get_primary_monitor()
         else:
-            return self.screen.get_mouse_monitor()
+            return status.screen.get_mouse_monitor()
 
     def maybe_update_layout(self):
         """
         Called on all user events, moves widgets to the currently
         focused monitor if it changes (whichever monitor the mouse is in)
         """
-        current_focus_monitor = self.screen.get_mouse_monitor()
+        current_focus_monitor = status.screen.get_mouse_monitor()
 
         if self.last_focus_monitor == -1:
             self.last_focus_monitor = current_focus_monitor
@@ -779,6 +800,12 @@ class Stage(Gtk.Window):
         Add a new child to the overlay
         """
         self.overlay.add_overlay(widget)
+
+    def sink_child_widget(self, widget):
+        """
+        Move a child to the bottom of the overlay
+        """
+        self.overlay.reorder_overlay(widget, 0)
 
     def position_overlay_child(self, overlay, child, allocation):
         """
@@ -814,8 +841,8 @@ class Stage(Gtk.Window):
             UnlockDialog always shows on the currently focused monitor (the one the
             mouse is currently in), and is kept centered.
             """
-            monitor = self.screen.get_mouse_monitor()
-            monitor_rect = self.screen.get_monitor_geometry(monitor)
+            monitor = status.screen.get_mouse_monitor()
+            monitor_rect = status.screen.get_monitor_geometry(monitor)
 
             min_rect, nat_rect = child.get_preferred_size()
 
@@ -840,11 +867,11 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                current_monitor = self.screen.get_mouse_monitor()
+                current_monitor = status.screen.get_mouse_monitor()
             else:
                 current_monitor = child.current_monitor
 
-            monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+            monitor_rect = status.screen.get_monitor_geometry(current_monitor)
 
             region_w = monitor_rect.width / 3
             region_h = monitor_rect.height / 3
@@ -927,8 +954,8 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                current_monitor = self.screen.get_mouse_monitor()
-                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+                current_monitor = status.screen.get_mouse_monitor()
+                monitor_rect = status.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x
                 allocation.y = monitor_rect.y
                 allocation.width = nat_rect.width
@@ -952,8 +979,8 @@ class Stage(Gtk.Window):
             min_rect, nat_rect = child.get_preferred_size()
 
             if status.Awake:
-                current_monitor = self.screen.get_mouse_monitor()
-                monitor_rect = self.screen.get_monitor_geometry(current_monitor)
+                current_monitor = status.screen.get_mouse_monitor()
+                monitor_rect = status.screen.get_monitor_geometry(current_monitor)
                 allocation.x = monitor_rect.x + monitor_rect.width - nat_rect.width
                 allocation.y = monitor_rect.y
                 allocation.width = nat_rect.width
