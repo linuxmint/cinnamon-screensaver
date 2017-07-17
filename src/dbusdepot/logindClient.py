@@ -50,6 +50,11 @@ class LogindClient(LoginInterface, BaseClient):
             if id_suffix != "":
                 self.session_id = "/org/freedesktop/login1/session/%s" % (id_suffix,)
                 print("found session: %s" % (id_suffix,))
+            else:
+                print("Could not construct a valid ID for Logind session.  Is XDG_SESSION_ID set?")
+                self.session_proxy = None
+                self.on_failure()
+                return
 
         try:
             self.session_proxy = CScreensaver.LogindSessionProxy.new_for_bus(Gio.BusType.SYSTEM,
