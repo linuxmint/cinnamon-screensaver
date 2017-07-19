@@ -160,6 +160,10 @@ class Stage(Gtk.Window):
         """
         This is the primary way of making the Stage visible.
         """
+
+        # Cancel any existing transition
+        self.fader.cancel()
+
         if effect_time == 0:
             self.set_opacity(1.0)
             self.move_onscreen()
@@ -448,7 +452,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.albumart_widget = AlbumArt(self.away_message, status.screen.get_mouse_monitor())
+        self.albumart_widget = AlbumArt(None, status.screen.get_mouse_monitor())
         self.add_child_widget(self.albumart_widget)
 
         self.floaters.append(self.clock_widget)

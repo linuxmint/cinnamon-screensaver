@@ -90,12 +90,15 @@ class ScreensaverManager(GObject.Object):
             if not status.Active:
                 self.cinnamon_client.exit_expo_and_overview()
                 if self.grab_helper.grab_root(False):
+                    if immediate:
+                        transition = 0
+                    else:
+                        transition = c.STAGE_SPAWN_TRANSITION
                     if not self.stage:
-                        if immediate:
-                            transition = 0
-                        else:
-                            transition = c.STAGE_SPAWN_TRANSITION
                         self.spawn_stage(msg, transition, self.on_spawn_stage_complete)
+                    else:
+                        self.stage.transition_in(transition, self.on_spawn_stage_complete)
+                        self.stage.set_message(msg)
                     return True
                 else:
                     status.Active = False
