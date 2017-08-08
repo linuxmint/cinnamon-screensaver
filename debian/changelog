@@ -1,3 +1,14 @@
+cinnamon-screensaver (3.4.2) sonya; urgency=medium
+
+  [ Michael Webster ]
+  * add an issue template
+  * CsScreen: Fix hotplug/screen change detection and response, other issues.
+  * logindClient.py: Produce a more helpful message when logind is running, but we're unable to figure out a valid session id.
+  * manager/stage: Allow a second activation trigger to override a previous.
+  * manager.py: Force secondary activations to be immediate. (prevents flash)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 08 Aug 2017 13:11:48 +0200
+
 cinnamon-screensaver (3.4.1) sonya; urgency=medium
 
   [ Michael Webster ]
