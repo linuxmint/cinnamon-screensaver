@@ -59,6 +59,7 @@ notification_filter_func (GDBusConnection *connection,
 {
     GDBusMessage *ret = NULL;
     gboolean transient = FALSE;
+    gboolean replaces_existing = FALSE;
     gchar *sender_str = NULL;
 
     CsNotificationWatcher *watcher = CS_NOTIFICATION_WATCHER (user_data);
@@ -74,7 +75,7 @@ notification_filter_func (GDBusConnection *connection,
             g_variant_is_of_type (body, G_VARIANT_TYPE_TUPLE) &&
             g_variant_n_children (body) >= 7)
         {
-            GVariant *hints, *sender;
+            GVariant *hints, *sender, *replaces_id;
 
             if (debug_mode)
             {
@@ -152,6 +153,20 @@ notification_filter_func (GDBusConnection *connection,
             }
 
             g_clear_pointer (&sender, g_variant_unref);
+
+            replaces_id = g_variant_get_child_value (body, 1);
+
+            if (replaces_id)
+            {
+                /* The replaces_id will be 0 if the notification is not replacing
+                 * another - if it's not zero, we can ignore it, so we don't accumulate
+                 * notifications from spammy programs (like dropbox can be)
+                 */
+
+                replaces_existing = g_variant_get_uint32 (replaces_id) > 0;
+            }
+
+            g_clear_pointer (&replaces_id, g_variant_unref);
         }
     }
     else
@@ -159,7 +174,7 @@ notification_filter_func (GDBusConnection *connection,
         ret = message;
     }
 
-    if (ret == NULL && !transient)
+    if (ret == NULL && !transient && !replaces_existing)
     {
         NotificationIdleData *data = g_slice_new0 (NotificationIdleData);
 
