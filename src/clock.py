@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from gi.repository import CinnamonDesktop, CDesktopEnums, GLib, Gtk, Gio
+from gi.repository import CinnamonDesktop, GLib, Gtk, Gio
 
 from util import utils, trackers, settings
 from baseWindow import BaseWindow
@@ -31,10 +31,10 @@ class ClockWidget(Floating, BaseWindow):
         self.label.show()
         self.add(self.label)
 
-        self.clock_tracker = CinnamonDesktop.WallClock()
-        self.set_clock_interval()
+        self.clock = CinnamonDesktop.WallClock()
+        self.set_clock_format()
 
-        trackers.con_tracker_get().connect(self.clock_tracker,
+        trackers.con_tracker_get().connect(self.clock,
                                            "notify::clock",
                                            self.on_clock_changed)
 
@@ -51,58 +51,32 @@ class ClockWidget(Floating, BaseWindow):
 
         self.update_clock()
 
-    def set_clock_interval(self):
-        interval = CDesktopEnums.ClockInterval.SETTING
+    def set_clock_format(self):
+        date_format = ""
+        time_format = ""
 
         if settings.get_use_custom_format():
             date_format = settings.get_custom_date_format()
             time_format = settings.get_custom_time_format()
+        else:
+            date_format = self.clock.get_default_date_format()
+            time_format = self.clock.get_default_time_format()
 
-            use_seconds = False
+            # %l is 12-hr hours, but it adds a space to 0-9, which looks bad here.
+            # The '-' modifier tells the GDateTime formatter not to pad the value.
+            time_format = time_format.replace('%l', '%-l')
 
-            for token in ("%S", "%c", "%T", "%X"):
-                if token in date_format or token in time_format:
-                    use_seconds = True
-                    break
+        time_format = ('<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n' +             \
+                       '<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>')                \
+                        % (settings.get_time_font(), time_format, settings.get_date_font(), date_format)
 
-            if use_seconds:
-                interval = CDesktopEnums.ClockInterval.SECOND
-            else:
-                interval = CDesktopEnums.ClockInterval.MINUTE
-
-        self.clock_tracker.set_update_interval(interval)
+        self.clock.set_format_string(time_format)
 
     def on_clock_changed(self, clock, pspec):
         self.update_clock()
 
     def on_tz_changed(self, monitor, file, other, event):
         self.update_clock()
-
-    def get_clock_string(self):
-        date_value = ""
-        time_value = ""
-
-        now = GLib.DateTime.new_now_local()
-
-        if not settings.get_use_custom_format():
-            if settings.get_clock_should_show_date():
-                date_value = now.format(_("%A, %B %e"))
-            else:
-                date_value = ""
-
-            if settings.get_clock_should_use_24h():
-                time_value = now.format("%H:%M").lstrip()
-            else:
-                time_value = now.format("%l:%M %p").lstrip()
-        else:
-            date_value = now.format(settings.get_custom_date_format())
-            time_value = now.format(settings.get_custom_time_format())
-
-        clock_string = ('<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n' +\
-                       '<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>')\
-                        % (settings.get_time_font(), time_value, settings.get_date_font(), date_value)
-
-        return clock_string
 
     def update_clock(self):
         default_message = GLib.markup_escape_text (settings.get_default_away_message(), -1)
@@ -112,10 +86,10 @@ class ClockWidget(Floating, BaseWindow):
             user_name = utils.get_user_display_name()
             markup = ('%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>' +\
                       '\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>') %\
-                     (self.get_clock_string(), self.away_message, user_name)
+                     (self.clock.get_clock(), self.away_message, user_name)
         else:
             markup = '%s\n\n<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>' %\
-                     (self.get_clock_string(), font_message, default_message)
+                     (self.clock.get_clock(), font_message, default_message)
 
         self.label.set_markup(markup)
         self.label.set_line_wrap(True)
@@ -126,7 +100,7 @@ class ClockWidget(Floating, BaseWindow):
         self.update_clock()
 
     def on_destroy(self, data=None):
-        trackers.con_tracker_get().disconnect(self.clock_tracker,
+        trackers.con_tracker_get().disconnect(self.clock,
                                               "notify::clock",
                                               self.on_clock_changed)
 
@@ -138,6 +112,6 @@ class ClockWidget(Floating, BaseWindow):
                                               "destroy",
                                               self.on_destroy)
 
-        self.clock_tracker = None
+        self.clock = None
         self.tz_monitor = None
 

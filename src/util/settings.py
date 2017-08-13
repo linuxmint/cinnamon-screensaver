@@ -37,8 +37,6 @@ FLOATING_WIDGETS = "floating-widgets"
 # Interface settings - the same logic applies here as above - we don't
 # need to listen to changes to these.
 if_settings = Gio.Settings(schema_id="org.cinnamon.desktop.interface")
-CLOCK_SHOW_DATE_KEY = "clock-show-date"
-CLOCK_USE_24H_KEY = "clock-use-24h"
 KBD_LAYOUT_SHOW_FLAGS = "keyboard-layout-show-flags"
 KBD_LAYOUT_USE_CAPS = "keyboard-layout-use-upper"
 KBD_LAYOUT_PREFER_VARIANT = "keyboard-layout-prefer-variant-names"
@@ -107,12 +105,6 @@ def get_time_font():
     time_font = ss_settings.get_string(FONT_TIME_KEY)
 
     return _check_string(time_font)
-
-def get_clock_should_show_date():
-    return if_settings.get_boolean(CLOCK_SHOW_DATE_KEY)
-
-def get_clock_should_use_24h():
-    return if_settings.get_boolean(CLOCK_USE_24H_KEY)
 
 def get_show_flags():
     return if_settings.get_boolean(KBD_LAYOUT_SHOW_FLAGS)
