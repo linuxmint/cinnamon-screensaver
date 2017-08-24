@@ -97,4 +97,3 @@ class FocusNavigator:
             return None
 
         return widgets[focus_index]
-

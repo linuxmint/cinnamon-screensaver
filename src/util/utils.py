@@ -136,9 +136,9 @@ def lookup_plugin_path(name):
         return None
 
     try_path = os.path.join(config.pkgdatadir,
-                                "screensavers",
-                                name,
-                                "main")
+                            "screensavers",
+                            name,
+                            "main")
 
     if not os.path.exists(try_path):
         try_path = os.path.join(GLib.get_user_data_dir(),
@@ -152,14 +152,14 @@ def lookup_plugin_path(name):
     return try_path
 
 def CLAMP(value, low, high):
-        return max(low, min(value, high))
+    return max(low, min(value, high))
 
 def have_gtk_version(version_string):
     [major, minor, micro] = version_string.split(".", 3)
 
     return Gtk.get_major_version() >= eval(major) and \
-           Gtk.get_minor_version() >= eval(minor) and \
-           Gtk.get_micro_version() >= eval(micro)
+        Gtk.get_minor_version() >= eval(minor) and \
+        Gtk.get_micro_version() >= eval(micro)
 
 def clear_clipboards(widget):
     clipboard = widget.get_clipboard(Gdk.SELECTION_PRIMARY)

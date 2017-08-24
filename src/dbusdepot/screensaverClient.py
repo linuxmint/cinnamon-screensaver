@@ -18,13 +18,12 @@ class ScreenSaverClient(BaseClient):
 
     def __init__(self):
         super(ScreenSaverClient, self).__init__(Gio.BusType.SESSION,
-                                            CScreensaver.ScreenSaverProxy,
-                                            c.SS_SERVICE,
-                                            c.SS_PATH)
+                                                CScreensaver.ScreenSaverProxy,
+                                                c.SS_SERVICE,
+                                                c.SS_PATH)
 
     def on_client_setup_complete(self):
         self.emit("client-ready", True)
 
     def on_failure(self, *args):
         self.emit("client-ready", False)
-

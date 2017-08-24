@@ -98,8 +98,8 @@ class VolumeControl(Gtk.Box):
         self.volume_slider.set_value(volume)
 
         trackers.con_tracker_get().handler_unblock(self.volume_slider,
-                                                 "value-changed",
-                                                 self.on_volume_slider_changed)
+                                                   "value-changed",
+                                                   self.on_volume_slider_changed)
 
     def on_volume_slider_changed(self, range, data=None):
         value = self.volume_slider.get_value()

@@ -79,7 +79,7 @@ class InfoPanel(BaseWindow):
             if self.show_notifications:
                 do_reveal = True
 
-       
+
         if do_reveal:
             self.power_widget.set_visible(self.show_power)
             self.notification_widget.set_visible(self.show_notifications)
@@ -96,4 +96,3 @@ class InfoPanel(BaseWindow):
         trackers.con_tracker_get().disconnect(self,
                                               "notify::child-revealed",
                                               self.after_unreveal)
-

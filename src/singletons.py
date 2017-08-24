@@ -10,7 +10,7 @@ import status
 # business to the various dbus address is performed asynchronously from within each client.
 # The following clients can fail to establish with their respective dbus interfaces without
 # competely breaking the program (or at least that's what we're after) - it just means that
-# depending on what fails, you may end up without keyboard shortcut support, or a battery 
+# depending on what fails, you may end up without keyboard shortcut support, or a battery
 # widget, etc...
 from dbusdepot.cinnamonClient import CinnamonClient as _CinnamonClient
 from dbusdepot.sessionClient import SessionClient as _SessionClient

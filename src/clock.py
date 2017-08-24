@@ -68,7 +68,7 @@ class ClockWidget(Floating, BaseWindow):
 
         time_format = ('<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n' +             \
                        '<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>')                \
-                        % (settings.get_time_font(), time_format, settings.get_date_font(), date_format)
+            % (settings.get_time_font(), time_format, settings.get_date_font(), date_format)
 
         self.clock.set_format_string(time_format)
 
@@ -114,4 +114,3 @@ class ClockWidget(Floating, BaseWindow):
 
         self.clock = None
         self.tz_monitor = None
-

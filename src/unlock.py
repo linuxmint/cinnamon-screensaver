@@ -314,4 +314,3 @@ class UnlockDialog(BaseWindow):
         Updates the name label to the current real_name.
         """
         self.realname_label.set_text(self.real_name)
-

@@ -118,6 +118,3 @@ if __name__ == "__main__":
     setproctitle.setproctitle('cinnamon-screensaver')
 
     main = Main()
-
-
-
