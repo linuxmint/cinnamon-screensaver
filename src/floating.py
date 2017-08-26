@@ -71,5 +71,3 @@ class Floating:
         trackers.timer_tracker_get().cancel(str(self) + "align-timeout")
 
         return False
-
-

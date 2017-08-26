@@ -15,7 +15,7 @@ from util.grabHelper import GrabHelper
 
 class ScreensaverManager(GObject.Object):
     """
-    The ScreensaverManager is the central point where most major decision are made, 
+    The ScreensaverManager is the central point where most major decision are made,
     and where ScreensaverService requests are acted upon.
     """
     __gsignals__ = {
@@ -39,7 +39,7 @@ class ScreensaverManager(GObject.Object):
 
         self.session_client = singletons.SessionClient
         trackers.con_tracker_get().connect(self.session_client,
-                                           "idle-changed", 
+                                           "idle-changed",
                                            self.on_session_idle_changed)
 
         self.cinnamon_client = singletons.CinnamonClient
@@ -77,7 +77,7 @@ class ScreensaverManager(GObject.Object):
     def set_active(self, active, immediate=False, msg=None):
         """
         Activates or deactivates the screensaver.  Activation involves:
-            - sending a request to Cinnamon to exit Overview or Expo - 
+            - sending a request to Cinnamon to exit Overview or Expo -
               this could prevent a successful screen grab and keep the
               screensaver from activating.
             - grabbing the keyboard and mouse.
@@ -345,18 +345,3 @@ class ScreensaverManager(GObject.Object):
             self.grab_helper.release()
 
         return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

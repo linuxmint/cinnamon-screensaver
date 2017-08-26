@@ -84,4 +84,3 @@ class VolumeSlider(Gtk.Scale):
         cr.restore()
 
         return True
-

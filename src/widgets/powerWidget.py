@@ -88,5 +88,3 @@ class PowerWidget(Gtk.Frame):
 
     def should_show(self):
         return not self.power_client.full_and_on_ac_or_no_batteries()
-
-

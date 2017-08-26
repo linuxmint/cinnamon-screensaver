@@ -219,5 +219,3 @@ connection_tracker = ConnectionTracker()
 def con_tracker_get():
     global connection_tracker
     return connection_tracker
-
-

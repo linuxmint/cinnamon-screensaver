@@ -28,7 +28,7 @@ class WallpaperStack(Gtk.Stack):
 
     def set_initial_image(self, image):
         """
-        Creates and sets the initial background image to use in 
+        Creates and sets the initial background image to use in
         the WallpaperStack.
         """
         self.current = image
@@ -254,4 +254,3 @@ class MonitorView(BaseWindow):
                 match = re.match('^\s*WINDOW ID=(\d+)\s*$', output)
                 if match:
                     self.socket.add_id(int(match.group(1)))
-

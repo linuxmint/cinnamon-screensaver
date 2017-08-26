@@ -49,7 +49,7 @@ class Stage(Gtk.Window):
         self.get_style_context().add_class("csstage")
 
         trackers.con_tracker_get().connect(singletons.Backgrounds,
-                                           "changed", 
+                                           "changed",
                                            self.on_bg_changed)
 
         self.destroying = False
@@ -395,8 +395,8 @@ class Stage(Gtk.Window):
             image = Gtk.Image()
 
             singletons.Backgrounds.create_and_set_gtk_image (image,
-                                                  monitor.rect.width,
-                                                  monitor.rect.height)
+                                                             monitor.rect.width,
+                                                             monitor.rect.height)
 
             monitor.set_next_wallpaper_image(image)
 
@@ -638,7 +638,7 @@ class Stage(Gtk.Window):
         """
         Hide the unlock widget (and others) if the unlock has been canceled
 
-        This process is in three steps for aesthetic reasons - 
+        This process is in three steps for aesthetic reasons -
             a) Unreveal all widgets (begin fading them out)
             b) Switch over MonitorViews from wallpaper to plug-ins if needed.
             c) Re-reveal the InfoPanel if applicable

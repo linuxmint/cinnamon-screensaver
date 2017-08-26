@@ -74,4 +74,3 @@ class AlbumArt(Floating, BaseWindow):
             self.image.set_from_path(f.get_path())
         elif f.get_uri_scheme() == "http":
             self.image.set_from_file(f)
-
