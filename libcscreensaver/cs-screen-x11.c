@@ -365,14 +365,11 @@ reload_monitor_infos (CsScreen *screen)
 static void
 reload_screen_info (CsScreen *screen)
 {
-    Screen *xscreen;
     gint scale_factor;
 
-    xscreen = gdk_x11_screen_get_xscreen (screen->gdk_screen);
-
     screen->rect.x = screen->rect.y = 0;
-    screen->rect.width = WidthOfScreen (xscreen);
-    screen->rect.height = HeightOfScreen (xscreen);
+    screen->rect.width = gdk_screen_get_width (screen->gdk_screen);
+    screen->rect.height = gdk_screen_get_height (screen->gdk_screen);
 
     scale_factor = gdk_screen_get_monitor_scale_factor (screen->gdk_screen, PRIMARY_MONITOR);
     screen->rect.width /= scale_factor;

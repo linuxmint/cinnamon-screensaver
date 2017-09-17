@@ -134,12 +134,16 @@ class Stage(Gtk.Window):
             self.set_interactive_debugging(True)
 
     def on_screen_size_changed(self, screen, data=None):
+        if status.Debug:
+            print("Stage: Received screen changed signal, updating backdrop")
         self.update_geometry()
         self.move_onscreen()
 
         self.overlay.queue_resize()
 
     def on_monitors_changed(self, screen, data=None):
+        if status.Debug:
+            print("Stage: Received screen monitors-changed signal, updating monitor views")
         self.destroy_monitor_views()
 
         try:
@@ -765,6 +769,9 @@ class Stage(Gtk.Window):
             self.rect = status.screen.get_monitor_geometry(monitor_n)
         else:
             self.rect = status.screen.get_screen_geometry()
+
+        if status.Debug:
+            print("Stage.update_geometry - new backdrop position: %d, %d  new size: %d x %d" % (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
         hints = Gdk.Geometry()
         hints.min_width = self.rect.width
