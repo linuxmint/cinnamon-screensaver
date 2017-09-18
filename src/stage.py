@@ -133,6 +133,16 @@ class Stage(Gtk.Window):
         if status.InteractiveDebug:
             self.set_interactive_debugging(True)
 
+    def update_monitors(self):
+        self.destroy_monitor_views()
+
+        try:
+            self.setup_monitors()
+            for monitor in self.monitors:
+                self.sink_child_widget(monitor)
+        except Exception as e:
+            print("Problem updating monitor views views: %s" % str(e))
+
     def on_screen_size_changed(self, screen, data=None):
         if status.Debug:
             print("Stage: Received screen changed signal, updating backdrop")
@@ -144,21 +154,20 @@ class Stage(Gtk.Window):
     def on_monitors_changed(self, screen, data=None):
         if status.Debug:
             print("Stage: Received screen monitors-changed signal, updating monitor views")
-        self.destroy_monitor_views()
 
-        try:
-            self.setup_monitors()
-            for monitor in self.monitors:
-                self.sink_child_widget(monitor)
-        except Exception as e:
-            print("Problem setting up monitor views during monitor change event: %s" % str(e))
-
+        self.update_monitors()
         self.overlay.queue_resize()
 
     def on_grab_broken_event(self, widget, event, data=None):
         GObject.idle_add(self.manager.grab_stage)
 
         return False
+
+    def refresh(self):
+        self.update_geometry()
+        self.move_onscreen()
+        self.update_monitors()
+        self.overlay.queue_resize()
 
     def transition_in(self, effect_time, callback):
         """

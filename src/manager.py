@@ -230,6 +230,17 @@ class ScreensaverManager(GObject.Object):
         """
         self.grab_helper.move_to_window(self.stage.get_window(), True)
 
+    def update_stage(self):
+        """
+        Tells the stage to check its canvas size and make sure its windows are up-to-date.  This is called
+        when our login manager tells us its "Active" property has changed.  We are always connected to the
+        login manager, so we first check if we have a stage.
+        """
+        if self.stage == None:
+            return
+
+        self.stage.refresh()
+
     def start_timers(self):
         """
         Stamps our current time starts our lock delay timer (the elapsed time to allow after
