@@ -146,6 +146,9 @@ class Stage(Gtk.Window):
     def on_screen_size_changed(self, screen, data=None):
         if status.Debug:
             print("Stage: Received screen changed signal, updating backdrop")
+
+        Gdk.flush()
+
         self.update_geometry()
         self.move_onscreen()
 
@@ -154,6 +157,8 @@ class Stage(Gtk.Window):
     def on_monitors_changed(self, screen, data=None):
         if status.Debug:
             print("Stage: Received screen monitors-changed signal, updating monitor views")
+
+        Gdk.flush()
 
         self.update_monitors()
         self.overlay.queue_resize()
@@ -164,6 +169,8 @@ class Stage(Gtk.Window):
         return False
 
     def refresh(self):
+        Gdk.flush()
+
         self.update_geometry()
         self.move_onscreen()
         self.update_monitors()
