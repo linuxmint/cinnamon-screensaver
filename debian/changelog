@@ -1,3 +1,14 @@
+cinnamon-screensaver (3.4.3) sonya; urgency=medium
+
+  [ Michael Webster ]
+  * cs-notification-watcher.c: Ignore notifications that replace existing ones, by checking if the 'replaces_id' field of the notification is non-zero.
+  * cs-screen-x11.c: Use Gdk to get the screen size, the previous method doesn't appear to update in time to have the new size, causing exposure to the desktop in some cases, such as resizing host windows of virtual machines.
+  * cs-screen-x11.c: GdkScreen width and height arrive already scaled for hidpi.
+  * logind/consolekit: Refresh screen and monitor info when coming back from inactive (such as sleep.)
+  * stage.py: Call gdk_flush to allow the server to catch up before getting updated screen/monitor infos.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 12 Oct 2017 12:32:35 +0100
+
 cinnamon-screensaver (3.4.2) sonya; urgency=medium
 
   [ Michael Webster ]
