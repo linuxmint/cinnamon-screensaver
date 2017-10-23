@@ -1,3 +1,30 @@
+cinnamon-screensaver (3.6.0) sylvia; urgency=medium
+
+  [ Michael Webster ]
+  * add an issue template
+  * CsScreen: Fix hotplug/screen change detection and response, other issues.
+  * logindClient.py: Produce a more helpful message when logind is running, but we're unable to figure out a valid session id.
+  * manager/stage: Allow a second activation trigger to override a previous.
+  * manager.py: Force secondary activations to be immediate. (prevents flash)
+  * cs-notification-watcher.c: Ignore notifications that replace existing ones, by checking if the 'replaces_id' field of the notification is non-zero.
+  * clock: Update for new wall clock API.
+  * debian/control: Update cinnamon-desktop dependency for new WallClock api.
+
+  [ Leigh Scott ]
+  * fix indent (#238)
+
+  [ Michael Webster ]
+  * cs-screen-x11.c: Use Gdk to get the screen size, the previous method doesn't appear to update in time to have the new size, causing exposure to the desktop in some cases, such as resizing host windows of virtual machines.
+  * cs-screen-x11.c: GdkScreen width and height arrive already scaled for hidpi.
+  * logind/consolekit: Refresh screen and monitor info when coming back from inactive (such as sleep.)
+  * stage.py: Call gdk_flush to allow the server to catch up before getting updated screen/monitor infos.
+  * keybindings: remove ability to take screenshots, restore ability to use computer power button.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 23 Oct 2017 15:50:38 +0100
+
 cinnamon-screensaver (3.4.1) sonya; urgency=medium
 
   [ Michael Webster ]
