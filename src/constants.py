@@ -8,10 +8,11 @@ STAGE_SPAWN_TRANSITION = 250
 STAGE_DESPAWN_TRANSITION = 250
 
 # Time in ms to fade the stage in when triggered by session idle
-STAGE_IDLE_SPAWN_TRANSITION = 10 * 1000
-# Time in ms to despawn the stage when it is interrupted during an
-# idle fade in.
-STAGE_IDLE_CANCEL_SPAWN_TRANSITION = 125
+# Set to 0, see https://github.com/linuxmint/cinnamon-screensaver/issues/219#issuecomment-342679518
+STAGE_IDLE_SPAWN_TRANSITION = 0
+# Time in ms to despawn the stage when it is interrupted during an idle fade in.
+# Set to 0, see https://github.com/linuxmint/cinnamon-screensaver/issues/219#issuecomment-342679518
+STAGE_IDLE_CANCEL_SPAWN_TRANSITION = 0
 
 # Time in ms to wait before releasing the keyboard and mouse grabs
 # after an idle-activation is canceled.
