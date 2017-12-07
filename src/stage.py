@@ -369,9 +369,12 @@ class Stage(Gtk.Window):
                                               "monitors-changed",
                                               self.on_monitors_changed)
 
-        status.screen = None
+        trackers.con_tracker_get().disconnect(self.overlay,
+                                              "get-child-position",
+                                              self.position_overlay_child)
 
         self.destroy()
+        status.screen = None
 
     def setup_monitors(self):
         """
