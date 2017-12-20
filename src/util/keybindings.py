@@ -33,7 +33,7 @@ ALLOWED_ACTIONS = [MK.MUTE,
                    MK.SCREEN_BRIGHTNESS_DOWN,
                    MK.KEYBOARD_BRIGHTNESS_UP,
                    MK.KEYBOARD_BRIGHTNESS_DOWN,
-                   MK.KEYBOARD_BRIGHTNESS_TOGGLE
+                   MK.KEYBOARD_BRIGHTNESS_TOGGLE,
                    MK.SUSPEND,
                    MK.HIBERNATE]
 
