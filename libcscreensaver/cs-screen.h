@@ -64,6 +64,8 @@ gint                         cs_screen_get_n_monitors (CsScreen *screen);
 
 gint                         cs_screen_get_mouse_monitor (CsScreen *screen);
 
+void                         cs_screen_reset_screensaver (void);
+
 void                         cs_screen_nuke_focus (void);
 
 G_END_DECLS
