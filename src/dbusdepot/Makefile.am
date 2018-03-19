@@ -17,6 +17,7 @@ app_PYTHON = \
         logindClient.py \
         loginInterface.py \
         mediaPlayerWatcher.py \
+        nameBlocker.py \
         screensaverClient.py \
         sessionClient.py \
         uPowerClient.py \
