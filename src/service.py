@@ -131,6 +131,8 @@ class ScreensaverService(GObject.Object):
     def handle_simulate_user_activity(self, iface, inv):
         if self.manager.is_locked():
             self.manager.simulate_user_activity()
+        else:
+            CScreensaver.Screen.reset_screensaver()
 
         iface.complete_simulate_user_activity(inv)
 

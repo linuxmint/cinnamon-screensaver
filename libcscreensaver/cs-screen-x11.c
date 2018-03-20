@@ -627,6 +627,20 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
     return ret;
 }
 
+/**
+ * cs_screen_reset_screensaver:
+ *
+ * Resets the screensaver idle timer. If called when the screensaver is active
+ * it will stop it.
+ *
+ */
+
+void
+cs_screen_reset_screensaver (void)
+{
+    XResetScreenSaver (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()));
+}
+
 void
 cs_screen_nuke_focus (void)
 {
