@@ -7,6 +7,7 @@ from gi.repository import Gtk, CScreensaver, Gio, GObject
 
 import constants as c
 from manager import ScreensaverManager
+import status
 
 class ScreensaverService(GObject.Object):
     """
@@ -132,6 +133,9 @@ class ScreensaverService(GObject.Object):
         if self.manager.is_locked():
             self.manager.simulate_user_activity()
         else:
+            if status.Debug:
+                print("Calling XResetScreenSaver");
+
             CScreensaver.Screen.reset_screensaver()
 
         iface.complete_simulate_user_activity(inv)
