@@ -10,6 +10,7 @@ import argparse
 import syslog
 import signal
 import os
+import psutil
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -29,6 +30,7 @@ class XScreensaverPlugin:
         GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGTERM, self.on_terminate)
 
         self.proc = None
+        self.hack = None
 
         if self.args.standalone:
             self.plug = Gtk.Window()
@@ -80,6 +82,8 @@ class XScreensaverPlugin:
                     path.append("-window-id")
                     path.append(str(self.xid))
 
+                    self.hack = hack
+
                     try:
                         self.proc = Gio.Subprocess.new(path, Gio.SubprocessFlags.STDIN_PIPE)
                         success = True
@@ -102,8 +106,12 @@ class XScreensaverPlugin:
 
     def kill_plugin(self):
         if self.proc:
-            self.proc.send_signal(signal.SIGTERM)
+            self.proc.force_exit()
             self.proc = None
+
+        for proc in psutil.process_iter():
+            if proc.name() == self.hack:
+                proc.kill()
 
     def on_terminate(self, data=None):
         self.kill_plugin()
