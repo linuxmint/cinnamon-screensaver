@@ -71,15 +71,22 @@ class XScreensaverPlugin:
             try:
                 path = shlex.split(direc + hack)
                 if os.path.exists(path[0]):
+                    sc_path = self.get_safechild_path()
+
+                    if sc_path == None:
+                        raise Exception("Cannot find safechild subprocess wrapper, exiting")
+
+                    path.insert(0, sc_path)
                     path.append("-window-id")
                     path.append(str(self.xid))
+
                     try:
-                        self.proc = Gio.Subprocess.new(path, Gio.SubprocessFlags.NONE)
+                        self.proc = Gio.Subprocess.new(path, Gio.SubprocessFlags.STDIN_PIPE)
                         success = True
                     except GLib.Error as e:
                         print("Error spawning screensaver hack: %s" % e.message)
             except Exception as e:
-                pass
+                print(e)
 
         if not success:
             syslog.syslog("cinnamon-screensaver: Screensaver '%s' not found" % hack)
@@ -102,6 +109,21 @@ class XScreensaverPlugin:
         self.kill_plugin()
         self.plug.destroy()
         Gtk.main_quit()
+
+    def get_safechild_path(self):
+        datadirs = GLib.get_system_data_dirs()
+
+        for datadir in datadirs:
+            try_path = os.path.join(datadir,
+                                    "cinnamon-screensaver",
+                                    "screensavers",
+                                    "xscreensaver@cinnamon.org",
+                                    "safechild")
+
+            if os.path.exists(try_path):
+                return try_path
+
+        return None
 
     def ensure_config_file(self):
         """
