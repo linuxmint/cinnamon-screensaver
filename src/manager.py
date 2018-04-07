@@ -54,17 +54,27 @@ class ScreensaverManager(GObject.Object):
 
     def lock(self, msg=""):
         """
-        Initiate locking (activating first if necessary.)
+        Initiate locking (activating first if necessary.)  Return True if we were
+        already active and just need to set the lock flag (or we were already locked
+        as well).  Return False if we're not active, and need to construct a stage, etc...
         """
         if not status.Active:
             if self.set_active(True, True, msg):
                 self.stop_lock_delay()
                 if utils.user_can_lock():
                     status.Locked = True
+                return False
         else:
             if utils.user_can_lock():
                 status.Locked = True
             self.stage.set_message(msg)
+
+        # Return True to complete any invocation immediately because:
+        # - we were already active and possibly already locked
+        # - we were unable to achieve a server grab, or something else
+        #   prevents the activation from proceeding, and we don't want to
+        #   block anything...??
+        return True
 
     def unlock(self):
         """

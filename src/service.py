@@ -93,9 +93,22 @@ class ScreensaverService(GObject.Object):
 
 # Interface handlers
     def handle_lock(self, iface, inv, msg):
-        self.lock_queue.append(inv)
+        """
+        We want to be able to respond to locking synchronously for security reasons.
+        Things like cinnamon-settings-daemon (power) and cinnamon-session use the
+        cinnamon-screensaver-command helper script to lock the screen during certain events
+        like sleep, hibernate, user switching, etc...
 
-        self.manager.lock(msg)
+        If we receive a lock request, we forward it to the manager.  It returns True if we were
+        already active (or active and locked.)  If so, we can complete the invocation immediately.
+        Otherwise, we queue the invocation, and wait for an "active-changed" signal from the manager,
+        and then complete the invocations (in the same order they were received.)
+        """
+
+        if self.manager.lock(msg):
+            iface.complete_lock(inv)
+        else:
+            self.lock_queue.append(inv)
 
         return True
 
