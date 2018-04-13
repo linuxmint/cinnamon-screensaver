@@ -49,7 +49,7 @@ class WebkitPlugin:
         if os.path.isfile(uri):
             self.webkit.load_uri("file://" + uri)
         else:
-            uri2 = os.path.join(os.getenv("HOME"), ".local/share/cinnamon-screensaver/screensavers/webkit", plugin, "index.html")
+            uri2 = os.path.join(os.getenv("HOME"), ".local/share/cinnamon-screensaver/screensavers/webkit@cinnamon.org", plugin, "index.html")
             self.webkit.load_uri("file://" + uri2)
 
         self.webkit.show()
