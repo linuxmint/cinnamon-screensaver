@@ -5,6 +5,9 @@ DEB_PKG_CONFIG_LIBDIR=$(shell pkg-config gobject-introspection-1.0 --variable li
 %:
 	dh $@ --parallel --with=autoreconf,gnome
 
+override_dh_autoreconf:
+	NOCONFIGURE=1 dh_autoreconf --as-needed ./autogen.sh
+
 override_dh_gnome_clean:
 	dh_gnome_clean --no-control
 
