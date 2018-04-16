@@ -3,13 +3,10 @@
 DEB_PKG_CONFIG_LIBDIR=$(shell pkg-config gobject-introspection-1.0 --variable libdir | sed -e 's/.//')
 
 %:
-	dh $@ --parallel --with=autoreconf,gnome
+	dh $@ --parallel --with=autoreconf
 
 override_dh_autoreconf:
 	NOCONFIGURE=1 dh_autoreconf --as-needed ./autogen.sh
-
-override_dh_gnome_clean:
-	dh_gnome_clean --no-control
 
 override_dh_strip:
 	dh_strip --dbg-package=libcscreensaver-dbg
