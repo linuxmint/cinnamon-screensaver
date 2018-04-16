@@ -4,9 +4,8 @@ Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  autoconf-archive,
- debhelper (>= 9),
+ debhelper (>= 10),
  devscripts,
- dh-autoreconf,
  dh-exec,
  dh-python,
  gnome-pkg-tools (>= 0.10),
