@@ -1,7 +1,8 @@
+/etc/pam.d/cinnamon-screensaver
+/usr/bin
 /usr/share/applications
-/usr/share/icons
-/usr/share/cinnamon-screensaver/*.py
 /usr/share/cinnamon-screensaver/*.css
+/usr/share/cinnamon-screensaver/*.py
 /usr/share/cinnamon-screensaver/__pycache__
 /usr/share/cinnamon-screensaver/dbusdepot/*.py
 /usr/share/cinnamon-screensaver/dbusdepot/__pycache__
@@ -12,5 +13,4 @@
 /usr/share/cinnamon-screensaver/widgets/*.py
 /usr/share/cinnamon-screensaver/widgets/__pycache__
 /usr/share/dbus-1
-/usr/bin
-/etc/pam.d/cinnamon-screensaver
+/usr/share/icons
