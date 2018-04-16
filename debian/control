@@ -20,6 +20,7 @@ Build-Depends:
  librsvg2-bin,
  libxext-dev,
  python-rsvg,
+ python3,
 Standards-Version: 3.9.6
 
 Package: cinnamon-screensaver
@@ -42,7 +43,7 @@ Depends:
  python3-setproctitle,
  python3-xapp (>= 1.0.1),
  ${misc:Depends},
- ${python:Depends},
+ ${python3:Depends},
  ${shlibs:Depends},
 Recommends: libpam-gnome-keyring
 Suggests: cinnamon-screensaver-webkit-plugin, cinnamon-screensaver-x-plugin
@@ -63,7 +64,12 @@ Description: Webkit plugin for cinnamon-screensaver
 Package: cinnamon-screensaver-x-plugin
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
-Depends: cinnamon-screensaver (>= 3.1.0), xscreensaver-data
+Depends:
+ cinnamon-screensaver (>= 3.1.0),
+ python3:any,
+ xscreensaver-data,
+ ${misc:Depends},
+ ${python3:Depends},
 Recommends: xscreensaver-data-extra, xscreensaver-gl, xscreensaver-gl-extra
 Description: XScreensaver plugin for cinnamon-screensaver
 
