@@ -82,6 +82,6 @@ Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${gir:Depends}, ${misc:Depends}, ${shlibs:Depends}
 Description: library and introspection data used only by cinnamon-screensaver
  to work around currently un-introspectable functions in Gdk-3.0

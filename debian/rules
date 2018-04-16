@@ -3,7 +3,7 @@
 DEB_PKG_CONFIG_LIBDIR=$(shell pkg-config gobject-introspection-1.0 --variable libdir | sed -e 's/.//')
 
 %:
-	dh $@ --parallel --with=autoreconf
+	dh $@ --parallel --with=autoreconf,gir
 
 override_dh_autoreconf:
 	NOCONFIGURE=1 dh_autoreconf --as-needed ./autogen.sh
