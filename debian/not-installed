@@ -1,0 +1,8 @@
+# Internal lib, no need for the dev parts
+usr/lib/*/libcscreensaver.la
+usr/lib/*/libcscreensaver.so
+usr/lib/*/pkgconfig/cscreensaver.pc
+usr/include/cinnamon-screensaver/
+# precompiled python files
+*/__pycache__/
+
