@@ -26,7 +26,6 @@ Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends:
  cinnamon-desktop-data (>= 3.5),
- cinnamon-screensaver-pam-helper,
  gir1.2-accountsservice-1.0,
  gir1.2-cinnamondesktop-3.0 (>= 3.5),
  gir1.2-gkbd-3.0,
@@ -49,10 +48,6 @@ Suggests: cinnamon-screensaver-webkit-plugin, cinnamon-screensaver-x-plugin
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
-
-Package: cinnamon-screensaver-pam-helper
-Architecture: any
-Description: PAM helper for cinnamon-screensaver
 
 Package: cinnamon-screensaver-webkit-plugin
 Architecture: all
