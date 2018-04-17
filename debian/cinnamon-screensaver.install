@@ -1,5 +1,6 @@
 etc/pam.d/cinnamon-screensaver
 usr/bin
+usr/lib/*/cinnamon-screensaver/cinnamon-screensaver-pam-helper
 usr/share/applications
 usr/share/cinnamon-screensaver/*.css
 usr/share/cinnamon-screensaver/*.py
