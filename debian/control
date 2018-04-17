@@ -4,17 +4,16 @@ Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  autoconf-archive,
+ automake,
  debhelper (>= 10),
- devscripts,
- dh-exec,
  dh-python,
  gnome-pkg-tools (>= 0.10),
  gobject-introspection,
  intltool (>= 0.40.0),
  libdbus-1-dev,
  libgirepository1.0-dev,
- libglib2.0-dev,
- libgtk-3-dev,
+ libglib2.0-dev (>= 2.37.3),
+ libgtk-3-dev (>= 3.1.4),
  libpam0g-dev,
  librsvg2-bin,
  libxext-dev,
@@ -23,24 +22,25 @@ Build-Depends:
 Standards-Version: 3.9.6
 
 Package: cinnamon-screensaver
-Architecture: all
+Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends:
- cinnamon-desktop-data (>= 3.0.0),
+ cinnamon-desktop-data (>= 3.5),
  cinnamon-screensaver-pam-helper,
  gir1.2-accountsservice-1.0,
- gir1.2-cinnamondesktop-3.0 (>= 3.5.0),
+ gir1.2-cinnamondesktop-3.0 (>= 3.5),
  gir1.2-gkbd-3.0,
  gir1.2-glib-2.0,
  gir1.2-gtk-3.0,
  gir1.2-xapp-1.0,
  iso-flag-png,
- libcscreensaver0,
+ libcscreensaver0 (= ${binary:Version}),
  python3,
  python3-gi,
  python3-gi-cairo,
  python3-setproctitle,
  python3-xapp (>= 1.0.1),
+ python3-xlib,
  ${misc:Depends},
  ${python3:Depends},
  ${shlibs:Depends},
@@ -57,8 +57,17 @@ Description: PAM helper for cinnamon-screensaver
 Package: cinnamon-screensaver-webkit-plugin
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
-Depends: cinnamon-screensaver (>= 3.1.0), gir1.2-webkit2-4.0
+Depends:
+ cinnamon-screensaver (>= 3.1.0),
+ gir1.2-webkit2-4.0,
+ python3:any,
+ ${misc:Depends},
+ ${python3:Depends},
 Description: Webkit plugin for cinnamon-screensaver
+ cinnamon-screensaver is a screen saver and locker that aims to have simple,
+ sane and secure defaults, and be well integrated with the Cinnamon desktop.
+ .
+ This package contains the plugin for using webkit screensavers.
 
 Package: cinnamon-screensaver-x-plugin
 Architecture: all
@@ -71,6 +80,10 @@ Depends:
  ${python3:Depends},
 Recommends: xscreensaver-data-extra, xscreensaver-gl, xscreensaver-gl-extra
 Description: XScreensaver plugin for cinnamon-screensaver
+ cinnamon-screensaver is a screen saver and locker that aims to have simple,
+ sane and secure defaults, and be well integrated with the Cinnamon desktop.
+ .
+ This package contains the plugin for using the xscreensaver animations.
 
 Package: libcscreensaver-dbg
 Section: debug
@@ -88,5 +101,8 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${gir:Depends}, ${misc:Depends}, ${shlibs:Depends}
-Description: library and introspection data used only by cinnamon-screensaver
- to work around currently un-introspectable functions in Gdk-3.0
+Description: library and introspection data used by cinnamon-screensaver
+ cinnamon-screensaver is a screen saver and locker that aims to have simple,
+ sane and secure defaults, and be well integrated with the Cinnamon desktop.
+ .
+ This package contains the library used by the screensaver.
