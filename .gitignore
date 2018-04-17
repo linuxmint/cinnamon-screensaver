@@ -52,7 +52,7 @@ xmldocs.make
 *.typelib
 *.pc
 .libs
-debian
+debian/files
 m4
 depcomp
 py-compile
