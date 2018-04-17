@@ -5,9 +5,10 @@ NULL =
 
 SUBDIRS =
 
-pamhelperdir = $(datadir)/cinnamon-screensaver/pamhelper
+pamhelperdatadir = $(datadir)/cinnamon-screensaver/pamhelper
+pamhelperdir = $(libexecdir)/pamhelper
 
-pamhelper_PYTHON = \
+pamhelperdata_PYTHON = \
     authClient.py \
     $(NULL)
 

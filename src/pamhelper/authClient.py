@@ -2,6 +2,7 @@
 
 from gi.repository import Gio, GObject, GLib, CScreensaver
 
+import config
 import re
 import os
 import signal
@@ -40,7 +41,7 @@ class AuthClient(GObject.Object):
         try:
             helper_path = None
             architecture = platform.machine()
-            paths = ["/usr/lib", "/usr/lib/cinnamon-screensaver", "/usr/libexec", "/usr/libexec/cinnamon-screensaver"]
+            paths = [config.libexecdir, "/usr/lib", "/usr/lib/cinnamon-screensaver", "/usr/libexec", "/usr/libexec/cinnamon-screensaver"]
 
             # On x86 archs, iterate through multiple paths
             # For instance, on a Mint i686 box, the path is actually /usr/lib/i386-linux-gnu
