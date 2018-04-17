@@ -44,6 +44,8 @@ Depends:
  ${python3:Depends},
  ${shlibs:Depends},
 Recommends: libpam-gnome-keyring
+Breaks: cinnamon-screensaver-pam-helper (<< 3.8)
+Replaces: cinnamon-screensaver-pam-helper (<< 3.8)
 Suggests: cinnamon-screensaver-webkit-plugin, cinnamon-screensaver-x-plugin
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
