@@ -3,7 +3,7 @@
 
 import gi
 
-from gi.repository import Gtk, Gdk, GObject, CScreensaver
+from gi.repository import Gtk, Gdk, GObject, CScreensaver, Gio
 import traceback
 
 
@@ -39,6 +39,8 @@ class UnlockDialog(BaseWindow):
 
     def __init__(self):
         super(UnlockDialog, self).__init__()
+
+        settings = Gio.Settings.new("org.cinnamon.desktop.lockdown")
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
@@ -94,18 +96,14 @@ class UnlockDialog(BaseWindow):
 
         button_box.pack_start(self.auth_unlock_button, False, False, 4)
 
-        self.auth_switch_button = TransparentButton("screensaver-switch-users-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
-        self.auth_switch_button.set_tooltip_text(_("Switch User"))
+        status.focusWidgets = [self.password_entry, self.auth_unlock_button]
 
-        trackers.con_tracker_get().connect(self.auth_switch_button,
-                                           "clicked",
-                                           self.on_switch_user_clicked)
-
-        button_box.pack_start(self.auth_switch_button, False, False, 4)
-
-        status.focusWidgets = [self.password_entry,
-                               self.auth_unlock_button,
-                               self.auth_switch_button]
+        if not settings.get_boolean("disable-user-switching"):
+            self.auth_switch_button = TransparentButton("screensaver-switch-users-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            self.auth_switch_button.set_tooltip_text(_("Switch User"))
+            trackers.con_tracker_get().connect(self.auth_switch_button, "clicked", self.on_switch_user_clicked)
+            button_box.pack_start(self.auth_switch_button, False, False, 4)
+            status.focusWidgets.append(self.auth_switch_button)
 
         vbox_messages = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
 
