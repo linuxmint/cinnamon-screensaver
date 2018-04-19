@@ -1,3 +1,51 @@
+cinnamon-screensaver (3.8.0) tara; urgency=medium
+
+  [ Michael Webster ]
+  * stage.py: Disconnect from, and destroy the CsScreen last, when tearing down the stage.
+
+  [ Clement Lefebvre ]
+  * Add CI configuration
+  * CI: Fix dependencies
+
+  [ Michael Thies ]
+  * keybindings: Allow suspend, hibernate and screen rotation from screensaver (#257)
+
+  [ itzexor ]
+  * libcscreensaver/service.py: fix xdg-screensaver suspend
+  * doc: add back dbus interface documentation
+
+  [ Michael Webster ]
+  * dbus: Own other screensaver names to prevent them from being activated on demand during a cinnamon session.
+  * nameBlocker.py: Watch for dbus activations and kill instead of simply blocking.  See inline notes for explanation related to xdg-screensaver.
+  * xscreensavers: Add safechild wrapper (from blueberry) - provides better control over screensaver hack processes, to prevent their lingering after the screensaver or cinnamon-settings is done with them.
+  * xscreensavers: Use python3 for safechild, attempt to kill the hack process when terminated.
+  * service, manager: always complete the lock invocation, whether we succeed or not, and whether we were already active or not.
+  * webkit script: Use correct path to user webkit screensavers.
+
+  [ Fabio Fantoni ]
+  * debian: wrap-and-sort -bst (#274)
+  * debian: Call autogen.sh with dh_autoreconf
+  * cleanup debian/rules from not needed gnome things
+  * debian: add missed gir to libcscreensaver0
+  * debian: right lib path from debian/rules without generate .install
+  * debian: improve python3 support
+  * Bump debhelper build-dep and compat to 10
+  * .gitignore: debian/files instead all debian folder
+  * improve debian/cinnamon-screensaver.install
+  * add debian/not-installed
+  * debian: remove old prerm
+  * update debian/copyright
+  * improve debian/control
+  * move pamhelper to libexec
+  * debian: remove cinnamon-screensaver-pam-helper, integrating in cinnamon-screensaver pkg
+  * circleci: remove mint18 job
+  * debian/control: add break/replace anyway to remove old cinnamon-screensaver-pam-helper
+
+  [ Clement Lefebvre ]
+  * Don't show switch-user when org.cinnamon.desktop.lockdown disable-user-switching is False
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 19 Apr 2018 12:46:03 +0100
+
 cinnamon-screensaver (3.6.1) sylvia; urgency=medium
 
   * Disable fade-in effects on idle
