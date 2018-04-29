@@ -88,6 +88,7 @@
     color: white;
     background-image: none;
     background-color: transparent;
+    border-image: none;
     border-width: 1px;
     padding: 5px 10px 5px 5px;
 }
