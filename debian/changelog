@@ -1,3 +1,10 @@
+cinnamon-screensaver (3.8.1) tara; urgency=medium
+
+  [ Germán Franco ]
+  * Remove border-image from the password entry (#277)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 06 May 2018 15:20:28 +0100
+
 cinnamon-screensaver (3.8.0) tara; urgency=medium
 
   [ Michael Webster ]
