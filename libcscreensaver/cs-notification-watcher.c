@@ -133,14 +133,37 @@ notification_filter_func (GDBusConnection *connection,
             {
                 GVariant *transient_hint;
 
-                transient_hint = g_variant_lookup_value (hints, "transient", NULL);
+                transient_hint = g_variant_lookup_value (hints, "transient", G_VARIANT_TYPE_BOOLEAN);
 
                 if (transient_hint)
                 {
                     transient = g_variant_get_boolean (transient_hint);
-                }
+                    g_variant_unref (transient_hint);
 
-                g_clear_pointer (&transient_hint, g_variant_unref);
+                    if (debug_mode)
+                    {
+                        g_printerr ("notification has transient BOOLEAN hint: %s\n",
+                                    transient ? "TRUE" : "FALSE");
+                    }
+                }
+                else
+                {
+                    transient_hint = g_variant_lookup_value (hints, "transient", G_VARIANT_TYPE_INT32);
+
+                    if (transient_hint)
+                    {
+                        transient = g_variant_get_int32 (transient_hint);
+
+                        if (debug_mode)
+                        {
+                            g_printerr ("notification has transient INT32 hint: %d, transient: %s\n",
+                                        g_variant_get_int32 (transient_hint),
+                                        transient ? "TRUE" : "FALSE");
+                        }
+
+                        g_variant_unref (transient_hint);
+                    }
+                }
             }
 
             g_clear_pointer (&hints, g_variant_unref);
