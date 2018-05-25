@@ -22,6 +22,8 @@ class ClockWidget(Floating, BaseWindow):
         self.get_style_context().add_class("clock")
         self.set_halign(Gtk.Align.START)
 
+        self.clock = None
+
         if not settings.get_show_clock():
             return
 
@@ -96,6 +98,9 @@ class ClockWidget(Floating, BaseWindow):
         self.label.set_alignment(0.5, 0.5)
 
     def set_message(self, msg=""):
+        if not self.clock:
+            return
+
         self.away_message = msg
         self.update_clock()
 
