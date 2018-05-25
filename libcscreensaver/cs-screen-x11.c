@@ -378,6 +378,8 @@ on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
 
     screen = CS_SCREEN (user_data);
 
+    gdk_flush ();
+
     old_monitor_infos = screen->monitor_infos;
 
     reload_monitor_infos (screen);
@@ -393,6 +395,8 @@ on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
     CsScreen *screen;
 
     screen = CS_SCREEN (user_data);
+
+    gdk_flush ();
 
     reload_screen_info (screen);
 
