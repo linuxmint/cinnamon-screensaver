@@ -436,6 +436,9 @@ class Stage(Gtk.Window):
                                            "current-view-change-complete",
                                            self.after_power_state_changed)
 
+        if status.Debug:
+            print("stage: Power state changed, updating monitor views")
+
         self.update_monitor_views()
 
     def after_power_state_changed(self, monitor):
@@ -462,7 +465,7 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+        if not status.shouldShowPlugin():
             if settings.get_show_clock():
                 self.clock_widget.start_positioning()
 
@@ -480,7 +483,7 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if (not settings.should_show_plugin()) or (settings.should_show_plugin() and not self.power_client.plugged_in):
+        if not status.shouldShowPlugin():
             if settings.get_show_albumart():
                 self.albumart_widget.start_positioning()
 
@@ -729,9 +732,8 @@ class Stage(Gtk.Window):
         Updates all of our MonitorViews based on the power
         or Awake states.
         """
-        low_power = not self.power_client.plugged_in
         if not status.Awake:
-            if (not settings.should_show_plugin()) or (settings.should_show_plugin() and low_power):
+            if (not status.shouldShowPlugin()):
                 if self.clock_widget != None and settings.get_show_clock():
                     self.clock_widget.start_positioning()
                 if self.albumart_widget != None and settings.get_show_albumart():
@@ -745,7 +747,7 @@ class Stage(Gtk.Window):
                     self.albumart_widget.hide()
 
         for monitor in self.monitors:
-            monitor.update_view(status.Awake, low_power)
+            monitor.update_view()
 
             if not monitor.get_reveal_child():
                 monitor.reveal()

@@ -146,6 +146,9 @@ class MonitorView(BaseWindow):
         when it receives a SIGTERM.
         """
         if self.proc:
+            if status.Debug:
+                print("monitorView: killing plugin")
+
             self.proc.send_signal(signal.SIGTERM)
             self.proc = None
 
@@ -154,13 +157,14 @@ class MonitorView(BaseWindow):
         Attempt to retreive the current plug-in info and spawn
         a script to instantiate it.
         """
+
+        if status.Debug:
+            print("monitorView: show plugin")
+
         name = settings.get_screensaver_name()
         path = utils.lookup_plugin_path(name)
         if path is not None:
             self.spawn_plugin(path)
-            trackers.con_tracker_get().connect(self.socket,
-                                               "plug-added",
-                                               self.on_plug_added)
 
     def on_plug_added(self, socket, data=None):
         """
@@ -189,6 +193,9 @@ class MonitorView(BaseWindow):
         """
         status.PluginRunning = False
 
+        if status.Debug:
+            print("monitorView: show wallpaper")
+
         if self.stack.get_visible_child_name() == "wallpaper":
             self.emit("current-view-change-complete")
             return
@@ -214,17 +221,34 @@ class MonitorView(BaseWindow):
                                                   self.notify_transition_callback)
             self.emit("current-view-change-complete")
 
-    def update_view(self, awake, low_power):
+    def update_view(self, widget=None, data=None):
         """
         Syncs the current MonitorView state to whatever is appropriate, depending
         on whether we're awake and whether a plugin should be visible instead.
         """
         self.kill_plugin()
 
-        if not awake and not low_power and settings.should_show_plugin():
+        if status.Debug:
+            print("monitorView: updating view state")
+
+        trackers.con_tracker_get().disconnect(self.socket,
+                                              "hierarchy-changed",
+                                              self.show_plugin)
+
+        if not status.Awake and status.shouldShowPlugin():
             self.show_plugin()
         else:
             self.show_wallpaper()
+
+    def socket_is_anchored(self, socket):
+        toplevel = self.socket.get_toplevel()
+
+        is_toplevel = isinstance(toplevel, Gtk.Window)
+
+        if status.Debug:
+            print("monitorView: socket anchor check:", is_toplevel)
+
+        return is_toplevel
 
     def spawn_plugin(self, path):
         """
@@ -232,16 +256,31 @@ class MonitorView(BaseWindow):
         our GtkSocket.  We hold a reference to it so that we can terminate it properly
         later.
         """
-        try:
-            self.proc = Gio.Subprocess.new((path, None),
-                                           Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
+        if self.socket_is_anchored(self.socket):
+            try:
+                if status.Debug:
+                    print("monitorView: spawning plugin process: %s" % path)
 
-            pipe = self.proc.get_stdout_pipe()
-            pipe.read_bytes_async(4096, GLib.PRIORITY_DEFAULT, None, self.on_bytes_read)
+                trackers.con_tracker_get().connect(self.socket,
+                                                   "plug-added",
+                                                   self.on_plug_added)
 
-        except Exception as e:
-            print(e)
-            return
+                self.proc = Gio.Subprocess.new((path, None),
+                                               Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
+
+                pipe = self.proc.get_stdout_pipe()
+                pipe.read_bytes_async(4096, GLib.PRIORITY_DEFAULT, None, self.on_bytes_read)
+
+            except Exception as e:
+                print(e)
+                return
+        else:
+            if status.Debug:
+                print("monitorView: socket not anchored, waiting on toplevel change")
+
+            trackers.con_tracker_get().connect(self.socket,
+                                               "hierarchy-changed",
+                                               self.update_view)
 
     def on_bytes_read(self, pipe, res):
         bytes_read = pipe.read_bytes_finish(res)
@@ -253,4 +292,12 @@ class MonitorView(BaseWindow):
             if output:
                 match = re.match('^\s*WINDOW ID=(\d+)\s*$', output)
                 if match:
-                    self.socket.add_id(int(match.group(1)))
+                    # We might have gotten a wake between spawning the plugin
+                    # and receiving the window id
+                    xid = int(match.group(1))
+                    if status.Debug:
+                        print("monitorView: received window id from plugin: %d" % xid)
+                    if self.socket_is_anchored(self.socket):
+                        self.socket.add_id(xid)
+                    else:
+                        self.kill_plugin()

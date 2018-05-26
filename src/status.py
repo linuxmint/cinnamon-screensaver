@@ -11,8 +11,13 @@ focusWidgets = []
 # This helps the Stage decide whether to show the clock widget or not while not Awake.
 # You get all sorts of artifacts trying to draw widgets over the x plugins
 PluginRunning = False
+# Our test for whether we should be showing the plugin:  If it's the user's preference
+# and if we're on ac power.
+def shouldShowPlugin():
+    from util import settings
+    import singletons
 
-# Set by command line args
+    return settings.should_show_plugin() and singletons.UPowerClient.plugged_in
 
 # This is different than the preference that turns off locking - that only prevents idle locking.  The
 # user can still lock explicitly.  The function checks for the existence of correct PAM files,
