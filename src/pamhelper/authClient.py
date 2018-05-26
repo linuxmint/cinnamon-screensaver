@@ -32,11 +32,11 @@ class AuthClient(GObject.Object):
         self.in_pipe = None
 
     def initialize(self):
-        if status.Debug:
-            print("authClient initialize... initialized already: %s" % str(self.initialized))
-
         if self.initialized:
             return True
+
+        if status.Debug:
+            print("authClient: attempting to initialize")
 
         try:
             helper_path = None
@@ -61,7 +61,7 @@ class AuthClient(GObject.Object):
                     break
 
             if helper_path is None:
-                print ("Critical Error: PAM Helper could not be found!")
+                print ("authClient: critical Error: PAM Helper could not be found!")
 
             if status.Debug:
                 argv = (helper_path, "--debug", None)
@@ -76,7 +76,7 @@ class AuthClient(GObject.Object):
                                                Gio.SubprocessFlags.STDERR_SILENCE)
 
         except GLib.Error as e:
-            print("error starting cinnamon-screensaver-pam-helper: %s" % e.message)
+            print("authClient: error starting cinnamon-screensaver-pam-helper: %s" % e.message)
             return False
 
         self.proc.wait_check_async(None, self.on_proc_completed, None)
@@ -88,6 +88,9 @@ class AuthClient(GObject.Object):
 
         self.initialized = True
 
+        if status.Debug:
+            print("authClient: initialized")
+
         return True
 
     def cancel(self):
@@ -95,11 +98,11 @@ class AuthClient(GObject.Object):
             self.message_to_child("CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT\n");
         else:
             if status.Debug:
-                print("authClient cancel requested, but no helper process")
+                print("authClient: cancel requested, but no helper process")
 
     def on_proc_completed(self, proc, res, data=None):
         if status.Debug:
-            print("authClient helper process completed...")
+            print("authClient: helper process completed...")
         try:
             ret = proc.wait_check_finish(res)
         except GLib.Error as e:
@@ -132,7 +135,7 @@ class AuthClient(GObject.Object):
             return
 
         if status.Debug:
-            print("authClient message to child")
+            print("authClient: message to child")
 
         try:
             b = GLib.Bytes.new(string.encode())
@@ -176,25 +179,25 @@ class AuthClient(GObject.Object):
 
     def emit_idle_busy_state(self, busy):
         if status.Debug:
-            print("authClient idle add auth-busy")
+            print("authClient: idle add auth-busy")
         GObject.idle_add(self.emit, "auth-busy", busy)
 
     def emit_idle_failure(self):
         if status.Debug:
-            print("authClient idle add failure")
+            print("authClient: idle add failure")
         GObject.idle_add(self.emit, "auth-failure")
 
     def emit_idle_success(self):
         if status.Debug:
-            print("authClient idle add success")
+            print("authClient: idle add success")
         GObject.idle_add(self.emit, "auth-success")
 
     def emit_idle_cancel(self):
         if status.Debug:
-            print("authClient idle add cancel")
+            print("authClient: idle add cancel")
         GObject.idle_add(self.emit, "auth-cancel")
 
     def emit_idle_auth_prompt(self, prompt):
         if status.Debug:
-            print("authClient idle add auth-prompt")
+            print("authClient: idle add auth-prompt")
         GObject.idle_add(self.emit, "auth-prompt", prompt)

@@ -57,6 +57,13 @@ class TimerTracker:
 
         self.timers[name] = timeout_id
 
+    def add_idle(self, name, callback, *args):
+        self.cancel(name)
+        idle_id = GObject.idle_add(self.do_callback, callback, name, *args)
+        debug_timers("adding idle callback of name", name, "callback", str(callback), "id", idle_id)
+
+        self.timers[name] = idle_id
+
     def cancel(self, name):
         try:
             if self.timers[name]:

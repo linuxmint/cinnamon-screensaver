@@ -25,6 +25,8 @@ def shouldShowPlugin():
 LockEnabled = True
 
 # Enables extra PAM/authentication/notification debugging
+# TODO: We do a *lot* of logging now, we should just use a debug() function that checks
+# for debug mode internally, instead of 'if status.Debug' everywhere.
 Debug = False
 
 # Forces the Stage to only cover a single monitor and launch a GtkInspector window.

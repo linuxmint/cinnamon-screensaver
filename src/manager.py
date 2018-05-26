@@ -162,15 +162,28 @@ class ScreensaverManager(GObject.Object):
         if not status.Active:
             return
 
+        if status.Debug and not status.Awake:
+            print("manager: user activity, waking")
+
         if status.Locked and self.stage.initialize_pam():
+            if status.Debug and not status.Awake:
+                print("manager: locked, raising unlock widget")
+
             self.stage.raise_unlock_widget()
             self.grab_helper.release_mouse()
             self.stage.maybe_update_layout()
         else:
-            GObject.idle_add(self.idle_deactivate)
+            if status.Debug:
+                print("manager: not locked, queueing idle deactivation")
+
+            trackers.timer_tracker_get().add_idle("idle-deactivate",
+                                                  self.idle_deactivate)
 
     def idle_deactivate(self):
         self.set_active(False)
+
+        trackers.timer_tracker_get().cancel("idle-deactivate")
+
         return False
 
     def spawn_stage(self, away_message, effect_time=c.STAGE_SPAWN_TRANSITION, callback=None):
@@ -278,6 +291,9 @@ class ScreensaverManager(GObject.Object):
         """
         Updates the lock status when our timer has hit its limit
         """
+        if status.Debug:
+            print("manager: locking after delay ('lock-delay')")
+
         status.Locked = True
 
         return False
