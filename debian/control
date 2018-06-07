@@ -17,7 +17,6 @@ Build-Depends:
  libpam0g-dev,
  librsvg2-bin,
  libxext-dev,
- python-rsvg,
  python3,
 Standards-Version: 3.9.6
 
