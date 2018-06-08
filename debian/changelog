@@ -1,3 +1,15 @@
+cinnamon-screensaver (3.8.2) tara; urgency=medium
+
+  [ Michael Webster ]
+  * cs-notification-watcher.c: accept int variants for the transient hint.
+  * clock.py: Always initialize self.clock, whether the clock is to be shown or not ("show-clock" setting,) but guard against it not being an actual WallClock in set_message.
+  * cs-screen-x11.c: gdk_flush before retrieving updated monitor and screen information.  This is done in stage.py when responding to our CsScreen's signals, but we should do it here before rebuilding the monitor info for sharing with the stage.
+  * monitorView.py: Improve plugin behavior, logging, during screensaver activation/deactivation.
+  * various: Add more and improve existing logging for debug mode, and implement and use a timer tracker for the deactivation idle callback.
+  * debian/control: Remove python-rsvg from build deps (not available.)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 08 Jun 2018 11:37:49 +0100
+
 cinnamon-screensaver (3.8.1) tara; urgency=medium
 
   [ Germán Franco ]
