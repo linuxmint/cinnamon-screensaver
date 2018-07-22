@@ -35,8 +35,11 @@ class AccountsServiceClient(GObject.Object):
 
     def get_face_path(self):
         face_path = None
+        home_path = self.service.get_home_dir()
+        if home_path is None:
+            home_path = os.path.expanduser('~')
 
-        for path in [os.path.join(self.service.get_home_dir(), ".face"),
+        for path in [os.path.join(home_path, ".face"),
                      self.service.get_icon_file()]:
             if os.path.exists(path):
                 face_path = path
