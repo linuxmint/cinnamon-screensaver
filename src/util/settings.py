@@ -54,7 +54,7 @@ def _check_string(string):
     return ""
 
 def get_default_away_message():
-    msg = ss_settings.get_string(DEFAULT_MESSAGE_KEY)
+    msg = Gio.Settings(schema_id="org.cinnamon.desktop.screensaver").get_string(DEFAULT_MESSAGE_KEY)
 
     return _check_string(msg)
 
