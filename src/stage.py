@@ -67,6 +67,8 @@ class Stage(Gtk.Window):
         self.audio_panel = None
         self.info_panel = None
 
+        self.stage_refresh_id = 0
+
         self.floaters = []
 
         self.event_handler = EventHandler(manager)
@@ -144,32 +146,62 @@ class Stage(Gtk.Window):
             print("Problem updating monitor views views: %s" % str(e))
 
     def on_screen_size_changed(self, screen, data=None):
-        if status.Debug:
-            print("Stage: Received screen changed signal, updating backdrop")
+        """
+        The screen changing size should be acted upon immediately, to ensure coverage.
+        Wallpapers and plugins are secondary.
+        """
 
-        Gdk.flush()
+        if status.Debug:
+            print("Stage: Received screen size-changed signal, refreshing stage")
 
         self.update_geometry()
         self.move_onscreen()
-
         self.overlay.queue_resize()
 
     def on_monitors_changed(self, screen, data=None):
+        """
+        Updating monitors also will trigger an immediate stage coverage update (same
+        as on_screen_size_changed), and follow up at idle with actual monitor view
+        refreshes (wallpapers/plugins.)
+        """
         if status.Debug:
-            print("Stage: Received screen monitors-changed signal, updating monitor views")
+            print("Stage: Received screen monitors-changed signal, refreshing stage")
+
+        self.update_geometry()
+        self.move_onscreen()
+        self.overlay.queue_resize()
 
         Gdk.flush()
 
-        self.update_monitors()
-        self.overlay.queue_resize()
+        self.queue_refresh_stage()
 
     def on_grab_broken_event(self, widget, event, data=None):
         GObject.idle_add(self.manager.grab_stage)
 
         return False
 
-    def refresh(self):
+    def queue_refresh_stage(self):
+        """
+        Queues a complete refresh of the stage, resizing the screen if necessary,
+        reconstructing the individual monitor objects, etc...
+        """
+        if self.stage_refresh_id > 0:
+            GObject.source_remove(self.stage_refresh_id)
+            self.stage_refresh_id = 0
+
+        self.stage_refresh_id = GObject.idle_add(self._update_full_stage_on_idle)
+
+    def _update_full_stage_on_idle(self, data=None):
+        self.stage_refresh_id = 0
+
+        self._refresh()
+
+        return False
+
+    def _refresh(self):
         Gdk.flush()
+        if status.Debug:
+            print("Stage: refresh callback")
 
         self.update_geometry()
         self.move_onscreen()

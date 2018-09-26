@@ -262,7 +262,10 @@ class ScreensaverManager(GObject.Object):
         if self.stage == None:
             return
 
-        self.stage.refresh()
+        if status.Debug:
+            print("manager: queuing stage refresh (login manager reported active?")
+
+        self.stage.queue_refresh_stage()
 
     def start_timers(self):
         """
