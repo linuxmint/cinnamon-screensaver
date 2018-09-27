@@ -567,6 +567,8 @@ class Stage(Gtk.Window):
         self.info_panel = InfoPanel()
         self.add_child_widget(self.info_panel)
 
+        self.info_panel.update_revealed()
+
     def queue_dialog_key_event(self, event):
         """
         Sent from our EventHandler via the ScreensaverManager, this catches
@@ -764,8 +766,12 @@ class Stage(Gtk.Window):
         Updates all of our MonitorViews based on the power
         or Awake states.
         """
+
         if not status.Awake:
             if (not status.shouldShowPlugin()):
+                if status.Debug:
+                    if settings.should_show_plugin():
+                        print("Stage: plugin configured but disabling because we're on battery")
                 if self.clock_widget != None and settings.get_show_clock():
                     self.clock_widget.start_positioning()
                 if self.albumart_widget != None and settings.get_show_albumart():

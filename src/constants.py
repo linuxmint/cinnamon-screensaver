@@ -18,6 +18,10 @@ STAGE_IDLE_CANCEL_SPAWN_TRANSITION = 0
 # after an idle-activation is canceled.
 GRAB_RELEASE_TIMEOUT = 1 * 1000
 
+# Used by powerWidget - the level a battery must be below before the battery icon widget in the infopanel
+# will show even when asleep (active but not awake.)
+BATTERY_CRITICAL_PERCENT = 20
+
 # Cinnamon Screensaver
 SS_SERVICE                      = "org.cinnamon.ScreenSaver"
 SS_PATH                         = "/org/cinnamon/ScreenSaver"

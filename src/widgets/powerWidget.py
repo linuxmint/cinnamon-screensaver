@@ -4,6 +4,7 @@ from gi.repository import Gtk, GObject
 
 from util import trackers
 import singletons
+import constants as c
 
 class PowerWidget(Gtk.Frame):
     """
@@ -29,6 +30,8 @@ class PowerWidget(Gtk.Frame):
 
         self.power_client = singletons.UPowerClient
 
+        self.battery_critical = False
+
         trackers.con_tracker_get().connect(self.power_client,
                                            "power-state-changed",
                                            self.on_power_state_changed)
@@ -39,11 +42,14 @@ class PowerWidget(Gtk.Frame):
 
         self.power_client.rescan_devices()
 
+        self.on_power_state_changed(self.power_client)
+
     def on_power_state_changed(self, client):
         for widget in self.box.get_children():
             widget.destroy()
 
         self.path_widget_pairs = []
+        self.battery_critical = False
 
         self.construct_icons()
 
@@ -81,6 +87,8 @@ class PowerWidget(Gtk.Frame):
 
             if pct > 0:
                 text = _("%d%%" % pct)
+                if pct < c.BATTERY_CRITICAL_PERCENT:
+                    self.battery_critical = True
         except Exception as e:
             pass
 

@@ -46,11 +46,15 @@ class InfoPanel(BaseWindow):
 
         self.power_widget = PowerWidget()
         self.power_widget.set_no_show_all(True)
+        self.power_widget.connect("power-state-changed",self.on_power_state_changed)
         hbox.pack_start(self.power_widget, True, True, 2)
 
         self.show_all()
 
     def on_notification_received(self, obj):
+        self.update_revealed()
+
+    def on_power_state_changed(self, obj):
         self.update_revealed()
 
     def update_revealed(self):
@@ -66,19 +70,21 @@ class InfoPanel(BaseWindow):
             return
 
         do_reveal = False
+        battery_critical = False
 
         self.show_power = self.power_widget.should_show()
+        if self.show_power:
+            battery_critical = self.power_widget.battery_critical
+
         self.show_notifications = self.notification_widget.should_show()
 
         # Determine if we want to show all the time or only when status.Awake
-
         if status.Awake:
             if self.show_power or self.show_notifications:
                 do_reveal = True
-        elif status.Active and not status.PluginRunning:
-            if self.show_notifications:
+        elif not status.PluginRunning:
+            if self.show_notifications or battery_critical:
                 do_reveal = True
-
 
         if do_reveal:
             self.power_widget.set_visible(self.show_power)
