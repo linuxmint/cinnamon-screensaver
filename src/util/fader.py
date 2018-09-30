@@ -48,6 +48,8 @@ class Fader:
                 self.tick_id = self.widget.add_tick_callback(self._on_frame_tick_fade_in)
 
             self._fade_in_step(self.start_time)
+        else:
+            self.finished_cb()
 
         return GLib.SOURCE_REMOVE
 
@@ -64,6 +66,8 @@ class Fader:
                 self.tick_id = self.widget.add_tick_callback(self._on_frame_tick_fade_out)
 
             self._fade_out_step(self.start_time)
+        else:
+            self.finished_cb()
 
         return GLib.SOURCE_REMOVE
 
