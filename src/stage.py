@@ -158,6 +158,7 @@ class Stage(Gtk.Window):
         self.move_onscreen()
         self.overlay.queue_resize()
 
+
     def on_monitors_changed(self, screen, data=None):
         """
         Updating monitors also will trigger an immediate stage coverage update (same
@@ -263,6 +264,14 @@ class Stage(Gtk.Window):
         self.gdk_filter.start(self)
 
     def move_onscreen(self):
+        w = self.get_window()
+
+        if w:
+            w.move_resize(self.rect.x,
+                          self.rect.y,
+                          self.rect.width,
+                          self.rect.height)
+
         self.move(self.rect.x, self.rect.y)
         self.resize(self.rect.width, self.rect.height)
 

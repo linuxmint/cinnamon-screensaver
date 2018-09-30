@@ -378,11 +378,12 @@ on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
 
     screen = CS_SCREEN (user_data);
 
+    reload_screen_info (screen);
+    g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
+
     gdk_flush ();
 
     DEBUG ("CsScreen received 'monitors-changed' signal from GdkScreen\n");
-
-    reload_screen_info (screen);
 
     old_monitor_infos = screen->monitor_infos;
     reload_monitor_infos (screen);
@@ -399,12 +400,9 @@ on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
 
     screen = CS_SCREEN (user_data);
 
-    gdk_flush ();
-
     DEBUG ("CsScreen received 'size-changed' signal from GdkScreen\n");
 
     reload_screen_info (screen);
-
     g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
 }
 
