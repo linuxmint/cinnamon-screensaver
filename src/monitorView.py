@@ -108,8 +108,8 @@ class MonitorView(BaseWindow):
         self.update_geometry()
 
         self.stack = Gtk.Stack()
-        self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
-        self.stack.set_transition_duration(250)
+        self.stack.set_transition_type(Gtk.StackTransitionType.NONE)
+        self.stack.set_transition_duration(0)
         self.add(self.stack)
 
         self.wallpaper_stack = WallpaperStack()
@@ -183,9 +183,7 @@ class MonitorView(BaseWindow):
             return
 
         self.stack.set_visible_child_name("plugin")
-        trackers.con_tracker_get().connect(self.stack,
-                                           "notify::transition-running",
-                                           self.notify_transition_callback)
+        self.emit("current-view-change-complete")
 
     def show_wallpaper(self):
         """
@@ -201,25 +199,7 @@ class MonitorView(BaseWindow):
             return
 
         self.stack.set_visible_child_name("wallpaper")
-        trackers.con_tracker_get().connect(self.stack,
-                                           "notify::transition-running",
-                                           self.notify_transition_callback)
-
-    def notify_transition_callback(self, stack, pspec, data=None):
-        """
-        GtkStacks don't have any signal for telling you 'we're done transitioning'
-        the closest we can come to it is for every animation tick they call a notify
-        on the 'transition-running' property.  We wait until it returns False
-        to emit our own transition completed signal.  This only works because our
-        stack here *does* use a duration and transition type that isn't "None".
-        """
-        if stack.get_transition_running():
-            return
-        else:
-            trackers.con_tracker_get().disconnect(self.stack,
-                                                  "notify::transition-running",
-                                                  self.notify_transition_callback)
-            self.emit("current-view-change-complete")
+        self.emit("current-view-change-complete")
 
     def update_view(self, widget=None, data=None):
         """
