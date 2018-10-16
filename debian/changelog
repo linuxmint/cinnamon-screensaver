@@ -1,3 +1,17 @@
+cinnamon-screensaver (3.8.3) tara; urgency=medium
+
+  [ Michael Webster ]
+  * CsScreen/stage: Fix coverage changes when plugging in monitors that may affect scale factor.
+  * power widget: Ensure widget state is correct when becoming Active, instead of only updating at the next power state change.
+  * monitorView: don't use a transition for the view stack.
+  * fader: Always run the callback, even if the fade is halted due to the widget not being mapped.
+  * stage/screen: During any screen change, resize the stage backdrop immediately, to try to prevent incomplete coverage.
+
+  [ Andrew Geng ]
+  * Fall back to os.path.expanduser to find home dir. (#284)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 16 Oct 2018 16:35:16 +0100
+
 cinnamon-screensaver (3.8.2) tara; urgency=medium
 
   [ Michael Webster ]
