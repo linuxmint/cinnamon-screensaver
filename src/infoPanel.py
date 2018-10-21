@@ -51,6 +51,9 @@ class InfoPanel(BaseWindow):
 
         self.show_all()
 
+    def refresh_power_state(self):
+        self.power_widget.refresh()
+
     def on_notification_received(self, obj):
         self.update_revealed()
 

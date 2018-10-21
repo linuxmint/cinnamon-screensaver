@@ -669,6 +669,9 @@ class Stage(Gtk.Window):
 
         status.Awake = True
 
+        if self.info_panel:
+            self.info_panel.refresh_power_state()
+
         # Connect to one of our monitorViews (we have at least one always), to wait for
         # its transition to finish before running after_wallpaper_shown_for_unlock()
 
