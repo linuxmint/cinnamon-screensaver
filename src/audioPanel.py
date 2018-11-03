@@ -16,7 +16,6 @@ class AudioPanel(BaseWindow):
         a controllable mpris player available.
         """
         super(AudioPanel, self).__init__()
-        self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
 
         self.monitor_index = status.screen.get_primary_monitor()
 

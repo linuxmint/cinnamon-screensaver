@@ -48,6 +48,9 @@ class UnlockDialog(BaseWindow):
         self.real_name = None
         self.user_name = None
 
+        self.bounce_rect = None
+        self.bounce_count = 0
+
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.box.get_style_context().add_class("unlockbox")
         self.add(self.box)
@@ -138,9 +141,7 @@ class UnlockDialog(BaseWindow):
                                            "state-changed",
                                            self.keymap_handler)
 
-        trackers.con_tracker_get().connect_after(self,
-                                                 "notify::child-revealed",
-                                                 self.on_revealed)
+        self.keymap_handler(self.keymap)
 
         self.auth_client = AuthClient()
 
@@ -160,10 +161,14 @@ class UnlockDialog(BaseWindow):
                                            "auth-prompt",
                                            self.on_authentication_prompt_changed)
 
+        self.box.show_all()
+
     def initialize_auth_client(self):
         return self.auth_client.initialize()
 
     def cancel_auth_client(self):
+        self.clear_entry()
+
         self.auth_client.cancel()
 
     def on_authentication_success(self, auth_client):
@@ -210,15 +215,6 @@ class UnlockDialog(BaseWindow):
         Clears the auth message text if we have any.
         """
         self.auth_message_label.set_text("")
-
-    def on_revealed(self, widget, child):
-        """
-        Updates the capslock state and ensures the password is cleared when we're first shown.
-        """
-        if self.get_child_revealed():
-            self.keymap_handler(self.keymap)
-        else:
-            self.password_entry.set_text("")
 
     def queue_key_event(self, event):
         """
@@ -312,3 +308,29 @@ class UnlockDialog(BaseWindow):
         Updates the name label to the current real_name.
         """
         self.realname_label.set_text(self.real_name)
+
+    def blink(self):
+        GObject.timeout_add(75, self.on_blink_tick)
+
+    def on_blink_tick(self, data=None):
+        window = self.get_window()
+
+        if window == None:
+            return False
+
+        x, y = window.get_position()
+
+        if self.bounce_count < 6:
+            if self.bounce_count % 2 == 0:
+                y += 6
+            else:
+                y -= 6
+            self.get_window().move(x, y)
+            self.queue_draw()
+
+            self.bounce_count += 1
+
+            return True
+
+        self.bounce_count = 0
+        return False

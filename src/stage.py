@@ -108,7 +108,7 @@ class Stage(Gtk.Window):
         self.add(self.overlay)
 
         # We hang onto the UPowerClient here so power events can
-        # trigger changes to and from low-power mode (no plugins.)
+        # trigger changes to the info panel.
         self.power_client = singletons.UPowerClient
 
         trackers.con_tracker_get().connect(self.power_client,
@@ -148,7 +148,7 @@ class Stage(Gtk.Window):
     def on_screen_size_changed(self, screen, data=None):
         """
         The screen changing size should be acted upon immediately, to ensure coverage.
-        Wallpapers and plugins are secondary.
+        Wallpapers are secondary.
         """
 
         if status.Debug:
@@ -163,7 +163,7 @@ class Stage(Gtk.Window):
         """
         Updating monitors also will trigger an immediate stage coverage update (same
         as on_screen_size_changed), and follow up at idle with actual monitor view
-        refreshes (wallpapers/plugins.)
+        refreshes (wallpapers.)
         """
         if status.Debug:
             print("Stage: Received screen monitors-changed signal, refreshing stage")
@@ -468,29 +468,11 @@ class Stage(Gtk.Window):
         """
         Callback for UPower changes, this will make our MonitorViews update
         themselves according to user setting and power state.
-
-        This is in two parts - it looks nicer to reveal/hide the info panel
-        only after the MonitorView changes, so we attach to a MonitorView signal
-        temporarily, which tells us then any animation is complete.
         """
-        trackers.con_tracker_get().connect(self.monitors[0],
-                                           "current-view-change-complete",
-                                           self.after_power_state_changed)
-
         if status.Debug:
-            print("stage: Power state changed, updating monitor views")
+            print("stage: Power state changed, updating info panel")
 
-        self.update_monitor_views()
-
-    def after_power_state_changed(self, monitor):
-        """
-        Update the visibility of the InfoPanel after updating the MonitorViews
-        """
-        trackers.con_tracker_get().disconnect(monitor,
-                                              "current-view-change-complete",
-                                              self.after_power_state_changed)
-
-        self.info_panel.update_revealed()
+        self.info_panel.update_visibility()
 
     def setup_clock(self):
         """
@@ -506,9 +488,8 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if not status.shouldShowPlugin():
-            if settings.get_show_clock():
-                self.clock_widget.start_positioning()
+        if settings.get_show_clock():
+            self.clock_widget.start_positioning()
 
     def setup_albumart(self):
         """
@@ -524,9 +505,8 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.clock_widget)
 
-        if not status.shouldShowPlugin():
-            if settings.get_show_albumart():
-                self.albumart_widget.start_positioning()
+        if settings.get_show_albumart():
+            self.albumart_widget.start_positioning()
 
     def setup_unlock(self):
         """
@@ -576,7 +556,7 @@ class Stage(Gtk.Window):
         self.info_panel = InfoPanel()
         self.add_child_widget(self.info_panel)
 
-        self.info_panel.update_revealed()
+        self.info_panel.update_visibility()
 
     def queue_dialog_key_event(self, event):
         """
@@ -650,10 +630,6 @@ class Stage(Gtk.Window):
     def raise_unlock_widget(self):
         """
         Bring the unlock widget to the front and make sure it's visible.
-
-        This is done in two steps - we don't want to show anything over a plugin
-        (graphic glitches abound) - so we update the MonitorViews first, then do
-        our other reveals after its transition is complete.
         """
         self.reset_timeout()
 
@@ -672,35 +648,17 @@ class Stage(Gtk.Window):
         if self.info_panel:
             self.info_panel.refresh_power_state()
 
-        # Connect to one of our monitorViews (we have at least one always), to wait for
-        # its transition to finish before running after_wallpaper_shown_for_unlock()
-
-        if len(self.monitors) > 0:
-            trackers.con_tracker_get().connect(self.monitors[0],
-                                               "current-view-change-complete",
-                                               self.after_wallpaper_shown_for_unlock)
-
-        self.update_monitor_views()
-
-    def after_wallpaper_shown_for_unlock(self, monitor, data=None):
-        """
-        Finish raising the unlock widget - also bring up our status bars if applicable.
-        """
-        trackers.con_tracker_get().disconnect(monitor,
-                                              "current-view-change-complete",
-                                              self.after_wallpaper_shown_for_unlock)
-
         if self.clock_widget != None:
-            self.clock_widget.reveal()
+            self.clock_widget.show()
         if self.albumart_widget != None:
-            self.albumart_widget.reveal()
+            self.albumart_widget.show()
 
-        self.unlock_dialog.reveal()
+        self.unlock_dialog.show()
 
         if self.audio_panel != None:
-            self.audio_panel.reveal()
+            self.audio_panel.show()
         if self.info_panel != None:
-            self.info_panel.update_revealed()
+            self.info_panel.update_visibility()
 
     def cancel_unlocking(self):
         if self.unlock_dialog:
@@ -709,11 +667,6 @@ class Stage(Gtk.Window):
     def cancel_unlock_widget(self):
         """
         Hide the unlock widget (and others) if the unlock has been canceled
-
-        This process is in three steps for aesthetic reasons -
-            a) Unreveal all widgets (begin fading them out)
-            b) Switch over MonitorViews from wallpaper to plug-ins if needed.
-            c) Re-reveal the InfoPanel if applicable
         """
         if not status.Awake:
             return
@@ -721,57 +674,22 @@ class Stage(Gtk.Window):
         self.set_timeout_active(None, False)
         utils.clear_clipboards(self.unlock_dialog)
 
-        trackers.con_tracker_get().connect(self.unlock_dialog,
-                                           "notify::child-revealed",
-                                           self.after_unlock_unrevealed)
-        self.unlock_dialog.unreveal()
-
-        if self.clock_widget != None:
-            self.clock_widget.unreveal()
-        if self.albumart_widget != None:
-            self.albumart_widget.unreveal()
-        if self.audio_panel != None:
-            self.audio_panel.unreveal()
-        if self.info_panel != None:
-            self.info_panel.unreveal()
-
-    def after_unlock_unrevealed(self, obj, pspec):
-        """
-        Called after unlock unreveal is complete.  Tells the MonitorViews
-        to update themselves.
-        """
         self.unlock_dialog.hide()
-        self.unlock_dialog.cancel()
 
-        if self.audio_panel != None:
-            self.audio_panel.hide()
         if self.clock_widget != None:
             self.clock_widget.hide()
         if self.albumart_widget != None:
             self.albumart_widget.hide()
+        if self.audio_panel != None:
+            self.audio_panel.hide()
+        if self.info_panel != None:
+            self.info_panel.hide()
 
-        trackers.con_tracker_get().disconnect(self.unlock_dialog,
-                                              "notify::child-revealed",
-                                              self.after_unlock_unrevealed)
-
+        self.unlock_dialog.cancel()
         status.Awake = False
 
-        trackers.con_tracker_get().connect(self.monitors[0],
-                                           "current-view-change-complete",
-                                           self.after_transitioned_back_to_sleep)
-
         self.update_monitor_views()
-
-    def after_transitioned_back_to_sleep(self, monitor, data=None):
-        """
-        Called after the MonitorViews have updated - re-show the clock (if desired)
-        and the InfoPanel (if required.)
-        """
-        trackers.con_tracker_get().disconnect(monitor,
-                                              "current-view-change-complete",
-                                              self.after_transitioned_back_to_sleep)
-
-        self.info_panel.update_revealed()
+        self.info_panel.update_visibility()
 
     def update_monitor_views(self):
         """
@@ -780,34 +698,19 @@ class Stage(Gtk.Window):
         """
 
         if not status.Awake:
-            if (not status.shouldShowPlugin()):
-                if status.Debug:
-                    if settings.should_show_plugin():
-                        print("Stage: plugin configured but disabling because we're on battery")
-                if self.clock_widget != None and settings.get_show_clock():
-                    self.clock_widget.start_positioning()
-                if self.albumart_widget != None and settings.get_show_albumart():
-                    self.albumart_widget.start_positioning()
-            else:
-                if self.clock_widget != None:
-                    self.clock_widget.stop_positioning()
-                    self.clock_widget.hide()
-                if self.albumart_widget != None:
-                    self.albumart_widget.stop_positioning()
-                    self.albumart_widget.hide()
+            if self.clock_widget != None and settings.get_show_clock():
+                self.clock_widget.start_positioning()
+            if self.albumart_widget != None and settings.get_show_albumart():
+                self.albumart_widget.start_positioning()
 
         for monitor in self.monitors:
-            monitor.update_view()
-
-            if not monitor.get_reveal_child():
-                monitor.reveal()
+                monitor.show()
 
     def destroy_monitor_views(self):
         """
         Destroy all MonitorViews
         """
         for monitor in self.monitors:
-            monitor.kill_plugin()
             monitor.destroy()
             del monitor
 
@@ -1052,8 +955,7 @@ class Stage(Gtk.Window):
 
         if isinstance(child, InfoPanel):
             """
-            The InfoPanel can be shown while not Awake, but only if we're not running
-            a screensaver plugin.  In any case, it will only appear if a) We have received
+            The InfoPanel can be shown while not Awake, but will only appear if a) We have received
             notifications while the screensaver is running, or b) we're either on battery
             or plugged in but with a non-full battery.  It attaches itself to the upper-right
             corner of the monitor.

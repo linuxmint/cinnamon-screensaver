@@ -1,3 +1,9 @@
+cinnamon-screensaver (3.9.0) UNRELEASED; urgency=medium
+
+  * Version bump for packaging changes (removal of plugins)
+
+ -- Michael Webster <miketwebster@gmail.com>  Tue, 30 Oct 2018 21:43:07 -0400
+
 cinnamon-screensaver (3.8.3) tara; urgency=medium
 
   [ Michael Webster ]

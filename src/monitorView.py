@@ -95,41 +95,18 @@ class MonitorView(BaseWindow):
     A monitor-sized child of the stage that is responsible for displaying
     the currently-selected wallpaper or appropriate plug-in.
     """
-    __gsignals__ = {
-        'current-view-change-complete': (GObject.SignalFlags.RUN_LAST, None, ()),
-    }
     def __init__(self, index):
         super(MonitorView, self).__init__()
 
         self.monitor_index = index
 
-        self.proc = None
-
         self.update_geometry()
-
-        self.stack = Gtk.Stack()
-        self.stack.set_transition_type(Gtk.StackTransitionType.NONE)
-        self.stack.set_transition_duration(0)
-        self.add(self.stack)
 
         self.wallpaper_stack = WallpaperStack()
         self.wallpaper_stack.show()
         self.wallpaper_stack.set_halign(Gtk.Align.FILL)
         self.wallpaper_stack.set_valign(Gtk.Align.FILL)
-
-        self.stack.add_named(self.wallpaper_stack, "wallpaper")
-
-        self.socket = Gtk.Socket()
-        self.socket.show()
-        self.socket.set_halign(Gtk.Align.FILL)
-        self.socket.set_valign(Gtk.Align.FILL)
-
-        # This prevents the socket from self-destructing when the plug process is killed
-        trackers.con_tracker_get().connect(self.socket,
-                                           "plug-removed",
-                                           lambda socket: True)
-
-        self.stack.add_named(self.socket, "plugin")
+        self.add(self.wallpaper_stack)
 
         self.show_all()
 
@@ -138,146 +115,3 @@ class MonitorView(BaseWindow):
 
     def set_next_wallpaper_image(self, image):
         self.wallpaper_stack.transition_to_image(image)
-
-    def kill_plugin(self):
-        """
-        Asks the active plug-in to exit gracefully.
-        The plug-in script is set to run Gtk.main_quit()
-        when it receives a SIGTERM.
-        """
-        if self.proc:
-            if status.Debug:
-                print("monitorView: killing plugin")
-
-            self.proc.send_signal(signal.SIGTERM)
-            self.proc = None
-
-    def show_plugin(self):
-        """
-        Attempt to retreive the current plug-in info and spawn
-        a script to instantiate it.
-        """
-
-        if status.Debug:
-            print("monitorView: show plugin")
-
-        name = settings.get_screensaver_name()
-        path = utils.lookup_plugin_path(name)
-        if path is not None:
-            self.spawn_plugin(path)
-
-    def on_plug_added(self, socket, data=None):
-        """
-        Callback for a plug-in being added to our GtkSocket.  This
-        completes the operation and makes the plugin stack child the
-        visible child for this MonitorView.
-        """
-        trackers.con_tracker_get().disconnect(self.socket,
-                                              "plug-added",
-                                              self.on_plug_added)
-
-        status.PluginRunning = True
-
-        if self.stack.get_visible_child_name() == "plugin":
-            self.emit("current-view-change-complete")
-            return
-
-        self.stack.set_visible_child_name("plugin")
-        self.emit("current-view-change-complete")
-
-    def show_wallpaper(self):
-        """
-        Initiate showing the wallpaper child of MonitorView
-        """
-        status.PluginRunning = False
-
-        if status.Debug:
-            print("monitorView: show wallpaper")
-
-        if self.stack.get_visible_child_name() == "wallpaper":
-            self.emit("current-view-change-complete")
-            return
-
-        self.stack.set_visible_child_name("wallpaper")
-        self.emit("current-view-change-complete")
-
-    def update_view(self, widget=None, data=None):
-        """
-        Syncs the current MonitorView state to whatever is appropriate, depending
-        on whether we're awake and whether a plugin should be visible instead.
-        """
-        self.kill_plugin()
-
-        if status.Debug:
-            print("monitorView: updating view state")
-
-        trackers.con_tracker_get().disconnect(self.socket,
-                                              "hierarchy-changed",
-                                              self.show_plugin)
-
-        if not status.Awake and status.shouldShowPlugin():
-            self.show_plugin()
-        else:
-            self.show_wallpaper()
-
-    def socket_is_anchored(self, socket):
-        toplevel = self.socket.get_toplevel()
-
-        is_toplevel = isinstance(toplevel, Gtk.Window)
-
-        if status.Debug:
-            print("monitorView: socket anchor check:", is_toplevel)
-
-        return is_toplevel
-
-    def spawn_plugin(self, path):
-        """
-        Spawns the plug-in script and watches its STDOUT for a window ID to use for
-        our GtkSocket.  We hold a reference to it so that we can terminate it properly
-        later.
-        """
-        if self.socket_is_anchored(self.socket):
-            try:
-                if status.Debug:
-                    print("monitorView: spawning plugin process: %s" % path)
-
-                trackers.con_tracker_get().connect(self.socket,
-                                                   "plug-added",
-                                                   self.on_plug_added)
-
-                self.proc = Gio.Subprocess.new((path, None),
-                                               Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
-
-                pipe = self.proc.get_stdout_pipe()
-                pipe.read_bytes_async(4096, GLib.PRIORITY_DEFAULT, None, self.on_bytes_read)
-
-            except Exception as e:
-                print(e)
-                return
-        else:
-            if status.Debug:
-                print("monitorView: socket not anchored, waiting on toplevel change")
-
-            trackers.con_tracker_get().connect(self.socket,
-                                               "hierarchy-changed",
-                                               self.update_view)
-
-    def on_bytes_read(self, pipe, res):
-        bytes_read = pipe.read_bytes_finish(res)
-        pipe.close(None)
-
-        if bytes_read:
-            output = bytes_read.get_data().decode()
-
-            if output:
-                match = re.match('^\s*WINDOW ID=(\d+)\s*$', output)
-                if match:
-                    # We might have gotten a wake between spawning the plugin
-                    # and receiving the window id
-                    xid = int(match.group(1))
-                    if status.Debug:
-                        print("monitorView: received window id from plugin: %d" % xid)
-                    if self.socket_is_anchored(self.socket):
-                        self.socket.add_id(xid)
-                    else:
-                        self.kill_plugin()

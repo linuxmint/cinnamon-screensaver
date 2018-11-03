@@ -131,26 +131,6 @@ def override_user_time(window):
 def debug_allocation(alloc):
     print("x:%d, y:%d, width:%d, height:%d" % (alloc.x, alloc.y, alloc.width, alloc.height))
 
-def lookup_plugin_path(name):
-    if name == "":
-        return None
-
-    try_path = os.path.join(config.pkgdatadir,
-                            "screensavers",
-                            name,
-                            "main")
-
-    if not os.path.exists(try_path):
-        try_path = os.path.join(GLib.get_user_data_dir(),
-                                "cinnamon-screensaver",
-                                "screensavers",
-                                name,
-                                "main")
-        if not os.path.exists(try_path):
-            return None
-
-    return try_path
-
 def CLAMP(value, low, high):
     return max(low, min(value, high))
 

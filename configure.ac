@@ -2,7 +2,7 @@ dnl -*- mode: m4 -*-
 
 AC_PREREQ(2.60)
 AC_INIT([cinnamon-screensaver],
-        [3.8.3],
+        [3.9.0],
         [https://github.com/linuxmint/cinnamon-screensaver/issues])
 
 PKG_PROG_PKG_CONFIG([0.26])
@@ -372,10 +372,6 @@ libcscreensaver/Makefile
 libcscreensaver/cscreensaver.pc
 libcscreensaver/cscreensaver-uninstalled.pc
 po/Makefile.in
-screensavers/Makefile
-screensavers/webkit@cinnamon.org/Makefile
-screensavers/webkit@cinnamon.org/webkit-stars@cinnamon.org/Makefile
-screensavers/xscreensaver@cinnamon.org/Makefile
 src/Makefile
 src/binfiles/Makefile
 src/dbusdepot/Makefile

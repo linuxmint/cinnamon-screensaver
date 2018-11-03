@@ -27,6 +27,7 @@ class PasswordEntry(Gtk.Entry):
         self.set_visibility(False)
         self.set_property("caps-lock-warning", False)
         self.set_placeholder_text (placeholder_text)
+        self.set_can_default(True)
 
         self.placeholder_text = placeholder_text
         self.current_icon_name = None

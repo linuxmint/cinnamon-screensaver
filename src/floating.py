@@ -7,7 +7,7 @@ import status
 from util import trackers
 from util import settings
 
-POSITIONING_TIMEOUT = 30
+POSITIONING_TIMEOUT = 5
 ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
 
 class Floating:
@@ -18,7 +18,7 @@ class Floating:
         self.current_monitor = initial_monitor
 
     def start_positioning(self):
-        self.reveal()
+        self.show()
         if settings.get_allow_floating():
             trackers.timer_tracker_get().cancel(str(self) + "positioning")
             trackers.timer_tracker_get().start_seconds(str(self) + "positioning",
@@ -28,19 +28,8 @@ class Floating:
     def stop_positioning(self):
         if settings.get_allow_floating():
             trackers.timer_tracker_get().cancel(str(self) + "positioning")
-            trackers.timer_tracker_get().cancel(str(self) + "align-timeout")
 
     def positioning_callback(self):
-        self.unreveal()
-        self.queue_resize()
-
-        trackers.timer_tracker_get().start(str(self) + "align-timeout",
-                                           self.REVEALER_DURATION + 10,
-                                           self.align_clock)
-
-        return True
-
-    def align_clock(self):
         current_halign = int(self.get_halign())
         horizontal = current_halign
 
@@ -66,8 +55,4 @@ class Floating:
 
         self.queue_resize()
 
-        self.reveal()
-
-        trackers.timer_tracker_get().cancel(str(self) + "align-timeout")
-
-        return False
+        return True

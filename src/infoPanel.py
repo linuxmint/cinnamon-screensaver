@@ -12,13 +12,10 @@ class InfoPanel(BaseWindow):
     """
     Upper right corner panel - contains the notification counter and any
     battery indicator(s) - this panel will generally show if it has anything
-    relevant to say, regardless of our Awake state (*except* when a plugin is
-    running, due to graphical issues.)
+    relevant to say, regardless of our Awake state.
     """
     def __init__(self):
         super(InfoPanel, self).__init__()
-        self.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
-
         self.monitor_index = status.screen.get_primary_monitor()
 
         self.update_geometry()
@@ -55,24 +52,23 @@ class InfoPanel(BaseWindow):
         self.power_widget.refresh()
 
     def on_notification_received(self, obj):
-        self.update_revealed()
+        self.update_visibility()
 
     def on_power_state_changed(self, obj):
-        self.update_revealed()
+        self.update_visibility()
 
-    def update_revealed(self):
+    def update_visibility(self):
         """
         Determines whether or not to show the panel, depending on:
             - Whether the power widget should show (are we on battery?)
             - Whether the notification widget should show (are there any?)
-            - Are we running a plugin or not?  Only show over wallpaper.
 
         The panel will show if either of its child indicators has useful info.
         """
         if self.disabled:
             return
 
-        do_reveal = False
+        do_show = False
         battery_critical = False
 
         self.show_power = self.power_widget.should_show()
@@ -84,24 +80,10 @@ class InfoPanel(BaseWindow):
         # Determine if we want to show all the time or only when status.Awake
         if status.Awake:
             if self.show_power or self.show_notifications:
-                do_reveal = True
-        elif not status.PluginRunning:
-            if self.show_notifications or battery_critical:
-                do_reveal = True
+                do_show = True
+        elif self.show_notifications or battery_critical:
+                do_show = True
 
-        if do_reveal:
-            self.power_widget.set_visible(self.show_power)
-            self.notification_widget.set_visible(self.show_notifications)
-            self.reveal()
-        else:
-            self.unreveal()
-            trackers.con_tracker_get().connect(self,
-                                               "notify::child-revealed",
-                                               self.after_unreveal)
-
-    def after_unreveal(self, obj, pspec):
+        self.set_visible(do_show)
         self.power_widget.set_visible(self.show_power)
         self.notification_widget.set_visible(self.show_notifications)
-        trackers.con_tracker_get().disconnect(self,
-                                              "notify::child-revealed",
-                                              self.after_unreveal)

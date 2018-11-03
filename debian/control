@@ -43,43 +43,17 @@ Depends:
  ${python3:Depends},
  ${shlibs:Depends},
 Recommends: libpam-gnome-keyring
-Breaks: cinnamon-screensaver-pam-helper (<< 3.8)
-Replaces: cinnamon-screensaver-pam-helper (<< 3.8)
-Suggests: cinnamon-screensaver-webkit-plugin, cinnamon-screensaver-x-plugin
+Breaks: 
+ cinnamon-screensaver-pam-helper (<< 3.8),
+ cinnamon-screensaver-webkit-plugin (<< 3.9),
+ cinnamon-screensaver-x-plugin (<< 3.9)
+Replaces:
+ cinnamon-screensaver-pam-helper (<< 3.8),
+ cinnamon-screensaver-webkit-plugin (<< 3.9),
+ cinnamon-screensaver-x-plugin (<< 3.9)
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.
-
-Package: cinnamon-screensaver-webkit-plugin
-Architecture: all
-Pre-Depends: ${misc:Pre-Depends}
-Depends:
- cinnamon-screensaver (>= 3.1.0),
- gir1.2-webkit2-4.0,
- python3:any,
- ${misc:Depends},
- ${python3:Depends},
-Description: Webkit plugin for cinnamon-screensaver
- cinnamon-screensaver is a screen saver and locker that aims to have simple,
- sane and secure defaults, and be well integrated with the Cinnamon desktop.
- .
- This package contains the plugin for using webkit screensavers.
-
-Package: cinnamon-screensaver-x-plugin
-Architecture: all
-Pre-Depends: ${misc:Pre-Depends}
-Depends:
- cinnamon-screensaver (>= 3.1.0),
- python3:any,
- xscreensaver-data,
- ${misc:Depends},
- ${python3:Depends},
-Recommends: xscreensaver-data-extra, xscreensaver-gl, xscreensaver-gl-extra
-Description: XScreensaver plugin for cinnamon-screensaver
- cinnamon-screensaver is a screen saver and locker that aims to have simple,
- sane and secure defaults, and be well integrated with the Cinnamon desktop.
- .
- This package contains the plugin for using the xscreensaver animations.
 
 Package: libcscreensaver-dbg
 Section: debug
