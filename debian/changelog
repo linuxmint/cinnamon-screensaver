@@ -1,8 +1,13 @@
-cinnamon-screensaver (3.9.0) UNRELEASED; urgency=medium
+cinnamon-screensaver (4.0.0) tessa; urgency=medium
 
-  * Version bump for packaging changes (removal of plugins)
+  [Michael Webster]
+  * all: Remove xscreensaver and webkit support and plugins, simplify widget transitions.
+  * info panel: Update the battery status when raising the lock screen.
 
- -- Michael Webster <miketwebster@gmail.com>  Tue, 30 Oct 2018 21:43:07 -0400
+  [schachmat] 
+  * Silence lintian warning about missing man pages.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 03 Nov 2018 10:45:05 +0000
 
 cinnamon-screensaver (3.8.3) tara; urgency=medium
 
