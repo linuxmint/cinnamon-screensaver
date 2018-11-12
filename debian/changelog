@@ -1,3 +1,10 @@
+cinnamon-screensaver (4.0.1) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * infoPanel.py: Don't attempt to access the power widget if we're disabled.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 12 Nov 2018 15:06:47 +0000
+
 cinnamon-screensaver (4.0.0) tessa; urgency=medium
 
   [Michael Webster]
