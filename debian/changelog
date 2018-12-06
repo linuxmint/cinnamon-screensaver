@@ -1,3 +1,10 @@
+cinnamon-screensaver (4.0.2) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * floating.py: Revert accidental change to widget positioning frequency.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 06 Dec 2018 13:20:21 +0000
+
 cinnamon-screensaver (4.0.1) tessa; urgency=medium
 
   [ Michael Webster ]
