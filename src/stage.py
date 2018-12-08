@@ -656,7 +656,7 @@ class Stage(Gtk.Window):
         self.unlock_dialog.show()
 
         if self.audio_panel != None:
-            self.audio_panel.show()
+            self.audio_panel.show_panel()
         if self.info_panel != None:
             self.info_panel.update_visibility()
 

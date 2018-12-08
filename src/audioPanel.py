@@ -43,7 +43,9 @@ class AudioPanel(BaseWindow):
 
         should_show = self.player_widget.should_show()
 
-        if should_show:
-            self.show_all()
-        else:
+        if not self.player_widget.should_show():
             self.disabled = True
+
+    def show_panel(self):
+        if not self.disabled:
+            self.show_all()
