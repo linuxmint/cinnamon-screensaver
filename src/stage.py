@@ -483,7 +483,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.clock_widget = ClockWidget(self.away_message, status.screen.get_mouse_monitor())
+        self.clock_widget = ClockWidget(self.away_message, status.screen.get_mouse_monitor(), status.screen.get_low_res_mode())
         self.add_child_widget(self.clock_widget)
 
         self.floaters.append(self.clock_widget)
@@ -859,7 +859,7 @@ class Stage(Gtk.Window):
             monitor_rect = status.screen.get_monitor_geometry(current_monitor)
 
             region_w = monitor_rect.width / 3
-            region_h = monitor_rect.height / 3
+            region_h = monitor_rect.height
 
             if status.Awake:
                 """
@@ -874,6 +874,8 @@ class Stage(Gtk.Window):
                 """
                 if (unlock_nw > region_w):
                     region_w = (monitor_rect.width - unlock_nw) / 2
+
+                region_h = monitor_rect.height
 
                 if isinstance(child, ClockWidget):
                     child.set_halign(Gtk.Align.START)
@@ -891,6 +893,8 @@ class Stage(Gtk.Window):
                             continue
                         if floater.get_halign() != child.get_halign() and floater.get_valign() != child.get_valign():
                             continue
+
+                        region_h = monitor_rect.height / 3
 
                         fa = floater.get_halign()
                         ca = child.get_halign()

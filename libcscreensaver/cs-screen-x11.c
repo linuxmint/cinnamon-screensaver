@@ -171,6 +171,38 @@ apply_scale_factor (CsMonitorInfo *infos,
     }
 }
 
+#define MONITOR_WIDTH_THRESHOLD 1200
+#define MONITOR_HEIGHT_THRESHOLD 1000
+
+static gboolean
+get_low_res_mode (CsMonitorInfo *infos,
+                  gint           n_infos)
+{
+    gint i;
+    gint smallest_width, smallest_height;
+
+    smallest_width = smallest_height = G_MAXINT;
+
+    for (i = 0; i < n_infos; i++)
+    {
+        smallest_width = MIN (infos[i].rect.width, smallest_width);
+        smallest_height = MIN (infos[i].rect.height, smallest_height);
+    }
+
+    if (smallest_width < MONITOR_WIDTH_THRESHOLD || smallest_height < MONITOR_HEIGHT_THRESHOLD)
+    {
+        DEBUG ("Narrowest monitor width after scaling (%dx%d) is below threshold of %dx%d, applying low-res mode\n",
+               smallest_width,
+               smallest_height,
+               MONITOR_WIDTH_THRESHOLD,
+               MONITOR_HEIGHT_THRESHOLD);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static void
 reload_monitor_infos (CsScreen *screen)
 {
@@ -357,6 +389,9 @@ reload_monitor_infos (CsScreen *screen)
     apply_scale_factor (screen->monitor_infos,
                         screen->n_monitor_infos,
                         gdk_screen_get_monitor_scale_factor (screen->gdk_screen, PRIMARY_MONITOR));
+
+    screen->low_res = get_low_res_mode (screen->monitor_infos,
+                                        screen->n_monitor_infos);
 
     g_assert (screen->n_monitor_infos > 0);
     g_assert (screen->monitor_infos != NULL);
@@ -635,13 +670,29 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
 }
 
 /**
+ * cs_screen_get_low_res_mode:
+ * @screen: a #CsScreen
+ *
+ * Gets whether or not one of our monitors falls below the low res threshold (1200 wide).
+ * This lets us display certain things at smaller sizes to prevent truncating of images, etc.
+ *
+ * Returns: Whether or not to use low res mode.
+ */
+gboolean
+cs_screen_get_low_res_mode (CsScreen *screen)
+{
+    g_return_val_if_fail (CS_IS_SCREEN (screen), FALSE);
+
+    return screen->low_res;
+}
+
+/**
  * cs_screen_reset_screensaver:
  *
  * Resets the screensaver idle timer. If called when the screensaver is active
  * it will stop it.
  *
  */
-
 void
 cs_screen_reset_screensaver (void)
 {

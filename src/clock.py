@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
-from gi.repository import CinnamonDesktop, GLib, Gtk, Gio
+from gi.repository import CinnamonDesktop, GLib, Gtk, Gio, Pango
 
 from util import utils, trackers, settings
 from baseWindow import BaseWindow
 from floating import Floating
+
+MAX_WIDTH = 320
+MAX_WIDTH_LOW_RES = 200
 
 class ClockWidget(Floating, BaseWindow):
     """
@@ -17,21 +20,43 @@ class ClockWidget(Floating, BaseWindow):
     using a timer which randomizes its halign and valign properties
     as well as its current monitor.
     """
-    def __init__(self, away_message=None, initial_monitor=0):
+    def __init__(self, away_message=None, initial_monitor=0, low_res=False):
         super(ClockWidget, self).__init__(initial_monitor)
         self.get_style_context().add_class("clock")
         self.set_halign(Gtk.Align.START)
 
+        self.set_property("margin", 6)
+
         self.clock = None
+        self.low_res = low_res
 
         if not settings.get_show_clock():
             return
 
         self.away_message = away_message
 
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(box)
+        box.show()
+
         self.label = Gtk.Label()
         self.label.show()
-        self.add(self.label)
+        self.label.set_line_wrap(True)
+        self.label.set_alignment(0.5, 0.5)
+
+        box.pack_start(self.label, True, False, 6)
+
+        self.msg_label = Gtk.Label()
+        self.msg_label.show()
+        self.msg_label.set_line_wrap(True)
+        self.msg_label.set_alignment(0.5, 0.5)
+
+        if self.low_res:
+            self.msg_label.set_max_width_chars(50)
+        else:
+            self.msg_label.set_max_width_chars(80)
+
+        box.pack_start(self.msg_label, True, True, 6)
 
         self.clock = CinnamonDesktop.WallClock()
         self.set_clock_format()
@@ -68,9 +93,18 @@ class ClockWidget(Floating, BaseWindow):
             # The '-' modifier tells the GDateTime formatter not to pad the value.
             time_format = time_format.replace('%l', '%-l')
 
+        time_font = Pango.FontDescription.from_string(settings.get_time_font())
+        date_font = Pango.FontDescription.from_string(settings.get_date_font())
+
+        if self.low_res:
+            time_size = time_font.get_size() * .66
+            date_size = date_font.get_size() * .66
+            time_font.set_size(int(time_size))
+            date_font.set_size(int(date_size))
+
         time_format = ('<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>\n' +             \
                        '<b><span font_desc=\"%s\" foreground=\"#FFFFFF\">%s</span></b>')                \
-            % (settings.get_time_font(), time_format, settings.get_date_font(), date_format)
+            % (time_font.to_string(), time_format, date_font.to_string(), date_format)
 
         self.clock.set_format_string(time_format)
 
@@ -82,20 +116,23 @@ class ClockWidget(Floating, BaseWindow):
 
     def update_clock(self):
         default_message = GLib.markup_escape_text (settings.get_default_away_message(), -1)
-        font_message = settings.get_message_font()
+        font_message = Pango.FontDescription.from_string(settings.get_message_font())
+
+        if self.low_res:
+            msg_size = font_message.get_size() * .66
+            font_message.set_size(int(msg_size))
 
         if self.away_message and self.away_message != "":
             user_name = utils.get_user_display_name()
-            markup = ('%s\n\n<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>' +\
-                      '\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>') %\
-                     (self.clock.get_clock(), self.away_message, user_name)
+            markup = ('<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>' +\
+                      '\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>\n ') %\
+                     (self.away_message, user_name)
         else:
-            markup = '%s\n\n<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>' %\
-                     (self.clock.get_clock(), font_message, default_message)
+            markup = '<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>\n ' %\
+                     (font_message.to_string(), default_message)
 
-        self.label.set_markup(markup)
-        self.label.set_line_wrap(True)
-        self.label.set_alignment(0.5, 0.5)
+        self.label.set_markup(self.clock.get_clock())
+        self.msg_label.set_markup(markup)
 
     def set_message(self, msg=""):
         if not self.clock:

@@ -40,6 +40,8 @@ typedef struct
 
     gulong monitors_changed_id;
     gulong screen_size_changed_id;
+
+    gboolean low_res;
 } CsScreen;
 
 typedef struct
@@ -63,6 +65,8 @@ gint                         cs_screen_get_primary_monitor (CsScreen *screen);
 gint                         cs_screen_get_n_monitors (CsScreen *screen);
 
 gint                         cs_screen_get_mouse_monitor (CsScreen *screen);
+
+gboolean                     cs_screen_get_low_res_mode (CsScreen *screen);
 
 void                         cs_screen_reset_screensaver (void);
 

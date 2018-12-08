@@ -55,7 +55,7 @@ class UnlockDialog(BaseWindow):
         self.box.get_style_context().add_class("unlockbox")
         self.add(self.box)
 
-        self.face_image = FramedImage()
+        self.face_image = FramedImage(status.screen.get_low_res_mode())
         self.face_image.set_halign(Gtk.Align.CENTER)
         self.face_image.get_style_context().add_class("faceimage")
         self.face_image.set_no_show_all(True)

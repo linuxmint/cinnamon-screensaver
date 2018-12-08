@@ -9,6 +9,7 @@ from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject
 from util import utils, trackers
 
 MAX_IMAGE_SIZE = 320
+MAX_IMAGE_SIZE_LOW_RES = 200
 
 class FramedImage(Gtk.Image):
     """
@@ -18,7 +19,7 @@ class FramedImage(Gtk.Image):
     __gsignals__ = {
         "pixbuf-changed": (GObject.SignalFlags.RUN_LAST, None, (object,))
     }
-    def __init__(self):
+    def __init__(self, low_res=False):
         super(FramedImage, self).__init__()
         self.get_style_context().add_class("framedimage")
 
@@ -26,6 +27,11 @@ class FramedImage(Gtk.Image):
 
         self.file = None
         self.path = None
+
+        if low_res:
+            self.max_size = MAX_IMAGE_SIZE_LOW_RES
+        else:
+            self.max_size = MAX_IMAGE_SIZE
 
         trackers.con_tracker_get().connect(self, "realize", self.on_realized)
 
@@ -60,9 +66,9 @@ class FramedImage(Gtk.Image):
             error = True
 
         if pixbuf != None:
-            if pixbuf.get_height() > MAX_IMAGE_SIZE or pixbuf.get_width() > MAX_IMAGE_SIZE:
+            if pixbuf.get_height() > self.max_size or pixbuf.get_width() > self.max_size:
                 try:
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.max_size, self.max_size)
                 except GLib.Error as e:
                     message = "Could not scale pixbuf from '%s' for FramedImage: %s" % (path, e.message)
                     error = True

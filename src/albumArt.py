@@ -8,6 +8,7 @@ from floating import Floating
 from widgets.framedImage import FramedImage
 
 import singletons
+import status
 
 class AlbumArt(Floating, BaseWindow):
     """
@@ -33,7 +34,7 @@ class AlbumArt(Floating, BaseWindow):
 
         self.current_url = None
 
-        self.image = FramedImage()
+        self.image = FramedImage(status.screen.get_low_res_mode())
         self.image.show()
         self.image.set_opacity(0.0)
         self.add(self.image)
