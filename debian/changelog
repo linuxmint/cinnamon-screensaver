@@ -1,3 +1,12 @@
+cinnamon-screensaver (4.0.3) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * all: Add low-resolution detection, adjust the clock and albumart widgets to be smaller in these cases.
+  * audio panel: Don't show initially.
+  * framedImage.py: Use surfaces for better hidpi display of album art.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Dec 2018 11:24:36 +0000
+
 cinnamon-screensaver (4.0.2) tessa; urgency=medium
 
   [ Michael Webster ]
