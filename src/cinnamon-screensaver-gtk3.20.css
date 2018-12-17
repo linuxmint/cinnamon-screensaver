@@ -193,3 +193,60 @@
     background-color: transparent;
     background-image: none;
 }
+
+.csstage .osk-button {
+    -gtk-icon-style: requested;
+    border-color: alpha(white, .2);
+    border-image: none;
+    box-shadow: none;
+    background-image: none;
+    background-color: transparent;
+    border-radius: 4px;
+    -gtk-outline-radius: 4px;
+    outline-color: transparent;
+    color: alpha(white, .7);
+    border-width: 1px;
+    padding: 4px;
+}
+
+.csstage .osk-button image {
+    color: alpha(white, .7);
+}
+
+.csstage .osk-button:disabled image {
+    color: #333333;
+}
+
+.csstage .osk-button:focus {
+    background-color: alpha(grey, .3);
+    border-color: @theme_selected_bg_color;
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.csstage .osk-button:hover {
+    border-color: alpha(white, .2);
+    background-color: alpha(grey, .2);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.csstage .osk-button:hover:focus {
+    border-color: @theme_selected_bg_color;
+    background-color: alpha(grey, .4);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.csstage .osk-button:active {
+    border-color: @theme_selected_bg_color;
+    background-color: alpha(grey, .5);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.csstage .osk-button:active:focus {
+    border-color: @theme_selected_bg_color;
+    background-color: alpha(grey, .55);
+    box-shadow: 1px 1px alpha(white, 0.1);
+}
+
+.csstage .osk-popover {
+    background-color: black;
+}

@@ -19,6 +19,7 @@ app_PYTHON = \
         infoPanel.py \
         manager.py \
         monitorView.py \
+        osk.py \
         passwordEntry.py \
         playerControl.py \
         service.py \
