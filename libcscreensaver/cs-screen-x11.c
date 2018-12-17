@@ -175,7 +175,8 @@ apply_scale_factor (CsMonitorInfo *infos,
 #define MONITOR_HEIGHT_THRESHOLD 1000
 
 static gboolean
-get_low_res_mode (CsMonitorInfo *infos,
+get_low_res_mode (CsScreen      *screen,
+                  CsMonitorInfo *infos,
                   gint           n_infos)
 {
     gint i;
@@ -188,6 +189,9 @@ get_low_res_mode (CsMonitorInfo *infos,
         smallest_width = MIN (infos[i].rect.width, smallest_width);
         smallest_height = MIN (infos[i].rect.height, smallest_height);
     }
+
+    screen->smallest_width = smallest_width;
+    screen->smallest_height = smallest_height;
 
     if (smallest_width < MONITOR_WIDTH_THRESHOLD || smallest_height < MONITOR_HEIGHT_THRESHOLD)
     {
@@ -390,7 +394,8 @@ reload_monitor_infos (CsScreen *screen)
                         screen->n_monitor_infos,
                         gdk_screen_get_monitor_scale_factor (screen->gdk_screen, PRIMARY_MONITOR));
 
-    screen->low_res = get_low_res_mode (screen->monitor_infos,
+    screen->low_res = get_low_res_mode (screen,
+                                        screen->monitor_infos,
                                         screen->n_monitor_infos);
 
     g_assert (screen->n_monitor_infos > 0);
@@ -684,6 +689,35 @@ cs_screen_get_low_res_mode (CsScreen *screen)
     g_return_val_if_fail (CS_IS_SCREEN (screen), FALSE);
 
     return screen->low_res;
+}
+
+/**
+ * cs_screen_get_smallest_monitor_sizes:
+ * @screen: a #CsScreen
+ * @width: (out): width of the smallest monitor
+ * @height: (out): height of the smallest monitor
+ *
+ * Gets whether or not one of our monitors falls below the low res threshold (1200 wide).
+ * This lets us display certain things at smaller sizes to prevent truncating of images, etc.
+ *
+ * Returns: Whether or not to use low res mode.
+ */
+void
+cs_screen_get_smallest_monitor_sizes (CsScreen *screen,
+                                      gint     *width,
+                                      gint     *height)
+{
+    g_return_if_fail (CS_IS_SCREEN (screen));
+
+    if (width != NULL)
+    {
+        *width = screen->smallest_width;
+    }
+
+    if (height != NULL)
+    {
+        *height = screen->smallest_height;
+    }
 }
 
 /**

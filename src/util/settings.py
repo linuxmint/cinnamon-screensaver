@@ -41,6 +41,14 @@ KBD_LAYOUT_SHOW_FLAGS = "keyboard-layout-show-flags"
 KBD_LAYOUT_USE_CAPS = "keyboard-layout-use-upper"
 KBD_LAYOUT_PREFER_VARIANT = "keyboard-layout-prefer-variant-names"
 
+osk_settings = Gio.Settings(schema_id="org.cinnamon.keyboard")
+OSK_TYPE = "keyboard-type"
+OSK_SIZE = "keyboard-size"
+OSK_ACTIVATION = "activation-mode"
+
+a11y_settings = Gio.Settings(schema_id="org.cinnamon.desktop.a11y.applications")
+OSK_A11Y_ENABLED = "screen-keyboard-enabled"
+
 # Every setting has a getter (and setter, rarely).  This is mainly for
 # organizational purposes and cleanliness - it's easier to read in the
 # main code if you see "settings.get_default_away_message()" than seeing
@@ -130,3 +138,9 @@ def get_show_info_panel():
 
 def get_allow_floating():
     return ss_settings.get_boolean(FLOATING_WIDGETS)
+
+def get_osk_type():
+    return osk_settings.get_string(OSK_TYPE)
+
+def get_osk_a11y_active():
+    return a11y_settings.get_boolean(OSK_A11Y_ENABLED)

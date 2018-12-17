@@ -15,6 +15,7 @@ from clock import ClockWidget
 from albumArt import AlbumArt
 from audioPanel import AudioPanel
 from infoPanel import InfoPanel
+from osk import OnScreenKeyboard
 from floating import ALIGNMENTS
 from util import utils, trackers, settings
 from util.fader import Fader
@@ -324,6 +325,12 @@ class Stage(Gtk.Window):
                 self.audio_panel = None
                 self.info_panel = None
 
+            try:
+                self.setup_osk()
+            except Exception as e:
+                print("Problem setting up on-screen keyboard: %s" % str(e))
+                self.osk = None
+
         if total_failure:
             print("Total failure somewhere, deactivating screensaver.")
             GObject.idle_add(self.deactivate_after_timeout)
@@ -366,11 +373,18 @@ class Stage(Gtk.Window):
         except Exception as e:
             print(e)
 
+        try:
+            if self.osk != None:
+                self.osk.destroy()
+        except Exception as e:
+            print(e)
+
         self.unlock_dialog = None
         self.clock_widget = None
         self.albumart_widget = None
         self.info_panel = None
         self.audio_panel = None
+        self.osk = None
         self.away_message = None
 
         self.monitors = []
@@ -507,6 +521,11 @@ class Stage(Gtk.Window):
 
         if settings.get_show_albumart():
             self.albumart_widget.start_positioning()
+
+    def setup_osk(self):
+        self.osk = OnScreenKeyboard()
+
+        self.add_child_widget(self.osk)
 
     def setup_unlock(self):
         """
@@ -659,6 +678,8 @@ class Stage(Gtk.Window):
             self.audio_panel.show_panel()
         if self.info_panel != None:
             self.info_panel.update_visibility()
+        if self.osk != None:
+            self.osk.show()
 
     def cancel_unlocking(self):
         if self.unlock_dialog:
@@ -684,6 +705,8 @@ class Stage(Gtk.Window):
             self.audio_panel.hide()
         if self.info_panel != None:
             self.info_panel.hide()
+        if self.osk != None:
+            self.osk.hide()
 
         self.unlock_dialog.cancel()
         status.Awake = False
@@ -981,5 +1004,22 @@ class Stage(Gtk.Window):
 
             return True
 
+        if isinstance(child, OnScreenKeyboard):
+            """
+            The InfoPanel can be shown while not Awake, but will only appear if a) We have received
+            notifications while the screensaver is running, or b) we're either on battery
+            or plugged in but with a non-full battery.  It attaches itself to the upper-right
+            corner of the monitor.
+            """
+            min_rect, nat_rect = child.get_preferred_size()
+
+            current_monitor = status.screen.get_mouse_monitor()
+            monitor_rect = status.screen.get_monitor_geometry(current_monitor)
+            allocation.x = monitor_rect.x
+            allocation.y = monitor_rect.y + monitor_rect.height - (monitor_rect.height / 3)
+            allocation.width = monitor_rect.width
+            allocation.height = monitor_rect.height / 3
+
+            return True
 
         return False

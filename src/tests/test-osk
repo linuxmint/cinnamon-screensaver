@@ -1,0 +1,41 @@
+#!/usr/bin/python3
+
+import sys
+import signal
+import gettext
+
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('CScreensaver', '1.0')
+
+sys.path.append("/usr/share/cinnamon-screensaver")
+gettext.install("cinnamon-screensaver", "/usr/share/locale")
+
+from gi.repository import Gtk, CScreensaver
+
+from osk import OnScreenKeyboard
+import status
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+class Main:
+    def __init__(self):
+        status.screen = CScreensaver.Screen.new(True)
+
+        win = Gtk.Window()
+
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        win.add(box)
+        win.get_style_context().add_class("csstage")
+
+        self.osk = OnScreenKeyboard()
+        box.pack_start(self.osk, True, True, 2)
+        box.show_all()
+
+        win.connect("delete-event", lambda w, e: Gtk.main_quit())
+        win.present()
+
+        Gtk.main()
+
+if __name__ == "__main__":
+    main = Main()
