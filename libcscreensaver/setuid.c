@@ -9,7 +9,7 @@
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
  * documentation.  No representations are made about the suitability of this
- * software for any purpose.  It is provided "as is" without express or 
+ * software for any purpose.  It is provided "as is" without express or
  * implied warranty.
  */
 
@@ -166,7 +166,7 @@ set_ids_by_number (uid_t  uid,
 
    *** WARNING: DO NOT DISABLE ANY OF THE FOLLOWING CODE!
    If you do so, you will open a security hole.  See the sections
-   of the xscreensaver manual titled "LOCKING AND ROOT LOGINS", 
+   of the xscreensaver manual titled "LOCKING AND ROOT LOGINS",
    and "USING XDM".
 */
 
@@ -205,23 +205,6 @@ hack_uid (char **nolock_reason,
                         *orig_uid = uid_gid_string (euid, egid);
                 }
 
-#ifdef HAVE_BSDAUTH /* we need to setgid auth to run the bsd_auth(3) login_* helpers */
-                {
-                        struct group *authg = getgrnam("auth");
-                        if (!authg || !authg->gr_name || !*authg->gr_name) {
-                                        reason = g_strdup ("no such group as \"auth\" for bsdauth.");
-
-                                        ret = FALSE;
-                                        goto out;
-                        }
-                        if (! set_ids_by_number (uid, authg->gr_gid, uid_message)) {
-                                        reason = g_strdup ("cannot setgid \"auth\" for bsdauth.");
-
-                                        ret = FALSE;
-                                        goto out;
-                        }
-                }
-#else /* !HAVE_BSDAUTH */
                 if (uid != euid || gid != egid) {
 #ifndef USE_SETRES
                         if (! set_ids_by_number (uid, gid, uid_message)) {
@@ -234,7 +217,6 @@ hack_uid (char **nolock_reason,
                                 goto out;
                         }
                 }
-#endif
         }
 
 
