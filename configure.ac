@@ -49,7 +49,7 @@ GOBJECT_INTROSPECTION_CHECK([0.9.7])
 
 AC_DEFUN([AC_CHECK_X_HEADER], [
   ac_save_CPPFLAGS="$CPPFLAGS"
-  if test \! -z "$includedir" ; then 
+  if test \! -z "$includedir" ; then
     CPPFLAGS="$CPPFLAGS -I$includedir"
   fi
   CPPFLAGS="$CPPFLAGS $X_CFLAGS"
@@ -60,7 +60,7 @@ AC_DEFUN([AC_CHECK_X_HEADER], [
 #
 AC_DEFUN([AC_TRY_X_COMPILE], [
   ac_save_CPPFLAGS="$CPPFLAGS"
-  if test \! -z "$includedir" ; then 
+  if test \! -z "$includedir" ; then
     CPPFLAGS="$CPPFLAGS -I$includedir"
   fi
   CPPFLAGS="$CPPFLAGS $X_CFLAGS"
@@ -199,8 +199,8 @@ have_bsdauth=no
 with_bsdauth_req=unspecified
 NEED_SETUID=no
 
-case "$host" in                                                                                       
-  *-openbsd*)                                                                                         
+case "$host" in
+  *-openbsd*)
     with_bsdauth=yes
     AUTH_SCHEME=bsdauth
     NEED_SETUID=no
@@ -208,7 +208,7 @@ case "$host" in
       with_bsdauth_req=yes
       NEED_SETUID=yes
     fi
-esac  
+esac
 
 if test "$with_bsdauth" = yes ; then
   AC_CACHE_CHECK([for BSD Authentication], ac_cv_bsdauth,
@@ -365,7 +365,7 @@ AC_OUTPUT([
 Makefile
 data/Makefile
 data/org.cinnamon.ScreenSaver.service
-data/cinnamon-screensaver.desktop.in
+data/cinnamon-screensaver.desktop
 data/icons/Makefile
 files/Makefile
 libcscreensaver/Makefile
