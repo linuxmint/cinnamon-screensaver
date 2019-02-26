@@ -24,24 +24,9 @@ class WallpaperStack(Gtk.Stack):
         self.set_transition_type(Gtk.StackTransitionType.NONE)
         self.set_transition_duration(1000)
 
+        self.initialized = False
         self.current = None
-
-    def set_initial_image(self, image):
-        """
-        Creates and sets the initial background image to use in
-        the WallpaperStack.
-        """
-        self.current = image
-        self.current.set_visible(True)
-
-        trackers.con_tracker_get().connect_after(image,
-                                                 "draw",
-                                                 self.shade_wallpaper)
-
-        self.add(self.current)
-        self.set_visible_child(self.current)
-
-        self.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        self.queued = None
 
     def transition_to_image(self, image):
         """
@@ -55,16 +40,27 @@ class WallpaperStack(Gtk.Stack):
                                                  self.shade_wallpaper)
 
         self.add(self.queued)
-        self.set_visible_child(self.queued)
 
-        tmp = self.current
+        if not self.initialized:
+            self.visible_image_changed()
+            self.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+            self.initialized = True
+            return
+
+        self.set_visible_child(self.queued)
+        GObject.timeout_add(2000, self.visible_image_changed)
+
+    def visible_image_changed(self, data=None):
+        if self.current != None:
+            tmp = self.current
+
+            self.remove(tmp)
+            tmp.destroy()
+
         self.current = self.queued
         self.queued = None
 
-        # No need to disconnect the draw handler, it'll be disco'd by the con_tracker's
-        # weak_ref callback.
-
-        GObject.idle_add(tmp.destroy)
+        return False
 
     def shade_wallpaper(self, widget, cr):
         """
@@ -109,9 +105,6 @@ class MonitorView(BaseWindow):
         self.add(self.wallpaper_stack)
 
         self.show_all()
-
-    def set_initial_wallpaper_image(self, image):
-        self.wallpaper_stack.set_initial_image(image)
 
     def set_next_wallpaper_image(self, image):
         self.wallpaper_stack.transition_to_image(image)

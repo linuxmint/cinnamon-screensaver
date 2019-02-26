@@ -442,7 +442,7 @@ class Stage(Gtk.Window):
                                                              monitor.rect.width,
                                                              monitor.rect.height)
 
-            monitor.set_initial_wallpaper_image(image)
+            monitor.set_next_wallpaper_image(image)
 
             self.monitors.append(monitor)
 
