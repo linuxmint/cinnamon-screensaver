@@ -28,6 +28,7 @@
 enum {
         SCREEN_MONITORS_CHANGED,
         SCREEN_SIZE_CHANGED,
+        COMPOSITED_CHANGED,
         LAST_SIGNAL
 };
 
@@ -447,12 +448,34 @@ on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
 }
 
 static void
+on_composited_changed (GdkScreen *gdk_screen, gpointer user_data)
+{
+    CsScreen *screen;
+
+    screen = CS_SCREEN (user_data);
+
+    DEBUG ("CsScreen received 'composited-changed' signal from GdkScreen\n");
+
+    g_signal_emit (screen, signals[COMPOSITED_CHANGED], 0);
+}
+
+static void
 cs_screen_init (CsScreen *screen)
 {
     screen->gdk_screen = gdk_screen_get_default ();
 
-    screen->monitors_changed_id = g_signal_connect (screen->gdk_screen, "monitors-changed", G_CALLBACK (on_monitors_changed), screen);
-    screen->screen_size_changed_id = g_signal_connect (screen->gdk_screen, "size-changed", G_CALLBACK (on_screen_changed), screen);
+    screen->monitors_changed_id = g_signal_connect (screen->gdk_screen,
+                                                    "monitors-changed",
+                                                    G_CALLBACK (on_monitors_changed),
+                                                    screen);
+    screen->screen_size_changed_id = g_signal_connect (screen->gdk_screen,
+                                                       "size-changed",
+                                                       G_CALLBACK (on_screen_changed),
+                                                       screen);
+    screen->composited_changed_id = g_signal_connect (screen->gdk_screen,
+                                                      "composited-changed",
+                                                      G_CALLBACK (on_composited_changed),
+                                                      screen);
 
     reload_screen_info (screen);
     reload_monitor_infos (screen);
@@ -500,6 +523,12 @@ cs_screen_dispose (GObject *object)
         screen->screen_size_changed_id = 0;
     }
 
+    if (screen->composited_changed_id > 0)
+    {
+        g_signal_handler_disconnect (screen->gdk_screen, screen->composited_changed_id);
+        screen->composited_changed_id = 0;
+    }
+
     DEBUG ("CsScreen dispose\n");
 
     G_OBJECT_CLASS (cs_screen_parent_class)->dispose (object);
@@ -521,6 +550,13 @@ cs_screen_class_init (CsScreenClass *klass)
                                               G_TYPE_NONE, 0);
 
     signals[SCREEN_SIZE_CHANGED] = g_signal_new ("size-changed",
+                                            G_TYPE_FROM_CLASS (object_class),
+                                            G_SIGNAL_RUN_LAST,
+                                            0,
+                                            NULL, NULL, NULL,
+                                            G_TYPE_NONE, 0);
+
+    signals[COMPOSITED_CHANGED] = g_signal_new ("composited-changed",
                                             G_TYPE_FROM_CLASS (object_class),
                                             G_SIGNAL_RUN_LAST,
                                             0,

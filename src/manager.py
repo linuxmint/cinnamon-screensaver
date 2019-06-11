@@ -251,7 +251,8 @@ class ScreensaverManager(GObject.Object):
         Makes a hard grab on the Stage window, all keyboard and mouse events are dispatched or eaten
         by us now.
         """
-        self.grab_helper.move_to_window(self.stage.get_window(), True)
+        if self.stage != None:
+            self.grab_helper.move_to_window(self.stage.get_window(), True)
 
     def update_stage(self):
         """

@@ -129,6 +129,10 @@ class Stage(Gtk.Window):
                                            "monitors-changed",
                                            self.on_monitors_changed)
 
+        trackers.con_tracker_get().connect(status.screen,
+                                           "composited-changed",
+                                           self.on_composited_changed)
+
         trackers.con_tracker_get().connect(self,
                                            "grab-broken-event",
                                            self.on_grab_broken_event)
@@ -176,6 +180,21 @@ class Stage(Gtk.Window):
         Gdk.flush()
 
         self.queue_refresh_stage()
+
+    def on_composited_changed(self, screen, data=None):
+        if self.get_realized():
+
+            user_time = self.get_display().get_user_time()
+
+            self.hide()
+            self.unrealize()
+
+            self.realize()
+
+            self.get_window().set_user_time(user_time)
+            self.show()
+
+            GObject.idle_add(self.manager.grab_stage)
 
     def on_grab_broken_event(self, widget, event, data=None):
         GObject.idle_add(self.manager.grab_stage)
@@ -263,6 +282,10 @@ class Stage(Gtk.Window):
         self.setup_children()
 
         self.gdk_filter.start(self)
+
+        trackers.con_tracker_get().disconnect(self.overlay,
+                                              "realize",
+                                              self.on_realized)
 
     def move_onscreen(self):
         w = self.get_window()

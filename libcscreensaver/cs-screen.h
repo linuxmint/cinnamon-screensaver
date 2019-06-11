@@ -40,6 +40,7 @@ typedef struct
 
     gulong monitors_changed_id;
     gulong screen_size_changed_id;
+    gulong composited_changed_id;
 
     gboolean low_res;
     gint smallest_width;
