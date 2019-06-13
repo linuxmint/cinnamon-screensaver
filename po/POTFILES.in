@@ -1,6 +1,0 @@
-# List of source files containing translatable strings.
-# Please keep this file sorted alphabetically.
-src/clock.py
-src/unlock.py
-src/cinnamon-screensaver-command.py
-src/playerControl.py
