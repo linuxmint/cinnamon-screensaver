@@ -1,0 +1,4 @@
+option('setres', type : 'boolean', value : false, description: 'Use setresuid/setresgid in the setuid.c helper')
+option('locking', type : 'boolean', value : true, description: 'Compile in support for locking the display')
+option('xinerama', type : 'boolean', value : true, description: 'Use of the Xinerama extension')
+option('pam-prefix', type : 'string', value : '', description: 'specify where pam files go')
