@@ -14,7 +14,6 @@ override_dh_strip:
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
-	    --enable-locking \
 	    --libexecdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver
 
 override_dh_install:
