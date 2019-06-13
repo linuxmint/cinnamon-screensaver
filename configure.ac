@@ -49,7 +49,7 @@ GOBJECT_INTROSPECTION_CHECK([0.9.7])
 
 AC_DEFUN([AC_CHECK_X_HEADER], [
   ac_save_CPPFLAGS="$CPPFLAGS"
-  if test \! -z "$includedir" ; then 
+  if test \! -z "$includedir" ; then
     CPPFLAGS="$CPPFLAGS -I$includedir"
   fi
   CPPFLAGS="$CPPFLAGS $X_CFLAGS"
@@ -60,7 +60,7 @@ AC_DEFUN([AC_CHECK_X_HEADER], [
 #
 AC_DEFUN([AC_TRY_X_COMPILE], [
   ac_save_CPPFLAGS="$CPPFLAGS"
-  if test \! -z "$includedir" ; then 
+  if test \! -z "$includedir" ; then
     CPPFLAGS="$CPPFLAGS -I$includedir"
   fi
   CPPFLAGS="$CPPFLAGS $X_CFLAGS"
@@ -150,25 +150,6 @@ AC_SUBST(CSCREENSAVER_LIBS)
 CSCREENSAVER_LIBS="$CSCREENSAVER_LIBS $RANDR_LIBS $X_PRE_LIBS $X_EXTRA_LIBS -lm"
 
 dnl ---------------------------------------------------------------------------
-dnl - The --enable-locking option
-dnl ---------------------------------------------------------------------------
-
-AC_ARG_ENABLE(locking,[
-Screen locking options:
-
-  --enable-locking        Compile in support for locking the display.
-  --disable-locking       Do not allow locking at all.],
-  [enable_locking="$enableval"],[enable_locking=yes])
-if test "$enable_locking" = yes; then
-  true
-elif test "$enable_locking" = no; then
-  AC_DEFINE(NO_LOCKING, 1, [Define if screen locking support is disabled])
-else
-  echo "error: must be yes or no: --enable-locking=$enable_locking"
-  exit 1
-fi
-
-dnl ---------------------------------------------------------------------------
 dnl - The --enable-setres option
 dnl ---------------------------------------------------------------------------
 
@@ -192,44 +173,6 @@ elif test "$enable_setres" = no; then
 fi
 
 dnl ---------------------------------------------------------------------------
-dnl - Check for bsd_auth(3) (OpenBSD)
-dnl ---------------------------------------------------------------------------
-
-have_bsdauth=no
-with_bsdauth_req=unspecified
-NEED_SETUID=no
-
-case "$host" in                                                                                       
-  *-openbsd*)                                                                                         
-    with_bsdauth=yes
-    AUTH_SCHEME=bsdauth
-    NEED_SETUID=no
-    if test "x$enable_locking" = "xyes"; then
-      with_bsdauth_req=yes
-      NEED_SETUID=yes
-    fi
-esac  
-
-if test "$with_bsdauth" = yes ; then
-  AC_CACHE_CHECK([for BSD Authentication], ac_cv_bsdauth,
-    [AC_TRY_X_COMPILE([#include <stdlib.h>
-                       #include <unistd.h>
-                       #include <sys/types.h>
-                       #include <bsd_auth.h>],
-      [int ok = auth_userokay("x", 0, "x", "x");],
-      [ac_cv_bsdauth=yes],
-      [ac_cv_bsdauth=no])])
-  if test "$ac_cv_bsdauth" = yes; then
-    have_bsdauth=yes
-  fi
-fi
-
-if test "$have_bsdauth" = yes; then
-  AC_DEFINE(HAVE_BSDAUTH, 1, [Define to 1 if using bsd_auth(3) authentication])
-fi
-
-AC_SUBST(NEED_SETUID)
-dnl ---------------------------------------------------------------------------
 dnl - Check for PAM
 dnl ---------------------------------------------------------------------------
 
@@ -249,9 +192,7 @@ fi
 AC_SUBST(PAM_PREFIX)
 
 have_pam=no
-if test "x$enable_locking" = "xyes" -a "x$have_bsdauth" = "xno"; then
 AC_CHECK_LIB(pam, pam_start, have_pam=yes)
-fi
 
 if test "x$have_pam" = "xyes"; then
         AUTH_LIBS="${AUTH_LIBS} -lpam"
@@ -289,7 +230,7 @@ if test "x$have_pam" = "xyes"; then
           AC_MSG_RESULT(unknown)
         fi
 
-elif test "x$have_bsdauth" = "xno"; then
+else
     AC_MSG_ERROR("PAM libraries not found")
 fi
 AC_SUBST(HAVE_PAM)
@@ -365,7 +306,7 @@ AC_OUTPUT([
 Makefile
 data/Makefile
 data/org.cinnamon.ScreenSaver.service
-data/cinnamon-screensaver.desktop.in
+data/cinnamon-screensaver.desktop
 data/icons/Makefile
 files/Makefile
 libcscreensaver/Makefile

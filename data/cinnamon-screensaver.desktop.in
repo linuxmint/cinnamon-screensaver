@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-_Name=Screensaver
-_Comment=Launch screensaver and locker program
+Name=Screensaver
+Comment=Launch screensaver and locker program
 Icon=preferences-desktop-screensaver
 Exec=cinnamon-screensaver
 OnlyShowIn=X-Cinnamon;
