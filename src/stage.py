@@ -18,7 +18,6 @@ from infoPanel import InfoPanel
 from osk import OnScreenKeyboard
 from floating import ALIGNMENTS
 from util import utils, trackers, settings
-from util.fader import Fader
 from util.eventHandler import EventHandler
 
 class Stage(Gtk.Window):
@@ -92,10 +91,8 @@ class Stage(Gtk.Window):
         self.override_background_color (Gtk.StateFlags.NORMAL, c);
 
         self.update_geometry()
-        self.move_offscreen()
 
         self.overlay = Gtk.Overlay()
-        self.fader = Fader(self)
 
         trackers.con_tracker_get().connect(self.overlay,
                                            "realize",
@@ -229,44 +226,23 @@ class Stage(Gtk.Window):
         self.update_monitors()
         self.overlay.queue_resize()
 
-    def transition_in(self, effect_time, callback):
+    def activate(self, callback):
         """
         This is the primary way of making the Stage visible.
         """
 
-        # Cancel any existing transition
-        self.fader.cancel()
+        self.set_opacity(1.0)
+        self.move_onscreen()
+        self.show()
 
-        if effect_time == 0:
-            self.set_opacity(1.0)
-            self.move_onscreen()
-            self.show()
+        callback()
 
-            callback()
-        else:
-            self.set_opacity(0.0)
-            self.show()
-
-            self.fader.fade_in(effect_time, self.move_onscreen, callback)
-
-    def transition_out(self, effect_time, callback):
+    def deactivate(self, callback):
         """
-        This is the primary way of destroying the stage.  This can
-        end up being called multiple times, so we keep track of if we've
-        already started a transition, and ignore further calls.
+        This is the primary way of destroying the stage.
         """
-        if self.destroying:
-            return
-
-        self.destroying = True
-
-        self.fader.cancel()
-
-        if effect_time > 0 and utils.have_gtk_version("3.18.0"):
-            self.fader.fade_out(effect_time, callback)
-        else:
-            self.hide()
-            callback()
+        self.hide()
+        callback()
 
     def on_realized(self, widget):
         """
@@ -297,10 +273,6 @@ class Stage(Gtk.Window):
                           self.rect.height)
 
         self.move(self.rect.x, self.rect.y)
-        self.resize(self.rect.width, self.rect.height)
-
-    def move_offscreen(self):
-        self.move(-self.rect.width, -self.rect.height)
         self.resize(self.rect.width, self.rect.height)
 
     def deactivate_after_timeout(self):
@@ -433,8 +405,6 @@ class Stage(Gtk.Window):
         self.set_timeout_active(None, False)
 
         self.destroy_children()
-
-        self.fader = None
 
         self.gdk_filter.stop()
         self.gdk_filter = None

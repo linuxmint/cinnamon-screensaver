@@ -59,7 +59,7 @@ class ScreensaverManager(GObject.Object):
         as well).  Return False if we're not active, and need to construct a stage, etc...
         """
         if not status.Active:
-            if self.set_active(True, True, msg):
+            if self.set_active(True, msg):
                 self.stop_lock_delay()
                 if utils.user_can_lock():
                     status.Locked = True
@@ -84,7 +84,7 @@ class ScreensaverManager(GObject.Object):
         status.Locked = False
         status.Awake = False
 
-    def set_active(self, active, immediate=False, msg=None):
+    def set_active(self, active, msg=None):
         """
         Activates or deactivates the screensaver.  Activation involves:
             - sending a request to Cinnamon to exit Overview or Expo -
@@ -101,16 +101,9 @@ class ScreensaverManager(GObject.Object):
                 self.cinnamon_client.exit_expo_and_overview()
                 if self.grab_helper.grab_root(False):
                     if not self.stage:
-                        if immediate:
-                            transition = 0
-                        else:
-                            transition = c.STAGE_SPAWN_TRANSITION
-
-                        self.spawn_stage(msg, transition, self.on_spawn_stage_complete)
+                        self.spawn_stage(msg, self.on_spawn_stage_complete)
                     else:
-                        transition = 0
-
-                        self.stage.transition_in(transition, self.on_spawn_stage_complete)
+                        self.stage.activate(self.on_spawn_stage_complete)
                         self.stage.set_message(msg)
                     return True
                 else:
@@ -121,7 +114,7 @@ class ScreensaverManager(GObject.Object):
                 return True
         else:
             if self.stage:
-                self.despawn_stage(c.STAGE_DESPAWN_TRANSITION, self.on_despawn_stage_complete)
+                self.despawn_stage(self.on_despawn_stage_complete)
                 status.focusWidgets = []
             self.grab_helper.release()
             return True
@@ -186,14 +179,14 @@ class ScreensaverManager(GObject.Object):
 
         return False
 
-    def spawn_stage(self, away_message, effect_time=c.STAGE_SPAWN_TRANSITION, callback=None):
+    def spawn_stage(self, away_message, callback=None):
         """
         Create the Stage and begin fading it in.  This may run quickly, in the case of
         user-initiated activation, or slowly, when the session has gone idle.
         """
         try:
             self.stage = Stage(self, away_message)
-            self.stage.transition_in(effect_time, callback)
+            self.stage.activate(callback)
         except Exception:
             print("Could not spawn screensaver stage:\n")
             traceback.print_exc()
@@ -201,16 +194,16 @@ class ScreensaverManager(GObject.Object):
             status.Active = False
             self.cancel_timers()
 
-    def despawn_stage(self, effect_time=c.STAGE_DESPAWN_TRANSITION, callback=None):
+    def despawn_stage(self, callback=None):
         """
         Begin destruction of the stage.
         """
         self.stage.cancel_unlocking()
-        self.stage.transition_out(effect_time, callback)
+        self.stage.deactivate(callback)
 
     def on_spawn_stage_complete(self):
         """
-        Called after the stage has faded in.  All user events are now
+        Called after the stage become visible.  All user events are now
         redirected to GrabHelper, our status is updated, our active timer
         is started, and emit an active-changed signal (Which is listened to
         by our ConsoleKit client if we're using it, and our own ScreensaverService.)
@@ -225,7 +218,7 @@ class ScreensaverManager(GObject.Object):
 
     def on_despawn_stage_complete(self):
         """
-        Called after the stage has faded out - the stage is destroyed, our status
+        Called after the stage has been hidden - the stage is destroyed, our status
         is updated, timer is canceled and active-changed is fired.
         """
         was_active = status.Active == True
@@ -354,8 +347,6 @@ class ScreensaverManager(GObject.Object):
         """
         return self.focus_nav.get_focused_widget()
 
-# Session watcher handler:
-
     def on_session_idle_changed(self, proxy, idle):
         """
         Call back for the session client - initiates a slow fade-in
@@ -363,25 +354,4 @@ class ScreensaverManager(GObject.Object):
         if idle becomes False before it has completed its animation.
         """
         if idle and not status.Active:
-            if self.grab_helper.grab_offscreen(False):
-                self.spawn_stage("", c.STAGE_IDLE_SPAWN_TRANSITION, self.on_spawn_stage_complete)
-            else:
-                print("Can't fade in screensaver, unable to grab the keyboard")
-        else:
-            if not status.Active:
-                if self.stage:
-                    self.despawn_stage(c.STAGE_IDLE_CANCEL_SPAWN_TRANSITION, self.on_despawn_stage_complete)
-
-                trackers.timer_tracker_get().start("release-grab-timeout",
-                                                   c.GRAB_RELEASE_TIMEOUT,
-                                                   self.on_release_grab_timeout)
-
-    def on_release_grab_timeout(self):
-        """
-        Releases the initial grab during idle fade-in, when idle cancels prior to the screensaver
-        becoming fully active.
-        """
-        if not status.Active:
-            self.grab_helper.release()
-
-        return False
+            self.set_active(True)
