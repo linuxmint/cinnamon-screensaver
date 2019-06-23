@@ -1,3 +1,23 @@
+cinnamon-screensaver (4.2.0) tina; urgency=medium
+
+  [ Michael Webster ]
+  * monitorView.py: refactor wallpaper transitioning to improve garbage collection.
+  * Add on-screen keyboard.
+  * stage.py: Only involve the stage fader if the transition time is not zero.
+  * stage: re-realize when/if the GdkScreen's composited state changes.
+  * Remove use of a fader on the stage window, eliminate off-screen mapping. (#309)
+
+  [ Clement Lefebvre ]
+  * OSK: Respect the cinnamon OSK activation mode
+
+  [ Eli Schwartz ]
+  * A couple small install fixups. (#302)
+
+  [ Clement Lefebvre ]
+  * Packaging: Remove obsolete build flag
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 23 Jun 2019 15:42:14 +0200
+
 cinnamon-screensaver (4.0.3) tessa; urgency=medium
 
   [ Michael Webster ]
