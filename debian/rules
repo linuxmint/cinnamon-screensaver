@@ -6,15 +6,22 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 %:
 	dh $@ --with=python3,gir
 
-override_dh_autoreconf:
-	NOCONFIGURE=1 dh_autoreconf --as-needed ./autogen.sh
-
 override_dh_strip:
 	dh_strip --dbg-package=libcscreensaver-dbg
 
 override_dh_auto_configure:
-	dh_auto_configure -- \
-	    --libexecdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver
+	mkdir -p debian/build
+	meson debian/build  \
+	--prefix=/usr \
+	--libdir=lib/$(DEB_HOST_MULTIARCH) \
+	--libexecdir=lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver
+
+override_dh_auto_build:
+	ninja -C debian/build
+
+override_dh_auto_install:
+	DESTDIR=${CURDIR}/debian/tmp \
+	ninja -C debian/build install
 
 # there has never been a testsuite, so don't try running it and breaking
 # just because there isn't one
