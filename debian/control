@@ -3,8 +3,6 @@ Section: x11
 Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
- autoconf-archive,
- automake,
  debhelper (>= 10),
  dh-python,
  gnome-pkg-tools (>= 0.10),
@@ -17,6 +15,7 @@ Build-Depends:
  libpam0g-dev,
  librsvg2-bin,
  libxext-dev,
+ meson(>= 0.47.0),
  python3,
 Standards-Version: 3.9.6
 
