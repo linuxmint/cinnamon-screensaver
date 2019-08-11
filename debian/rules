@@ -6,9 +6,6 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 %:
 	dh $@ --with=python3,gir
 
-override_dh_autoreconf:
-	NOCONFIGURE=1 dh_autoreconf --as-needed ./autogen.sh
-
 override_dh_strip:
 	dh_strip --dbg-package=libcscreensaver-dbg
 
