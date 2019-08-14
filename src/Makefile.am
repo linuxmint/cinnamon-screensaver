@@ -55,7 +55,6 @@ all-local: config.py
 
 EXTRA_DIST =                \
     config.py.in \
-    debug-screensaver.sh        \
     $(NULL)
 
 MAINTAINERCLEANFILES =          \

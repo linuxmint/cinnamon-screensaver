@@ -308,7 +308,6 @@ data/Makefile
 data/org.cinnamon.ScreenSaver.service
 data/cinnamon-screensaver.desktop
 data/icons/Makefile
-files/Makefile
 libcscreensaver/Makefile
 libcscreensaver/cscreensaver.pc
 libcscreensaver/cscreensaver-uninstalled.pc
