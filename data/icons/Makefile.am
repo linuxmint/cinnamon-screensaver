@@ -5,10 +5,10 @@ public_icons_themes = \
     $(NULL)
 
 public_icons = \
-    hicolor_actions_scalable_screensaver-unlock-symbolic.svg \
-    hicolor_actions_scalable_screensaver-switch-users-symbolic.svg \
-    hicolor_status_scalable_screensaver-notification-symbolic.svg \
-    hicolor_status_scalable_screensaver-blank.svg \
+    hicolor/scalable/actions/screensaver-unlock-symbolic.svg \
+    hicolor/scalable/actions/screensaver-switch-users-symbolic.svg \
+    hicolor/scalable/status/screensaver-notification-symbolic.svg \
+    hicolor/scalable/status/screensaver-blank.svg \
     $(NULL)
 
 EXTRA_DIST = \
@@ -35,36 +35,17 @@ update-icon-cache:
 
 install-icons:
 	for icon in $(public_icons); do \
-        THEME=`echo $$icon | cut -d_ -f1`; \
-        CONTEXT=`echo $$icon | cut -d_ -f2`; \
-        SIZE=`echo $$icon | cut -d_ -f3`; \
-        ICONFILE=`echo $$icon | cut -d_ -f4`; \
-        mkdir -p $(DESTDIR)$(datadir)/icons/$$THEME/$$SIZE/$$CONTEXT; \
-        $(INSTALL_DATA) $(srcdir)/$$icon $(DESTDIR)$(datadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
-    done; \
-    for icon in $(private_icons); do \
-        THEME=`echo $$icon | cut -d_ -f1`; \
-        CONTEXT=`echo $$icon | cut -d_ -f2`; \
-        SIZE=`echo $$icon | cut -d_ -f3`; \
-        ICONFILE=`echo $$icon | cut -d_ -f4`; \
-        mkdir -p $(DESTDIR)$(pkgdatadir)/icons/$$THEME/$$SIZE/$$CONTEXT; \
-        $(INSTALL_DATA) $(srcdir)/$$icon $(DESTDIR)$(pkgdatadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
+        BASEDIR=$${icon%/*}; \
+        ICONFILE=$${icon##*/}; \
+        mkdir -p $(DESTDIR)$(datadir)/icons/$$BASEDIR; \
+        $(INSTALL_DATA) $(srcdir)/$$icon $(DESTDIR)$(datadir)/icons/$$BASEDIR/$$ICONFILE; \
     done
 
 uninstall-icons:
 	-for icon in $(public_icons); do \
-        THEME=`echo $$icon | cut -d_ -f1`; \
-        CONTEXT=`echo $$icon | cut -d_ -f2`; \
-        SIZE=`echo $$icon | cut -d_ -f3`; \
-        ICONFILE=`echo $$icon | cut -d_ -f4`; \
-        rm -f $(DESTDIR)$(datadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
-    done; \
-    for icon in $(private_icons); do \
-        THEME=`echo $$icon | cut -d_ -f1`; \
-        CONTEXT=`echo $$icon | cut -d_ -f2`; \
-        SIZE=`echo $$icon | cut -d_ -f3`; \
-        ICONFILE=`echo $$icon | cut -d_ -f4`; \
-        rm -f $(DESTDIR)$(pkgdatadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
+        BASEDIR=$${icon%/*}; \
+        ICONFILE=$${icon##*/}; \
+        rm -f $(DESTDIR)$(datadir)/icons/$$BASEDIR/$$ICONFILE; \
     done
 
 install-data-local: install-icons update-icon-cache
