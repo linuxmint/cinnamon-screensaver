@@ -1,6 +1,10 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-src/clock.py
-src/unlock.py
+libcscreensaver/cs-auth-pam.c
 src/cinnamon-screensaver-command.py
+src/clock.py
+src/pamhelper/cinnamon-screensaver-pam-helper.c
+src/passwordEntry.py
 src/playerControl.py
+src/unlock.py
+src/widgets/powerWidget.py

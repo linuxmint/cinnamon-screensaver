@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 15:09+0100\n"
+"POT-Creation-Date: 2019-08-14 13:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,26 +69,26 @@ msgid_plural "The screensaver has been active for %d seconds.\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/passwordEntry.py:23 src/unlock.py:203
+#: src/passwordEntry.py:23 src/unlock.py:206
 msgid "Please enter your password..."
 msgstr ""
 
-#: src/unlock.py:90
+#: src/unlock.py:95
 msgid "Unlock"
 msgstr ""
 
-#: src/unlock.py:98
+#: src/unlock.py:106
 msgid "Switch User"
 msgstr ""
 
-#: src/unlock.py:181
+#: src/unlock.py:184
 msgid "Incorrect password"
 msgstr ""
 
-#: src/unlock.py:195
+#: src/unlock.py:198
 msgid "Checking..."
 msgstr ""
 
-#: src/unlock.py:241
+#: src/unlock.py:235
 msgid "You have the Caps Lock key on."
 msgstr ""
