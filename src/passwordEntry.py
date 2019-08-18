@@ -70,27 +70,36 @@ class PasswordEntry(Gtk.Entry):
         if settings.get_show_flags():
             name = self.keyboard_controller.get_current_icon_name()
 
+            ui_scale = self.get_scale_factor()
+
             if name:
                 filename = "/usr/share/iso-flag-png/%s.png" % name
 
                 try:
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, -1, height)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, -1, height * ui_scale)
 
-                    render_x = (x + (width / 2) - (pixbuf.get_width() / 2))
-                    render_y = (y + (height / 2) - (pixbuf.get_height() / 2))
+                    logical_width = pixbuf.get_width() / ui_scale
+                    logical_height = pixbuf.get_height() / ui_scale
 
-                    Gdk.cairo_set_source_pixbuf(cr,
-                                                pixbuf,
-                                                render_x,
-                                                render_y)
+                    render_x = (x + (width / 2) - (logical_width / 2))
+                    render_y = (y + (height / 2) - (logical_height / 2))
+
+                    if pixbuf:
+                        surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf,
+                                                                       ui_scale,
+                                                                       self.get_window())
+
+                    cr.set_source_surface(surface,
+                                          render_x,
+                                          render_y)
 
                     cr.paint()
 
                     self.keyboard_controller.render_cairo_subscript(cr,
-                                                                    render_x + (pixbuf.get_width() / 2),
-                                                                    render_y + (pixbuf.get_height() / 2),
-                                                                    pixbuf.get_width() / 2,
-                                                                    pixbuf.get_height() / 2,
+                                                                    render_x + (logical_width / 2),
+                                                                    render_y + (logical_height / 2),
+                                                                    logical_width / 2,
+                                                                    logical_height / 2,
                                                                     self.keyboard_controller.get_current_flag_id())
 
                     handled = True
