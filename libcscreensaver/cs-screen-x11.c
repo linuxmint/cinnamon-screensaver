@@ -757,6 +757,39 @@ cs_screen_get_smallest_monitor_sizes (CsScreen *screen,
 }
 
 /**
+ * cs_screen_center_pointer_in_primary_monitor:
+ * @screen: The #CsScreen
+ *
+ * Warps the mouse pointer to the center in x, and half again below center
+ * in y, of the primary monitor.  This is used during waking to have the
+ * unlock dialog appear on the primary monitor (at least, initially).
+ */
+void
+cs_screen_place_pointer_in_primary_monitor (CsScreen *screen)
+{
+    GdkDisplay *display;
+    GdkRectangle rect;
+    GdkSeat *seat;
+    GdkDevice *pointer;
+
+    g_return_if_fail (CS_IS_SCREEN (screen));
+
+    cs_screen_get_monitor_geometry (screen,
+                                    screen->primary_monitor_index,
+                                    &rect);
+
+    display = gdk_screen_get_display (screen->gdk_screen);
+    seat = gdk_display_get_default_seat (display);
+
+    pointer = gdk_seat_get_pointer (seat);
+
+    gdk_device_warp (pointer,
+                     screen->gdk_screen,
+                     rect.x + (rect.width * .5),
+                     rect.y + (rect.height * .75));
+}
+
+/**
  * cs_screen_reset_screensaver:
  *
  * Resets the screensaver idle timer. If called when the screensaver is active

@@ -648,6 +648,8 @@ class Stage(Gtk.Window):
         if status.Awake:
             return
 
+        status.screen.place_pointer_in_primary_monitor ()
+
         utils.clear_clipboards(self.unlock_dialog)
 
         if self.clock_widget != None:
