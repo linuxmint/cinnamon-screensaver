@@ -7,10 +7,13 @@ from gi.repository import GLib
 import signal
 import argparse
 import gettext
+import shlex
 from enum import IntEnum
+from subprocess import Popen, DEVNULL
 
 from dbusdepot.screensaverClient import ScreenSaverClient
 import config
+from util import settings
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
@@ -62,8 +65,23 @@ class ScreensaverCommand:
         self.action_id = args.action_id
         self.message = args.message
 
+        custom_saver = settings.get_custom_screensaver()
+        if custom_saver != '':
+            self.handle_custom_saver(custom_saver)
+            quit()
+
         self.client = ScreenSaverClient()
         self.client.connect("client-ready", self.on_client_ready)
+
+    def handle_custom_saver(self, custom_saver):
+        if self.action_id in [Action.LOCK, Action.ACTIVATE]:
+            try:
+                Popen(shlex.split(custom_saver), stdin=DEVNULL)
+            except OSError as e:
+                print("Error %d running %s: %s" % (e.errno, custom_saver,
+                                                   e.strerror))
+        else:
+            print("Action not supported with custom screensaver.")
 
     def on_client_ready(self, client, success):
         if not success or client.proxy == None:
