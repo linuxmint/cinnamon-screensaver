@@ -14,7 +14,7 @@ import setproctitle
 
 import config
 import status
-from util import utils
+from util import utils, settings
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
@@ -39,6 +39,10 @@ class Main:
         parser.add_argument('--no-daemon', dest='no_daemon', action='store_true',
                             help="Deprecated: left for compatibility only - we never become a daemon")
         args = parser.parse_args()
+
+        if settings.get_custom_screensaver() != '':
+            print("custom screensaver selected, exiting cinnamon-screensaver.")
+            quit()
 
         if args.version:
             print("cinnamon-screensaver %s" % (config.VERSION))
