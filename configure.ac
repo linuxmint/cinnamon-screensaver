@@ -2,7 +2,7 @@ dnl -*- mode: m4 -*-
 
 AC_PREREQ(2.60)
 AC_INIT([cinnamon-screensaver],
-        [4.2.0],
+        [4.4.0],
         [https://github.com/linuxmint/cinnamon-screensaver/issues])
 
 PKG_PROG_PKG_CONFIG([0.26])

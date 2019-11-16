@@ -1,3 +1,11 @@
+cinnamon-screensaver (4.4.0) tricia; urgency=medium
+
+  [ Michael Webster ]
+  * passwordEntry.py: Render keyboard layout flags properly in hidpi.
+  * cs-screen, stage.py: Move the pointer to the primary monitor (and, as a result, the unlock dialog as well) when initially waking.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 16 Nov 2019 12:24:53 +0100
+
 cinnamon-screensaver (4.2.0) tina; urgency=medium
 
   [ Michael Webster ]
