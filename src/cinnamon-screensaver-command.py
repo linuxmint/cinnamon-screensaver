@@ -4,6 +4,7 @@ import gi
 gi.require_version('CScreensaver', '1.0')
 
 from gi.repository import GLib
+from gi.repository import Gio
 import signal
 import argparse
 import gettext
@@ -59,6 +60,8 @@ class ScreensaverCommand:
             print("cinnamon-screensaver %s" % (config.VERSION))
             quit()
 
+        self.settings = Gio.Settings.new("org.cinnamon.desktop.lockdown")
+
         self.action_id = args.action_id
         self.message = args.message
 
@@ -87,7 +90,10 @@ class ScreensaverCommand:
             else:
                 print(gettext.ngettext ("The screensaver has been active for %d second.\n", "The screensaver has been active for %d seconds.\n", time) % time)
         elif self.action_id == Action.LOCK:
-            self.client.proxy.call_lock_sync(self.message)
+            if not self.settings.get_boolean("disable-lock-screen"):
+                self.client.proxy.call_lock_sync(self.message)
+            else:
+                print(_("Screen lock is not allowed at this time.\n"))
         elif self.action_id == Action.ACTIVATE:
             self.client.proxy.call_set_active_sync(True)
         elif self.action_id == Action.DEACTIVATE:
