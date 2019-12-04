@@ -58,8 +58,6 @@ class Main:
         # This is here mainly to allow the notification watcher to have a valid status.Debug value
         import singletons
 
-        Gtk.icon_size_register("audio-button", 20, 20)
-
         Gtk.Settings.get_default().connect("notify::gtk-theme-name", self.on_theme_changed)
         self.do_style_overrides()
 
