@@ -29,8 +29,6 @@ class PlayerControl(Gtk.Box):
             self.build_layout()
 
     def build_layout(self):
-        size = Gtk.IconSize.from_name("audio-button")
-
         player_status = self.player.get_playback_status()
 
         # Player buttons
@@ -42,7 +40,7 @@ class PlayerControl(Gtk.Box):
         vbox.pack_start(button_box, True, True, 0)
         vbox.set_valign(Gtk.Align.CENTER)
 
-        self.previous_button = TransparentButton("media-skip-backward-symbolic", size)
+        self.previous_button = TransparentButton("media-skip-backward-symbolic", Gtk.IconSize.BUTTON)
         self.previous_button.show()
         trackers.con_tracker_get().connect(self.previous_button,
                                            "clicked",
@@ -50,14 +48,14 @@ class PlayerControl(Gtk.Box):
 
         button_box.pack_start(self.previous_button, True, True, 2)
 
-        self.play_pause_button = TransparentButton(self.get_play_pause_icon_name(player_status), size)
+        self.play_pause_button = TransparentButton(self.get_play_pause_icon_name(player_status), Gtk.IconSize.BUTTON)
         self.play_pause_button.show()
         trackers.con_tracker_get().connect(self.play_pause_button,
                                            "clicked",
                                            self.on_play_pause_clicked)
         button_box.pack_start(self.play_pause_button, True, True, 2)
 
-        self.next_button = TransparentButton("media-skip-forward-symbolic", size)
+        self.next_button = TransparentButton("media-skip-forward-symbolic", Gtk.IconSize.BUTTON)
         self.next_button.show()
         trackers.con_tracker_get().connect(self.next_button,
                                            "clicked",
@@ -156,9 +154,7 @@ class PlayerControl(Gtk.Box):
 
         icon_name = self.get_play_pause_icon_name(status)
 
-        size = Gtk.IconSize.from_name("audio-button")
-
-        image = Gtk.Image.new_from_icon_name(icon_name, size)
+        image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
         self.play_pause_button.set_image(image)
 
     def on_widget_destroy(self, widget, data=None):
