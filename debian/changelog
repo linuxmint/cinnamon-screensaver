@@ -1,3 +1,13 @@
+cinnamon-screensaver (4.4.1) tricia; urgency=medium
+
+  [ GeorchW ]
+  * Fixed wrong font being applied in custom text (#328)
+
+  [ claudiux ]
+  * Update cinnamon-screensaver to fix #326 (#327)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 10 Dec 2019 09:58:06 +0000
+
 cinnamon-screensaver (4.4.0) tricia; urgency=medium
 
   [ Michael Webster ]
