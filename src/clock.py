@@ -124,9 +124,11 @@ class ClockWidget(Floating, BaseWindow):
 
         if self.away_message and self.away_message != "":
             user_name = utils.get_user_display_name()
-            markup = ('<b><span font_desc=\"Ubuntu 14\" foreground=\"#CCCCCC\">%s</span></b>' +\
-                      '\n<b><span font_desc=\"Ubuntu 10\" foreground=\"#ACACAC\">  ~ %s</span></b>\n ') %\
-                     (self.away_message, user_name)
+            markup = ('<span font_desc=\"{0}\">'
+                + '<b><span foreground=\"#CCCCCC\">{1}</span></b>' 
+                + '\n<b><span font_size=\"smaller\" foreground=\"#ACACAC\">  ~ {2}</span></b>'
+                + '</span>\n ').format(
+                     font_message.to_string(), self.away_message, user_name)
         else:
             markup = '<b><span font_desc=\"%s\" foreground=\"#CCCCCC\">%s</span></b>\n ' %\
                      (font_message.to_string(), default_message)
