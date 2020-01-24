@@ -68,10 +68,6 @@ class VolumeControl(Gtk.Box):
                 trackers.con_tracker_get().connect(self.volume_slider,
                                                    "button-press-event",
                                                    self.on_button_press_event)
-                if not utils.have_gtk_version("3.18.0"):
-                    trackers.con_tracker_get().connect(self.volume_slider,
-                                                       "scroll-event",
-                                                       self.on_scroll_event)
 
                 self.on_volume_changed(None, None)
                 self.show()
