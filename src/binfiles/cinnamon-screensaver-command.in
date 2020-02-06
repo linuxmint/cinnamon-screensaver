@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec @datadir@/cinnamon-screensaver/cinnamon-screensaver-command.py "$@"
