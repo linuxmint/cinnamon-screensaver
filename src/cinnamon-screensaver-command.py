@@ -35,21 +35,21 @@ class ScreensaverCommand:
 
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver Command')
         parser.add_argument('--exit', '-e', dest="action_id", action='store_const', const=Action.EXIT,
-                            help=_('Causes the screensaver to exit gracefully'))
+                            help=gettext.gettext('Causes the screensaver to exit gracefully'))
         parser.add_argument('--query', '-q', dest="action_id", action='store_const', const=Action.QUERY,
-                            help=_('Query the state of the screensaver'))
+                            help=gettext.gettext('Query the state of the screensaver'))
         parser.add_argument('--time', '-t', dest="action_id", action='store_const', const=Action.TIME,
-                            help=_('Query the length of time the screensaver has been active'))
+                            help=gettext.gettext('Query the length of time the screensaver has been active'))
         parser.add_argument('--lock', '-l', dest="action_id", action='store_const', const=Action.LOCK,
-                            help=_('Tells the running screensaver process to lock the screen immediately'))
+                            help=gettext.gettext('Tells the running screensaver process to lock the screen immediately'))
         parser.add_argument('--activate', '-a', dest="action_id", action='store_const', const=Action.ACTIVATE,
-                            help=_('Turn the screensaver on (blank the screen)'))
+                            help=gettext.gettext('Turn the screensaver on (blank the screen)'))
         parser.add_argument('--deactivate', '-d', dest="action_id", action='store_const', const=Action.DEACTIVATE,
-                            help=_('If the screensaver is active then deactivate it (un-blank the screen)'))
+                            help=gettext.gettext('If the screensaver is active then deactivate it (un-blank the screen)'))
         parser.add_argument('--version', '-V', dest="action_id", action='store_const', const=Action.VERSION,
-                            help=_('Version of this application'))
+                            help=gettext.gettext('Version of this application'))
         parser.add_argument('--away-message', '-m', dest="message", action='store', default="",
-                            help=_('Message to be displayed in lock screen'))
+                            help=gettext.gettext('Message to be displayed in lock screen'))
         args = parser.parse_args()
 
         if not args.action_id:
@@ -80,20 +80,20 @@ class ScreensaverCommand:
             self.client.proxy.call_quit_sync()
         elif self.action_id == Action.QUERY:
             if self.client.proxy.call_get_active_sync():
-                print(_("The screensaver is active\n"))
+                print(gettext.gettext("The screensaver is active\n"))
             else:
-                print(_("The screensaver is inactive\n"))
+                print(gettext.gettext("The screensaver is inactive\n"))
         elif self.action_id == Action.TIME:
             time = self.client.proxy.call_get_active_time_sync()
             if time == 0:
-                print(_("The screensaver is not currently active.\n"))
+                print(gettext.gettext("The screensaver is not currently active.\n"))
             else:
                 print(gettext.ngettext ("The screensaver has been active for %d second.\n", "The screensaver has been active for %d seconds.\n", time) % time)
         elif self.action_id == Action.LOCK:
             if not self.settings.get_boolean("disable-lock-screen"):
                 self.client.proxy.call_lock_sync(self.message)
             else:
-                print(_("Screen lock is not allowed at this time.\n"))
+                print(gettext.gettext("Screen lock is not allowed at this time.\n"))
         elif self.action_id == Action.ACTIVATE:
             self.client.proxy.call_set_active_sync(True)
         elif self.action_id == Action.DEACTIVATE:
