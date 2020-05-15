@@ -64,5 +64,3 @@ foreach script : app_scripts
   meson.add_install_script('sh', '-c',
     'ln -sf "@0@" "$DESTDIR/@1@"'.format(join_paths(pkgdatadir, script[0]), join_paths(bindir, script[1])))
 endforeach
-
-meson.add_install_script('sh', '-c', 'python3 -m compileall "$DESTDIR/@0@"'.format(pkgdatadir) )

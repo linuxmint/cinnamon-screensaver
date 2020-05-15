@@ -123,6 +123,7 @@ conf_h = configure_file(
 
 inc = include_directories('.')
 
+subdir('install-scripts')
 subdir('libcscreensaver')
 subdir('data')
 subdir('src')
