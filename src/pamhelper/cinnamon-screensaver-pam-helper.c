@@ -63,6 +63,7 @@ static GOptionEntry entries [] = {
 #define CS_PAM_AUTH_BUSY_FALSE "CS_PAM_AUTH_BUSY_FALSE\n"
 
 #define CS_PAM_AUTH_SET_PROMPT_ "CS_PAM_AUTH_SET_PROMPT_"
+#define CS_PAM_AUTH_SET_INFO_ "CS_PAM_AUTH_SET_INFO_"
 
 #define CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT "CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT"
 
@@ -129,6 +130,13 @@ static void
 send_prompt (const gchar *msg)
 {
     printf (CS_PAM_AUTH_SET_PROMPT_ "%s_\n", msg);
+    fflush (stdout);
+}
+
+static void
+send_info (const gchar *msg)
+{
+    printf (CS_PAM_AUTH_SET_INFO_ "%s_\n", msg);
     fflush (stdout);
 }
 
@@ -200,6 +208,10 @@ auth_message_handler (CsAuthMessageStyle style,
         case CS_AUTH_MESSAGE_ERROR_MSG:
             break;
         case CS_AUTH_MESSAGE_TEXT_INFO:
+            if (msg != NULL)
+            {
+              send_info(msg);
+            }
             break;
         default:
             g_assert_not_reached ();

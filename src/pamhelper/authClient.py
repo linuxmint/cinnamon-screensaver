@@ -20,7 +20,8 @@ class AuthClient(GObject.Object):
         'auth-failure': (GObject.SignalFlags.RUN_LAST, None, ()),
         'auth-cancel': (GObject.SignalFlags.RUN_LAST, None, ()),
         'auth-busy': (GObject.SignalFlags.RUN_LAST, None, (bool,)),
-        'auth-prompt': (GObject.SignalFlags.RUN_LAST, None, (str,))
+        'auth-prompt': (GObject.SignalFlags.RUN_LAST, None, (str,)),
+        'auth-info': (GObject.SignalFlags.RUN_LAST, None, (str,))
     }
 
     def __init__(self):
@@ -174,6 +175,10 @@ class AuthClient(GObject.Object):
                     if "CS_PAM_AUTH_SET_PROMPT" in output:
                         prompt = re.search('(?<=CS_PAM_AUTH_SET_PROMPT_)(.*)(?=_)', output).group(0)
                         self.emit_idle_auth_prompt(prompt)
+                    if "CS_PAM_AUTH_SET_INFO" in output:
+                        info = re.search('(?<=CS_PAM_AUTH_SET_INFO_)(.*)(?=_)', output).group(0)
+                        self.emit_auth_info(info)
+
         if not finished:
             pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
 
@@ -201,3 +206,8 @@ class AuthClient(GObject.Object):
         if status.Debug:
             print("authClient: idle add auth-prompt")
         GObject.idle_add(self.emit, "auth-prompt", prompt)
+
+    def emit_auth_info(self, info):
+        if status.Debug:
+            print("authClient: auth-info")
+        GObject.idle_add(self.emit, "auth-info", info)
