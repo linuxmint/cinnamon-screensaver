@@ -14,7 +14,8 @@ override_dh_auto_configure:
 	meson debian/build  \
 	--prefix=/usr \
 	--libdir=lib/$(DEB_HOST_MULTIARCH) \
-	--libexecdir=lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver
+	--libexecdir=lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver \
+	-D use-debian-pam=true
 
 override_dh_auto_build:
 	ninja -C debian/build
