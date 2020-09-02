@@ -61,7 +61,8 @@ foreach sym : [
   endif
 endforeach
 
-if get_option('xinerama')
+use_xinerama = get_option('xinerama')
+if use_xinerama
   if host_machine.system() == 'solaris'
     xinerama = cc.find_library('Xext')
     xinerama_h = cc.has_header('X11/extensions/xinerama.h')
