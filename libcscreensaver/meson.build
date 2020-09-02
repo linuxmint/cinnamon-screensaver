@@ -145,13 +145,18 @@ gir_sources = [
   dbus_built
 ]
 
+libcscreensaver_deps = [gobject, gtk, gdk, x11, xrandr, xext, glib, gio, gthread, pam, m]
+if use_xinerama
+  libcscreensaver_deps += xinerama
+endif
+
 libcscreensaver = library(
   'cscreensaver',
   cscreensaver_sources + gir_sources,
   version: '0.0.0',
   include_directories: inc,
   cpp_args: '-DG_LOG_DOMAIN="CScreensaver"',
-  dependencies: [gobject, gtk, gdk, x11, xinerama, xrandr, xext, glib, gio, gthread, pam, m],
+  dependencies: libcscreensaver_deps,
   install: true
 )
 
