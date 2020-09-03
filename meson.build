@@ -1,4 +1,4 @@
-project('cinnamon-screensaver', 'c', version: '4.6.0', meson_version: '>=0.40.0')
+project('cinnamon-screensaver', 'c', version: '4.6.0', meson_version: '>=0.46.0')
 
 cc = meson.get_compiler('c')
 
@@ -61,7 +61,8 @@ foreach sym : [
   endif
 endforeach
 
-if get_option('xinerama')
+use_xinerama = get_option('xinerama')
+if use_xinerama
   if host_machine.system() == 'solaris'
     xinerama = cc.find_library('Xext')
     xinerama_h = cc.has_header('X11/extensions/xinerama.h')

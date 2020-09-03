@@ -21,6 +21,18 @@ dbus_service = configure_file(
   configuration: misc_conf
 )
 
-install_data('cinnamon-screensaver', install_dir: join_paths(pamdir, 'pam.d'))
+if get_option('use-debian-pam')
+  install_data(
+    'cinnamon-screensaver.pam.debian',
+    rename: 'cinnamon-screensaver',
+    install_dir: join_paths(pamdir, 'pam.d')
+  )
+else
+  install_data(
+    'cinnamon-screensaver',
+    install_dir: join_paths(pamdir, 'pam.d')
+  )
+endif
+
 install_data(desktop, install_dir: join_paths(datadir, 'applications'))
 install_data(dbus_service, install_dir: dbus_services_dir)
