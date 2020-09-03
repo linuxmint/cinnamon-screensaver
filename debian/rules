@@ -10,26 +10,17 @@ override_dh_strip:
 	dh_strip --dbg-package=libcscreensaver-dbg
 
 override_dh_auto_configure:
-	mkdir -p debian/build
-	meson debian/build  \
-	--prefix=/usr \
-	--libdir=lib/$(DEB_HOST_MULTIARCH) \
+	dh_auto_configure -- \
 	--libexecdir=lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver \
 	-D use-debian-pam=true
-
-override_dh_auto_build:
-	ninja -C debian/build
-
-override_dh_auto_install:
-	DESTDIR=${CURDIR}/debian/tmp \
-	ninja -C debian/build install
 
 # there has never been a testsuite, so don't try running it and breaking
 # just because there isn't one
 override_dh_auto_test:
 
-override_dh_install:
-	dh_install --list-missing
+# --list-missing will be default in compat 12
+override_dh_missing:
+	dh_missing --list-missing
 
 override_dh_python3:
 	dh_python3 usr/share/cinnamon-screensaver
