@@ -43,7 +43,7 @@ x11 = dependency('x11')
 xext = dependency('xext')
 xrandr = dependency('xrandr', required: false)
 m = cc.find_library('m')
-dbus_services_dir = dependency('dbus-1').get_pkgconfig_variable('session_bus_services_dir', define_variable: ['prefix', prefix])
+dbus_services_dir = dependency('dbus-1').get_pkgconfig_variable('session_bus_services_dir', define_variable: ['datadir', datadir])
 
 # check for symbols and headers
 foreach header : [
