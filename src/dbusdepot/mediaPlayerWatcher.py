@@ -31,6 +31,7 @@ class MprisClient(BaseClient):
                                           name,
                                           path)
 
+        self.identity = None
         self.metadata = None
         self.album_name = ""
         self.track_name = ""
@@ -47,6 +48,14 @@ class MprisClient(BaseClient):
                                            self.on_metadata_changed)
 
         self.ensure_metadata()
+
+        # This isn't the app-provided MediaPlayer.Identity, but we'd need to
+        # set up another proxy and it's not really necessary for what this is
+        # used for.
+        self.identity = self.proxy.get_name().rpartition(".")[2]
+
+    def get_identity(self):
+        return self.identity
 
     def get_playback_status(self):
         status = PlaybackStatus.Unknown
