@@ -393,7 +393,7 @@ reload_monitor_infos (CsScreen *screen)
 
     apply_scale_factor (screen->monitor_infos,
                         screen->n_monitor_infos,
-                        gdk_screen_get_monitor_scale_factor (screen->gdk_screen, PRIMARY_MONITOR));
+                        gdk_monitor_get_scale_factor (PRIMARY_MONITOR));
 
     screen->low_res = get_low_res_mode (screen,
                                         screen->monitor_infos,
@@ -422,7 +422,7 @@ on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
     reload_screen_info (screen);
     g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
 
-    gdk_flush ();
+    gdk_display_flush (gdk_screen);
 
     DEBUG ("CsScreen received 'monitors-changed' signal from GdkScreen\n");
 
@@ -679,7 +679,7 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
     gdk_display = gdk_screen_get_display (screen->gdk_screen);
     xroot = gdk_x11_window_get_xid (gdk_screen_get_root_window (screen->gdk_screen));
 
-    gdk_error_trap_push ();
+    gdk_x11_display_error_trap_push (gdk_display);
     XQueryPointer (gdk_x11_display_get_xdisplay (gdk_display),
                    xroot,
                    &root_return,
@@ -689,9 +689,9 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
                    &win_x_return,
                    &win_y_return,
                    &mask_return);
-    gdk_error_trap_pop_ignored ();
+    gdk_x11_display_error_trap_pop_ignored (gdk_display);
 
-    scale_factor = gdk_screen_get_monitor_scale_factor (screen->gdk_screen, 0);
+    scale_factor = gdk_monitor_get_scale_factor (screen->gdk_screen);
     root_x_return /= scale_factor;
     root_y_return /= scale_factor;
 
@@ -810,10 +810,10 @@ cs_screen_nuke_focus (void)
 
     DEBUG ("Nuking focus\n");
 
-    gdk_error_trap_push ();
+    gdk_x11_display_error_trap_push (gdk_display_get_default);
 
     XGetInputFocus (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &focus, &rev);
     XSetInputFocus (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), PointerRoot, RevertToNone, CurrentTime);
 
-    gdk_error_trap_pop_ignored ();
+    gdk_x11_display_error_trap_pop_ignored (gdk_display_get_default);
 }

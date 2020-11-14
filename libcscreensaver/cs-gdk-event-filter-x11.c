@@ -108,7 +108,7 @@ select_popup_events (void)
     XWindowAttributes attr;
     unsigned long     events;
 
-    gdk_error_trap_push ();
+    gdk_x11_display_error_trap_push (gdk_display_get_default);
 
     memset (&attr, 0, sizeof (attr));
     XGetWindowAttributes (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), &attr);
@@ -116,7 +116,7 @@ select_popup_events (void)
     events = SubstructureNotifyMask | attr.your_event_mask;
     XSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), events);
 
-    gdk_error_trap_pop_ignored ();
+    gdk_x11_display_error_trap_pop_ignored (gdk_display_get_default);
 }
 
 static void
@@ -126,7 +126,7 @@ select_shape_events (CsGdkEventFilter *filter)
     unsigned long events;
     int           shape_error_base;
 
-    gdk_error_trap_push ();
+    gdk_x11_display_error_trap_push (gdk_display_get_default);
 
     if (XShapeQueryExtension (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &filter->shape_event_base, &shape_error_base)) {
         events = ShapeNotifyMask;
@@ -136,7 +136,7 @@ select_shape_events (CsGdkEventFilter *filter)
                            events);
     }
 
-    gdk_error_trap_pop_ignored ();
+    gdk_x11_display_error_trap_pop_ignored (gdk_display_get_default);
 #endif
 }
 
@@ -231,4 +231,3 @@ cs_gdk_event_filter_new (void)
 
     return CS_GDK_EVENT_FILTER (result);
 }
-
