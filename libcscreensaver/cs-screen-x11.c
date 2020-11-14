@@ -393,7 +393,7 @@ reload_monitor_infos (CsScreen *screen)
 
     apply_scale_factor (screen->monitor_infos,
                         screen->n_monitor_infos,
-                        gdk_monitor_get_scale_factor (PRIMARY_MONITOR));
+                        gdk_display_get_monitor (gdk_display, PRIMARY_MONITOR));
 
     screen->low_res = get_low_res_mode (screen,
                                         screen->monitor_infos,
@@ -691,7 +691,7 @@ cs_screen_get_mouse_monitor (CsScreen *screen)
                    &mask_return);
     gdk_x11_display_error_trap_pop_ignored (gdk_display);
 
-    scale_factor = gdk_monitor_get_scale_factor (screen->gdk_screen);
+    scale_factor = gdk_monitor_get_scale_factor (gdk_display);
     root_x_return /= scale_factor;
     root_y_return /= scale_factor;
 
