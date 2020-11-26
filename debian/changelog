@@ -1,3 +1,27 @@
+cinnamon-screensaver (4.8.0) ulyssa; urgency=medium
+
+  [ Michael Webster ]
+  * Build: Only generate python bytecode during builds with no temporary install folder.  Package managers should handle this otherwise.
+
+  [ Fabio Fantoni ]
+  * CI: Update targets
+  * use debhelper 11 for integrated meson support
+  * CI: Update targets (#339)
+
+  [ Michael Webster ]
+  * build: Don't rely on debian magic to install the correct pam file.
+
+  [ Sparky Bluefang ]
+  * Fix meson syntax error when xinerama support is disabled.
+
+  [ WORLDofPEACE ]
+  * build: use datadir in define_variable for dbus_services_dir
+
+  [ Michael Webster ]
+  * album art: Adjust the album art url for spotify.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 26 Nov 2020 13:49:22 +0000
+
 cinnamon-screensaver (4.6.0) ulyana; urgency=medium
 
   [ Eli Schwartz ]
