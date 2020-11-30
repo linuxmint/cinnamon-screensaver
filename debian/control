@@ -25,7 +25,7 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends:
  cinnamon-desktop-data (>= 3.5),
  gir1.2-accountsservice-1.0,
- gir1.2-cinnamondesktop-3.0 (>= 3.5),
+ gir1.2-cinnamondesktop-3.0 (>= 4.8),
  gir1.2-gkbd-3.0,
  gir1.2-glib-2.0,
  gir1.2-gtk-3.0,
