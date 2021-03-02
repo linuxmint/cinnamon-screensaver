@@ -9,6 +9,9 @@ import status
 
 UPOWER_STATE_CHARGING = 1
 UPOWER_STATE_DISCHARGING = 2
+UPOWER_STATE_FULLY_CHARGED = 4
+UPOWER_STATE_PENDING_CHARGE = 5
+UPOWER_STATE_PENDING_DISCHARGE = 6
 
 class PowerWidget(Gtk.Frame):
     """
@@ -99,7 +102,8 @@ class PowerWidget(Gtk.Frame):
 
         names = None
 
-        if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_DISCHARGING):
+        if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_DISCHARGING,
+                     UPOWER_STATE_PENDING_CHARGE, UPOWER_STATE_PENDING_DISCHARGE):
             if percentage < 10:
                 names = ["battery-level-0", "battery-caution"]
             elif percentage < 20:
@@ -123,16 +127,20 @@ class PowerWidget(Gtk.Frame):
             else:
                 names = ["battery-level-100", "battery-full"]
 
-            if state == UPOWER_STATE_CHARGING:
+            if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_PENDING_CHARGE):
                 names[0] += "-charging"
                 names[1] += "-charging"
 
             names[0] += "-symbolic"
             names[1] += "-symbolic"
+        elif state == UPOWER_STATE_FULLY_CHARGED:
+            names = ["battery-level-100-charged-symbolic",
+                     "battery-full-charged-symbolic",
+                     "battery-full-charging-symbolic"]
+        else:
+            names = (battery.get_property("icon-name"),)
 
-            return Gio.ThemedIcon.new_from_names(names)
-
-        return battery.get_property("icon-name")
+        return Gio.ThemedIcon.new_from_names(names)
 
     def update_battery_tooltip(self, widget, battery):
         text = ""
