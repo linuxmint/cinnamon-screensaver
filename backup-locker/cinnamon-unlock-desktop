@@ -1,2 +1,3 @@
 #!/bin/sh
 killall cs-backup-locker
+killall cinnamon-screensaver
