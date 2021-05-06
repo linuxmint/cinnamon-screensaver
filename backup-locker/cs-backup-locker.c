@@ -15,7 +15,9 @@
 #include <libcscreensaver/cs-gdk-event-filter.h>
 #include "event-grabber.h"
 
-#define TESTING 0
+static gboolean debug = FALSE;
+static guint term_tty = 0;
+static guint session_tty = 0;
 
 #define BACKUP_TYPE_WINDOW (backup_window_get_type ())
 
@@ -81,10 +83,11 @@ root_window_size_changed (CsGdkEventFilter *filter,
     w = DisplayWidth (xdisplay, screen_num);
     h = DisplayHeight (xdisplay, screen_num);
 
-#if TESTING
-    w /= 2;
-    h /= 2;
-#endif
+    if (debug)
+    {
+        w /= 2;
+        h /= 2;
+    }
 
     gdk_window_move_resize (gtk_widget_get_window (GTK_WIDGET (window)), 
                             0, 0, w, h);
@@ -248,12 +251,17 @@ backup_window_init (BackupWindow *window)
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
 
-    widget = gtk_label_new (_("• Switch to a console using <Control-Alt-F2>.\n"
-                              "• Log in by typing your user name followed by your password.\n"
-                              "• At the prompt, type 'cinnamon-unlock-desktop' and press Enter.\n"
-                              "• Switch back to your unlocked desktop using <Control-Alt-F7>.\n\n"
-                              "If you can reproduce this behavior, please file a report here:\n"
-                              "https://github.com/linuxmint/cinnamon-screensaver"));
+    gchar *inst = g_strdup_printf (_("• Switch to a console using <Control-Alt-F%u>.\n"
+                                     "• Log in by typing your user name followed by your password.\n"
+                                     "• At the prompt, type 'cinnamon-unlock-desktop' and press Enter.\n"
+                                     "• Switch back to your unlocked desktop using <Control-Alt-F%u>.\n\n"
+                                     "If you can reproduce this behavior, please file a report here:\n"
+                                     "https://github.com/linuxmint/cinnamon-screensaver"),
+                                     term_tty, session_tty);
+
+    widget = gtk_label_new (inst);
+    g_free (inst);
+
     attrs = pango_attr_list_new ();
     pango_attr_list_insert (attrs, pango_attr_size_new (10 * PANGO_SCALE));
     pango_attr_list_insert (attrs, pango_attr_foreground_new (65535, 65535, 65535));
@@ -345,7 +353,7 @@ window_monitor_thread (GTask        *task,
     gchar *xid_str = g_strdup_printf ("%lu", xid);
     error = NULL;
 
-    xprop_proc = g_subprocess_new (G_SUBPROCESS_FLAGS_NONE,
+    xprop_proc = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_SILENCE,
                                    &error,
                                    "xprop",
                                    "-spy",
@@ -375,11 +383,16 @@ screensaver_window_gone (GObject      *source,
     BackupWindow *window = BACKUP_WINDOW (user_data);
 
     g_task_propagate_boolean (G_TASK (result), NULL);
-    g_clear_object (&window_monitor_cancellable);
 
     // The normal screensaver window is gone - either thru a crash or normal unlocking.
     // The main process will kill us, or the user will have to.  Either way, grab everything.
-    activate_backup_window (window);
+    if (!g_cancellable_is_cancelled (g_task_get_cancellable (G_TASK (result))))
+    {
+        activate_backup_window (window);
+    }
+
+    g_clear_object (&window_monitor_cancellable);
+
 }
 
 static void
@@ -400,6 +413,7 @@ setup_window_monitor (BackupWindow *window, gulong xid)
 static gboolean
 sigterm_received (gpointer data)
 {
+    g_cancellable_cancel (window_monitor_cancellable);
     gtk_main_quit ();
 
     sigterm_src_id = 0;
@@ -413,7 +427,6 @@ main (int    argc,
     GtkWidget *window;
     GError *error;
     static gboolean     show_version = FALSE;
-    static gboolean     debug        = FALSE;
     static GOptionEntry entries []   = {
         { "version", 0, 0, G_OPTION_ARG_NONE, &show_version, N_("Version of this application"), NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug, N_("Enable debugging code"), NULL },
@@ -434,28 +447,38 @@ main (int    argc,
         exit (1);
     }
 
+    if (debug)
+    {
+        g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+    }
+
     if (show_version) {
-        g_print ("%s %s\n", argv[0], VERSION);
+        g_print ("%s %s\n", g_get_prgname (), VERSION);
         exit (1);
     }
 
-#if !TESTING
-    if (argc < 2)
+    if (!debug && argc < 4)
     {
-        g_warning ("Argument must be the real screensaver's XID");
+        g_warning ("usage: cs-backup-locker ss-xid session_tty term_tty");
         exit (1);
     }
-#endif
 
     // sleep(1);
 
     g_debug ("initializing cs-backup-locker");
 
-#if TESTING
-    gulong xid = 9999;
-#else
-    gulong xid = strtoul (argv[1], NULL, 0);
-#endif
+    gulong xid = 0;
+
+    if (debug)
+    {
+        xid = 9999;
+    }
+    else
+    {
+        xid = strtoul (argv[1], NULL, 0);
+        term_tty = strtoul (argv[2], NULL, 0);
+        session_tty = strtoul (argv[3], NULL, 0);
+    }
 
     if (xid == 0)
     {
@@ -470,9 +493,10 @@ main (int    argc,
 
     gtk_widget_show (window);
 
-#if TESTING
-    g_timeout_add_seconds (10, (GSourceFunc) gtk_main_quit, NULL);
-#endif
+    if (debug)
+    {
+        g_timeout_add_seconds (10, (GSourceFunc) gtk_main_quit, NULL);
+    }
 
     gtk_main ();
 

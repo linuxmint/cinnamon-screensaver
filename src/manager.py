@@ -5,6 +5,7 @@ import time
 import traceback
 import os
 import signal
+import subprocess
 
 import config
 import constants as c
@@ -219,13 +220,47 @@ class ScreensaverManager(GObject.Object):
         else:
             self.stage.connect("realize", self._real_spawn_fallback_window)
 
+    def get_tty_vals(self):
+        session_tty = None
+        term_tty = None
+        username = os.getlogin()[:7]
+        used_tty = []
+
+        tty_output = subprocess.check_output(["w", "-h"]).decode("utf-8")
+        for line in tty_output.split("\n"):
+            if line.startswith(username):
+                if "cinnamon-session" in line and "tty" in line:
+                    session_tty = line.split()[1].replace("tty", "")
+                    used_tty.append(session_tty)
+                elif "tty" in line:
+                    term_tty = line.split()[1].replace("tty", "")
+            elif "tty" in line:
+                used_tty.append(line.split()[1].replace("tty", ""))
+
+        used_tty.sort()
+
+        if term_tty == None:
+            for i in range(1, 6):
+                if str(i) not in used_tty:
+                    term_tty = str(i)
+                    break
+
+        if term_tty == None:
+            term_tty = "1"
+
+        return [term_tty, session_tty]
+
     def _real_spawn_fallback_window(self, stage, data=None):
-        if self.fb_pid > 0: # can't happen??
+        if self.fb_pid > 0:
             return
+
+        term_tty, session_tty = self.get_tty_vals()
 
         argv = [
             os.path.join(config.libexecdir, "cs-backup-locker"),
-            str(self.stage.get_window().get_xid())
+            str(self.stage.get_window().get_xid()),
+            term_tty,
+            session_tty
         ]
 
         self.fb_pid = GLib.spawn_async(argv)[0]
@@ -233,7 +268,6 @@ class ScreensaverManager(GObject.Object):
         try:
             self.stage.disconnect_by_func(self._real_spawn_fallback_window)
         except:
-            print("no connected")
             pass
 
     def kill_fallback_window(self):
@@ -243,7 +277,27 @@ class ScreensaverManager(GObject.Object):
         if status.Debug:
             print("manager: killing fallback window")
 
-        os.system("kill %d" % self.fb_pid)
+        try:
+            if status.Debug:
+                print("manager: checking if fallback window exists first.")
+            os.kill(self.fb_pid, 0)
+        except ProcessLookupError:
+            if status.Debug:
+                print("manager: fallback window terminated before the main screensaver, something went wrong!")
+            notification = Gio.Notification.new(_("Cinnamon Screensaver has experienced an error"))
+
+            notification.set_body(_("The 'cs-backup-locker' process terminated before the screensaver did. "
+                                    "Please report this issue and try to describe any actions you may "
+                                    "have performed prior to this occurring."))
+            notification.set_icon(Gio.ThemedIcon(name="dialog-error"))
+            notification.set_priority(Gio.NotificationPriority.URGENT)
+            Gio.Application.get_default().send_notification("cinnamon-screensaver", notification)
+
+        try:
+            os.kill(self.fb_pid, signal.SIGTERM)
+        except:
+            pass
+
         self.fb_pid = 0
 
     def despawn_stage(self, callback=None):
