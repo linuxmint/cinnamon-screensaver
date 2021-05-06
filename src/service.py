@@ -17,46 +17,13 @@ class ScreensaverService(GObject.Object):
     is controlled.
     """
     def __init__(self):
-        """
-        Immediately attempt to own org.cinnamon.Screensaver.
-
-        Failure to do so will result in simply quitting the program,
-        as we can't run more than one instance at a time.
-
-        Upon success we export our interface to the session bus.
-        """
         super(ScreensaverService, self).__init__()
 
-        self.bus = Gio.bus_get_sync(Gio.BusType.SESSION)
-
-        Gio.bus_own_name(Gio.BusType.SESSION,
-                         c.SS_SERVICE,
-                         Gio.BusNameOwnerFlags.NONE,
-                         self.on_bus_acquired,
-                         self.on_name_acquired,
-                         self.on_name_lost)
-
-    def on_name_lost(self, connection, name, data=None):
-        """
-        Failed to acquire our name - just exit.
-        """
-        print("A screensaver is already running!  Exiting...")
-        Gtk.main_quit()
-
-    def on_name_acquired(self, connection, name, data=None):
-        """
-        Acquired our name - pass... The real work will begin
-        on our bus_acquired callback.
-        """
-        print("Starting screensaver...")
-
-    def on_bus_acquired(self, connection, name, data=None):
-        """
-        Export our interface to the session bus.  Creates the
-        ScreensaverManager.  We are now ready to respond to requests
-        by cinnamon-session and cinnamon-screensaver-command.
-        """
-        self.bus = connection
+        try:
+            self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        except:
+            print("Unable to get session connection, fatal!")
+            exit(1)
 
         self.interface = CScreensaver.ScreenSaverSkeleton.new()
 
@@ -117,7 +84,7 @@ class ScreensaverService(GObject.Object):
 
         iface.complete_quit(inv)
 
-        Gtk.main_quit()
+        Gio.Application.get_default().quit()
 
         return True
 

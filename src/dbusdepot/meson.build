@@ -9,7 +9,6 @@ app_py = [
   'loginInterface.py',
   'mediaPlayerWatcher.py',
   'nameBlocker.py',
-  'screensaverClient.py',
   'sessionClient.py',
   'uPowerClient.py'
 ]

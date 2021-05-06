@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from gi.repository import Gdk, GObject
+from gi.repository import Gdk, GObject, Gio
 import time
 import traceback
 
@@ -101,6 +101,7 @@ class ScreensaverManager(GObject.Object):
                 self.cinnamon_client.exit_expo_and_overview()
                 if self.grab_helper.grab_root(False):
                     if not self.stage:
+                        Gio.Application.get_default().hold()
                         self.spawn_stage(msg, self.on_spawn_stage_complete)
                     else:
                         self.stage.activate(self.on_spawn_stage_complete)
@@ -115,10 +116,10 @@ class ScreensaverManager(GObject.Object):
         else:
             if self.stage:
                 self.despawn_stage(self.on_despawn_stage_complete)
+                Gio.Application.get_default().release()
                 status.focusWidgets = []
             self.grab_helper.release()
             return True
-        return False
 
     def get_active(self):
         """

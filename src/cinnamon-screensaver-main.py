@@ -5,7 +5,8 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GdkX11', '3.0')
 gi.require_version('CScreensaver', '1.0')
 
-from gi.repository import Gtk, Gdk, CScreensaver
+from gi.repository import Gtk, Gdk, CScreensaver, Gio
+
 import signal
 import gettext
 import argparse
@@ -15,11 +16,12 @@ import setproctitle
 import config
 import status
 from util import utils, settings
+from service import ScreensaverService
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
 
-class Main:
+class Main(Gtk.Application):
     """
     This is the main entry point to the program, and it shows up
     in the process list.  We do any theme preparation here as well.
@@ -27,6 +29,21 @@ class Main:
     We start the ScreensaverService from here.
     """
     def __init__(self):
+        super(Main, self).__init__(application_id="org.cinnamon.ScreenSaver",
+                                   register_session=True,
+                                   inactivity_timeout=5000,
+                                   flags=Gio.ApplicationFlags.IS_SERVICE)
+
+        # Our service must be set up before we register with the session manager.
+        ScreensaverService()
+
+    def do_activate(self):
+        pass
+
+    def do_startup(self):
+        print("Starting screensaver...")
+        Gtk.Application.do_startup(self)
+
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver')
         parser.add_argument('--debug', dest='debug', action='store_true',
                             help='Print out some extra debugging info')
@@ -58,15 +75,11 @@ class Main:
         if args.lock_disabled:
             print("Locking disabled")
 
-        from service import ScreensaverService
         # This is here mainly to allow the notification watcher to have a valid status.Debug value
         import singletons
 
         Gtk.Settings.get_default().connect("notify::gtk-theme-name", self.on_theme_changed)
         self.do_style_overrides()
-
-        ScreensaverService()
-        Gtk.main()
 
     def on_theme_changed(self, settings, pspec, data=None):
         self.do_style_overrides()
@@ -115,3 +128,4 @@ if __name__ == "__main__":
     setproctitle.setproctitle('cinnamon-screensaver')
 
     main = Main()
+    main.run()
