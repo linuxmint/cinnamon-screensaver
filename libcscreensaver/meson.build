@@ -160,8 +160,6 @@ libcscreensaver = library(
   install: true
 )
 
-install_headers('cs-auth.h', 'setuid.h', subdir: 'cinnamon-screensaver/libcscreensaver')
-
 pkgconfig.generate(
   # TODO meson 0.46 replace libraries, name, version with positional library argument
   libraries: libcscreensaver,

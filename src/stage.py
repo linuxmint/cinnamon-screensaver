@@ -116,7 +116,7 @@ class Stage(Gtk.Window):
         # This filter suppresses any other windows that might share
         # our window group in muffin, from showing up over the Stage.
         # For instance: Chrome and Firefox native notifications.
-        self.gdk_filter = CScreensaver.GdkEventFilter()
+        self.gdk_filter = CScreensaver.GdkEventFilter.new(self, 0)
 
         trackers.con_tracker_get().connect(status.screen,
                                            "size-changed",
@@ -257,7 +257,7 @@ class Stage(Gtk.Window):
 
         self.setup_children()
 
-        self.gdk_filter.start(self)
+        self.gdk_filter.start()
 
         trackers.con_tracker_get().disconnect(self.overlay,
                                               "realize",

@@ -1,6 +1,7 @@
 etc/pam.d/cinnamon-screensaver
 usr/bin
 usr/lib/*/cinnamon-screensaver/cinnamon-screensaver-pam-helper
+usr/lib/*/cinnamon-screensaver/cs-backup-locker
 usr/share/applications
 usr/share/cinnamon-screensaver/*.css
 usr/share/cinnamon-screensaver/*.py

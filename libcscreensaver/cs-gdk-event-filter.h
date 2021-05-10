@@ -18,7 +18,12 @@ typedef struct
 {
     GObject        obj;
 
-    GtkWidget     *stage;
+    GdkDisplay    *display;
+    GtkWidget     *managed_window;
+
+    /* Using XID/Window here would complicate introspection. */
+    gulong         pretty_xid;
+
     int            shape_event_base;
 } CsGdkEventFilter;
 
@@ -29,10 +34,9 @@ typedef struct
 
 GType                        cs_gdk_event_filter_get_type           (void);
 
-CsGdkEventFilter            *cs_gdk_event_filter_new (void);
+CsGdkEventFilter            *cs_gdk_event_filter_new (GtkWidget *managed_window, gulong pretty_xid);
 
-void                         cs_gdk_event_filter_start (CsGdkEventFilter *filter,
-                                                        GtkWidget *stage);
+void                         cs_gdk_event_filter_start (CsGdkEventFilter *filter);
 
 void                         cs_gdk_event_filter_stop  (CsGdkEventFilter *filter);
 

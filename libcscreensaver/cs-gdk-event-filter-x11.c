@@ -16,42 +16,47 @@
 #include <gtk/gtkx.h>
 #include <string.h>
 
-G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT);
+enum {
+        XSCREEN_SIZE,
+        LAST_SIGNAL
+};
 
-static void clear_widget (CsGdkEventFilter *filter);
+static guint signals [LAST_SIGNAL] = { 0, };
+
+G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT);
 
 static void
 unshape_window (CsGdkEventFilter *filter)
 {
     g_return_if_fail (CS_IS_GDK_EVENT_FILTER (filter));
 
-    gdk_window_shape_combine_region (gtk_widget_get_window (GTK_WIDGET (filter->stage)),
+    gdk_window_shape_combine_region (gtk_widget_get_window (GTK_WIDGET (filter->managed_window)),
                                      NULL,
                                      0,
                                      0);
 }
 
 static void
-raise_stage (CsGdkEventFilter *filter)
+raise_managed_window (CsGdkEventFilter *filter)
 {
     GdkWindow *win;
 
     g_return_if_fail (CS_IS_GDK_EVENT_FILTER (filter));
 
-    win = gtk_widget_get_window (GTK_WIDGET (filter->stage));
+    win = gtk_widget_get_window (GTK_WIDGET (filter->managed_window));
 
     gdk_window_raise (win);
 }
 
 static gboolean
-x11_window_is_ours (Window window)
+x11_window_is_ours (CsGdkEventFilter *filter, Window window)
 {
     GdkWindow *gwindow;
     gboolean   ret;
 
     ret = FALSE;
 
-    gwindow = gdk_x11_window_lookup_for_display (gdk_display_get_default (), window);
+    gwindow = gdk_x11_window_lookup_for_display (filter->display, window);
     if (gwindow && (window != GDK_ROOT_WINDOW ())) {
             ret = TRUE;
     }
@@ -59,14 +64,25 @@ x11_window_is_ours (Window window)
     return ret;
 }
 
-static void
+static gboolean
+is_pretty_window (CsGdkEventFilter *filter,
+                  Window            window)
+{
+    if (filter->pretty_xid == 0)
+    {
+        return FALSE;
+    }
+
+    return window == filter->pretty_xid;
+}
+
+static GdkFilterReturn
 cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
-                                      GdkXEvent *xevent)
+                            GdkXEvent        *xevent)
 {
     XEvent *ev;
 
     ev = xevent;
-
     /* MapNotify is used to tell us when new windows are mapped.
        ConfigureNofify is used to tell us when windows are raised. */
     switch (ev->xany.type) {
@@ -74,8 +90,11 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
           {
             XMapEvent *xme = &ev->xmap;
 
-            if (! x11_window_is_ours (xme->window)) {
-                raise_stage (filter);
+            // if (! x11_window_is_ours (filter, xme->window)) {
+                // raise_managed_window (filter);
+            // }
+            if (! x11_window_is_ours (filter, xme->window) && !is_pretty_window (filter, xme->window)) {
+                raise_managed_window (filter);
             }
 
             break;
@@ -84,11 +103,18 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
           {
             XConfigureEvent *xce = &ev->xconfigure;
 
-            if (! x11_window_is_ours (xce->window)) {
-                raise_stage (filter);
+            if (! x11_window_is_ours (filter, xce->window) && !is_pretty_window (filter, xce->window)) {
+                raise_managed_window (filter);
             }
 
-            break;
+            // If the reported window is the root window, and we're the backup window (we have a pretty
+            // xid) then signal to resize to the root window (screen).
+            // if (xce->window == GDK_ROOT_WINDOW () && filter->pretty_xid > 0)
+            if (xce->window == GDK_ROOT_WINDOW ())
+            {
+                // Screen size may have changed, tell the fallback
+                g_signal_emit (filter, signals[XSCREEN_SIZE], 0);
+            }
           }
         default:
           {
@@ -97,26 +123,28 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
                 unshape_window (filter);
             }
 #endif
-        break;
+            // return GDK_FILTER_REMOVE;
           }
     }
+
+    return GDK_FILTER_CONTINUE;
 }
 
 static void
-select_popup_events (void)
+select_popup_events (CsGdkEventFilter *filter)
 {
     XWindowAttributes attr;
     unsigned long     events;
 
-    gdk_error_trap_push ();
+    gdk_x11_display_error_trap_push (filter->display);
 
     memset (&attr, 0, sizeof (attr));
-    XGetWindowAttributes (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), &attr);
+    XGetWindowAttributes (GDK_DISPLAY_XDISPLAY (filter->display), GDK_ROOT_WINDOW (), &attr);
 
     events = SubstructureNotifyMask | attr.your_event_mask;
-    XSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), events);
+    XSelectInput (GDK_DISPLAY_XDISPLAY (filter->display), GDK_ROOT_WINDOW (), events);
 
-    gdk_error_trap_pop_ignored ();
+    gdk_x11_display_error_trap_pop_ignored (filter->display);
 }
 
 static void
@@ -126,17 +154,17 @@ select_shape_events (CsGdkEventFilter *filter)
     unsigned long events;
     int           shape_error_base;
 
-    gdk_error_trap_push ();
+    gdk_x11_display_error_trap_push (filter->display);
 
-    if (XShapeQueryExtension (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), &filter->shape_event_base, &shape_error_base)) {
+    if (XShapeQueryExtension (GDK_DISPLAY_XDISPLAY (filter->display), &filter->shape_event_base, &shape_error_base)) {
         events = ShapeNotifyMask;
 
-        XShapeSelectInput (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()),
-                           GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (filter->stage))),
+        XShapeSelectInput (GDK_DISPLAY_XDISPLAY (filter->display),
+                           GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (filter->managed_window))),
                            events);
     }
 
-    gdk_error_trap_pop_ignored ();
+    gdk_x11_display_error_trap_pop_ignored (filter->display);
 #endif
 }
 
@@ -145,16 +173,15 @@ xevent_filter (GdkXEvent *xevent,
                GdkEvent  *event,
                CsGdkEventFilter *filter)
 {
-    cs_gdk_event_filter_xevent (filter, xevent);
-
-    return GDK_FILTER_CONTINUE;
+    return cs_gdk_event_filter_xevent (filter, xevent);
 }
 
 static void
 cs_gdk_event_filter_init (CsGdkEventFilter *filter)
 {
     filter->shape_event_base = 0;
-    filter->stage = NULL;
+    filter->managed_window = NULL;
+    filter->pretty_xid = 0;
 }
 
 static void
@@ -168,6 +195,7 @@ cs_gdk_event_filter_finalize (GObject *object)
     filter = CS_GDK_EVENT_FILTER (object);
 
     cs_gdk_event_filter_stop (filter);
+    g_object_unref (filter->managed_window);
 
     G_OBJECT_CLASS (cs_gdk_event_filter_parent_class)->finalize (object);
 }
@@ -178,37 +206,19 @@ cs_gdk_event_filter_class_init (CsGdkEventFilterClass *klass)
         GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
         object_class->finalize     = cs_gdk_event_filter_finalize;
-}
 
-static void
-on_widget_finalized (CsGdkEventFilter *filter,
-                     GtkWidget                  *stage)
-{
-    cs_gdk_event_filter_stop (filter);
-    clear_widget (filter);
-}
-
-static void
-clear_widget (CsGdkEventFilter *filter)
-{
-    if (filter->stage == NULL)
-        return;
-
-    g_object_weak_unref (G_OBJECT (filter->stage), (GWeakNotify) on_widget_finalized, filter);
-    filter->stage = NULL;
+        signals[XSCREEN_SIZE] = g_signal_new ("xscreen-size",
+                                              G_TYPE_FROM_CLASS (object_class),
+                                              G_SIGNAL_RUN_LAST,
+                                              0,
+                                              NULL, NULL, NULL,
+                                              G_TYPE_NONE, 0);
 }
 
 void
-cs_gdk_event_filter_start (CsGdkEventFilter *filter,
-                           GtkWidget        *stage)
+cs_gdk_event_filter_start (CsGdkEventFilter *filter)
 {
-    g_return_if_fail(stage != NULL);
-
-    filter->stage = stage;
-
-    g_object_weak_ref (G_OBJECT (stage), (GWeakNotify) on_widget_finalized, filter);
-
-    select_popup_events ();
+    select_popup_events (filter);
     select_shape_events (filter);
 
     gdk_window_add_filter (NULL, (GdkFilterFunc) xevent_filter, filter);
@@ -218,17 +228,21 @@ void
 cs_gdk_event_filter_stop (CsGdkEventFilter *filter)
 {
     gdk_window_remove_filter (NULL, (GdkFilterFunc) xevent_filter, filter);
-    clear_widget (filter);
 }
 
 CsGdkEventFilter *
-cs_gdk_event_filter_new (void)
+cs_gdk_event_filter_new (GtkWidget *managed_window,
+                         gulong     pretty_xid)
 {
-    GObject     *result;
+    CsGdkEventFilter *filter;
 
-    result = g_object_new (CS_TYPE_GDK_EVENT_FILTER,
+    filter = g_object_new (CS_TYPE_GDK_EVENT_FILTER,
                            NULL);
 
-    return CS_GDK_EVENT_FILTER (result);
+    filter->display = gdk_display_get_default ();
+    filter->managed_window = g_object_ref (managed_window);
+    filter->pretty_xid = pretty_xid;
+
+    return filter;
 }
 
