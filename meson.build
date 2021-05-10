@@ -124,6 +124,17 @@ conf_h = configure_file(
 
 inc = include_directories('.')
 
+if not get_option('deprecated-warnings')
+  add_global_arguments([
+      '-Wno-deprecated-declarations',
+      '-Wno-deprecated',
+      '-Wno-declaration-after-statement',
+      '-DGLIB_DISABLE_DEPRECATION_WARNINGS',
+    ],
+    language: 'c',
+  )
+endif
+
 subdir('install-scripts')
 subdir('libcscreensaver')
 subdir('data')
