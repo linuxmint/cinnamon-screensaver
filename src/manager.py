@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
-from gi.repository import Gdk, GObject, Gio
+from gi.repository import Gdk, GObject, GLib, Gio
 import time
 import traceback
+import os
+import signal
 
+import config
 import constants as c
 import status
 
@@ -28,6 +31,7 @@ class ScreensaverManager(GObject.Object):
         self.activated_timestamp = 0
 
         self.stage = None
+        self.fb_pid = 0
 
         # Ensure our state
         status.Active = False
@@ -52,6 +56,14 @@ class ScreensaverManager(GObject.Object):
         """
         return status.Locked
 
+    def set_locked(self, locked):
+        if locked:
+            status.Locked = True
+            self.spawn_fallback_window()
+        else:
+            status.Locked = False
+            self.kill_fallback_window()
+
     def lock(self, msg=""):
         """
         Initiate locking (activating first if necessary.)  Return True if we were
@@ -62,11 +74,11 @@ class ScreensaverManager(GObject.Object):
             if self.set_active(True, msg):
                 self.stop_lock_delay()
                 if utils.user_can_lock():
-                    status.Locked = True
+                    self.set_locked(True)
                 return False
         else:
             if utils.user_can_lock():
-                status.Locked = True
+                self.set_locked(True)
             self.stage.set_message(msg)
 
         # Return True to complete any invocation immediately because:
@@ -81,7 +93,7 @@ class ScreensaverManager(GObject.Object):
         Initiate unlocking and deactivating
         """
         self.set_active(False)
-        status.Locked = False
+        self.set_locked(False)
         status.Awake = False
 
     def set_active(self, active, msg=None):
@@ -195,6 +207,45 @@ class ScreensaverManager(GObject.Object):
             status.Active = False
             self.cancel_timers()
 
+    def spawn_fallback_window(self):
+        if self.fb_pid > 0:
+            return
+
+        if status.Debug:
+            print("manager: spawning fallback window")
+
+        if self.stage.get_realized():
+            self._real_spawn_fallback_window(self)
+        else:
+            self.stage.connect("realize", self._real_spawn_fallback_window)
+
+    def _real_spawn_fallback_window(self, stage, data=None):
+        if self.fb_pid > 0: # can't happen??
+            return
+
+        argv = [
+            os.path.join(config.libexecdir, "cs-backup-locker"),
+            str(self.stage.get_window().get_xid())
+        ]
+
+        self.fb_pid = GLib.spawn_async(argv)[0]
+
+        try:
+            self.stage.disconnect_by_func(self._real_spawn_fallback_window)
+        except:
+            print("no connected")
+            pass
+
+    def kill_fallback_window(self):
+        if self.fb_pid == 0:
+            return
+
+        if status.Debug:
+            print("manager: killing fallback window")
+
+        os.system("kill %d" % self.fb_pid)
+        self.fb_pid = 0
+
     def despawn_stage(self, callback=None):
         """
         Begin destruction of the stage.
@@ -291,7 +342,7 @@ class ScreensaverManager(GObject.Object):
         if status.Debug:
             print("manager: locking after delay ('lock-delay')")
 
-        status.Locked = True
+        self.set_locked(True)
 
         return False
 
