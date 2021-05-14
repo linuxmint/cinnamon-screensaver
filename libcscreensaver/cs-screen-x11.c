@@ -735,8 +735,6 @@ cs_screen_get_low_res_mode (CsScreen *screen)
  *
  * Gets whether or not one of our monitors falls below the low res threshold (1200 wide).
  * This lets us display certain things at smaller sizes to prevent truncating of images, etc.
- *
- * Returns: Whether or not to use low res mode.
  */
 void
 cs_screen_get_smallest_monitor_sizes (CsScreen *screen,
