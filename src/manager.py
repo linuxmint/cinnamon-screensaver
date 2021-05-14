@@ -223,7 +223,7 @@ class ScreensaverManager(GObject.Object):
     def get_tty_vals(self):
         session_tty = None
         term_tty = None
-        username = os.getlogin()[:7]
+        username = GLib.get_user_name()[:8]
         used_tty = []
 
         tty_output = subprocess.check_output(["w", "-h"]).decode("utf-8")
