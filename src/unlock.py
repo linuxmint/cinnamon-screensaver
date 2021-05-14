@@ -69,12 +69,6 @@ class UnlockDialog(BaseWindow):
 
         self.box.pack_start(self.realname_label, False, False, 10)
 
-        self.authinfo_label = Gtk.Label(None)
-        self.authinfo_label.set_alignment(0, 0.5)
-        self.authinfo_label.set_halign(Gtk.Align.CENTER)
-
-        self.box.pack_start(self.authinfo_label, False, False, 10)
-
         self.entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
 
         self.box.pack_start(self.entry_box, True, True, 2)
@@ -126,6 +120,11 @@ class UnlockDialog(BaseWindow):
         self.auth_message_label.get_style_context().add_class("auth-message")
         self.auth_message_label.set_alignment(0.5, 0.5)
         vbox_messages.pack_start(self.auth_message_label, False, False, 2)
+
+        self.authinfo_label = Gtk.Label(None)
+        self.authinfo_label.set_alignment(0, 0.5)
+        self.authinfo_label.set_halign(Gtk.Align.CENTER)
+        vbox_messages.pack_start(self.authinfo_label, False, False, 2)
 
         self.box.pack_start(vbox_messages, False, False, 0)
 
@@ -183,7 +182,7 @@ class UnlockDialog(BaseWindow):
         self.auth_client.cancel()
 
     def on_authentication_success(self, auth_client):
-        self.clear_entry()
+        self.set_busy(False)
         self.emit("authenticate-success")
 
     def on_authentication_failure(self, auth_client):
@@ -191,7 +190,7 @@ class UnlockDialog(BaseWindow):
         Called upon authentication failure, clears the password, sets an error message,
         and refocuses the password entry.
         """
-        self.clear_entry()
+        self.set_busy(False)
         self.auth_message_label.set_text(_("Incorrect password"))
 
         self.emit("authenticate-failure")
@@ -201,6 +200,9 @@ class UnlockDialog(BaseWindow):
         self.emit("authenticate-cancel")
 
     def on_authentication_busy_changed(self, auth_client, busy):
+        self.set_busy(busy)
+
+    def set_busy(self, busy):
         if busy:
             self.auth_message_label.set_text("")
             self.clear_entry()
@@ -211,6 +213,8 @@ class UnlockDialog(BaseWindow):
             self.entry_box.set_sensitive(True)
             self.password_entry.stop_progress()
             self.password_entry.set_placeholder_text (self.password_entry.placeholder_text)
+            self.auth_info = ""
+            self.update_authinfo_label()
 
     def on_authentication_prompt_changed(self, auth_client, prompt):
         if "password:" in prompt.lower():
