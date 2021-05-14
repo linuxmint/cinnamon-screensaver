@@ -69,7 +69,7 @@ class UnlockDialog(BaseWindow):
 
         self.box.pack_start(self.realname_label, False, False, 10)
 
-        self.entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, halign=Gtk.Align.CENTER)
 
         self.box.pack_start(self.entry_box, True, True, 2)
 
