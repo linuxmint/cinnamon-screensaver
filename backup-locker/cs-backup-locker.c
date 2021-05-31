@@ -228,7 +228,7 @@ backup_window_init (BackupWindow *window)
     box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_valign (box, GTK_ALIGN_CENTER);
 
-    widget = gtk_image_new_from_icon_name ("cinnamon", GTK_ICON_SIZE_DIALOG);
+    widget = gtk_image_new_from_icon_name ("csr-backup-locker-icon", GTK_ICON_SIZE_DIALOG);
     gtk_image_set_pixel_size (GTK_IMAGE (widget), 100);
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
