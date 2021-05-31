@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 15:09+0100\n"
+"POT-Creation-Date: 2021-05-31 15:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,77 +18,88 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/cinnamon-screensaver-command.py:37
+#: src/cinnamon-screensaver-command.py:41
 msgid "Causes the screensaver to exit gracefully"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:39
+#: src/cinnamon-screensaver-command.py:43
 msgid "Query the state of the screensaver"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:41
+#: src/cinnamon-screensaver-command.py:45
 msgid "Query the length of time the screensaver has been active"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:43
+#: src/cinnamon-screensaver-command.py:47
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:45
+#: src/cinnamon-screensaver-command.py:49
 msgid "Turn the screensaver on (blank the screen)"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:47
+#: src/cinnamon-screensaver-command.py:51
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:49
+#: src/cinnamon-screensaver-command.py:53
 msgid "Version of this application"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:51
+#: src/cinnamon-screensaver-command.py:55
 msgid "Message to be displayed in lock screen"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:80
+#: src/cinnamon-screensaver-command.py:105
 msgid "The screensaver is active\n"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:82
+#: src/cinnamon-screensaver-command.py:107
 msgid "The screensaver is inactive\n"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:86
+#: src/cinnamon-screensaver-command.py:111
 msgid "The screensaver is not currently active.\n"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:88
+#: src/cinnamon-screensaver-command.py:113
 #, python-format
 msgid "The screensaver has been active for %d second.\n"
 msgid_plural "The screensaver has been active for %d seconds.\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/passwordEntry.py:23 src/unlock.py:203
+#: src/manager.py:287
+msgid "Cinnamon Screensaver has experienced an error"
+msgstr ""
+
+#: src/manager.py:289
+msgid ""
+"The 'cs-backup-locker' process terminated before the screensaver did. Please "
+"report this issue and try to describe any actions you may have performed "
+"prior to this occurring."
+msgstr ""
+
+#: src/passwordEntry.py:23 src/unlock.py:221
 msgid "Please enter your password..."
 msgstr ""
 
-#: src/unlock.py:90
+#: src/unlock.py:96
 msgid "Unlock"
 msgstr ""
 
-#: src/unlock.py:98
+#: src/unlock.py:107
 msgid "Switch User"
 msgstr ""
 
-#: src/unlock.py:181
+#: src/unlock.py:194
 msgid "Incorrect password"
 msgstr ""
 
-#: src/unlock.py:195
+#: src/unlock.py:211
 msgid "Checking..."
 msgstr ""
 
-#: src/unlock.py:241
+#: src/unlock.py:254
 msgid "You have the Caps Lock key on."
 msgstr ""
