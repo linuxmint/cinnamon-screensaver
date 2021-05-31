@@ -25,6 +25,79 @@ static guint signals [LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT);
 
+static gboolean
+we_are_fallback_window (CsGdkEventFilter *filter)
+{
+    return filter->pretty_xid > 0;
+}
+
+static gboolean
+ignore_fcitx_input_window (CsGdkEventFilter *filter, Window xid)
+{
+    XClassHint *clh;
+    Display *xdpy;
+    gboolean ret = FALSE;
+    int status;
+
+    gdk_x11_display_error_trap_push (filter->display);
+
+    xdpy = GDK_DISPLAY_XDISPLAY (filter->display);
+
+    clh = XAllocClassHint();
+    status = XGetClassHint (xdpy, xid, clh);
+
+    if (status)
+    {
+        if (g_strcmp0 (clh->res_name, "fcitx") == 0)
+        {
+            ret = TRUE;
+        }
+
+        g_clear_pointer (&clh->res_name, XFree);
+        g_clear_pointer (&clh->res_class, XFree);
+    }
+
+    XFree (clh);
+
+    if (!ret)
+    {
+        return FALSE;
+    }
+
+    ret = FALSE;
+
+    XTextProperty text;
+
+    status = XGetWMName(xdpy, xid, &text);
+    if (status)
+    {
+        gint count;
+        gchar **list;
+        status = XmbTextPropertyToTextList (xdpy, &text, &list, &count);
+
+        if (status == Success && count > 0)
+        {
+            gint i;
+
+            for (i = 0; i < count; i++)
+            {
+                if (g_strcmp0 (list[i], "Fcitx Input Window") == 0)
+                {
+                    ret = TRUE;
+                    break;
+                }
+            }
+
+            XFreeStringList (list);
+            XFree (text.value);
+        }
+    }
+
+    gdk_x11_display_error_trap_pop_ignored (filter->display);
+
+    return ret;
+}
+
 static void
 unshape_window (CsGdkEventFilter *filter)
 {
@@ -90,9 +163,11 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
           {
             XMapEvent *xme = &ev->xmap;
 
-            // if (! x11_window_is_ours (filter, xme->window)) {
-                // raise_managed_window (filter);
-            // }
+            if (ignore_fcitx_input_window (filter, xme->window) && we_are_fallback_window (filter))
+            {
+                break;
+            }
+
             if (! x11_window_is_ours (filter, xme->window) && !is_pretty_window (filter, xme->window)) {
                 raise_managed_window (filter);
             }
@@ -102,6 +177,11 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
         case ConfigureNotify:
           {
             XConfigureEvent *xce = &ev->xconfigure;
+
+            if (ignore_fcitx_input_window (filter, xce->window) && we_are_fallback_window (filter))
+            {
+                break;
+            }
 
             if (! x11_window_is_ours (filter, xce->window) && !is_pretty_window (filter, xce->window)) {
                 raise_managed_window (filter);
