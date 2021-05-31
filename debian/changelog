@@ -1,3 +1,28 @@
+cinnamon-screensaver (5.0.0) uma; urgency=medium
+
+  [ Michael Webster ]
+  * powerWidget.py: Use new battery icons when available.
+  * powerWidget.py: Add some more battery icon names, fix the default to return a GIcon, not a string.
+  * Make cinnamon-screensaver a dbus-activated service.
+  * Clean up .gitignore.
+  * Add option to silence deprecation warnings during the build.
+  * Implement a fallback window in the event of the 'pretty' ui crashing for some reason.
+  * backup window: Don't assume which tty's to use in instructions, send a notification if the backup locked crashes.
+  * manager.py: Use GLib to get the user name, and trim the string to 8 chars to match 'w -h' output.
+  * cs-screen-x11.c: Fix annotation.
+
+  [ Natsu Kagami ]
+  * Show PAM info
+
+  [ Michael Webster ]
+  * unlock.py: Move info label underneath the entry and other labels.
+  * unlock.py: Don't allow pw entry row to expand if a longer info message is shown.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 31 May 2021 15:45:29 +0100
+
 cinnamon-screensaver (4.8.1) ulyssa; urgency=medium
 
   [ Michael Webster ]
