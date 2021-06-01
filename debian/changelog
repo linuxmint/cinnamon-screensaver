@@ -1,3 +1,12 @@
+cinnamon-screensaver (5.0.1) uma; urgency=medium
+
+  [ Michael Webster ]
+  * cs-gdk-event-filter-xll.c: Ignore fcitx ConfigureNotify events in the backup locker process.
+  * Clean up the desktop file and rename it so that it passes desktop-file- validate.
+  * cs-backup-locker: Use a white cinnamon icon (symbolic doesn't work here, and the normal orangey-brown doesn't look very nice.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 01 Jun 2021 09:35:32 +0100
+
 cinnamon-screensaver (5.0.0) uma; urgency=medium
 
   [ Michael Webster ]
