@@ -30,8 +30,7 @@ class Main(Gtk.Application):
     """
     def __init__(self):
         super(Main, self).__init__(application_id="org.cinnamon.ScreenSaver",
-                                   register_session=True,
-                                   inactivity_timeout=5000,
+                                   inactivity_timeout=10000,
                                    flags=Gio.ApplicationFlags.IS_SERVICE)
 
         # Our service must be set up before we register with the session manager.
