@@ -2,6 +2,7 @@
 
 from gi.repository import Gio, GLib, CScreensaver
 import os
+import subprocess
 
 from dbusdepot.baseClient import BaseClient
 from dbusdepot.loginInterface import LoginInterface
@@ -26,7 +27,7 @@ class LogindClient(LoginInterface, BaseClient):
 
         self.pid = os.getpid()
 
-        self.session_id = None
+        self.session_path = None
         self.session_proxy = None
 
     def on_client_setup_complete(self):
@@ -43,30 +44,22 @@ class LogindClient(LoginInterface, BaseClient):
         there is no issue here.
         """
         try:
-            self.session_id = self.proxy.call_get_session_by_pid_sync(self.pid)
-        except GLib.Error:
-            print("Not running under the session scope, trying XDG_SESSION_ID")
-            id_suffix = os.getenv("XDG_SESSION_ID", "")
-            if id_suffix != "":
-                self.session_id = "/org/freedesktop/login1/session/%s" % (id_suffix,)
-                print("found session: %s" % (id_suffix,))
-            else:
-                print("Could not construct a valid ID for Logind session.  Is XDG_SESSION_ID set?")
-                self.session_proxy = None
-                self.on_failure()
-                return
-
-        try:
-            self.session_proxy = CScreensaver.LogindSessionProxy.new_for_bus(Gio.BusType.SYSTEM,
-                                                                             Gio.DBusProxyFlags.NONE,
-                                                                             self.LOGIND_SERVICE,
-                                                                             self.session_id,
-                                                                             None,
-                                                                             self.on_session_ready,
-                                                                             None)
-        except GLib.Error:
+            cmd = "loginctl show-user %s -pDisplay --value" % GLib.get_user_name()
+            session_id = subprocess.check_output(cmd, shell=True).decode().replace("\n", "")
+            self.session_path = "/org/freedesktop/login1/session/%s" % session_id
+        except subprocess.CalledProcessError as e:
+            print("Could not get the session id: %s" % e)
             self.session_proxy = None
             self.on_failure()
+            return
+
+        CScreensaver.LogindSessionProxy.new_for_bus(Gio.BusType.SYSTEM,
+                                                    Gio.DBusProxyFlags.NONE,
+                                                    self.LOGIND_SERVICE,
+                                                    self.session_path,
+                                                    None,
+                                                    self.on_session_ready,
+                                                    None)
 
     def on_session_ready(self, object, result, data=None):
         """
