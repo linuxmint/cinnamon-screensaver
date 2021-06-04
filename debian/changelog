@@ -1,3 +1,11 @@
+cinnamon-screensaver (5.0.2) uma; urgency=medium
+
+  [ Michael Webster ]
+  * cinnamon-screensaver-main.py: Don't register with the session manager.
+  * logindClient.py: Change how we get the session id to work with dbus activation.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 04 Jun 2021 12:18:04 +0100
+
 cinnamon-screensaver (5.0.1) uma; urgency=medium
 
   [ Michael Webster ]
