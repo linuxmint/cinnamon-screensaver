@@ -89,7 +89,10 @@ class ScreensaverService(GObject.Object):
         return True
 
     def handle_set_active(self, iface, inv, active):
-        self.manager.set_active(active)
+        if active:
+            self.manager.set_active(active)
+        else:
+            self.manager.unlock()
 
         iface.complete_set_active(inv)
 
