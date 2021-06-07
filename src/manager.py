@@ -33,6 +33,7 @@ class ScreensaverManager(GObject.Object):
 
         self.stage = None
         self.fb_pid = 0
+        self.fb_failed_to_start = False
 
         # Ensure our state
         status.Active = False
@@ -226,27 +227,36 @@ class ScreensaverManager(GObject.Object):
         username = GLib.get_user_name()[:8]
         used_tty = []
 
-        tty_output = subprocess.check_output(["w", "-h"]).decode("utf-8")
-        for line in tty_output.split("\n"):
-            if line.startswith(username):
-                if "cinnamon-session" in line and "tty" in line:
-                    session_tty = line.split()[1].replace("tty", "")
-                    used_tty.append(session_tty)
+        try:
+            tty_output = subprocess.check_output(["w", "-h"]).decode("utf-8")
+            for line in tty_output.split("\n"):
+                if line.startswith(username):
+                    if "cinnamon-session" in line and "tty" in line:
+                        session_tty = line.split()[1].replace("tty", "")
+                        used_tty.append(session_tty)
+                    elif "tty" in line:
+                        term_tty = line.split()[1].replace("tty", "")
                 elif "tty" in line:
-                    term_tty = line.split()[1].replace("tty", "")
-            elif "tty" in line:
-                used_tty.append(line.split()[1].replace("tty", ""))
+                    used_tty.append(line.split()[1].replace("tty", ""))
 
-        used_tty.sort()
+            used_tty.sort()
+
+            if term_tty == None:
+                for i in range(1, 6):
+                    if str(i) not in used_tty:
+                        term_tty = str(i)
+                        break
+        except Exception as e:
+            print("Failed to get tty numbers using w -h: %s" % str(e))
+
+        if session_tty == None:
+            try:
+                session_tty = os.environ["XDG_VTNR"]
+            except KeyError:
+                session_tty = "7"
 
         if term_tty == None:
-            for i in range(1, 6):
-                if str(i) not in used_tty:
-                    term_tty = str(i)
-                    break
-
-        if term_tty == None:
-            term_tty = "1"
+            term_tty = "2" if session_tty != "2" else "1"
 
         return [term_tty, session_tty]
 
@@ -263,7 +273,11 @@ class ScreensaverManager(GObject.Object):
             session_tty
         ]
 
-        self.fb_pid = GLib.spawn_async(argv)[0]
+        try:
+            self.fb_pid = GLib.spawn_async(argv)[0]
+        except GLib.Error as e:
+            self.fb_failed_to_start = True
+            print("Could not start screensaver fallback process: %s" % e.message)
 
         try:
             self.stage.disconnect_by_func(self._real_spawn_fallback_window)
@@ -271,7 +285,7 @@ class ScreensaverManager(GObject.Object):
             pass
 
     def kill_fallback_window(self):
-        if self.fb_pid == 0:
+        if self.fb_pid == 0 and not self.fb_failed_to_start:
             return
 
         if status.Debug:
@@ -280,7 +294,10 @@ class ScreensaverManager(GObject.Object):
         try:
             if status.Debug:
                 print("manager: checking if fallback window exists first.")
-            os.kill(self.fb_pid, 0)
+            if self.fb_pid > 0:
+                os.kill(self.fb_pid, 0)
+            elif self.fb_failed_to_start:
+                raise ProcessLookupError("Fallback window failed to start")
         except ProcessLookupError:
             if status.Debug:
                 print("manager: fallback window terminated before the main screensaver, something went wrong!")
@@ -298,6 +315,7 @@ class ScreensaverManager(GObject.Object):
         except:
             pass
 
+        self.fb_failed_to_start = False
         self.fb_pid = 0
 
     def despawn_stage(self, callback=None):
