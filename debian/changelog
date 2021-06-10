@@ -1,3 +1,11 @@
+cinnamon-screensaver (5.0.3) uma; urgency=medium
+
+  [ Michael Webster ]
+  * service.py: Always unlock when deactivating.
+  * manager.py: Improve backup locker startup and shutdown.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 10 Jun 2021 14:06:39 +0100
+
 cinnamon-screensaver (5.0.2) uma; urgency=medium
 
   [ Michael Webster ]
