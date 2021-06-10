@@ -17,7 +17,7 @@ class PasswordEntry(Gtk.Entry):
     keyboard layout, and allowing switching of the layout.
     """
     def __init__(self):
-        super(PasswordEntry, self).__init__()
+        super(PasswordEntry, self).__init__(max_length=200)
         self.get_style_context().add_class("passwordentry")
 
         placeholder_text = _("Please enter your password...")
