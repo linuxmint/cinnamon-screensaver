@@ -1,3 +1,10 @@
+cinnamon-screensaver (5.0.4) uma; urgency=medium
+
+  [ Michael Webster ]
+  * passwordEntry.py: Limit the entry's maximum length.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 11 Jun 2021 10:28:37 +0100
+
 cinnamon-screensaver (5.0.3) uma; urgency=medium
 
   [ Michael Webster ]
