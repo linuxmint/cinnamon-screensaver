@@ -1,3 +1,11 @@
+cinnamon-screensaver (5.0.5) uma; urgency=medium
+
+  [ Michael Webster ]
+  * powerWidget.py: Don't update the power state before the UPower client has been constructed.
+  * uPowerClient.py: Don't rely on the OnBattery property of the upower client, it's unreliable.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 14 Jun 2021 16:29:15 +0100
+
 cinnamon-screensaver (5.0.4) uma; urgency=medium
 
   [ Michael Webster ]
