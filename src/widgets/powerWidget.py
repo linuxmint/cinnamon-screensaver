@@ -47,10 +47,6 @@ class PowerWidget(Gtk.Frame):
                                            "percentage-changed",
                                            self.on_percentage_changed)
 
-        self.power_client.rescan_devices()
-
-        self.on_power_state_changed(self.power_client)
-
     def refresh(self):
         self.on_power_state_changed(self.power_client)
 
