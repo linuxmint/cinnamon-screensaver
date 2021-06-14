@@ -55,8 +55,6 @@ class UPowerClient(BaseClient):
     def on_client_setup_complete(self):
         self.proxy.connect("device-removed", self.on_device_added_or_removed)
         self.proxy.connect("device-added", self.on_device_added_or_removed)
-        self.proxy.connect("notify::on-battery", self.on_battery_changed)
-
         self.queue_update_state()
 
     def on_device_added_or_removed(self, proxy, path):
@@ -120,13 +118,12 @@ class UPowerClient(BaseClient):
 
         # UPower doesn't necessarily have a LinePower device if there are no batteries.
         # Default to plugged in, then.
-        new_plugged_in = True
+        new_plugged_in = False
         new_have_battery = False
 
         for path, dev in self.relevant_devices:
-            if dev.get_property("type") == DeviceType.LinePower:
-                new_plugged_in = dev.get_property("online")
             if dev.get_property("type") == DeviceType.Battery:
+                new_plugged_in = dev.get_property("state") != DeviceState.Discharging
                 new_have_battery = True
 
         if (new_plugged_in != old_plugged_in) or (new_have_battery != old_have_battery):
