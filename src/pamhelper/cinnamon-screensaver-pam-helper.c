@@ -323,13 +323,16 @@ stdin_monitor_task_thread (GTask        *task,
 
         g_mutex_lock (&password_mutex);
 
-        if (input [strlen (input) - 1] == '\n')
+        if (input != NULL)
         {
-            input [strlen (input) - 1] = 0;
-        }
+            if (input [strlen (input) - 1] == '\n')
+            {
+                input [strlen (input) - 1] = 0;
+            }
 
-        password_ptr = g_strdup (input);
-        memset (input, '\b', strlen (input));
+            password_ptr = g_strdup (input);
+            memset (input, '\b', strlen (input));
+        }
 
         g_mutex_unlock (&password_mutex);
     }
