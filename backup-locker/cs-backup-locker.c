@@ -156,6 +156,7 @@ window_grab_broken (gpointer data)
     {
         activate_backup_window (window);
     }
+    return GDK_EVENT_PROPAGATE;
 }
 
 static void
