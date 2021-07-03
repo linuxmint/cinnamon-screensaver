@@ -66,6 +66,7 @@ class Main(Gtk.Application):
 
         status.LockEnabled = not args.lock_disabled
         status.Debug = args.debug
+        status.Debug = True
         status.InteractiveDebug = args.interactive
 
         if status.Debug:

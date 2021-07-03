@@ -23,14 +23,42 @@ class PlayerControl(Gtk.Box):
         super(PlayerControl, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
         self.watcher = singletons.MediaPlayerWatcher
-        self.player = self.watcher.get_best_player()
+        trackers.con_tracker_get().connect(self.watcher,
+                                           "players-changed",
+                                           self.on_players_changed)
+
+        self.player = None
+        self.build_layout()
+        self.on_players_changed()
+
+    def on_players_changed(self, data=None):
+        new_best_player = self.watcher.get_best_player()
+
+        if new_best_player == self.player:
+            return
+
+        trackers.con_tracker_get().disconnect(self.player,
+                                              "status-changed",
+                                              self.on_playback_status_changed)
+        trackers.con_tracker_get().disconnect(self.player,
+                                              "metadata-changed",
+                                              self.on_metadata_changed)
+
+        self.player = new_best_player
 
         if self.player:
-            self.build_layout()
+            trackers.con_tracker_get().connect(self.player,
+                                               "status-changed",
+                                               self.on_playback_status_changed)
+
+            trackers.con_tracker_get().connect(self.player,
+                                               "metadata-changed",
+                                               self.on_metadata_changed)
+
+            self.on_playback_status_changed(self.player, self.player.get_playback_status())
+            self.on_metadata_changed(self.player)
 
     def build_layout(self):
-        player_status = self.player.get_playback_status()
-
         # Player buttons
 
         button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -48,7 +76,7 @@ class PlayerControl(Gtk.Box):
 
         button_box.pack_start(self.previous_button, True, True, 2)
 
-        self.play_pause_button = TransparentButton(self.get_play_pause_icon_name(player_status), Gtk.IconSize.BUTTON)
+        self.play_pause_button = TransparentButton("media-playback-start-symbolic", Gtk.IconSize.BUTTON)
         self.play_pause_button.show()
         trackers.con_tracker_get().connect(self.play_pause_button,
                                            "clicked",
@@ -61,8 +89,6 @@ class PlayerControl(Gtk.Box):
                                            "clicked",
                                            self.on_next_clicked)
         button_box.pack_start(self.next_button, True, True, 2)
-
-        self.update_buttons(player_status)
 
         status.focusWidgets = status.focusWidgets + [self.previous_button,
                                                      self.play_pause_button,
@@ -84,17 +110,6 @@ class PlayerControl(Gtk.Box):
         vbox.pack_end(self.album_artist_label, True, True, 2)
 
         self.show_all()
-
-        trackers.con_tracker_get().connect(self.player,
-                                           "status-changed",
-                                           self.on_playback_status_changed)
-
-        trackers.con_tracker_get().connect(self.player,
-                                           "metadata-changed",
-                                           self.on_metadata_changed)
-
-        self.on_playback_status_changed(self.player, player_status)
-        self.on_metadata_changed(self.player)
 
         trackers.con_tracker_get().connect(self,
                                            "destroy",
@@ -162,9 +177,17 @@ class PlayerControl(Gtk.Box):
                                               "status-changed",
                                               self.on_playback_status_changed)
 
+        trackers.con_tracker_get().disconnect(self.player,
+                                              "metadata-changed",
+                                              self.on_metadata_changed)
+
         trackers.con_tracker_get().disconnect(self,
                                               "destroy",
                                               self.on_widget_destroy)
+
+        trackers.con_tracker_get().disconnect(self.watcher,
+                                              "players-changed",
+                                              self.on_players_changed)
 
     def should_show(self):
         """

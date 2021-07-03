@@ -26,13 +26,16 @@ class AlbumArt(Floating, BaseWindow):
         self.get_style_context().add_class("albumart")
         self.set_halign(Gtk.Align.END)
 
+        self.player = None
+        self.current_url = None
+
         if not settings.get_show_albumart():
             return
 
         self.watcher = singletons.MediaPlayerWatcher
-        self.player = self.watcher.get_best_player()
-
-        self.current_url = None
+        trackers.con_tracker_get().connect(self.watcher,
+                                   "players-changed",
+                                   self.on_players_changed)
 
         self.image = FramedImage(status.screen.get_low_res_mode(), scale_up=True)
         self.image.show()
@@ -43,10 +46,25 @@ class AlbumArt(Floating, BaseWindow):
                                            "surface-changed",
                                            self.on_surface_changed)
 
-        if self.player != None:
+        self.on_players_changed()
+
+    def on_players_changed(self, data=None):
+        new_best_player = self.watcher.get_best_player()
+
+        if new_best_player == self.player:
+            return
+
+        trackers.con_tracker_get().disconnect(self.player,
+                                              "metadata-changed",
+                                              self.on_metadata_changed)
+        self.image.clear_image()
+
+        self.player = new_best_player
+        if self.player:
             trackers.con_tracker_get().connect(self.player,
                                                "metadata-changed",
                                                self.on_metadata_changed)
+
             self.on_metadata_changed(self.player)
 
     def on_surface_changed(self, image, surface):
@@ -59,6 +77,9 @@ class AlbumArt(Floating, BaseWindow):
         self.update_image()
 
     def update_image(self):
+        if self.player == None:
+            return
+
         url = self.player.get_albumart_url()
 
         if self.player.get_identity() == "spotify":

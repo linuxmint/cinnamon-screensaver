@@ -5,7 +5,7 @@ from gi.repository import Gtk
 from baseWindow import BaseWindow
 from volumeControl import VolumeControl
 from playerControl import PlayerControl
-from util import utils, settings
+from util import utils, settings, trackers
 import status
 
 class AudioPanel(BaseWindow):
@@ -43,8 +43,12 @@ class AudioPanel(BaseWindow):
 
         should_show = self.player_widget.should_show()
 
-        if not self.player_widget.should_show():
-            self.disabled = True
+        trackers.con_tracker_get().connect(self.player_widget.watcher,
+                                           "players-changed",
+                                           self.update_visibility)
+
+    def update_visibility(self, watcher):
+        self.disabled = not self.player_widget.should_show()
 
     def show_panel(self):
         if not self.disabled:

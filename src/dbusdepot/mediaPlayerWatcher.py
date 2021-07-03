@@ -23,7 +23,8 @@ class MprisClient(BaseClient):
     """
     __gsignals__ = {
         "status-changed": (GObject.SignalFlags.RUN_LAST, None, (int,)),
-        "metadata-changed": (GObject.SignalFlags.RUN_LAST, None, ())
+        "metadata-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "setup-complete": (GObject.SignalFlags.RUN_LAST, None, ())
     }
     def __init__(self, name, path):
         super(MprisClient, self).__init__(Gio.BusType.SESSION,
@@ -53,6 +54,7 @@ class MprisClient(BaseClient):
         # set up another proxy and it's not really necessary for what this is
         # used for.
         self.identity = self.proxy.get_name().rpartition(".")[2]
+        self.emit("setup-complete")
 
     def get_identity(self):
         return self.identity
@@ -186,6 +188,9 @@ class MediaPlayerWatcher(GObject.Object):
     """
     MPRIS_PATH = "/org/mpris/MediaPlayer2"
 
+    __gsignals__ = {
+        "players-changed": (GObject.SignalFlags.RUN_LAST, None, ())
+    }
     def __init__(self):
         """
         Connect to the bus and retrieve a list of interfaces.
@@ -243,7 +248,10 @@ class MediaPlayerWatcher(GObject.Object):
         Create an mpris client for any discovered interfaces.
         """
         if name.startswith("org.mpris.MediaPlayer2."):
-            self.player_clients.append(MprisClient(name, self.MPRIS_PATH))
+            player = MprisClient(name, self.MPRIS_PATH)
+            player.connect("setup-complete", lambda p: self.emit("players-changed"))
+
+            self.player_clients.append(player)
 
     def on_name_lost(self, name):
         """
@@ -257,6 +265,7 @@ class MediaPlayerWatcher(GObject.Object):
 
         if item:
             self.player_clients.remove(item)
+            self.emit("players-changed")
 
     def get_best_player(self):
         """
