@@ -66,6 +66,7 @@ class Stage(Gtk.Window):
         self.unlock_dialog = None
         self.audio_panel = None
         self.info_panel = None
+        self.osk = None
 
         self.stage_refresh_id = 0
 
@@ -308,27 +309,30 @@ class Stage(Gtk.Window):
                 self.clock_widget = None
 
             try:
-                self.setup_albumart()
-            except Exception as e:
-                print("Problem setting up albumart widget: %s" % str(e))
-                self.albumart_widget = None
-
-            try:
-                self.setup_status_bars()
-            except Exception as e:
-                print("Problem setting up status bars: %s" % str(e))
-                self.audio_panel = None
-                self.info_panel = None
-
-            try:
                 self.setup_osk()
             except Exception as e:
                 print("Problem setting up on-screen keyboard: %s" % str(e))
                 self.osk = None
 
-        if total_failure:
+            trackers.timer_tracker_get().start("setup-delayed-components",
+                                               2000,
+                                               self.setup_delayed_components)
+        else:
             print("Total failure somewhere, deactivating screensaver.")
             GObject.idle_add(self.deactivate_after_timeout)
+
+    def setup_delayed_components(self, data=None):
+        try:
+            self.setup_albumart()
+        except Exception as e:
+            print("Problem setting up albumart widget: %s" % str(e))
+            self.albumart_widget = None
+        try:
+            self.setup_status_bars()
+        except Exception as e:
+            print("Problem setting up status bars: %s" % str(e))
+            self.audio_panel = None
+            self.info_panel = None
 
     def destroy_children(self):
         try:
@@ -404,6 +408,7 @@ class Stage(Gtk.Window):
 
         self.set_timeout_active(None, False)
 
+        trackers.timer_tracker_get().cancel("setup-delayed-components")
         self.destroy_children()
 
         self.gdk_filter.stop()
@@ -479,7 +484,8 @@ class Stage(Gtk.Window):
         if status.Debug:
             print("stage: Power state changed, updating info panel")
 
-        self.info_panel.update_visibility()
+        if self.info_panel != None:
+            self.info_panel.update_visibility()
 
     def setup_clock(self):
         """
@@ -510,7 +516,7 @@ class Stage(Gtk.Window):
         self.albumart_widget = AlbumArt(None, status.screen.get_mouse_monitor())
         self.add_child_widget(self.albumart_widget)
 
-        self.floaters.append(self.clock_widget)
+        self.floaters.append(self.albumart_widget)
 
         if settings.get_show_albumart():
             self.albumart_widget.start_positioning()
@@ -565,10 +571,13 @@ class Stage(Gtk.Window):
         self.audio_panel = AudioPanel()
         self.add_child_widget(self.audio_panel)
 
+        if status.Awake:
+            self.audio_panel.show_panel()
+
         self.info_panel = InfoPanel()
         self.add_child_widget(self.info_panel)
 
-        self.info_panel.update_visibility()
+        self.info_panel.refresh_power_state()
 
     def queue_dialog_key_event(self, event):
         """
@@ -672,7 +681,7 @@ class Stage(Gtk.Window):
         if self.audio_panel != None:
             self.audio_panel.show_panel()
         if self.info_panel != None:
-            self.info_panel.update_visibility()
+            self.info_panel.refresh_power_state()
         if self.osk != None:
             self.osk.show()
 
@@ -707,7 +716,7 @@ class Stage(Gtk.Window):
         status.Awake = False
 
         self.update_monitor_views()
-        self.info_panel.update_visibility()
+        self.info_panel.refresh_power_state()
 
     def update_monitor_views(self):
         """
