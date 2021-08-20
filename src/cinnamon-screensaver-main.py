@@ -52,8 +52,9 @@ class Main(Gtk.Application):
                             help='Disable the lock screen')
         parser.add_argument('--version', dest='version', action='store_true',
                             help='Display the current version')
-        parser.add_argument('--no-daemon', dest='no_daemon', action='store_true',
-                            help="Deprecated: left for compatibility only - we never become a daemon")
+        parser.add_argument('--hold', dest='hold', action='store_true',
+                            help="Keep the process running." \
+                                 "Normally cinnamon-screensaver will exit after being idle for 10 seconds.")
         args = parser.parse_args()
 
         if settings.get_custom_screensaver() != '':
@@ -67,6 +68,9 @@ class Main(Gtk.Application):
         status.LockEnabled = not args.lock_disabled
         status.Debug = args.debug
         status.InteractiveDebug = args.interactive
+
+        if args.hold:
+            self.hold()
 
         if status.Debug:
             print("Debug mode active")
