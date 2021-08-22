@@ -181,6 +181,7 @@ class Stage(Gtk.Window):
 
     def on_composited_changed(self, screen, data=None):
         if self.get_realized():
+            self.manager.kill_fallback_window()
 
             user_time = self.get_display().get_user_time()
 
@@ -191,6 +192,9 @@ class Stage(Gtk.Window):
 
             self.get_window().set_user_time(user_time)
             self.show()
+
+            if status.Locked:
+                self.manager.spawn_fallback_window()
 
             GObject.idle_add(self.manager.grab_stage)
 
