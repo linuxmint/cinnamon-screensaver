@@ -114,7 +114,8 @@ class KeyBindings(GObject.GObject):
                 else:
                     self.manager.propagate_tab_event(False)
                 return True
-            elif event.keyval == Gdk.KEY_space and isinstance(self.manager.get_focused_widget(), Gtk.Button):
+            elif (event.keyval in (Gdk.KEY_space, Gdk.KEY_Return, Gdk.KEY_KP_Enter)) and \
+                  isinstance(self.manager.get_focused_widget(), Gtk.Button):
                 self.manager.propagate_activation()
                 return True
 

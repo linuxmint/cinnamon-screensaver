@@ -86,6 +86,9 @@ def process_is_running(name):
     return res != ""
 
 def do_user_switch():
+    GLib.idle_add(do_user_switch_timeout)
+
+def do_user_switch_timeout(data=None):
     if process_is_running("mdm"):
         command = "%s %s" % ("mdmflexiserver", "--startnew Standard")
         ctx = Gdk.Display.get_default().get_app_launch_context()
