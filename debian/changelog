@@ -1,3 +1,12 @@
+cinnamon-screensaver (5.0.7) uma; urgency=medium
+
+  [ Michael Webster ]
+  * stage.py: Delay initialization of certain components during startup.
+  * cinnamon-screensaver-main.py: Add a 'hold' flag for debugging.
+  * stage.py: Reset the fallback window when a compositor change is detected.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 15 Oct 2021 15:41:28 +0100
+
 cinnamon-screensaver (5.0.6) uma; urgency=medium
 
   [ Michael Webster ]
