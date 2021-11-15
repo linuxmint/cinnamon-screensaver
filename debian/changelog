@@ -1,3 +1,22 @@
+cinnamon-screensaver (5.2.0) una; urgency=medium
+
+  [ Michael Webster ]
+  * stage.py: Delay initialization of certain components during startup.
+  * cinnamon-screensaver-main.py: Add a 'hold' flag for debugging.
+  * stage.py: Reset the fallback window when a compositor change is detected.
+  * keybindings: Allow enter/return to activate the unlock and switch- user buttons.
+
+  [ forever-and-a-day ]
+  * updated trackname and albumartist to use more suitable fonts (ubuntu font family). Changed to integrate better with a stock cinnamon install, should be updated to follow system font prefs in the future. (#381)
+
+  [ Clement Lefebvre ]
+  * css: Make album info label larger
+
+  [ bidlocode ]
+  * journal fix (#398)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 15 Nov 2021 12:50:02 +0000
+
 cinnamon-screensaver (5.0.6) uma; urgency=medium
 
   [ Michael Webster ]
