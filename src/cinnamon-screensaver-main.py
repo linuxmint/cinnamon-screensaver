@@ -30,7 +30,7 @@ class Main(Gtk.Application):
     """
     def __init__(self):
         super(Main, self).__init__(application_id="org.cinnamon.ScreenSaver",
-                                   inactivity_timeout=10000,
+                                   inactivity_timeout=30000,
                                    flags=Gio.ApplicationFlags.IS_SERVICE)
 
         # Our service must be set up before we register with the session manager.
@@ -69,8 +69,13 @@ class Main(Gtk.Application):
         status.Debug = args.debug
         status.InteractiveDebug = args.interactive
 
-        if args.hold:
-            self.hold()
+        # The inactivity-timeout will be ignored until there's been an initial hold. Simply
+        # starting the app and letting it idle will end up with it exiting after 10s no matter
+        # what the timeout.
+        self.hold()
+
+        if not args.hold:
+            self.release()
 
         if status.Debug:
             print("Debug mode active")
