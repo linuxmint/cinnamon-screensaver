@@ -3,12 +3,8 @@
 <node>
  <interface name="org.freedesktop.login1.Manager">
   <method name="GetSession">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
-  </method>
-  <method name="GetSessionByPID">
-   <arg type="u" direction="in"/>
-   <arg type="o" direction="out"/>
+    <arg type="s" direction="in" name="session_id"/>
+    <arg type="o" direction="out" name="object_path"/>
   </method>
  </interface>
 </node>

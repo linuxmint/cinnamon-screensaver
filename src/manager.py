@@ -477,5 +477,8 @@ class ScreensaverManager(GObject.Object):
         for the stage when the session goes idle.  Cancels the stage fade-in
         if idle becomes False before it has completed its animation.
         """
+        if status.Debug:
+            print("manager: session idle-changed - %s" % str(idle))
+
         if idle and not status.Active:
             self.set_active(True)

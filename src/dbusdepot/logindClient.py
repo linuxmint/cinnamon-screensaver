@@ -4,6 +4,7 @@ from gi.repository import Gio, GLib, CScreensaver
 import os
 import subprocess
 
+import status
 from dbusdepot.baseClient import BaseClient
 from dbusdepot.loginInterface import LoginInterface
 
@@ -32,24 +33,20 @@ class LogindClient(LoginInterface, BaseClient):
 
     def on_client_setup_complete(self):
         """
-        If our manager connection succeeds, we ask it for the current session id and
-        then attempt to connect to its session interface.
-
-        Note: there are issues with retrieving this session id depending on how the
-        screensaver instances was started, when running under systemd.  If started from
-        a terminal (which is running in a different scope than the current session,) we
-        need to retrieve the session id via its environment variable.
-
-        If the screensaver is started as part of the session (due to autostart conditions,)
-        there is no issue here.
+        If our manager connection succeeds, we get the current session path and attempt
+        to connect to its interface.
         """
         try:
-            cmd = "loginctl show-user %s -pDisplay --value" % GLib.get_user_name()
-            session_id = subprocess.check_output(cmd, shell=True).decode().replace("\n", "")
-            self.session_path = "/org/freedesktop/login1/session/%s" % session_id
-        except subprocess.CalledProcessError as e:
-            print("Could not get the session id: %s" % e)
-            self.session_proxy = None
+            current_user = GLib.get_user_name()
+
+            cmd = "loginctl show-user %s -pDisplay --value" % current_user
+            current_session_id = subprocess.check_output(cmd, shell=True).decode().replace("\n", "")
+
+            self.session_path = self.proxy.call_get_session_sync(current_session_id, None)
+            if status.Debug:
+                print("login client: found session path for user '%s' (session_id: %s): %s" % (current_user, current_session_id, self.session_path))
+        except GLib.Error as e:
+            print("login client: could not get session path: %s" % e)
             self.on_failure()
             return
 
