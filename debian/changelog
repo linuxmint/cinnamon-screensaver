@@ -1,3 +1,11 @@
+cinnamon-screensaver (5.2.1) una; urgency=medium
+
+  [ Michael Webster ]
+  * Increase the inactivity-timeout from 10s to 30s and get the screensaver to respect it.
+  * logind: Request the session object path instead of guessing it.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 10 Feb 2022 18:34:32 +0000
+
 cinnamon-screensaver (5.2.0) una; urgency=medium
 
   [ Michael Webster ]
