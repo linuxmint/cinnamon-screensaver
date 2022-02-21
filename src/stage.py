@@ -741,7 +741,9 @@ class Stage(Gtk.Window):
         status.Awake = False
 
         self.update_monitor_views()
-        self.info_panel.refresh_power_state()
+
+        if self.info_panel != None:
+            self.info_panel.refresh_power_state()
 
     def update_monitor_views(self):
         """
