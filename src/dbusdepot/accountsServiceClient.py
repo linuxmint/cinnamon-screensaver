@@ -27,6 +27,10 @@ class AccountsServiceClient(GObject.Object):
                                            self.on_accounts_service_loaded)
 
     def on_accounts_service_loaded(self, service, param):
+        trackers.con_tracker_get().disconnect(self.service,
+                                              "notify::is-loaded",
+                                              self.on_accounts_service_loaded)
+
         self.is_loaded = True
         self.emit("account-loaded")
 
