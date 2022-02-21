@@ -413,10 +413,14 @@ setup_window_monitor (BackupWindow *window, gulong xid)
 static gboolean
 sigterm_received (gpointer data)
 {
+    GtkWidget *window = GTK_WIDGET (data);
+
+    g_clear_handle_id (&sigterm_src_id, g_source_remove);
     g_cancellable_cancel (window_monitor_cancellable);
+
+    gtk_widget_destroy (window);
     gtk_main_quit ();
 
-    sigterm_src_id = 0;
     return G_SOURCE_REMOVE;
 }
 
@@ -499,10 +503,6 @@ main (int    argc,
     }
 
     gtk_main ();
-
-    g_clear_handle_id (&sigterm_src_id, g_source_remove);
-    g_cancellable_cancel (window_monitor_cancellable);
-    gtk_widget_destroy (window);
 
     g_debug ("cs-backup-locker finished");
 
