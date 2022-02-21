@@ -129,7 +129,7 @@ class ScreensaverManager(GObject.Object):
                 return True
         else:
             if self.stage:
-                self.despawn_stage(self.on_despawn_stage_complete)
+                self.despawn_stage()
                 Gio.Application.get_default().release()
                 status.focusWidgets = []
             self.grab_helper.release()
@@ -318,13 +318,6 @@ class ScreensaverManager(GObject.Object):
         self.fb_failed_to_start = False
         self.fb_pid = 0
 
-    def despawn_stage(self, callback=None):
-        """
-        Begin destruction of the stage.
-        """
-        self.stage.cancel_unlocking()
-        self.stage.deactivate(callback)
-
     def on_spawn_stage_complete(self):
         """
         Called after the stage become visible.  All user events are now
@@ -340,11 +333,14 @@ class ScreensaverManager(GObject.Object):
 
         self.start_timers()
 
-    def on_despawn_stage_complete(self):
+    def despawn_stage(self):
         """
-        Called after the stage has been hidden - the stage is destroyed, our status
+        The stage is destroyed, our status
         is updated, timer is canceled and active-changed is fired.
         """
+        self.stage.cancel_unlocking()
+        self.stage.hide()
+
         was_active = status.Active == True
         status.Active = False
 
