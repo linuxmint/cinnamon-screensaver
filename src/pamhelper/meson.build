@@ -7,7 +7,7 @@ install_data(app_py,
 
 executable('cinnamon-screensaver-pam-helper',
   'cinnamon-screensaver-pam-helper.c',
-  dependencies: [gtk, glib],
+  dependencies: [gio_unix, glib],
   include_directories: inc,
   link_with: libcscreensaver,
   install: true,

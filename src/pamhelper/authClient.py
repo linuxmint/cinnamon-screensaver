@@ -96,10 +96,13 @@ class AuthClient(GObject.Object):
 
     def cancel(self):
         if self.proc != None:
-            self.message_to_child("CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT\n");
+            if status.Debug:
+                print("authClient: cancel requested, killing helper.")
+            self.proc.send_signal(signal.SIGTERM)
         else:
             if status.Debug:
                 print("authClient: cancel requested, but no helper process")
+        self.emit_idle_cancel()
 
     def on_proc_completed(self, proc, res, data=None):
         if status.Debug:
@@ -130,6 +133,8 @@ class AuthClient(GObject.Object):
 
         self.initialized = False
         self.proc = None
+
+        self.emit_idle_cancel()
 
     def message_to_child(self, string):
         if not self.initialized:
@@ -179,8 +184,10 @@ class AuthClient(GObject.Object):
                         info = re.search('(?<=CS_PAM_AUTH_SET_INFO_)(.*)(?=_)', output).group(0)
                         self.emit_auth_info(info)
 
-        if not finished:
-            pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
+        if finished:
+            return
+
+        pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
 
     def emit_idle_busy_state(self, busy):
         if status.Debug:
