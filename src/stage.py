@@ -398,6 +398,27 @@ class Stage(Gtk.Window):
         Performs all tear-down necessary to destroy the Stage, destroying
         all children in the process, and finally destroying itself.
         """
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "inhibit-timeout",
+                                              self.set_timeout_active)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "uninhibit-timeout",
+                                              self.set_timeout_active)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "authenticate-success",
+                                              self.authentication_result_callback)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "authenticate-failure",
+                                              self.authentication_result_callback)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "authenticate-cancel",
+                                              self.authentication_cancel_callback)
+
         trackers.con_tracker_get().disconnect(singletons.Backgrounds,
                                               "changed",
                                               self.on_bg_changed)
