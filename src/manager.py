@@ -171,7 +171,10 @@ class ScreensaverManager(GObject.Object):
             return
 
         if status.Debug and not status.Awake:
-            print("manager: user activity, waking")
+            print("*******************************************")
+            print("manager: user activity, waking:")
+            # traceback.print_stack()
+            print("*******************************************")
 
         if status.Locked and self.stage.initialize_pam():
             if status.Debug and not status.Awake:
@@ -357,10 +360,8 @@ class ScreensaverManager(GObject.Object):
         self.stage = None
 
         # Ideal time to check for leaking connections that might prevent GC by python and gobject
-        if trackers.DEBUG_SIGNALS:
+        if status.Debug:
             trackers.con_tracker_get().dump_connections_list()
-
-        if trackers.DEBUG_TIMERS:
             trackers.timer_tracker_get().dump_timer_list()
 
     def grab_stage(self):
