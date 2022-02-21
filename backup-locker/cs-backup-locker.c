@@ -45,7 +45,6 @@ position_info_box (BackupWindow *window)
     GdkMonitor *monitor = gdk_display_get_primary_monitor (display);
     GdkRectangle rect;
     GtkRequisition natural_size;
-    gint baseline;
 
     gtk_widget_get_preferred_size (window->info_box, NULL, &natural_size);
 
@@ -317,7 +316,7 @@ backup_window_class_init (BackupWindowClass *klass)
     widget_class->realize = backup_window_realize;
 }
 
-GtkWidget *
+static GtkWidget *
 backup_window_new (gulong pretty_xid)
 {
     BackupWindow *window;
