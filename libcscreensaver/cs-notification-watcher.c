@@ -54,7 +54,7 @@ idle_notify_received (gpointer user_data)
 static GDBusMessage *
 notification_filter_func (GDBusConnection *connection,
                           GDBusMessage    *message,
-                          gboolean        *incoming,
+                          gboolean         incoming,
                           gpointer         user_data)
 {
     GDBusMessage *ret = NULL;

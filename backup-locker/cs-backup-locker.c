@@ -118,7 +118,7 @@ backup_window_show (GtkWidget *widget)
     cs_gdk_event_filter_start (BACKUP_WINDOW (widget)->event_filter);
 }
 
-static gboolean window_grab_broken (gpointer data);
+static void window_grab_broken (gpointer data);
 
 static void
 activate_backup_window (BackupWindow *window)
@@ -144,7 +144,7 @@ backup_window_ungrab (BackupWindow *window)
     window->should_grab = FALSE;
 }
 
-static gboolean
+static void
 window_grab_broken (gpointer data)
 {
     BackupWindow *window = BACKUP_WINDOW (data);
@@ -155,7 +155,6 @@ window_grab_broken (gpointer data)
     {
         activate_backup_window (window);
     }
-    return GDK_EVENT_PROPAGATE;
 }
 
 static void
