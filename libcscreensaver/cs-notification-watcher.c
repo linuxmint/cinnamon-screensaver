@@ -19,7 +19,7 @@ enum {
 
 static guint signals [LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (CsNotificationWatcher, cs_notification_watcher, G_TYPE_OBJECT);
+G_DEFINE_TYPE (CsNotificationWatcher, cs_notification_watcher, G_TYPE_OBJECT)
 
 #define DBUS_SERVICE "org.freedesktop.DBus"
 #define DBUS_PATH "/org/freedesktop/DBus"
@@ -54,7 +54,7 @@ idle_notify_received (gpointer user_data)
 static GDBusMessage *
 notification_filter_func (GDBusConnection *connection,
                           GDBusMessage    *message,
-                          gboolean        *incoming,
+                          gboolean         incoming,
                           gpointer         user_data)
 {
     GDBusMessage *ret = NULL;

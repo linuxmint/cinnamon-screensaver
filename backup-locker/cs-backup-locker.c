@@ -45,7 +45,6 @@ position_info_box (BackupWindow *window)
     GdkMonitor *monitor = gdk_display_get_primary_monitor (display);
     GdkRectangle rect;
     GtkRequisition natural_size;
-    gint baseline;
 
     gtk_widget_get_preferred_size (window->info_box, NULL, &natural_size);
 
@@ -119,7 +118,7 @@ backup_window_show (GtkWidget *widget)
     cs_gdk_event_filter_start (BACKUP_WINDOW (widget)->event_filter);
 }
 
-static gboolean window_grab_broken (gpointer data);
+static void window_grab_broken (gpointer data);
 
 static void
 activate_backup_window (BackupWindow *window)
@@ -145,7 +144,7 @@ backup_window_ungrab (BackupWindow *window)
     window->should_grab = FALSE;
 }
 
-static gboolean
+static void
 window_grab_broken (gpointer data)
 {
     BackupWindow *window = BACKUP_WINDOW (data);
@@ -156,7 +155,6 @@ window_grab_broken (gpointer data)
     {
         activate_backup_window (window);
     }
-    return GDK_EVENT_PROPAGATE;
 }
 
 static void
@@ -317,7 +315,7 @@ backup_window_class_init (BackupWindowClass *klass)
     widget_class->realize = backup_window_realize;
 }
 
-GtkWidget *
+static GtkWidget *
 backup_window_new (gulong pretty_xid)
 {
     BackupWindow *window;

@@ -483,8 +483,8 @@ set_pam_error (GError **error,
 
 }
 
-static int
-cs_auth_thread_func (int auth_operation_fd)
+static gpointer
+cs_auth_thread_func (gpointer auth_operation_fd_ptr)
 {
         static const int flags = 0;
         int              status;
@@ -492,6 +492,7 @@ cs_auth_thread_func (int auth_operation_fd)
         struct timespec  timeout;
         sigset_t         set;
         const void      *p;
+        int              auth_operation_fd = GPOINTER_TO_INT(auth_operation_fd_ptr);
 
         timeout.tv_sec = 0;
         timeout.tv_nsec = 1;
@@ -570,7 +571,7 @@ cs_auth_thread_func (int auth_operation_fd)
          */
         close (auth_operation_fd);
 
-        return status;
+        return GINT_TO_POINTER(status);
 }
 
 static gboolean
@@ -628,9 +629,9 @@ cs_auth_pam_verify_user (pam_handle_t *handle,
         watch_id = g_io_add_watch (channel, G_IO_ERR | G_IO_HUP,
                                    (GIOFunc) cs_auth_loop_quit, &thread_done);
 
-        auth_thread = g_thread_create ((GThreadFunc) cs_auth_thread_func,
-                                       GINT_TO_POINTER (auth_operation_fds[1]),
-                                       TRUE, NULL);
+        auth_thread = g_thread_new ("cs-auth-verify-user",
+                                    (GThreadFunc) cs_auth_thread_func,
+                                    GINT_TO_POINTER (auth_operation_fds[1]));
 
         if (auth_thread == NULL) {
                 goto out;

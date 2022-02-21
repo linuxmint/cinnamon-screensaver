@@ -34,7 +34,7 @@ enum {
 
 static guint signals [LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (CsScreen, cs_screen, G_TYPE_OBJECT);
+G_DEFINE_TYPE (CsScreen, cs_screen, G_TYPE_OBJECT)
 
 static gboolean debug_mode = FALSE;
 #define DEBUG(...) if (debug_mode) g_printerr (__VA_ARGS__)
