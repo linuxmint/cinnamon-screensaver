@@ -78,6 +78,11 @@ class TimerTracker:
             pass
 
     def dump_timer_list(self):
+        print("")
+        print("/******************************************************************")
+        print(" * There should be no timers leftover here                        *")
+        print(" ******************************************************************/")
+        print("")
         print("Timer tracker dump:")
 
         i = 0
@@ -87,6 +92,7 @@ class TimerTracker:
             i += 1
 
         print("%d timers total" % i)
+        print("")
 
 
 timer_tracker = TimerTracker()
@@ -211,6 +217,19 @@ class ConnectionTracker:
         self._disconnect_by_name(name)
 
     def dump_connections_list(self):
+        print("")
+        print("/******************************************************************")
+        print(" * Currently only these signals should remain after deactivation: *")
+        print(" * g-signal - mediaPlayerWatcher.py (player listener)             *")
+        print(" * idle-changed - manager.py (idle listener for GnomeSession)     *")
+        print(" * lock - singletons.py (logind/consolekit listeners              *")
+        print(" * unlock - singletons.py (logind/consolekit listeners            *")
+        print(" * active - singletons.py (logind/consolekit listeners            *")
+        print(" ******************************************************************/")
+        print("")
+        if len(self.connections) > 5:
+            print("****** Leftover signal handlers!!")
+
         print("Connection tracker dump:")
 
         i = 0
@@ -220,6 +239,7 @@ class ConnectionTracker:
             i += 1
 
         print("%d connections total" % i)
+        print("")
 
 connection_tracker = ConnectionTracker()
 
