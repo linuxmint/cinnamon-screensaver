@@ -23,7 +23,7 @@ enum {
 
 static guint signals [LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT);
+G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT)
 
 static gboolean
 we_are_fallback_window (CsGdkEventFilter *filter)
@@ -195,6 +195,8 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
                 // Screen size may have changed, tell the fallback
                 g_signal_emit (filter, signals[XSCREEN_SIZE], 0);
             }
+
+            break;
           }
         default:
           {
@@ -203,7 +205,6 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
                 unshape_window (filter);
             }
 #endif
-            // return GDK_FILTER_REMOVE;
           }
     }
 
