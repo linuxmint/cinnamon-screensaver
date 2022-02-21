@@ -135,6 +135,18 @@ if not get_option('deprecated-warnings')
   )
 endif
 
+# add_global_arguments(
+#     [
+#         '-Wall',
+#         '-Wextra',
+#         '-Wno-unused-parameter',
+#         '-Wmissing-prototypes',
+#         '-Wstrict-prototypes',
+#         '-pedantic'
+#     ],
+#     language: 'c'
+# )
+
 subdir('install-scripts')
 subdir('libcscreensaver')
 subdir('data')
