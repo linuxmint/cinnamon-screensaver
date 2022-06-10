@@ -1,3 +1,9 @@
+cinnamon-screensaver (5.4.0) vanessa; urgency=medium
+
+  * CI: Update targets
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 10 Jun 2022 15:12:41 +0200
+
 cinnamon-screensaver (5.2.1) una; urgency=medium
 
   [ Michael Webster ]
