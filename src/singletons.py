@@ -141,5 +141,4 @@ class LoginClientResolver:
         if status.Debug:
             print("Received Active changed from session manager")
 
-        self.manager.update_stage()
-        self.manager.simulate_user_activity()
+        self.manager.refresh_stage()

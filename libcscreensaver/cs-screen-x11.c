@@ -414,22 +414,18 @@ reload_screen_info (CsScreen *screen)
 static void
 on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
-    CsMonitorInfo *old_monitor_infos;
     CsScreen *screen;
+    CsMonitorInfo *old_monitor_infos;
 
     screen = CS_SCREEN (user_data);
 
-    reload_screen_info (screen);
-    g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
-
+    DEBUG ("CsScreen received 'monitors-changed' signal from GdkScreen %ld\n", g_get_monotonic_time () / 1000);
     gdk_flush ();
-
-    DEBUG ("CsScreen received 'monitors-changed' signal from GdkScreen\n");
 
     old_monitor_infos = screen->monitor_infos;
     reload_monitor_infos (screen);
-
     g_free (old_monitor_infos);
+    reload_screen_info (screen);
 
     g_signal_emit (screen, signals[SCREEN_MONITORS_CHANGED], 0);
 }
@@ -438,12 +434,18 @@ static void
 on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
     CsScreen *screen;
+    CsMonitorInfo *old_monitor_infos;
 
     screen = CS_SCREEN (user_data);
 
-    DEBUG ("CsScreen received 'size-changed' signal from GdkScreen\n");
+    DEBUG ("CsScreen received 'size-changed' signal from GdkScreen %ld\n", g_get_monotonic_time () / 1000);
+    gdk_flush ();
 
+    old_monitor_infos = screen->monitor_infos;
+    reload_monitor_infos (screen);
+    g_free (old_monitor_infos);
     reload_screen_info (screen);
+
     g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
 }
 

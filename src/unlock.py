@@ -176,11 +176,6 @@ class UnlockDialog(BaseWindow):
     def initialize_auth_client(self):
         return self.auth_client.initialize()
 
-    def cancel_auth_client(self):
-        self.clear_entry()
-
-        self.auth_client.cancel()
-
     def on_authentication_success(self, auth_client):
         self.set_busy(False)
         self.emit("authenticate-success")
@@ -233,7 +228,8 @@ class UnlockDialog(BaseWindow):
         """
         Clears the auth message text if we have any.
         """
-        self.auth_message_label.set_text("")
+        self.auth_client.cancel()
+        self.clear_entry()
 
     def queue_key_event(self, event):
         """

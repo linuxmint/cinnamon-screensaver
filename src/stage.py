@@ -3,7 +3,7 @@
 import gi
 gi.require_version('CDesktopEnums', '3.0')
 
-from gi.repository import Gtk, Gdk, CScreensaver, CDesktopEnums, GObject
+from gi.repository import GLib, Gtk, Gdk, CScreensaver, CDesktopEnums, GObject
 import random
 
 import status
@@ -34,6 +34,10 @@ class Stage(Gtk.Window):
     The Stage reponds pretty much only to the instructions of the
     ScreensaverManager.
     """
+    __gsignals__ = {
+        'needs-refresh': (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
+
     def __init__(self, manager, away_message):
         if status.InteractiveDebug:
             Gtk.Window.__init__(self,
@@ -157,10 +161,7 @@ class Stage(Gtk.Window):
         if status.Debug:
             print("Stage: Received screen size-changed signal, refreshing stage")
 
-        self.update_geometry()
-        self.move_onscreen()
-        self.overlay.queue_resize()
-
+        self.emit("needs-refresh")
 
     def on_monitors_changed(self, screen, data=None):
         """
@@ -171,17 +172,12 @@ class Stage(Gtk.Window):
         if status.Debug:
             print("Stage: Received screen monitors-changed signal, refreshing stage")
 
-        self.update_geometry()
-        self.move_onscreen()
-        self.overlay.queue_resize()
-
-        Gdk.flush()
-
-        self.queue_refresh_stage()
+        self.emit("needs-refresh")
 
     def on_composited_changed(self, screen, data=None):
         if self.get_realized():
-            self.manager.kill_fallback_window()
+            if status.Debug:
+                print("Stage: Received screen composited-changed signal, refreshing stage")
 
             user_time = self.get_display().get_user_time()
 
@@ -193,10 +189,7 @@ class Stage(Gtk.Window):
             self.get_window().set_user_time(user_time)
             self.show()
 
-            if status.Locked:
-                self.manager.spawn_fallback_window()
-
-            GObject.idle_add(self.manager.grab_stage)
+            self.emit("needs-refresh")
 
     def on_grab_broken_event(self, widget, event, data=None):
         GObject.idle_add(self.manager.grab_stage)
@@ -212,11 +205,10 @@ class Stage(Gtk.Window):
             GObject.source_remove(self.stage_refresh_id)
             self.stage_refresh_id = 0
 
-        self.stage_refresh_id = GObject.idle_add(self._update_full_stage_on_idle)
+        self.stage_refresh_id = GLib.idle_add(self._update_full_stage_on_idle, priority=GLib.PRIORITY_DEFAULT)
 
     def _update_full_stage_on_idle(self, data=None):
         self.stage_refresh_id = 0
-
         self._refresh()
 
         return False
@@ -224,12 +216,14 @@ class Stage(Gtk.Window):
     def _refresh(self):
         Gdk.flush()
         if status.Debug:
-            print("Stage: refresh callback")
+            print("Stage: refreshing")
 
         self.update_geometry()
         self.move_onscreen()
         self.update_monitors()
         self.overlay.queue_resize()
+
+        self.manager.stage_refreshed()
 
     def activate(self, callback):
         """
@@ -398,6 +392,27 @@ class Stage(Gtk.Window):
         Performs all tear-down necessary to destroy the Stage, destroying
         all children in the process, and finally destroying itself.
         """
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "inhibit-timeout",
+                                              self.set_timeout_active)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "uninhibit-timeout",
+                                              self.set_timeout_active)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "authenticate-success",
+                                              self.authentication_result_callback)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "authenticate-failure",
+                                              self.authentication_result_callback)
+
+        trackers.con_tracker_get().disconnect(self.unlock_dialog,
+                                              "authenticate-cancel",
+                                              self.authentication_cancel_callback)
+
         trackers.con_tracker_get().disconnect(singletons.Backgrounds,
                                               "changed",
                                               self.on_bg_changed)
@@ -619,7 +634,7 @@ class Stage(Gtk.Window):
         Go back to Sleep if we hit our timer limit
         """
         self.set_timeout_active(None, False)
-        self.manager.cancel_unlock_widget()
+        self.manager.cancel_unlocking()
 
         return False
 
@@ -640,7 +655,7 @@ class Stage(Gtk.Window):
             self.unlock_dialog.blink()
 
     def authentication_cancel_callback(self, dialog):
-        self.cancel_unlock_widget()
+        self.manager.cancel_unlocking()
 
     def set_message(self, msg):
         """
@@ -691,20 +706,13 @@ class Stage(Gtk.Window):
 
     def cancel_unlocking(self):
         if self.unlock_dialog:
-            self.unlock_dialog.cancel_auth_client()
-
-    def cancel_unlock_widget(self):
-        """
-        Hide the unlock widget (and others) if the unlock has been canceled
-        """
-        if not status.Awake:
-            return
+            self.unlock_dialog.cancel()
 
         self.set_timeout_active(None, False)
         utils.clear_clipboards(self.unlock_dialog)
 
-        self.unlock_dialog.hide()
-
+        if self.unlock_dialog != None:
+            self.unlock_dialog.hide()
         if self.clock_widget != None:
             self.clock_widget.hide()
         if self.albumart_widget != None:
@@ -716,11 +724,12 @@ class Stage(Gtk.Window):
         if self.osk != None:
             self.osk.hide()
 
-        self.unlock_dialog.cancel()
         status.Awake = False
 
         self.update_monitor_views()
-        self.info_panel.refresh_power_state()
+
+        if self.info_panel != None:
+            self.info_panel.refresh_power_state()
 
     def update_monitor_views(self):
         """
