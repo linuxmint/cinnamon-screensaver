@@ -128,7 +128,7 @@ class ScreensaverManager(GObject.Object):
                 return True
         else:
             if self.stage:
-                self.despawn_stage(self.on_despawn_stage_complete)
+                self.despawn_stage()
                 Gio.Application.get_default().release()
                 status.focusWidgets = []
             self.grab_helper.release()
@@ -320,13 +320,6 @@ class ScreensaverManager(GObject.Object):
         self.fb_failed_to_start = False
         self.fb_pid = 0
 
-    def despawn_stage(self, callback=None):
-        """
-        Begin destruction of the stage.
-        """
-        self.stage.cancel_unlocking()
-        self.stage.deactivate(callback)
-
     def on_spawn_stage_complete(self):
         """
         Called after the stage become visible.  All user events are now
@@ -335,6 +328,7 @@ class ScreensaverManager(GObject.Object):
         by our ConsoleKit client if we're using it, and our own ScreensaverService.)
         """
         self.grab_stage()
+        self.stage.connect("needs-refresh", self.refresh_stage)
 
         status.Active = True
 
@@ -342,11 +336,14 @@ class ScreensaverManager(GObject.Object):
 
         self.start_timers()
 
-    def on_despawn_stage_complete(self):
+    def despawn_stage(self):
         """
-        Called after the stage has been hidden - the stage is destroyed, our status
+        The stage is destroyed, our status
         is updated, timer is canceled and active-changed is fired.
         """
+        self.stage.cancel_unlocking()
+        self.stage.hide()
+
         was_active = status.Active == True
         status.Active = False
 
@@ -369,9 +366,21 @@ class ScreensaverManager(GObject.Object):
         by us now.
         """
         if self.stage != None:
-            self.grab_helper.move_to_window(self.stage.get_window(), True)
+            self.grab_helper.move_to_window(self.stage.get_window(), Gdk.Screen.get_default(),  True)
 
-    def update_stage(self):
+    def stage_refreshed(self):
+        if status.Debug:
+            print("manager: stage refresh complete")
+
+        self.grab_stage()
+
+        if status.Locked:
+            self.kill_fallback_window()
+            self.spawn_fallback_window()
+
+        self.simulate_user_activity()
+
+    def refresh_stage(self, stage=None):
         """
         Tells the stage to check its canvas size and make sure its windows are up-to-date.  This is called
         when our login manager tells us its "Active" property has changed.  We are always connected to the
@@ -381,8 +390,10 @@ class ScreensaverManager(GObject.Object):
             return
 
         if status.Debug:
-            print("manager: queuing stage refresh (login manager reported active?")
+            print("manager: queuing stage refresh")
 
+        self.kill_fallback_window()
+        self.cancel_unlocking()
         self.stage.queue_refresh_stage()
 
     def start_timers(self):
@@ -400,7 +411,7 @@ class ScreensaverManager(GObject.Object):
         self.activated_timestamp = 0
         self.stop_lock_delay()
 
-    def cancel_unlock_widget(self):
+    def cancel_unlocking(self):
         """
         Return to sleep (not Awake) - hides the pointer and the unlock widget.
         """

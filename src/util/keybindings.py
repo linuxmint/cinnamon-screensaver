@@ -101,7 +101,7 @@ class KeyBindings(GObject.GObject):
 
         if filtered_state == 0 and event.keyval == Gdk.KEY_Escape:
             if status.Awake:
-                self.manager.cancel_unlock_widget()
+                self.manager.cancel_unlocking()
                 return True
 
         if event.keyval == Gdk.KEY_Menu:
