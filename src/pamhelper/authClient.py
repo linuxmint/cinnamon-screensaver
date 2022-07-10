@@ -26,11 +26,7 @@ class AuthClient(GObject.Object):
 
     def __init__(self):
         super(AuthClient, self).__init__()
-        self.initialized = False
-
-        self.proc = None
-        self.out_pipe = None
-        self.in_pipe = None
+        self.reset()
 
     def initialize(self):
         if self.initialized:
@@ -38,6 +34,8 @@ class AuthClient(GObject.Object):
 
         if status.Debug:
             print("authClient: attempting to initialize")
+
+        self.cancellable = Gio.Cancellable()
 
         try:
             helper_path = None
@@ -80,59 +78,84 @@ class AuthClient(GObject.Object):
             print("authClient: error starting cinnamon-screensaver-pam-helper: %s" % e.message)
             return False
 
-        self.proc.wait_check_async(None, self.on_proc_completed, None)
+        self.proc.wait_check_async(self.cancellable, self.on_proc_completed, None)
 
         self.out_pipe = self.proc.get_stdout_pipe()
-        self.out_pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
+        self.out_pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, self.cancellable, self.message_from_child)
 
         self.in_pipe = self.proc.get_stdin_pipe()
 
         self.initialized = True
 
         if status.Debug:
-            print("authClient: initialized")
+            print("authClient: initialized (helper pid %s)" % self.proc.get_identifier ())
 
         return True
 
+    def reset(self):
+        self.initialized = False
+        self.cancellable = None
+        self.proc = None
+        self.in_pipe = None
+        self.out_pipe = None
+
     def cancel(self):
+        self.end_proc()
+
+    def end_proc(self):
+        if self.cancellable == None:
+            return
+
+        self.cancellable.cancel()
         if self.proc != None:
-            self.message_to_child("CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT\n");
+            if status.Debug:
+                print("authClient: cancel requested, killing helper.")
+            self.proc.send_signal(signal.SIGTERM)
         else:
             if status.Debug:
                 print("authClient: cancel requested, but no helper process")
 
+        self.reset()
+
     def on_proc_completed(self, proc, res, data=None):
         if status.Debug:
-            print("authClient: helper process completed...")
+            print("authClient: helper process (pid %s) completed..." % proc.get_identifier())
+
         try:
             ret = proc.wait_check_finish(res)
         except GLib.Error as e:
-            if status.Debug:
+            if status.Debug and e.code != Gio.IOErrorEnum.CANCELLED:
                 print("helper process did not exit cleanly: %s" % e.message)
 
-        if self.in_pipe != None:
-            self.in_pipe.clear_pending()
+        pipe = proc.get_stdin_pipe()
+
+        if pipe != None:
+            pipe.clear_pending()
             try:
-                self.in_pipe.close(None)
+                pipe.close(None)
             except GLib.Error as e:
                 if status.Debug:
                     print("helper process did not close in_pipe cleanly: %s" % e.message)
-            self.in_pipe = None
 
-        if self.out_pipe != None:
-            self.out_pipe.clear_pending()
+        pipe = proc.get_stdout_pipe()
+
+        if pipe != None:
+            pipe.clear_pending()
             try:
-                self.out_pipe.close(None)
+                pipe.close(None)
             except GLib.Error as e:
                 if status.Debug:
                     print("helper process did not close out_pipe cleanly: %s" % e.message)
-            self.out_pipe = None
 
-        self.initialized = False
-        self.proc = None
+        # Don't just reset - if another proc has been started we don't want to interfere.
+        if self.proc == proc:
+            self.reset()
 
     def message_to_child(self, string):
         if not self.initialized:
+            return
+
+        if self.cancellable == None or self.cancellable.is_cancelled():
             return
 
         if status.Debug:
@@ -140,18 +163,31 @@ class AuthClient(GObject.Object):
 
         try:
             b = GLib.Bytes.new(string.encode())
-            s = self.in_pipe.write_bytes(b)
+
+            try:
+                s = self.in_pipe.write_bytes(b)
+            except GLib.Error as e:
+                if e.code != Gio.IOErrorEnum.CANCELLED:
+                    print("Error reading message from pam helper")
+                return
 
             self.in_pipe.flush(None)
         except GLib.Error as e:
-            print("Error writing to child - %s" % e.message)
+            if e.code != Gib.IOErrorEnum.CANCELLED:
+                print("Error writing to pam helper: %s" % e.message)
 
     def message_from_child(self, pipe, res):
-        if pipe.is_closed():
+        if self.cancellable == None or self.cancellable.is_cancelled():
             return
 
-        finished = False
-        bytes_read = pipe.read_bytes_finish(res)
+        terminate = False
+
+        try:
+            bytes_read = pipe.read_bytes_finish(res)
+        except GLib.Error as e:
+            if e.code != Gio.IOErrorEnum.CANCELLED:
+                print("Error reading message from pam helper: %s" % e.message)
+            return
 
         if bytes_read:
             raw_string = bytes_read.get_data().decode()
@@ -164,10 +200,10 @@ class AuthClient(GObject.Object):
                         self.emit_idle_failure()
                     if "CS_PAM_AUTH_SUCCESS" in output:
                         self.emit_idle_success()
-                        finished = True
+                        terminate = True
                     if "CS_PAM_AUTH_CANCELLED" in output:
                         self.emit_idle_cancel()
-                        finished = True
+                        terminate = True
                     if "CS_PAM_AUTH_BUSY_TRUE" in output:
                         self.emit_idle_busy_state(True)
                     if "CS_PAM_AUTH_BUSY_FALSE" in output:
@@ -179,8 +215,11 @@ class AuthClient(GObject.Object):
                         info = re.search('(?<=CS_PAM_AUTH_SET_INFO_)(.*)(?=_)', output).group(0)
                         self.emit_auth_info(info)
 
-        if not finished:
-            pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
+        if terminate:
+            self.end_proc()
+            return
+
+        pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
 
     def emit_idle_busy_state(self, busy):
         if status.Debug:

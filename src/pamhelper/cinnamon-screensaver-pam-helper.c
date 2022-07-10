@@ -23,17 +23,16 @@
 
 #include "config.h"
 
-#include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
 
+#include <glib-unix.h>
 #include <glib/gi18n.h>
+#include <glib/gi18n.h>
+#include <glib/gprintf.h>
 #include <gio/gunixinputstream.h>
-#include <gtk/gtk.h>
 
 #include <libcscreensaver/setuid.h>
 #include <libcscreensaver/cs-auth.h>
@@ -42,19 +41,14 @@
 
 #define DEBUG(...) if (debug_mode) g_printerr (__VA_ARGS__)
 
+static GMainLoop *ml = NULL;
+
 static gboolean debug_mode = FALSE;
 
-static gboolean quit_request = FALSE;
+static guint shutdown_id = 0;
 static gchar *password_ptr = NULL;
 static GMutex password_mutex;
-
 static GCancellable *stdin_cancellable = NULL;
-
-static GOptionEntry entries [] = {
-    { "debug", 0, 0, G_OPTION_ARG_NONE, &debug_mode,
-      N_("Show debugging output"), NULL },
-    { NULL }
-};
 
 #define CS_PAM_AUTH_FAILURE "CS_PAM_AUTH_FAILURE\n"
 #define CS_PAM_AUTH_SUCCESS "CS_PAM_AUTH_SUCCESS\n"
@@ -67,60 +61,72 @@ static GOptionEntry entries [] = {
 
 #define CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT "CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT"
 
-static void
-shutdown_and_quit (void)
-{
-    if (!g_cancellable_is_cancelled (stdin_cancellable))
-    {
-        g_cancellable_cancel (stdin_cancellable);
-    }
-    else
-    {
-        g_clear_object (&stdin_cancellable);
-        g_clear_pointer (&password_ptr, g_free);
-
-        gtk_main_quit ();
-    }
-}
+static void send_cancelled (void);
 
 static gboolean
-idle_shutdown_and_quit_cb (gpointer data)
+shutdown (void)
 {
-    shutdown_and_quit ();
-    return FALSE;
+    DEBUG ("cinnamon-screensaver-pam-helper (pid %i): shutting down.\n", getpid ());
+
+    g_clear_handle_id (&shutdown_id, g_source_remove);
+    g_clear_object (&stdin_cancellable);
+    g_clear_pointer (&password_ptr, g_free);
+
+    g_main_loop_quit (ml);
+    return G_SOURCE_REMOVE;
 }
 
 static void
 send_failure (void)
 {
-    printf (CS_PAM_AUTH_FAILURE);
+    if (g_cancellable_is_cancelled (stdin_cancellable))
+    {
+        return;
+    }
+
+    g_printf (CS_PAM_AUTH_FAILURE);
     fflush (stdout);
 }
 
 static void
 send_success (void)
 {
-    printf (CS_PAM_AUTH_SUCCESS);
+    if (g_cancellable_is_cancelled (stdin_cancellable))
+    {
+        return;
+    }
+
+    g_printf (CS_PAM_AUTH_SUCCESS);
     fflush (stdout);
 }
 
 static void
 send_cancelled (void)
 {
-    printf (CS_PAM_AUTH_CANCELLED);
+    if (g_cancellable_is_cancelled (stdin_cancellable))
+    {
+        return;
+    }
+
+    g_printf (CS_PAM_AUTH_CANCELLED);
     fflush (stdout);
 }
 
 static void
 send_busy (gboolean busy)
 {
+    if (g_cancellable_is_cancelled (stdin_cancellable))
+    {
+        return;
+    }
+
     if (busy)
     {
-        printf (CS_PAM_AUTH_BUSY_TRUE);
+        g_printf (CS_PAM_AUTH_BUSY_TRUE);
     }
     else
     {
-        printf (CS_PAM_AUTH_BUSY_FALSE);
+        g_printf (CS_PAM_AUTH_BUSY_FALSE);
     }
 
     fflush (stdout);
@@ -129,26 +135,25 @@ send_busy (gboolean busy)
 static void
 send_prompt (const gchar *msg)
 {
-    printf (CS_PAM_AUTH_SET_PROMPT_ "%s_\n", msg);
+    if (g_cancellable_is_cancelled (stdin_cancellable))
+    {
+        return;
+    }
+
+    g_printf (CS_PAM_AUTH_SET_PROMPT_ "%s_\n", msg);
     fflush (stdout);
 }
 
 static void
 send_info (const gchar *msg)
 {
-    printf (CS_PAM_AUTH_SET_INFO_ "%s_\n", msg);
-    fflush (stdout);
-}
-
-static gboolean
-received_quit (const gchar *str)
-{
-    if (g_strstr_len (str, -1, CS_PAM_AUTH_REQUEST_SUBPROCESS_EXIT))
+    if (g_cancellable_is_cancelled (stdin_cancellable))
     {
-        return TRUE;
+        return;
     }
 
-    return FALSE;
+    g_printf (CS_PAM_AUTH_SET_INFO_ "%s_\n", msg);
+    fflush (stdout);
 }
 
 static gboolean
@@ -159,58 +164,50 @@ auth_message_handler (CsAuthMessageStyle style,
 {
     gboolean    ret;
 
-    DEBUG ("Got message style %d: '%s'\n", style, msg);
-
+    DEBUG ("cinnamon-screensaver-pam-helper: Got message style %d: '%s'\n", style, msg);
     ret = TRUE;
     *response = NULL;
 
     switch (style)
     {
         case CS_AUTH_MESSAGE_PROMPT_ECHO_ON:
+            DEBUG ("cinnamon-screensaver-pam-helper: CS_AUTH_MESSAGE_PROMPT_ECHO_ON\n");
             break;
         case CS_AUTH_MESSAGE_PROMPT_ECHO_OFF:
             if (msg != NULL)
             {
-                gchar *resp;
-
                 send_prompt (msg);
                 send_busy (FALSE);
 
-                while (password_ptr == NULL)
+                while (password_ptr == NULL && !g_cancellable_is_cancelled (stdin_cancellable))
                 {
-                    gtk_main_iteration_do (FALSE);
+                    g_main_context_iteration (g_main_context_default (), FALSE);
                     usleep (100 * 1000);
                 }
 
                 g_mutex_lock (&password_mutex);
 
-                resp = g_strdup (password_ptr);
+                DEBUG ("cinnamon-screensaver-pam-helper: auth_message_handler processing response string\n");
 
-                DEBUG ("auth_message_handler processing response string\n");
-
-                if (!received_quit (resp))
+                if (password_ptr != NULL)
                 {
-                    *response = resp;
+                    *response = g_strdup (password_ptr);
+                    memset (password_ptr, '\b', strlen (password_ptr));
+                    g_clear_pointer (&password_ptr, g_free);
                 }
-                else
-                {
-                    quit_request = TRUE;
-                    *response = NULL;
-                    g_free (resp);
-                }
-
-                memset (password_ptr, '\b', strlen (password_ptr));
-                g_clear_pointer (&password_ptr, g_free);
 
                 g_mutex_unlock (&password_mutex);
             }
             break;
         case CS_AUTH_MESSAGE_ERROR_MSG:
+            DEBUG ("CS_AUTH_MESSAGE_ERROR_MSG\n");
             break;
         case CS_AUTH_MESSAGE_TEXT_INFO:
+            DEBUG ("CS_AUTH_MESSAGE_TEXT_INFO\n");
+
             if (msg != NULL)
             {
-              send_info(msg);
+              send_info (msg);
             }
             break;
         default:
@@ -218,21 +215,16 @@ auth_message_handler (CsAuthMessageStyle style,
     }
 
     if (*response == NULL) {
-        DEBUG ("Got no response\n");
+        DEBUG ("cinnamon-screensaver-pam-helper: Got no response\n");
         ret = FALSE;
     } else {
         send_busy (TRUE);
     }
 
     /* we may have pending events that should be processed before continuing back into PAM */
-    while (gtk_events_pending ()) {
-        gtk_main_iteration ();
-    }
-
-    if (quit_request)
+    while (g_main_context_pending (g_main_context_default ()))
     {
-        send_cancelled ();
-        g_idle_add ((GSourceFunc) idle_shutdown_and_quit_cb, NULL);
+        g_main_context_iteration(g_main_context_default (), TRUE);
     }
 
     return ret;
@@ -252,16 +244,13 @@ do_auth_check (void)
                                NULL,
                                &error);
 
-    DEBUG ("Verify user returned: %s\n", res ? "TRUE" : "FALSE");
+    DEBUG ("cinnamon-screensaver-pam-helper: Verify user returned: %s\n", res ? "TRUE" : "FALSE");
 
     if (!res)
     {
-        if (error != NULL)
+        if (error != NULL && !g_cancellable_is_cancelled (stdin_cancellable))
         {
-            DEBUG ("Verify user returned error: %s\n", error->message);
-        }
-
-        if (error != NULL) {
+            DEBUG ("cinnamon-screensaver-pam-helper: Verify user returned error: %s\n", error->message);
             g_error_free (error);
         }
     }
@@ -283,7 +272,6 @@ auth_check_idle (gpointer user_data)
     {
         again = FALSE;
         send_success ();
-        g_idle_add ((GSourceFunc) idle_shutdown_and_quit_cb, NULL);
     }
     else
     {
@@ -292,21 +280,27 @@ auth_check_idle (gpointer user_data)
         if (loop_counter < MAX_FAILURES)
         {
             send_failure ();
-            DEBUG ("Authentication failed, retrying (%u)\n", loop_counter);
+            DEBUG ("cinnamon-screensaver-pam-helper: Authentication failed, retrying (%u)\n", loop_counter);
         }
         else
         {
-            DEBUG ("Authentication failed, quitting (max failures)\n");
+            DEBUG ("cinnamon-screensaver-pam-helper: Authentication failed, quitting (max failures)\n");
             again = FALSE;
             /* Don't quit immediately, but rather request that cinnamon-screensaver
              * terminates us after it has finished the dialog shake. Time out
              * after 5 seconds and quit anyway if this doesn't happen though */
             send_cancelled ();
-            g_idle_add ((GSourceFunc) idle_shutdown_and_quit_cb, NULL);
         }
     }
 
-    return again;
+    if (again)
+    {
+        return G_SOURCE_CONTINUE;
+    }
+
+    g_cancellable_cancel (stdin_cancellable);
+
+    return G_SOURCE_REMOVE;
 }
 
 static void
@@ -315,29 +309,47 @@ stdin_monitor_task_thread (GTask        *task,
                            gpointer      task_data,
                            GCancellable *cancellable)
 {
-    while (!g_cancellable_is_cancelled (stdin_cancellable))
+
+    GInputStream *stream = G_INPUT_STREAM (g_unix_input_stream_new (STDIN_FILENO, FALSE));
+    gssize size;
+    GError *error =NULL;
+
+    while (!g_cancellable_is_cancelled (cancellable))
     {
-        gchar buf[255];
-        gchar *input;
-        input = fgets (buf, sizeof (buf) - 1, stdin);
+        guint8 input[255];
+        // Blocks
+        size = g_input_stream_read (stream, input, 255, cancellable, &error);
+
+        if (error)
+        {
+            g_cancellable_cancel (cancellable);
+            break;
+        }
 
         g_mutex_lock (&password_mutex);
 
-        if (input != NULL)
+        if (size > 0)
         {
-            if (input [strlen (input) - 1] == '\n')
+            if (input [size - 1] == '\n')
             {
-                input [strlen (input) - 1] = 0;
+                input [size - 1] = 0;
             }
 
-            password_ptr = g_strdup (input);
-            memset (input, '\b', strlen (input));
+            password_ptr = g_strdup ((gchar *) &input);
+            memset (input, '\b', 255);
         }
 
         g_mutex_unlock (&password_mutex);
+
+        g_usleep (1000);
     }
 
-    g_task_return_boolean (task, TRUE);
+    g_object_unref (stream);
+
+    if (error != NULL)
+    {
+        g_task_return_error (task, error);
+    }
 }
 
 static void
@@ -345,18 +357,22 @@ stdin_monitor_task_finished (GObject      *source,
                            GAsyncResult *result,
                            gpointer      user_data)
 {
-    g_task_propagate_boolean (G_TASK (result), NULL);
+    GError *error = NULL;
+    g_task_propagate_boolean (G_TASK (result), &error);
 
-    g_clear_object (&stdin_cancellable);
-    g_clear_pointer (&password_ptr, g_free);
-    quit_request = FALSE;
-
-    while (gtk_events_pending ())
+    if (error != NULL)
     {
-        gtk_main_iteration ();
+        if (error->code != G_IO_ERROR_CANCELLED)
+        {
+            g_critical ("cinnamon-screensaver-pam-helper: stdin monitor: Could not read input from cinnamon-screensaver: %s", error->message);
+        }
+        g_error_free (error);
     }
 
-    g_idle_add ((GSourceFunc) gtk_main_quit, NULL);
+    DEBUG ("cinnamon-screensaver-pam-helper: stdin_monitor_task_finished (Cancelled: %d)\n",
+           g_cancellable_is_cancelled (stdin_cancellable));
+
+    shutdown ();
 }
 
 static void
@@ -367,7 +383,7 @@ setup_stdin_monitor (void)
     stdin_cancellable = g_cancellable_new ();
     task = g_task_new (NULL, stdin_cancellable, stdin_monitor_task_finished, NULL);
 
-    g_task_set_return_on_cancel (task, TRUE);
+    // g_task_set_return_on_cancel (task, TRUE);
 
     g_task_run_in_thread (task, stdin_monitor_task_thread);
     g_object_unref (task);
@@ -403,12 +419,12 @@ privileged_initialization (int     *argc,
 
     if (nolock_reason)
     {
-        DEBUG ("Locking disabled: %s\n", nolock_reason);
+        DEBUG ("cinnamon-screensaver-pam-helper: Locking disabled: %s\n", nolock_reason);
     }
 
     if (uid_message && verbose)
     {
-        g_print ("Modified UID: %s", uid_message);
+        g_print ("cinnamon-screensaver-pam-helper: Modified UID: %s", uid_message);
     }
 
     g_free (nolock_reason);
@@ -468,12 +484,24 @@ response_lock_init_failed (void)
     send_success ();
 }
 
+static gboolean
+handle_sigterm (gpointer data)
+{
+    DEBUG ("cinnamon-screensaver-pam-helper (pid %i): SIGTERM, shutting down\n", getpid ());
+
+    g_cancellable_cancel (stdin_cancellable);
+    return G_SOURCE_REMOVE;
+}
+
 int
 main (int    argc,
       char **argv)
 {
+    GOptionContext *context;
     GError *error = NULL;
     char   *nolock_reason = NULL;
+
+    g_unix_signal_add (SIGTERM, (GSourceFunc) handle_sigterm, NULL);
 
     bindtextdomain (GETTEXT_PACKAGE, "/usr/share/locale");
 
@@ -483,23 +511,30 @@ main (int    argc,
         exit (1);
     }
 
-    error = NULL;
-    if (! gtk_init_with_args (&argc, &argv, NULL, entries, NULL, &error))
-    {
-        if (error != NULL)
-        {
-            fprintf (stderr, "%s", error->message);
-            g_error_free (error);
-        }
+    static GOptionEntry entries [] = {
+        { "debug", 0, 0, G_OPTION_ARG_NONE, &debug_mode,
+          N_("Show debugging output"), NULL },
+        { NULL }
+    };
 
+    context = g_option_context_new (N_("\n\nPAM interface for cinnamon-screensaver."));
+    g_option_context_set_translation_domain (context, GETTEXT_PACKAGE);
+    g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+
+    if (!g_option_context_parse (context, &argc, &argv, &error)) {
+        g_critical ("Failed to parse arguments: %s", error->message);
+        g_error_free (error);
+        g_option_context_free (context);
         exit (1);
     }
+
+    g_option_context_free (context);
 
     if (! lock_initialization (&argc, argv, &nolock_reason, debug_mode))
     {
         if (nolock_reason != NULL)
         {
-            DEBUG ("Screen locking disabled: %s\n", nolock_reason);
+            DEBUG ("cinnamon-screensaver-pam-helper: Screen locking disabled: %s\n", nolock_reason);
             g_free (nolock_reason);
         }
         response_lock_init_failed ();
@@ -508,13 +543,14 @@ main (int    argc,
     }
 
     cs_auth_set_verbose (debug_mode);
-
-    quit_request = FALSE;
+    DEBUG ("cinnamon-screensaver-pam-helper (pid %i): start\n", getpid ());
 
     setup_stdin_monitor ();
-
     g_idle_add ((GSourceFunc) auth_check_idle, NULL);
 
-    gtk_main ();
+    ml = g_main_loop_new (NULL, FALSE);
+    g_main_loop_run (ml);
+
+    DEBUG ("cinnamon-screensaver-pam-helper: exit\n");
     return 0;
 }
