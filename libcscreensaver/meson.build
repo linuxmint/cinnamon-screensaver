@@ -147,7 +147,7 @@ gir_sources = [
   dbus_built
 ]
 
-libcscreensaver_deps = [gobject, gtk, gdk, x11, xrandr, xext, glib, gio, gthread, pam, m]
+libcscreensaver_deps = [gobject, gtk, gdk, x11, xrandr, xext, glib, gio, gthread, pam, m, xdo]
 if use_xinerama
   libcscreensaver_deps += xinerama
 endif

@@ -28,6 +28,7 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
+#include <xdo.h>
 
 #ifdef HAVE_XF86MISCSETGRABKEYSSTATE
 # include <X11/extensions/xf86misc.h>
@@ -48,6 +49,7 @@ typedef struct
         GdkWindow *keyboard_grab_window;
         GdkScreen *mouse_grab_screen;
         GdkScreen *keyboard_grab_screen;
+        xdo_t     *xdo;
 
         GtkWidget *invisible;
 } CsEventGrabberPrivate;
@@ -141,6 +143,18 @@ xorg_lock_smasher_set_active (CsEventGrabber  *grab,
 {
 }
 #endif /* HAVE_XF86MISCSETGRABKEYSSTATE */
+
+static void
+maybe_cancel_ui_grab (CsEventGrabber *grab)
+{
+    if (grab->priv->xdo == NULL)
+    {
+        return;
+    }
+
+    xdo_send_keysequence_window (grab->priv->xdo, CURRENTWINDOW, "Escape", 12000); // 12ms as suggested in xdo.h
+    xdo_send_keysequence_window (grab->priv->xdo, CURRENTWINDOW, "Escape", 12000);
+}
 
 static int
 cs_event_grabber_get_keyboard (CsEventGrabber    *grab,
@@ -490,6 +504,7 @@ cs_event_grabber_grab_window (CsEventGrabber    *grab,
         if (kstatus != GDK_GRAB_SUCCESS) {
                 if (!focus_fuckus) {
                         focus_fuckus = TRUE;
+                        maybe_cancel_ui_grab (grab);
                         cs_event_grabber_nuke_focus ();
                         goto AGAIN;
                 }
@@ -620,6 +635,12 @@ cs_event_grabber_init (CsEventGrabber *grab)
 
         grab->priv->session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
 
+        grab->priv->xdo = xdo_new (NULL);
+        if (grab->priv->xdo == NULL)
+        {
+            g_warning ("Xdo context could not be created.");
+        }
+
         grab->priv->mouse_hide_cursor = FALSE;
         grab->priv->invisible = gtk_invisible_new ();
         gtk_widget_show (grab->priv->invisible);
@@ -640,6 +661,8 @@ cs_event_grabber_finalize (GObject *object)
         g_return_if_fail (grab->priv != NULL);
 
         gtk_widget_destroy (grab->priv->invisible);
+
+        xdo_free (grab->priv->xdo);
 
         G_OBJECT_CLASS (cs_event_grabber_parent_class)->finalize (object);
 }
