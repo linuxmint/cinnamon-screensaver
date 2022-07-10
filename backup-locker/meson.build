@@ -9,8 +9,6 @@ bl_config = configure_file(output : 'config.h',
 
 bl_sources = [
 'cs-backup-locker.c',
-'event-grabber.c',
-'event-grabber.h'
 ]
 
 backup_locker = executable('cs-backup-locker',

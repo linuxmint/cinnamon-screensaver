@@ -79,8 +79,6 @@ void                         cs_screen_place_pointer_in_primary_monitor (CsScree
 
 void                         cs_screen_reset_screensaver (void);
 
-void                         cs_screen_nuke_focus (void);
-
 G_END_DECLS
 
 #endif /* __CS_SCREEN_H */
