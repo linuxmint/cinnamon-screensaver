@@ -33,19 +33,13 @@
 # include <X11/extensions/xf86misc.h>
 #endif /* HAVE_XF86MISCSETGRABKEYSSTATE */
 
-#include "event-grabber.h"
+#include "cs-event-grabber.h"
 
-static void     event_grabber_class_init (EventGrabberClass *klass);
-static void     event_grabber_init       (EventGrabber      *grab);
-static void     event_grabber_finalize   (GObject        *object);
+static void     cs_event_grabber_class_init (CsEventGrabberClass *klass);
+static void     cs_event_grabber_init       (CsEventGrabber      *grab);
+static void     cs_event_grabber_finalize   (GObject        *object);
 
-#define EVENT_GRABBER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), EVENT_TYPE_GRABBER, EventGrabberPrivate))
-
-G_DEFINE_TYPE (EventGrabber, event_grabber, G_TYPE_OBJECT)
-
-static gpointer grab_object = NULL;
-
-struct EventGrabberPrivate
+typedef struct
 {
         GDBusConnection *session_bus;
 
@@ -56,7 +50,17 @@ struct EventGrabberPrivate
         GdkScreen *keyboard_grab_screen;
 
         GtkWidget *invisible;
+} CsEventGrabberPrivate;
+
+struct _CsEventGrabber
+{
+        GObject        parent_instance;
+        CsEventGrabberPrivate *priv;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE (CsEventGrabber, cs_event_grabber, G_TYPE_OBJECT)
+
+static gpointer grab_object = NULL;
 
 static const char *
 grab_string (int status)
@@ -90,7 +94,7 @@ grab_string (int status)
    Ctrl-Alt-F1) but I wish it did.  Maybe it will someday.
  */
 static void
-xorg_lock_smasher_set_active (EventGrabber  *grab,
+xorg_lock_smasher_set_active (CsEventGrabber  *grab,
                               gboolean active)
 {
         int status, event, error;
@@ -132,14 +136,14 @@ xorg_lock_smasher_set_active (EventGrabber  *grab,
 }
 #else
 static void
-xorg_lock_smasher_set_active (EventGrabber  *grab,
+xorg_lock_smasher_set_active (CsEventGrabber  *grab,
                               gboolean active)
 {
 }
 #endif /* HAVE_XF86MISCSETGRABKEYSSTATE */
 
 static int
-event_grabber_get_keyboard (EventGrabber    *grab,
+cs_event_grabber_get_keyboard (CsEventGrabber    *grab,
                       GdkWindow *window,
                       GdkScreen *screen)
 {
@@ -170,7 +174,7 @@ event_grabber_get_keyboard (EventGrabber    *grab,
 }
 
 static int
-event_grabber_get_mouse (EventGrabber    *grab,
+cs_event_grabber_get_mouse (CsEventGrabber    *grab,
                    GdkWindow *window,
                    GdkScreen *screen,
                    gboolean   hide_cursor)
@@ -208,7 +212,7 @@ event_grabber_get_mouse (EventGrabber    *grab,
 }
 
 void
-event_grabber_keyboard_reset (EventGrabber *grab)
+cs_event_grabber_keyboard_reset (CsEventGrabber *grab)
 {
         if (grab->priv->keyboard_grab_window != NULL) {
                 g_object_remove_weak_pointer (G_OBJECT (grab->priv->keyboard_grab_window),
@@ -219,18 +223,18 @@ event_grabber_keyboard_reset (EventGrabber *grab)
 }
 
 static gboolean
-event_grabber_release_keyboard (EventGrabber *grab)
+cs_event_grabber_release_keyboard (CsEventGrabber *grab)
 {
         g_debug ("Ungrabbing keyboard");
         gdk_keyboard_ungrab (GDK_CURRENT_TIME);
 
-        event_grabber_keyboard_reset (grab);
+        cs_event_grabber_keyboard_reset (grab);
 
         return TRUE;
 }
 
 void
-event_grabber_mouse_reset (EventGrabber *grab)
+cs_event_grabber_mouse_reset (CsEventGrabber *grab)
 {
         if (grab->priv->mouse_grab_window != NULL) {
                 g_object_remove_weak_pointer (G_OBJECT (grab->priv->mouse_grab_window),
@@ -242,18 +246,18 @@ event_grabber_mouse_reset (EventGrabber *grab)
 }
 
 gboolean
-event_grabber_release_mouse (EventGrabber *grab)
+cs_event_grabber_release_mouse (CsEventGrabber *grab)
 {
         g_debug ("Ungrabbing pointer");
         gdk_pointer_ungrab (GDK_CURRENT_TIME);
 
-        event_grabber_mouse_reset (grab);
+        cs_event_grabber_mouse_reset (grab);
 
         return TRUE;
 }
 
 static gboolean
-event_grabber_move_mouse (EventGrabber    *grab,
+cs_event_grabber_move_mouse (CsEventGrabber    *grab,
                     GdkWindow *window,
                     GdkScreen *screen,
                     gboolean   hide_cursor)
@@ -266,7 +270,7 @@ event_grabber_move_mouse (EventGrabber    *grab,
         /* if the pointer is not grabbed and we have a
            mouse_grab_window defined then we lost the grab */
         if (! gdk_pointer_is_grabbed ()) {
-                event_grabber_mouse_reset (grab);
+                cs_event_grabber_mouse_reset (grab);
         }
 
         if (grab->priv->mouse_grab_window == window) {
@@ -298,19 +302,19 @@ event_grabber_move_mouse (EventGrabber    *grab,
         old_hide_cursor = grab->priv->mouse_hide_cursor;
 
         if (old_window) {
-                event_grabber_release_mouse (grab);
+                cs_event_grabber_release_mouse (grab);
         }
 
-        result = event_grabber_get_mouse (grab, window, screen, hide_cursor);
+        result = cs_event_grabber_get_mouse (grab, window, screen, hide_cursor);
 
         if (result != GDK_GRAB_SUCCESS) {
                 sleep (1);
-                result = event_grabber_get_mouse (grab, window, screen, hide_cursor);
+                result = cs_event_grabber_get_mouse (grab, window, screen, hide_cursor);
         }
 
         if ((result != GDK_GRAB_SUCCESS) && old_window) {
                 g_debug ("Could not grab mouse for new window.  Resuming previous grab.");
-                event_grabber_get_mouse (grab, old_window, old_screen, old_hide_cursor);
+                cs_event_grabber_get_mouse (grab, old_window, old_screen, old_hide_cursor);
         }
 
         g_debug ("*** releasing X server grab");
@@ -321,7 +325,7 @@ event_grabber_move_mouse (EventGrabber    *grab,
 }
 
 static gboolean
-event_grabber_move_keyboard (EventGrabber    *grab,
+cs_event_grabber_move_keyboard (CsEventGrabber    *grab,
                        GdkWindow *window,
                        GdkScreen *screen)
 {
@@ -352,19 +356,19 @@ event_grabber_move_keyboard (EventGrabber    *grab,
         old_screen = grab->priv->keyboard_grab_screen;
 
         if (old_window) {
-                event_grabber_release_keyboard (grab);
+                cs_event_grabber_release_keyboard (grab);
         }
 
-        result = event_grabber_get_keyboard (grab, window, screen);
+        result = cs_event_grabber_get_keyboard (grab, window, screen);
 
         if (result != GDK_GRAB_SUCCESS) {
                 sleep (1);
-                result = event_grabber_get_keyboard (grab, window, screen);
+                result = cs_event_grabber_get_keyboard (grab, window, screen);
         }
 
         if ((result != GDK_GRAB_SUCCESS) && old_window) {
                 g_debug ("Could not grab keyboard for new window.  Resuming previous grab.");
-                event_grabber_get_keyboard (grab, old_window, old_screen);
+                cs_event_grabber_get_keyboard (grab, old_window, old_screen);
         }
 
         g_debug ("*** releasing X server grab");
@@ -375,7 +379,7 @@ event_grabber_move_keyboard (EventGrabber    *grab,
 }
 
 static void
-event_grabber_nuke_focus (void)
+cs_event_grabber_nuke_focus (void)
 {
         Window focus = 0;
         int    rev = 0;
@@ -392,12 +396,12 @@ event_grabber_nuke_focus (void)
 }
 
 void
-event_grabber_release (EventGrabber *grab)
+cs_event_grabber_release (CsEventGrabber *grab)
 {
         g_debug ("Releasing all grabs");
 
-        event_grabber_release_mouse (grab);
-        event_grabber_release_keyboard (grab);
+        cs_event_grabber_release_mouse (grab);
+        cs_event_grabber_release_keyboard (grab);
 
         /* FIXME: is it right to enable this ? */
         xorg_lock_smasher_set_active (grab, TRUE);
@@ -410,7 +414,7 @@ event_grabber_release (EventGrabber *grab)
  * ask it to bounce out before we try locking the screen.
  */
 static void
-request_shell_exit_overview (EventGrabber *grab)
+request_shell_exit_overview (CsEventGrabber *grab)
 {
         GDBusMessage *message;
 
@@ -457,7 +461,7 @@ request_shell_exit_overview (EventGrabber *grab)
 }
 
 gboolean
-event_grabber_grab_window (EventGrabber    *grab,
+cs_event_grabber_grab_window (CsEventGrabber    *grab,
                      GdkWindow *window,
                      GdkScreen *screen,
                      gboolean   hide_cursor)
@@ -474,7 +478,7 @@ event_grabber_grab_window (EventGrabber    *grab,
  AGAIN:
 
         for (i = 0; i < retries; i++) {
-                kstatus = event_grabber_get_keyboard (grab, window, screen);
+                kstatus = cs_event_grabber_get_keyboard (grab, window, screen);
                 if (kstatus == GDK_GRAB_SUCCESS) {
                         break;
                 }
@@ -486,13 +490,13 @@ event_grabber_grab_window (EventGrabber    *grab,
         if (kstatus != GDK_GRAB_SUCCESS) {
                 if (!focus_fuckus) {
                         focus_fuckus = TRUE;
-                        event_grabber_nuke_focus ();
+                        cs_event_grabber_nuke_focus ();
                         goto AGAIN;
                 }
         }
 
         for (i = 0; i < retries; i++) {
-                mstatus = event_grabber_get_mouse (grab, window, screen, hide_cursor);
+                mstatus = cs_event_grabber_get_mouse (grab, window, screen, hide_cursor);
                 if (mstatus == GDK_GRAB_SUCCESS) {
                         break;
                 }
@@ -527,10 +531,10 @@ event_grabber_grab_window (EventGrabber    *grab,
 
                 /* Release keyboard or mouse which was grabbed. */
                 if (kstatus == GDK_GRAB_SUCCESS) {
-                        event_grabber_release_keyboard (grab);
+                        cs_event_grabber_release_keyboard (grab);
                 }
                 if (mstatus == GDK_GRAB_SUCCESS) {
-                        event_grabber_release_mouse (grab);
+                        cs_event_grabber_release_mouse (grab);
                 }
 
                 return FALSE;
@@ -542,7 +546,7 @@ event_grabber_grab_window (EventGrabber    *grab,
 
 /* this is used to grab the keyboard and mouse to the root */
 gboolean
-event_grabber_grab_root (EventGrabber  *grab,
+cs_event_grabber_grab_root (CsEventGrabber  *grab,
                    gboolean hide_cursor)
 {
         GdkDisplay *display;
@@ -556,14 +560,14 @@ event_grabber_grab_root (EventGrabber  *grab,
         gdk_display_get_pointer (display, &screen, NULL, NULL, NULL);
         root = gdk_screen_get_root_window (screen);
 
-        res = event_grabber_grab_window (grab, root, screen, hide_cursor);
+        res = cs_event_grabber_grab_window (grab, root, screen, hide_cursor);
 
         return res;
 }
 
 /* this is used to grab the keyboard and mouse to an offscreen window */
 gboolean
-event_grabber_grab_offscreen (EventGrabber *grab,
+cs_event_grabber_grab_offscreen (CsEventGrabber *grab,
                         gboolean hide_cursor)
 {
         GdkScreen *screen;
@@ -572,49 +576,47 @@ event_grabber_grab_offscreen (EventGrabber *grab,
         g_debug ("Grabbing an offscreen window");
 
         screen = gtk_invisible_get_screen (GTK_INVISIBLE (grab->priv->invisible));
-        res = event_grabber_grab_window (grab, gtk_widget_get_window (grab->priv->invisible), screen, hide_cursor);
+        res = cs_event_grabber_grab_window (grab, gtk_widget_get_window (grab->priv->invisible), screen, hide_cursor);
 
         return res;
 }
 
-/* This is similar to event_grabber_grab_window but doesn't fail */
+/* This is similar to cs_event_grabber_grab_window but doesn't fail */
 void
-event_grabber_move_to_window (EventGrabber    *grab,
+cs_event_grabber_move_to_window (CsEventGrabber    *grab,
                         GdkWindow *window,
                         GdkScreen *screen,
                         gboolean   hide_cursor)
 {
         gboolean result = FALSE;
 
-        g_return_if_fail (EVENT_IS_GRABBER (grab));
+        g_return_if_fail (CS_IS_EVENT_GRABBER (grab));
 
         xorg_lock_smasher_set_active (grab, FALSE);
 
         do {
-                result = event_grabber_move_keyboard (grab, window, screen);
+                result = cs_event_grabber_move_keyboard (grab, window, screen);
                 gdk_flush ();
         } while (!result);
 
         do {
-                result = event_grabber_move_mouse (grab, window, screen, hide_cursor);
+                result = cs_event_grabber_move_mouse (grab, window, screen, hide_cursor);
                 gdk_flush ();
         } while (!result);
 }
 
 static void
-event_grabber_class_init (EventGrabberClass *klass)
+cs_event_grabber_class_init (CsEventGrabberClass *klass)
 {
         GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
-        object_class->finalize = event_grabber_finalize;
-
-        g_type_class_add_private (klass, sizeof (EventGrabberPrivate));
+        object_class->finalize = cs_event_grabber_finalize;
 }
 
 static void
-event_grabber_init (EventGrabber *grab)
+cs_event_grabber_init (CsEventGrabber *grab)
 {
-        grab->priv = EVENT_GRABBER_GET_PRIVATE (grab);
+        grab->priv = cs_event_grabber_get_instance_private (grab);
 
         grab->priv->session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
 
@@ -624,14 +626,14 @@ event_grabber_init (EventGrabber *grab)
 }
 
 static void
-event_grabber_finalize (GObject *object)
+cs_event_grabber_finalize (GObject *object)
 {
-        EventGrabber *grab;
+        CsEventGrabber *grab;
 
         g_return_if_fail (object != NULL);
-        g_return_if_fail (EVENT_IS_GRABBER (object));
+        g_return_if_fail (CS_IS_EVENT_GRABBER (object));
 
-        grab = EVENT_GRABBER (object);
+        grab = CS_EVENT_GRABBER (object);
 
         g_object_unref (grab->priv->session_bus);
 
@@ -639,19 +641,19 @@ event_grabber_finalize (GObject *object)
 
         gtk_widget_destroy (grab->priv->invisible);
 
-        G_OBJECT_CLASS (event_grabber_parent_class)->finalize (object);
+        G_OBJECT_CLASS (cs_event_grabber_parent_class)->finalize (object);
 }
 
-EventGrabber *
-event_grabber_new (void)
+CsEventGrabber *
+cs_event_grabber_new (void)
 {
         if (grab_object) {
                 g_object_ref (grab_object);
         } else {
-                grab_object = g_object_new (EVENT_TYPE_GRABBER, NULL);
+                grab_object = g_object_new (CS_TYPE_EVENT_GRABBER, NULL);
                 g_object_add_weak_pointer (grab_object,
                                            (gpointer *) &grab_object);
         }
 
-        return EVENT_GRABBER (grab_object);
+        return CS_EVENT_GRABBER (grab_object);
 }

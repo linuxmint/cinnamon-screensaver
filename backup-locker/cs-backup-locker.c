@@ -13,7 +13,7 @@
 #include <gdk/gdkx.h>
 
 #include <libcscreensaver/cs-gdk-event-filter.h>
-#include "event-grabber.h"
+#include <libcscreensaver/cs-event-grabber.h>
 
 static gboolean debug = FALSE;
 static guint term_tty = 0;
@@ -30,7 +30,7 @@ struct _BackupWindow
     GtkWidget *info_box;
 
     CsGdkEventFilter *event_filter;
-    EventGrabber *grabber;
+    CsEventGrabber *grabber;
 
     gulong pretty_xid;
     gboolean should_grab;
@@ -124,7 +124,7 @@ static gboolean window_grab_broken (gpointer data);
 static void
 activate_backup_window (BackupWindow *window)
 {
-    event_grabber_move_to_window (window->grabber,
+    cs_event_grabber_move_to_window (window->grabber,
                                   gtk_widget_get_window (GTK_WIDGET (window)),
                                   gtk_widget_get_screen (GTK_WIDGET (window)),
                                   FALSE);
@@ -140,7 +140,7 @@ activate_backup_window (BackupWindow *window)
 static void
 backup_window_ungrab (BackupWindow *window)
 {
-    event_grabber_release (window->grabber);
+    cs_event_grabber_release (window->grabber);
 
     window->should_grab = FALSE;
 }
@@ -285,7 +285,7 @@ backup_window_init (BackupWindow *window)
     gtk_fixed_put (GTK_FIXED (window->fixed), window->info_box, 0, 0);
     gtk_widget_show (window->fixed);
 
-    window->grabber = event_grabber_new ();
+    window->grabber = cs_event_grabber_new ();
 }
 
 static void

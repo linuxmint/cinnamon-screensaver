@@ -136,6 +136,8 @@ cscreensaver_sources = [
 ]
 
 gir_sources = [
+  'cs-event-grabber.h',
+  'cs-event-grabber.c',
   'cs-gdk-event-filter.h',
   'cs-gdk-event-filter-x11.c',
   'cs-notification-watcher.h',

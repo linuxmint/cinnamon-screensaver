@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from gi.repository import Gdk, GObject, GLib, Gio
+from gi.repository import Gdk, GObject, GLib, Gio, CScreensaver
 import time
 import traceback
 import os
@@ -15,7 +15,6 @@ from stage import Stage
 import singletons
 from util import utils, settings, trackers
 from util.focusNavigator import FocusNavigator
-from util.grabHelper import GrabHelper
 
 class ScreensaverManager(GObject.Object):
     """
@@ -40,7 +39,7 @@ class ScreensaverManager(GObject.Object):
         status.Locked = False
         status.Awake = False
 
-        self.grab_helper = GrabHelper(self)
+        self.grab_helper = CScreensaver.EventGrabber()
         self.focus_nav = FocusNavigator()
 
         self.session_client = singletons.SessionClient
