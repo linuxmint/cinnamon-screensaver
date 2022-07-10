@@ -364,13 +364,16 @@ window_monitor_thread (GTask        *task,
     if (xprop_proc == NULL)
     {
         g_critical ("unable to monitor screensaver window: %s", error->message);
-        g_clear_error (&error);
     }
     else
     {
-        g_subprocess_wait (xprop_proc, cancellable, NULL);
+        g_subprocess_wait (xprop_proc, cancellable, &error);
+        if (error != NULL && error->code != G_IO_ERROR_CANCELLED)
+        {
+            g_critical ("problem with screensaver window monitor: %s", error->message);
+        }
     }
-
+    g_clear_error (&error);
     g_task_return_boolean (task, TRUE);
 }
 
@@ -412,10 +415,14 @@ setup_window_monitor (BackupWindow *window, gulong xid)
 static gboolean
 sigterm_received (gpointer data)
 {
+    GtkWidget *window = GTK_WIDGET (data);
+
+    g_clear_handle_id (&sigterm_src_id, g_source_remove);
     g_cancellable_cancel (window_monitor_cancellable);
+
+    gtk_widget_destroy (window);
     gtk_main_quit ();
 
-    sigterm_src_id = 0;
     return G_SOURCE_REMOVE;
 }
 
@@ -498,10 +505,6 @@ main (int    argc,
     }
 
     gtk_main ();
-
-    g_clear_handle_id (&sigterm_src_id, g_source_remove);
-    g_cancellable_cancel (window_monitor_cancellable);
-    gtk_widget_destroy (window);
 
     g_debug ("cs-backup-locker finished");
 
