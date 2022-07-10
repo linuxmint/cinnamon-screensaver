@@ -135,7 +135,7 @@ class UnlockDialog(BaseWindow):
 
         self.account_client = singletons.AccountsServiceClient
         if self.account_client.is_loaded:
-            self.on_account_client_loaded(self.account_client)
+            self.set_user_details()
         else:
             trackers.con_tracker_get().connect(self.account_client,
                                                "account-loaded",
@@ -259,12 +259,19 @@ class UnlockDialog(BaseWindow):
         """
         Handler for the AccountsService - requests the user real name and .face image.
         """
-        if client.get_real_name() != None:
-            self.real_name = client.get_real_name()
+        trackers.con_tracker_get().disconnect(self.account_client,
+                                           "account-loaded",
+                                           self.on_account_client_loaded)
+
+        self.set_user_details()
+
+    def set_user_details(self):
+        if self.account_client.get_real_name() != None:
+            self.real_name = self.account_client.get_real_name()
             self.update_realname_label()
 
-        if client.get_face_path() != None:
-            self.face_image.set_from_path(client.get_face_path())
+        if self.account_client.get_face_path() != None:
+            self.face_image.set_from_path(self.account_client.get_face_path())
             self.face_image.show()
 
     def on_password_entry_text_changed(self, editable):
