@@ -283,7 +283,7 @@ backup_window_init (BackupWindow *window)
     gtk_fixed_put (GTK_FIXED (window->fixed), window->info_box, 0, 0);
     gtk_widget_show (window->fixed);
 
-    window->grabber = cs_event_grabber_new ();
+    window->grabber = cs_event_grabber_new (debug);
 }
 
 static void
