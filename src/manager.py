@@ -39,7 +39,6 @@ class ScreensaverManager(GObject.Object):
         status.Locked = False
         status.Awake = False
 
-        self.grab_helper = CScreensaver.EventGrabber()
         self.focus_nav = FocusNavigator()
 
         self.session_client = singletons.SessionClient
@@ -109,6 +108,8 @@ class ScreensaverManager(GObject.Object):
             - destroying the screensaver stage.
             - releasing our keyboard and mouse grabs.
         """
+        self.grab_helper = CScreensaver.EventGrabber.new(status.Debug)
+
         if active:
             if not status.Active:
                 self.cinnamon_client.exit_expo_and_overview()
