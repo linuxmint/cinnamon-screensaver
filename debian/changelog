@@ -1,3 +1,19 @@
+cinnamon-screensaver (5.4.1) vanessa; urgency=medium
+
+  [ Michael Webster ]
+  * Improve signal handler tracking.
+  * grabs: Use the original (cs-)event-grabber for everything, not just the backup locker.
+  * cs-auth-pam.c: Use GMainloop instead of Gtk.
+  * Cleanup, fix some build warnings.
+  * unlock: Don't listen to the AccountsService is-loaded after startup.
+  * backup locker: Clean up quit sequence.
+  * Rework screensaver refreshing during suspend, lock, user-switch activities.
+  * authentication: improve interaction between the main process and the pam helper.
+  * Use xdo to feed escape keycodes into the focused window prior to attempting mouse and keyboard grabs.
+  * event-grabber: Better debugging.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 15 Jul 2022 15:09:43 +0200
+
 cinnamon-screensaver (5.4.0) vanessa; urgency=medium
 
   * CI: Update targets
