@@ -48,9 +48,6 @@ m = cc.find_library('m')
 xdo = dependency('libxdo', required: false)
 if not xdo.found()
   xdo = cc.find_library('xdo')
-    if not xdo.found()
-      error('could not find usable xdo library (libxdo')
-    endif
 endif
 
 dbus_services_dir = dependency('dbus-1').get_pkgconfig_variable('session_bus_services_dir', define_variable: ['datadir', datadir])
