@@ -44,7 +44,15 @@ x11 = dependency('x11')
 xext = dependency('xext')
 xrandr = dependency('xrandr', required: false)
 m = cc.find_library('m')
-xdo = cc.find_library('xdo')
+
+xdo = dependency('libxdo', required: false)
+if not xdo.found()
+  xdo = cc.find_library('xdo')
+    if not xdo.found()
+      error('could not find usable xdo library (libxdo')
+    endif
+endif
+
 dbus_services_dir = dependency('dbus-1').get_pkgconfig_variable('session_bus_services_dir', define_variable: ['datadir', datadir])
 
 # check for symbols and headers
