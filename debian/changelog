@@ -1,3 +1,14 @@
+cinnamon-screensaver (5.4.2) vanessa; urgency=medium
+
+  [ Michael Webster ]
+  * build: Try to find libxdo with pkgconfig, and use find_library() only if that fails.
+  * Don't try to throw an error if libxdo can't be found - meson will already do this if required == true.
+
+  [ Bobby Rong ]
+  * libcscreensaver: add missing gio-unix-2.0 dependency (#411)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 01 Aug 2022 16:07:03 +0200
+
 cinnamon-screensaver (5.4.1) vanessa; urgency=medium
 
   [ Michael Webster ]

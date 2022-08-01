@@ -1,4 +1,4 @@
-project('cinnamon-screensaver', 'c', version: '5.4.1', meson_version: '>=0.46.0')
+project('cinnamon-screensaver', 'c', version: '5.4.2', meson_version: '>=0.46.0')
 
 cc = meson.get_compiler('c')
 
