@@ -71,6 +71,7 @@ class Stage(Gtk.Window):
         self.audio_panel = None
         self.info_panel = None
         self.osk = None
+        self.set_visual(Gdk.Screen.get_default().get_rgba_visual())
 
         self.stage_refresh_id = 0
 
