@@ -59,10 +59,12 @@ class ScreensaverManager(GObject.Object):
     def set_locked(self, locked):
         if locked:
             status.Locked = True
-            self.spawn_fallback_window()
+            if status.UseFallback:
+                self.spawn_fallback_window()
         else:
             status.Locked = False
-            self.kill_fallback_window()
+            if status.UseFallback:
+                self.kill_fallback_window()
 
     def lock(self, msg=""):
         """
@@ -375,7 +377,7 @@ class ScreensaverManager(GObject.Object):
 
         self.grab_stage()
 
-        if status.Locked:
+        if status.Locked and status.UseFallback:
             self.kill_fallback_window()
             self.spawn_fallback_window()
 
@@ -393,7 +395,8 @@ class ScreensaverManager(GObject.Object):
         if status.Debug:
             print("manager: queuing stage refresh")
 
-        self.kill_fallback_window()
+        if status.UseFallback:
+            self.kill_fallback_window()
         self.cancel_unlocking()
         self.stage.queue_refresh_stage()
 

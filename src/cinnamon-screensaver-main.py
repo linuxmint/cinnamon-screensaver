@@ -54,7 +54,9 @@ class Main(Gtk.Application):
                             help='Display the current version')
         parser.add_argument('--hold', dest='hold', action='store_true',
                             help="Keep the process running." \
-                                 "Normally cinnamon-screensaver will exit after being idle for 10 seconds.")
+                                 "Normally cinnamon-screensaver will exit after being idle for 30 seconds.")
+        parser.add_argument('--no-fallback', dest='no_fallback', action='store_true',
+                            help="Don't spawn a fallback window when locking the screen.")
         args = parser.parse_args()
 
         if settings.get_custom_screensaver() != '':
@@ -68,7 +70,7 @@ class Main(Gtk.Application):
         status.LockEnabled = not args.lock_disabled
         status.Debug = args.debug
         status.InteractiveDebug = args.interactive
-
+        status.UseFallback = not args.no_fallback
         # The inactivity-timeout will be ignored until there's been an initial hold. Simply
         # starting the app and letting it idle will end up with it exiting after 10s no matter
         # what the timeout.
