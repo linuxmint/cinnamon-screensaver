@@ -13,6 +13,7 @@
 #ifdef HAVE_SHAPE_EXT
 #include <X11/extensions/shape.h>
 #endif
+#include <X11/Xatom.h>
 #include <gtk/gtkx.h>
 #include <string.h>
 
@@ -24,12 +25,6 @@ enum {
 static guint signals [LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (CsGdkEventFilter, cs_gdk_event_filter, G_TYPE_OBJECT)
-
-static gboolean
-we_are_fallback_window (CsGdkEventFilter *filter)
-{
-    return filter->pretty_xid > 0;
-}
 
 static gboolean
 ignore_fcitx_input_window (CsGdkEventFilter *filter, Window xid)
@@ -110,43 +105,34 @@ unshape_window (CsGdkEventFilter *filter)
 }
 
 static void
-raise_managed_window (CsGdkEventFilter *filter)
+restack (CsGdkEventFilter *filter, Window event_window)
 {
-    GdkWindow *win;
+    gdk_x11_display_error_trap_push (filter->display);
 
-    g_return_if_fail (CS_IS_GDK_EVENT_FILTER (filter));
-
-    win = gtk_widget_get_window (GTK_WIDGET (filter->managed_window));
-
-    gdk_window_raise (win);
-}
-
-static gboolean
-x11_window_is_ours (CsGdkEventFilter *filter, Window window)
-{
-    GdkWindow *gwindow;
-    gboolean   ret;
-
-    ret = FALSE;
-
-    gwindow = gdk_x11_window_lookup_for_display (filter->display, window);
-    if (gwindow && (window != GDK_ROOT_WINDOW ())) {
-            ret = TRUE;
-    }
-
-    return ret;
-}
-
-static gboolean
-is_pretty_window (CsGdkEventFilter *filter,
-                  Window            window)
-{
-    if (filter->pretty_xid == 0)
+    if (filter->we_are_backup_window)
     {
-        return FALSE;
+        if (event_window != filter->pretty_xid)
+        {
+            XRaiseWindow(GDK_DISPLAY_XDISPLAY (filter->display), filter->my_xid);
+        }
+        else
+        {
+            Window windows[] = {
+                filter->pretty_xid,
+                filter->my_xid
+            };
+
+            XRestackWindows (GDK_DISPLAY_XDISPLAY (filter->display), windows, 2);
+        }
+    }
+    else
+    {
+        XRaiseWindow(GDK_DISPLAY_XDISPLAY (filter->display), filter->my_xid);
     }
 
-    return window == filter->pretty_xid;
+    XFlush (GDK_DISPLAY_XDISPLAY (filter->display));
+
+    gdk_x11_display_error_trap_pop_ignored (filter->display);
 }
 
 static GdkFilterReturn
@@ -163,45 +149,73 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
           {
             XMapEvent *xme = &ev->xmap;
 
-            if (ignore_fcitx_input_window (filter, xme->window) && we_are_fallback_window (filter))
+            if (ignore_fcitx_input_window (filter, xme->window) && filter->we_are_backup_window)
+            {
+                g_debug ("Ignoring MapNotify for fcitx window (we're the backup-locker).");
+                break;
+            }
+
+            // Ignore my own events.
+            if (xme->window == filter->my_xid)
             {
                 break;
             }
 
-            if (! x11_window_is_ours (filter, xme->window) && !is_pretty_window (filter, xme->window)) {
-                raise_managed_window (filter);
-            }
+            g_debug ("MapNotify from %s window (%lu), raising ourselves. %s",
+                      xme->window == filter->pretty_xid ? "Screensaver" : xme->window == filter->my_xid ? "Backup locker" : "unknown",
+                      xme->window,
+                      filter->we_are_backup_window ? "(we're the backup-locker)" : "");
 
+            restack (filter, xme->window);
             break;
           }
         case ConfigureNotify:
           {
             XConfigureEvent *xce = &ev->xconfigure;
 
-            if (ignore_fcitx_input_window (filter, xce->window) && we_are_fallback_window (filter))
+            // If the reported window is the root window, and we're the backup window (we have a pretty
+            // xid) then signal to resize to the root window (screen).
+            if (xce->window == GDK_ROOT_WINDOW ())
+            {
+                // Screen size may have changed, tell the fallback
+                g_debug ("ConfigureNotify from root window (%lu), screen size may have changed. %s",
+                             xce->window,
+                             filter->we_are_backup_window ? "(we're the backup-locker)" : "");
+
+                // The screensaver doesn't need to know, it will get notified by CsScreen.
+                if (filter->we_are_backup_window)
+                {
+                    g_signal_emit (filter, signals[XSCREEN_SIZE], 0);
+                }
+                break;
+            }
+
+            if (ignore_fcitx_input_window (filter, xce->window) && filter->we_are_backup_window)
+            {
+                g_debug ("Ignoring ConfigureNotify for fcitx window (we're the backup-locker).");
+                break;
+            }
+
+            // Ignore my own events
+            if (xce->window == filter->my_xid)
             {
                 break;
             }
 
-            if (! x11_window_is_ours (filter, xce->window) && !is_pretty_window (filter, xce->window)) {
-                raise_managed_window (filter);
-            }
+            g_debug ("ConfigureNotify from %s window (%lu), raising ourselves. %s",
+                         xce->window == filter->pretty_xid ? "Screensaver" : xce->window == filter->my_xid ? "BackupLocker" : "unknown",
+                         xce->window,
+                         filter->we_are_backup_window ? "(we're the backup-locker)" : "");
 
-            // If the reported window is the root window, and we're the backup window (we have a pretty
-            // xid) then signal to resize to the root window (screen).
-            // if (xce->window == GDK_ROOT_WINDOW () && filter->pretty_xid > 0)
-            if (xce->window == GDK_ROOT_WINDOW ())
-            {
-                // Screen size may have changed, tell the fallback
-                g_signal_emit (filter, signals[XSCREEN_SIZE], 0);
-            }
-
+            restack (filter, xce->window);
             break;
           }
         default:
           {
 #ifdef HAVE_SHAPE_EXT
             if (ev->xany.type == (filter->shape_event_base + ShapeNotify)) {
+                g_debug ("ShapeNotify event. %s",
+                             filter->we_are_backup_window ? "(we're the backup-locker)" : "");
                 unshape_window (filter);
             }
 #endif
@@ -249,6 +263,24 @@ select_shape_events (CsGdkEventFilter *filter)
 #endif
 }
 
+static void
+disable_unredirection (CsGdkEventFilter *filter)
+{
+    GdkWindow *gdk_window;
+    guchar _NET_WM_BYPASS_COMPOSITOR_HINT_OFF = 2;
+
+    gdk_window = gtk_widget_get_window (filter->managed_window);
+
+    gdk_x11_display_error_trap_push (filter->display);
+
+    XChangeProperty (GDK_DISPLAY_XDISPLAY (filter->display), GDK_WINDOW_XID (gdk_window),
+                     XInternAtom (GDK_DISPLAY_XDISPLAY (filter->display), "_NET_WM_BYPASS_COMPOSITOR", TRUE),
+                     XA_CARDINAL, 32, PropModeReplace, &_NET_WM_BYPASS_COMPOSITOR_HINT_OFF, 1);
+    XFlush (GDK_DISPLAY_XDISPLAY (filter->display));
+
+    gdk_x11_display_error_trap_pop_ignored (filter->display);
+}
+
 static GdkFilterReturn
 xevent_filter (GdkXEvent *xevent,
                GdkEvent  *event,
@@ -263,6 +295,7 @@ cs_gdk_event_filter_init (CsGdkEventFilter *filter)
     filter->shape_event_base = 0;
     filter->managed_window = NULL;
     filter->pretty_xid = 0;
+    filter->my_xid = 0;
 }
 
 static void
@@ -296,13 +329,50 @@ cs_gdk_event_filter_class_init (CsGdkEventFilterClass *klass)
                                               G_TYPE_NONE, 0);
 }
 
+static void
+muted_log_handler (const char     *log_domain,
+                   GLogLevelFlags  log_level,
+                   const char     *message,
+                   gpointer        data)
+{
+  /* Intentionally empty to discard message */
+}
+
 void
-cs_gdk_event_filter_start (CsGdkEventFilter *filter)
+cs_gdk_event_filter_start (CsGdkEventFilter *filter,
+                           gboolean          fractional_scaling,
+                           gboolean          debug)
 {
     select_popup_events (filter);
     select_shape_events (filter);
 
+    if (fractional_scaling)
+    {
+        disable_unredirection (filter);
+    }
+
+    if (debug)
+    {
+        g_log_set_handler ("Cvc", G_LOG_LEVEL_DEBUG,
+                           muted_log_handler, NULL);
+        g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+    }
+
+    filter->my_xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (filter->managed_window)));
+
+    g_debug ("Starting event filter for %s - 0x%lx", 
+                 filter->we_are_backup_window ? "backup-locker." : "screensaver.",
+                 filter->my_xid);
     gdk_window_add_filter (NULL, (GdkFilterFunc) xevent_filter, filter);
+
+    if (filter->we_are_backup_window)
+    {
+        restack (filter, filter->pretty_xid);
+    }
+    else
+    {
+        restack (filter, 0);
+    }
 }
 
 void
@@ -324,6 +394,13 @@ cs_gdk_event_filter_new (GtkWidget *managed_window,
     filter->managed_window = g_object_ref (managed_window);
     filter->pretty_xid = pretty_xid;
 
+    filter->we_are_backup_window = filter->pretty_xid != 0;
+
     return filter;
 }
 
+void
+cs_gdk_event_filter_restack (CsGdkEventFilter *filter)
+{
+    restack (filter, 0);
+}

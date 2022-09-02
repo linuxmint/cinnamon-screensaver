@@ -411,6 +411,33 @@ reload_screen_info (CsScreen *screen)
     screen->rect.height = gdk_screen_get_height (screen->gdk_screen);
 }
 
+static gboolean
+is_full_change (CsScreen *screen)
+{
+    // Check to see if the union of monitor rects is the same size as the screen
+
+    GdkRectangle total_monitors;
+    gint i;
+    gboolean same;
+
+    for (i = 0; i < screen->n_monitor_infos; i++)
+    {
+        CsMonitorInfo info = screen->monitor_infos[i];
+
+        gdk_rectangle_union (&total_monitors, &info.rect, &total_monitors);
+    }
+
+    same = gdk_rectangle_equal (&total_monitors, &screen->rect);
+
+    g_printerr ("Screen rect (%d,%d-%dx%d) and %d monitor rects (%d,%d-%dx%d) %s\n",
+                screen->rect.x, screen->rect.y, screen->rect.width, screen->rect.height,
+                screen->n_monitor_infos,
+                total_monitors.x, total_monitors.y, total_monitors.width, total_monitors.height,
+                same ? "add up, sending change notification" : "DO NOT add up, skipping change notification");
+
+    return same;
+}
+
 static void
 on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
@@ -427,7 +454,10 @@ on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
     g_free (old_monitor_infos);
     reload_screen_info (screen);
 
-    g_signal_emit (screen, signals[SCREEN_MONITORS_CHANGED], 0);
+    if (is_full_change (screen))
+    {
+        g_signal_emit (screen, signals[SCREEN_MONITORS_CHANGED], 0);
+    }
 }
 
 static void
@@ -446,7 +476,10 @@ on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
     g_free (old_monitor_infos);
     reload_screen_info (screen);
 
-    g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
+    if (is_full_change (screen))
+    {
+        g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
+    }
 }
 
 static void

@@ -23,6 +23,7 @@ from dbusdepot.uPowerClient import UPowerClient as _UPowerClient
 from dbusdepot.keybindingHandlerClient import KeybindingHandlerClient as _KeybindingHandlerClient
 from dbusdepot.mediaPlayerWatcher import MediaPlayerWatcher as _MediaPlayerWatcher
 from dbusdepot.accountsServiceClient import AccountsServiceClient as _AccountsServiceClient
+from dbusdepot.muffinClient import MuffinClient as _MuffinClient
 
 CinnamonClient = _CinnamonClient()
 SessionClient = _SessionClient()
@@ -51,6 +52,10 @@ settings.bg_settings.connect("changed", lambda s,k: Backgrounds.load_from_prefer
 gi.require_version('XApp', '1.0')
 from gi.repository import XApp
 KeyboardLayoutController = XApp.KbdLayoutController()
+
+# This sets up synchronously, as we need to know the fractional scaling state before
+# setting up the screensaver.
+MuffinClient = _MuffinClient()
 
 # The login client is a bit different - we can have either logind or ConsoleKit.
 # So, we have to do a bit more work to determine which one we're going to use.

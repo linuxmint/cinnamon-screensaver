@@ -59,8 +59,9 @@ class Stage(Gtk.Window):
         self.destroying = False
 
         self.manager = manager
-        status.screen = CScreensaver.Screen.new(status.Debug)
         self.away_message = away_message
+
+        self.activate_callback = None
 
         self.monitors = []
         self.last_focus_monitor = -1
@@ -71,8 +72,6 @@ class Stage(Gtk.Window):
         self.audio_panel = None
         self.info_panel = None
         self.osk = None
-
-        self.stage_refresh_id = 0
 
         self.floaters = []
 
@@ -196,35 +195,6 @@ class Stage(Gtk.Window):
 
         return False
 
-    def queue_refresh_stage(self):
-        """
-        Queues a complete refresh of the stage, resizing the screen if necessary,
-        reconstructing the individual monitor objects, etc...
-        """
-        if self.stage_refresh_id > 0:
-            GObject.source_remove(self.stage_refresh_id)
-            self.stage_refresh_id = 0
-
-        self.stage_refresh_id = GLib.idle_add(self._update_full_stage_on_idle, priority=GLib.PRIORITY_DEFAULT)
-
-    def _update_full_stage_on_idle(self, data=None):
-        self.stage_refresh_id = 0
-        self._refresh()
-
-        return False
-
-    def _refresh(self):
-        Gdk.flush()
-        if status.Debug:
-            print("Stage: refreshing")
-
-        self.update_geometry()
-        self.move_onscreen()
-        self.update_monitors()
-        self.overlay.queue_resize()
-
-        self.manager.stage_refreshed()
-
     def activate(self, callback):
         """
         This is the primary way of making the Stage visible.
@@ -234,7 +204,10 @@ class Stage(Gtk.Window):
         self.move_onscreen()
         self.show()
 
-        callback()
+        if self.get_realized():
+            callback()
+        else:
+            self.activate_callback = callback;
 
     def deactivate(self, callback):
         """
@@ -256,11 +229,14 @@ class Stage(Gtk.Window):
 
         self.setup_children()
 
-        self.gdk_filter.start()
+        self.gdk_filter.start(singletons.MuffinClient.get_using_fractional_scaling(), status.Debug)
 
         trackers.con_tracker_get().disconnect(self.overlay,
                                               "realize",
                                               self.on_realized)
+
+        if self.activate_callback is not None:
+            self.activate_callback()
 
     def move_onscreen(self):
         w = self.get_window()
@@ -446,7 +422,6 @@ class Stage(Gtk.Window):
                                               self.position_overlay_child)
 
         self.destroy()
-        status.screen = None
 
     def setup_monitors(self):
         """

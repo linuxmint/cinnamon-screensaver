@@ -1,0 +1,21 @@
+<!DOCTYPE node PUBLIC
+'-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
+'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+  <!--
+      org.cinnamon.Muffin.DisplayConfig:
+      @short_description: display configuration interface
+
+      see https://github.com/linuxmint/muffin/blob/master/src/org.cinnamon.Muffin.DisplayConfig.xml
+  -->
+
+  <interface name="org.cinnamon.Muffin.DisplayConfig">
+    <signal name="MonitorsChanged" />
+    <method name="GetCurrentState">
+      <arg name="serial" direction="out" type="u" />
+      <arg name="monitors" direction="out" type="a((ssss)a(siiddada{sv})a{sv})" />
+      <arg name="logical_monitors" direction="out" type="a(iiduba(ssss)a{sv})" />
+      <arg name="properties" direction="out" type="a{sv}" />
+    </method>
+  </interface>
+</node>
