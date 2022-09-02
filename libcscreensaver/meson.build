@@ -80,6 +80,13 @@ dbus_files = [
     ],
     'org.mpris.MediaPlayer2.Player'
   ],
+  [
+    'cs-muffin-displayconfig-proxy',
+    [
+      ['org.cinnamon.Muffin.DisplayConfig', 'org.gtk.GDBus.C.Name', 'MuffinDisplayConfig']
+    ],
+    'org.cinnamon.Muffin.DisplayConfig'
+  ],
 ]
 
 dbus_built = []

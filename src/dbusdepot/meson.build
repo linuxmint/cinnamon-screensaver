@@ -8,6 +8,7 @@ app_py = [
   'logindClient.py',
   'loginInterface.py',
   'mediaPlayerWatcher.py',
+  'muffinClient.py',
   'nameBlocker.py',
   'sessionClient.py',
   'uPowerClient.py'

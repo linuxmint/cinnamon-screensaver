@@ -20,9 +20,11 @@ typedef struct
 
     GdkDisplay    *display;
     GtkWidget     *managed_window;
+    gulong         my_xid;
 
     /* Using XID/Window here would complicate introspection. */
     gulong         pretty_xid;
+    gboolean       we_are_backup_window;
 
     int            shape_event_base;
 } CsGdkEventFilter;
@@ -36,9 +38,11 @@ GType                        cs_gdk_event_filter_get_type           (void);
 
 CsGdkEventFilter            *cs_gdk_event_filter_new (GtkWidget *managed_window, gulong pretty_xid);
 
-void                         cs_gdk_event_filter_start (CsGdkEventFilter *filter);
+void                         cs_gdk_event_filter_start (CsGdkEventFilter *filter, gboolean fractional_scaling, gboolean debug);
 
 void                         cs_gdk_event_filter_stop  (CsGdkEventFilter *filter);
+
+void                         cs_gdk_event_filter_restack (CsGdkEventFilter *filter);
 
 G_END_DECLS
 

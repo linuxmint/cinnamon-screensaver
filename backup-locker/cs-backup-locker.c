@@ -82,17 +82,11 @@ root_window_size_changed (CsGdkEventFilter *filter,
     w = DisplayWidth (xdisplay, screen_num);
     h = DisplayHeight (xdisplay, screen_num);
 
-    if (debug)
-    {
-        w /= 2;
-        h /= 2;
-    }
-
     gdk_window_move_resize (gtk_widget_get_window (GTK_WIDGET (window)), 
                             0, 0, w, h);
     position_info_box (window);
 
-    gtk_widget_queue_draw (GTK_WIDGET (window));
+    gtk_widget_queue_resize (GTK_WIDGET (window));
 }
 
 static gboolean
@@ -114,8 +108,6 @@ backup_window_show (GtkWidget *widget)
     if (GTK_WIDGET_CLASS (backup_window_parent_class)->show) {
         GTK_WIDGET_CLASS (backup_window_parent_class)->show (widget);
     }
-
-    cs_gdk_event_filter_start (BACKUP_WINDOW (widget)->event_filter);
 }
 
 static void window_grab_broken (gpointer data);
@@ -123,6 +115,7 @@ static void window_grab_broken (gpointer data);
 static void
 activate_backup_window (BackupWindow *window)
 {
+    g_debug ("Grabbing input");
     cs_event_grabber_move_to_window (window->grabber,
                                   gtk_widget_get_window (GTK_WIDGET (window)),
                                   gtk_widget_get_screen (GTK_WIDGET (window)),
@@ -153,6 +146,7 @@ window_grab_broken (gpointer data)
 
     if (window->should_grab)
     {
+        g_debug ("Grab broken, retrying");
         activate_backup_window (window);
     }
 }
@@ -194,7 +188,7 @@ backup_window_realize (GtkWidget *widget)
 
     root_window_size_changed (BACKUP_WINDOW (widget)->event_filter, (gpointer) widget);
 
-    gtk_window_set_keep_above (GTK_WINDOW (widget), TRUE);
+    cs_gdk_event_filter_start (BACKUP_WINDOW (widget)->event_filter, FALSE, debug);
 }
 
 static void
@@ -207,7 +201,6 @@ backup_window_init (BackupWindow *window)
     gtk_window_set_decorated (GTK_WINDOW (window), FALSE);
     gtk_window_set_skip_taskbar_hint (GTK_WINDOW (window), TRUE);
     gtk_window_set_skip_pager_hint (GTK_WINDOW (window), TRUE);
-    // gtk_window_fullscreen (GTK_WINDOW (window));
 
     gtk_widget_set_events (GTK_WIDGET (window),
                            gtk_widget_get_events (GTK_WIDGET (window))
@@ -367,6 +360,7 @@ window_monitor_thread (GTask        *task,
     }
     else
     {
+        g_debug ("Monitoring screensaver window (%#lx)", xid);
         g_subprocess_wait (xprop_proc, cancellable, &error);
         if (error != NULL && error->code != G_IO_ERROR_CANCELLED)
         {
@@ -390,6 +384,7 @@ screensaver_window_gone (GObject      *source,
     // The main process will kill us, or the user will have to.  Either way, grab everything.
     if (!g_cancellable_is_cancelled (g_task_get_cancellable (G_TASK (result))))
     {
+        g_debug ("Screensaver window gone");
         activate_backup_window (window);
     }
 
@@ -415,6 +410,8 @@ setup_window_monitor (BackupWindow *window, gulong xid)
 static gboolean
 sigterm_received (gpointer data)
 {
+    g_debug("SIGTERM received, cleaning up.");
+
     GtkWidget *window = GTK_WIDGET (data);
 
     g_clear_handle_id (&sigterm_src_id, g_source_remove);
@@ -433,7 +430,12 @@ main (int    argc,
     GtkWidget *window;
     GError *error;
     static gboolean     show_version = FALSE;
-    static GOptionEntry entries []   = {
+    gchar *xid_str, *term_tty_str, *session_tty_str;
+
+    const GOptionEntry entries []   = {
+        { "xid", 0, 0, G_OPTION_ARG_STRING, &xid_str, "Window ID to monitor", NULL },
+        { "term", 0, 0, G_OPTION_ARG_STRING, &term_tty_str, "Terminal tty number", NULL },
+        { "session", 0, 0, G_OPTION_ARG_STRING, &session_tty_str, "Session tty number", NULL },
         { "version", 0, 0, G_OPTION_ARG_NONE, &show_version, N_("Version of this application"), NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug, N_("Enable debugging code"), NULL },
         { NULL }
@@ -463,28 +465,13 @@ main (int    argc,
         exit (1);
     }
 
-    if (!debug && argc < 4)
-    {
-        g_warning ("usage: cs-backup-locker ss-xid session_tty term_tty");
-        exit (1);
-    }
+    g_debug ("backup-locker: initializing");
 
-    // sleep(1);
+    gulong xid = term_tty = session_tty = 0;
 
-    g_debug ("initializing cs-backup-locker");
-
-    gulong xid = 0;
-
-    if (debug)
-    {
-        xid = 9999;
-    }
-    else
-    {
-        xid = strtoul (argv[1], NULL, 0);
-        term_tty = strtoul (argv[2], NULL, 0);
-        session_tty = strtoul (argv[3], NULL, 0);
-    }
+    xid = strtoul (xid_str, NULL, 0);
+    term_tty = strtoul (term_tty_str, NULL, 0);
+    session_tty = strtoul (session_tty_str, NULL, 0);
 
     if (xid == 0)
     {
@@ -499,14 +486,9 @@ main (int    argc,
 
     gtk_widget_show (window);
 
-    if (debug)
-    {
-        g_timeout_add_seconds (10, (GSourceFunc) gtk_main_quit, NULL);
-    }
-
     gtk_main ();
 
-    g_debug ("cs-backup-locker finished");
+    g_debug ("backup-locker: exit");
 
     return 0;
 }
