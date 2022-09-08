@@ -169,7 +169,7 @@ cs_event_grabber_get_keyboard (CsEventGrabber    *grab,
         g_return_val_if_fail (window != NULL, FALSE);
         g_return_val_if_fail (screen != NULL, FALSE);
 
-        DEBUG ("Grabbing keyboard widget=%X\n", (guint32) GDK_WINDOW_XID (window));
+        DEBUG ("Grabbing keyboard widget=0x%lx\n", (gulong) GDK_WINDOW_XID (window));
         status = gdk_keyboard_grab (window, FALSE, GDK_CURRENT_TIME);
 
         if (status == GDK_GRAB_SUCCESS) {
@@ -204,7 +204,7 @@ cs_event_grabber_get_mouse (CsEventGrabber    *grab,
 
         cursor = gdk_cursor_new (GDK_BLANK_CURSOR);
 
-        DEBUG ("Grabbing mouse widget=%X\n", (guint32) GDK_WINDOW_XID (window));
+        DEBUG ("Grabbing mouse widget=0x%lx\n", (gulong) GDK_WINDOW_XID (window));
         status = gdk_pointer_grab (window, TRUE, 0, NULL,
                                    (hide_cursor ? cursor : NULL),
                                    GDK_CURRENT_TIME);
@@ -291,8 +291,8 @@ cs_event_grabber_move_mouse (CsEventGrabber    *grab,
         }
 
         if (grab->priv->mouse_grab_window == window) {
-                DEBUG ("Window %X is already grabbed, skipping\n",
-                          (guint32) GDK_WINDOW_XID (grab->priv->mouse_grab_window));
+                DEBUG ("Window 0x%lx is already grabbed, skipping\n",
+                          (gulong) GDK_WINDOW_XID (grab->priv->mouse_grab_window));
                 return TRUE;
         }
 
@@ -302,12 +302,12 @@ cs_event_grabber_move_mouse (CsEventGrabber    *grab,
         return TRUE;
 #else
         if (grab->priv->mouse_grab_window) {
-                DEBUG ("Moving pointer grab from %X to %X\n",
-                          (guint32) GDK_WINDOW_XID (grab->priv->mouse_grab_window),
-                          (guint32) GDK_WINDOW_XID (window));
+                DEBUG ("Moving pointer grab from 0x%lx to 0x%lx\n",
+                          (gulong) GDK_WINDOW_XID (grab->priv->mouse_grab_window),
+                          (gulong) GDK_WINDOW_XID (window));
         } else {
-                DEBUG ("Getting pointer grab on %X\n",
-                          (guint32) GDK_WINDOW_XID (window));
+                DEBUG ("Getting pointer grab on 0x%lx\n",
+                          (gulong) GDK_WINDOW_XID (window));
         }
 #endif
 
@@ -351,18 +351,18 @@ cs_event_grabber_move_keyboard (CsEventGrabber    *grab,
         GdkScreen *old_screen;
 
         if (grab->priv->keyboard_grab_window == window) {
-                DEBUG ("Window %X is already grabbed, skipping\n",
-                          (guint32) GDK_WINDOW_XID (grab->priv->keyboard_grab_window));
+                DEBUG ("Window 0x%lx is already grabbed, skipping\n",
+                          (gulong) GDK_WINDOW_XID (grab->priv->keyboard_grab_window));
                 return TRUE;
         }
 
         if (grab->priv->keyboard_grab_window != NULL) {
-                DEBUG ("Moving keyboard grab from %X to %X\n",
-                          (guint32) GDK_WINDOW_XID (grab->priv->keyboard_grab_window),
-                          (guint32) GDK_WINDOW_XID (window));
+                DEBUG ("Moving keyboard grab from 0x%lx to 0x%lx\n",
+                          (gulong) GDK_WINDOW_XID (grab->priv->keyboard_grab_window),
+                          (gulong) GDK_WINDOW_XID (window));
         } else {
-                DEBUG ("Getting keyboard grab on %X\n",
-                          (guint32) GDK_WINDOW_XID (window));
+                DEBUG ("Getting keyboard grab on 0x%lx\n",
+                          (gulong) GDK_WINDOW_XID (window));
 
         }
 
