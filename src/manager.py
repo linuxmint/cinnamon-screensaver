@@ -421,9 +421,6 @@ class ScreensaverManager(GObject.Object):
 
         self.grab_stage()
 
-        if status.Locked and status.UseFallback:
-            self.spawn_fallback_window()
-
         self.refreshing = False
         if self.refresh_again:
             self.refresh_again = False
@@ -452,9 +449,6 @@ class ScreensaverManager(GObject.Object):
         status.focusWidgets = []
         self.grab_helper.release()
         away_message = self.stage.away_message
-
-        if status.UseFallback:
-            self.kill_fallback_window()
 
         self.old_stage = self.stage
         self.spawn_stage(away_message, self.on_spawn_stage_complete)

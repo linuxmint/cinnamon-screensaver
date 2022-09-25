@@ -823,6 +823,63 @@ cs_screen_place_pointer_in_primary_monitor (CsScreen *screen)
 }
 
 /**
+ * cs_screen_set_net_wm_name:
+ * @window: The #GdkWindow to set the property on
+ * @name: The name.
+ *
+ * Sets _NET_WM_NAME to name on window
+ */
+void
+cs_screen_set_net_wm_name (GdkWindow   *window,
+                           const gchar *name)
+{
+    GdkDisplay *display = gdk_display_get_default ();
+    Window xwindow = gdk_x11_window_get_xid (window);
+
+    XChangeProperty (GDK_DISPLAY_XDISPLAY (display), xwindow,
+                     gdk_x11_get_xatom_by_name_for_display (display, "_NET_WM_NAME"),
+                     gdk_x11_get_xatom_by_name_for_display (display, "UTF8_STRING"), 8,
+                     PropModeReplace, (guchar *)name, strlen (name));
+
+    XFlush(GDK_DISPLAY_XDISPLAY (display));
+}
+
+/**
+ * cs_screen_get_net_wm_name:
+ * @xwindow: The Window (XID) to get the property from.
+ *
+ * Gets the NET_WM_NAME of xwindow
+ * 
+ * returns: (transfer full): The value of NET_WM_NAME.
+ */
+gchar *
+cs_screen_get_net_wm_name (gulong xwindow)
+{
+    GdkDisplay *display = gdk_display_get_default ();
+    Atom net_wm_name_atom;
+    Atom type;
+    int format;
+    unsigned long nitems, after;
+    unsigned char *data = NULL;
+    gchar *name = NULL;
+
+    net_wm_name_atom = XInternAtom(GDK_DISPLAY_XDISPLAY (display), "_NET_WM_NAME", False);
+
+    XGetWindowProperty(GDK_DISPLAY_XDISPLAY (display),
+                       xwindow,
+                       net_wm_name_atom, 0, 256,
+                       False, AnyPropertyType,
+                       &type, &format, &nitems, &after,
+                       &data);
+    if (data) {
+       name = g_strdup((char *) data);
+       XFree(data);
+    }
+
+    return name;
+}
+
+/**
  * cs_screen_reset_screensaver:
  *
  * Resets the screensaver idle timer. If called when the screensaver is active

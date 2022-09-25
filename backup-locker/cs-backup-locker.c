@@ -14,14 +14,21 @@
 
 #include <libcscreensaver/cs-gdk-event-filter.h>
 #include <libcscreensaver/cs-event-grabber.h>
+#include <libcscreensaver/cs-screen.h>
 
 static gboolean debug = FALSE;
 static guint term_tty = 0;
 static guint session_tty = 0;
 
+static GMutex pretty_xid_mutex;
+static GCancellable *window_monitor_cancellable = NULL;
+static guint sigterm_src_id;
+
 #define BACKUP_TYPE_WINDOW (backup_window_get_type ())
 
 G_DECLARE_FINAL_TYPE (BackupWindow, backup_window, BACKUP, WINDOW, GtkWindow)
+
+static void setup_window_monitor (BackupWindow *window, gulong xid);
 
 struct _BackupWindow
 {
@@ -33,6 +40,7 @@ struct _BackupWindow
     CsEventGrabber *grabber;
 
     gulong pretty_xid;
+
     gboolean should_grab;
 };
 
@@ -156,6 +164,8 @@ on_composited_changed (gpointer data)
 {
     BackupWindow *window = BACKUP_WINDOW (data);
 
+    g_debug ("Received composited-changed");
+
     if (gtk_widget_get_realized (GTK_WIDGET (window)))
     {
         gtk_widget_hide (GTK_WIDGET (window));
@@ -180,15 +190,31 @@ on_composited_changed (gpointer data)
 }
 
 static void
+screensaver_window_changed (CsGdkEventFilter *filter,
+                            Window            xwindow,
+                            BackupWindow     *window)
+{
+    backup_window_ungrab (window);
+
+    setup_window_monitor (window, xwindow);
+}
+
+static void
 backup_window_realize (GtkWidget *widget)
 {
     if (GTK_WIDGET_CLASS (backup_window_parent_class)->realize) {
         GTK_WIDGET_CLASS (backup_window_parent_class)->realize (widget);
     }
 
-    root_window_size_changed (BACKUP_WINDOW (widget)->event_filter, (gpointer) widget);
+    BackupWindow *window = BACKUP_WINDOW (widget);
 
-    cs_gdk_event_filter_start (BACKUP_WINDOW (widget)->event_filter, FALSE, debug);
+    cs_screen_set_net_wm_name (gtk_widget_get_window (widget),
+                               "backup-locker");
+
+    root_window_size_changed (window->event_filter, (gpointer) widget);
+
+    cs_gdk_event_filter_stop (window->event_filter);
+    cs_gdk_event_filter_start (window->event_filter, FALSE, debug);
 }
 
 static void
@@ -323,14 +349,12 @@ backup_window_new (gulong pretty_xid)
 
     window->event_filter = cs_gdk_event_filter_new (GTK_WIDGET (window), pretty_xid);
     g_signal_connect (window->event_filter, "xscreen-size", G_CALLBACK (root_window_size_changed), window);
+    g_signal_connect (window->event_filter, "screensaver-window-changed", G_CALLBACK (screensaver_window_changed), window);
 
     window->pretty_xid = pretty_xid;
 
     return GTK_WIDGET (result);
 }
-
-static GCancellable *window_monitor_cancellable = NULL;
-static guint sigterm_src_id;
 
 static void
 window_monitor_thread (GTask        *task,
@@ -342,7 +366,7 @@ window_monitor_thread (GTask        *task,
     GError *error;
 
     gulong xid = GDK_POINTER_TO_XID (task_data);
-    gchar *xid_str = g_strdup_printf ("%lu", xid);
+    gchar *xid_str = g_strdup_printf ("0x%lx", xid);
     error = NULL;
 
     xprop_proc = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_SILENCE,
@@ -360,7 +384,7 @@ window_monitor_thread (GTask        *task,
     }
     else
     {
-        g_debug ("Monitoring screensaver window (%#lx)", xid);
+        g_debug ("Moncitoring screensaver window (0x%lx)", xid);
         g_subprocess_wait (xprop_proc, cancellable, &error);
         if (error != NULL && error->code != G_IO_ERROR_CANCELLED)
         {
@@ -377,25 +401,38 @@ screensaver_window_gone (GObject      *source,
                          gpointer      user_data)
 {
     BackupWindow *window = BACKUP_WINDOW (user_data);
+    GCancellable *task_cancellable = g_task_get_cancellable (G_TASK (result));
+    gulong xid = GDK_POINTER_TO_XID (g_task_get_task_data (G_TASK (result)));
 
     g_task_propagate_boolean (G_TASK (result), NULL);
 
     // The normal screensaver window is gone - either thru a crash or normal unlocking.
     // The main process will kill us, or the user will have to.  Either way, grab everything.
-    if (!g_cancellable_is_cancelled (g_task_get_cancellable (G_TASK (result))))
+    if (!g_cancellable_is_cancelled (task_cancellable))
     {
-        g_debug ("Screensaver window gone");
-        activate_backup_window (window);
+        g_debug ("Screensaver window gone: 0x%lx (pretty_xid now 0x%lx)", xid, window->pretty_xid);
+        g_mutex_lock (&pretty_xid_mutex);
+
+        if (xid == window->pretty_xid)
+        {
+            activate_backup_window (window);
+        }
+
+        g_mutex_unlock (&pretty_xid_mutex);
     }
 
-    g_clear_object (&window_monitor_cancellable);
-
+    g_clear_object (&task_cancellable);
 }
 
 static void
 setup_window_monitor (BackupWindow *window, gulong xid)
 {
     GTask *task;
+
+    g_debug ("Beginning to monitor screensaver window 0x%lx", xid);
+
+    g_mutex_lock (&pretty_xid_mutex);
+    window->pretty_xid = xid;
 
     window_monitor_cancellable = g_cancellable_new ();
     task = g_task_new (NULL, window_monitor_cancellable, screensaver_window_gone, window);
@@ -405,6 +442,7 @@ setup_window_monitor (BackupWindow *window, gulong xid)
 
     g_task_run_in_thread (task, window_monitor_thread);
     g_object_unref (task);
+    g_mutex_unlock (&pretty_xid_mutex);
 }
 
 static gboolean
