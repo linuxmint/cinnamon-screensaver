@@ -35,6 +35,7 @@
 #endif /* HAVE_XF86MISCSETGRABKEYSSTATE */
 
 #include "cs-event-grabber.h"
+#include "cs-screen.h"
 
 static void     cs_event_grabber_class_init (CsEventGrabberClass *klass);
 static void     cs_event_grabber_init       (CsEventGrabber      *grab);
@@ -646,6 +647,10 @@ cs_event_grabber_init (CsEventGrabber *grab)
 
         grab->priv->mouse_hide_cursor = FALSE;
         grab->priv->invisible = gtk_invisible_new ();
+
+        cs_screen_set_net_wm_name (gtk_widget_get_window (grab->priv->invisible),
+                                   "event-grabber-window");
+
         gtk_widget_show (grab->priv->invisible);
 }
 

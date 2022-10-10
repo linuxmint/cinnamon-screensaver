@@ -7,8 +7,9 @@
  *
  */
 
-#include "cs-gdk-event-filter.h"
 #include "config.h"
+#include "cs-gdk-event-filter.h"
+#include "cs-screen.h"
 
 #ifdef HAVE_SHAPE_EXT
 #include <X11/extensions/shape.h>
@@ -19,6 +20,7 @@
 
 enum {
         XSCREEN_SIZE,
+        SCREENSAVER_WINDOW_CHANGED,
         LAST_SIGNAL
 };
 
@@ -105,18 +107,52 @@ unshape_window (CsGdkEventFilter *filter)
 }
 
 static void
-restack (CsGdkEventFilter *filter, Window event_window)
+restack (CsGdkEventFilter *filter,
+         Window            event_window,
+         const gchar      *event_type)
 {
+    g_autofree gchar *net_wm_name = NULL;
+
     gdk_x11_display_error_trap_push (filter->display);
+
+    net_wm_name = cs_screen_get_net_wm_name (event_window);
+
+    if (g_strcmp0 (net_wm_name, "event-grabber-window") == 0)
+    {
+        g_debug ("(Ignoring %s from CsEventGrabber window)", event_type);
+        gdk_x11_display_error_trap_pop_ignored (filter->display);
+        return;
+    }
+
+    // Screensaver windows get re-made but we want to pick up new ones
+    // so the backup locker can stay in place always.
+    if (filter->pretty_xid != event_window)
+    {
+        if (g_strcmp0 (net_wm_name, "cinnamon-screensaver-window") == 0)
+        {
+            g_debug ("New screensaver window found: 0x%lx (replaces 0x%lx)", event_window, filter->pretty_xid);
+            filter->pretty_xid = event_window;
+            g_signal_emit (filter, signals[SCREENSAVER_WINDOW_CHANGED], 0, event_window);
+        }
+    }
 
     if (filter->we_are_backup_window)
     {
         if (event_window != filter->pretty_xid)
         {
+            g_debug ("BackupWindow received %s from window '%s' (0x%lx), raising ourselves.",
+                      event_type,
+                      net_wm_name,
+                      event_window);
+
             XRaiseWindow(GDK_DISPLAY_XDISPLAY (filter->display), filter->my_xid);
         }
         else
         {
+            g_debug ("BackupWindow received %s from screensaver window (0x%lx), restacking us below it.",
+                      event_type,
+                      event_window);
+
             Window windows[] = {
                 filter->pretty_xid,
                 filter->my_xid
@@ -127,6 +163,11 @@ restack (CsGdkEventFilter *filter, Window event_window)
     }
     else
     {
+        g_debug ("Screensaver received %s from window '%s' (0x%lx), raising ourselves.",
+                  event_type,
+                  net_wm_name,
+                  event_window);
+
         XRaiseWindow(GDK_DISPLAY_XDISPLAY (filter->display), filter->my_xid);
     }
 
@@ -161,12 +202,7 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
                 break;
             }
 
-            g_debug ("MapNotify from %s window (%lu), raising ourselves. %s",
-                      xme->window == filter->pretty_xid ? "Screensaver" : xme->window == filter->my_xid ? "Backup locker" : "unknown",
-                      xme->window,
-                      filter->we_are_backup_window ? "(we're the backup-locker)" : "");
-
-            restack (filter, xme->window);
+            restack (filter, xme->window, "MapNotify");
             break;
           }
         case ConfigureNotify:
@@ -178,7 +214,7 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
             if (xce->window == GDK_ROOT_WINDOW ())
             {
                 // Screen size may have changed, tell the fallback
-                g_debug ("ConfigureNotify from root window (%lu), screen size may have changed. %s",
+                g_debug ("ConfigureNotify from root window (0x%lx), screen size may have changed. %s",
                              xce->window,
                              filter->we_are_backup_window ? "(we're the backup-locker)" : "");
 
@@ -202,12 +238,7 @@ cs_gdk_event_filter_xevent (CsGdkEventFilter *filter,
                 break;
             }
 
-            g_debug ("ConfigureNotify from %s window (%lu), raising ourselves. %s",
-                         xce->window == filter->pretty_xid ? "Screensaver" : xce->window == filter->my_xid ? "BackupLocker" : "unknown",
-                         xce->window,
-                         filter->we_are_backup_window ? "(we're the backup-locker)" : "");
-
-            restack (filter, xce->window);
+            restack (filter, xce->window, "ConfigureNotify");
             break;
           }
         default:
@@ -327,6 +358,12 @@ cs_gdk_event_filter_class_init (CsGdkEventFilterClass *klass)
                                               0,
                                               NULL, NULL, NULL,
                                               G_TYPE_NONE, 0);
+        signals[SCREENSAVER_WINDOW_CHANGED] = g_signal_new ("screensaver-window-changed",
+                                              G_TYPE_FROM_CLASS (object_class),
+                                              G_SIGNAL_RUN_LAST,
+                                              0,
+                                              NULL, NULL, NULL,
+                                              G_TYPE_NONE, 1, G_TYPE_ULONG);
 }
 
 static void
@@ -367,11 +404,11 @@ cs_gdk_event_filter_start (CsGdkEventFilter *filter,
 
     if (filter->we_are_backup_window)
     {
-        restack (filter, filter->pretty_xid);
+        restack (filter, filter->pretty_xid, NULL);
     }
     else
     {
-        restack (filter, 0);
+        restack (filter, 0, NULL);
     }
 }
 
@@ -383,7 +420,7 @@ cs_gdk_event_filter_stop (CsGdkEventFilter *filter)
 
 CsGdkEventFilter *
 cs_gdk_event_filter_new (GtkWidget *managed_window,
-                         gulong     pretty_xid)
+                         gulong    pretty_xid)
 {
     CsGdkEventFilter *filter;
 
@@ -397,10 +434,4 @@ cs_gdk_event_filter_new (GtkWidget *managed_window,
     filter->we_are_backup_window = filter->pretty_xid != 0;
 
     return filter;
-}
-
-void
-cs_gdk_event_filter_restack (CsGdkEventFilter *filter)
-{
-    restack (filter, 0);
 }

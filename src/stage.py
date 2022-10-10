@@ -178,16 +178,6 @@ class Stage(Gtk.Window):
             if status.Debug:
                 print("Stage: Received screen composited-changed signal, refreshing stage")
 
-            user_time = self.get_display().get_user_time()
-
-            self.hide()
-            self.unrealize()
-
-            self.realize()
-
-            self.get_window().set_user_time(user_time)
-            self.show()
-
             self.emit("needs-refresh")
 
     def on_grab_broken_event(self, widget, event, data=None):
@@ -226,6 +216,8 @@ class Stage(Gtk.Window):
         """
         window = self.get_window()
         utils.override_user_time(window)
+
+        CScreensaver.Screen.set_net_wm_name(window, "cinnamon-screensaver-window")
 
         self.setup_children()
 

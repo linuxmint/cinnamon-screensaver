@@ -42,8 +42,6 @@ void                         cs_gdk_event_filter_start (CsGdkEventFilter *filter
 
 void                         cs_gdk_event_filter_stop  (CsGdkEventFilter *filter);
 
-void                         cs_gdk_event_filter_restack (CsGdkEventFilter *filter);
-
 G_END_DECLS
 
 #endif /* __CS_GDK_EVENT_FILTER_H */
