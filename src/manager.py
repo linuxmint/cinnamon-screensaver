@@ -465,7 +465,7 @@ class ScreensaverManager(GObject.Object):
         Return to sleep (not Awake) - hides the pointer and the unlock widget.
         """
         self.grab_stage()
-        self.stage.cancel_unlocking();
+        self.stage.cancel_unlocking()
 
     def on_lock_delay_timeout(self):
         """

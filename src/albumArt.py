@@ -62,7 +62,7 @@ class AlbumArt(Floating, BaseWindow):
         url = self.player.get_albumart_url()
 
         if self.player.get_identity() == "spotify":
-            url = url.replace("open.spotify.com", "i.scdn.co");
+            url = url.replace("open.spotify.com", "i.scdn.co")
 
         if url == self.current_url:
             return

@@ -93,7 +93,7 @@ class Stage(Gtk.Window):
                         Gdk.EventMask.FOCUS_CHANGE_MASK)
 
         c = Gdk.RGBA(0, 0, 0, 0)
-        self.override_background_color (Gtk.StateFlags.NORMAL, c);
+        self.override_background_color(Gtk.StateFlags.NORMAL, c)
 
         self.update_geometry()
 
@@ -195,7 +195,7 @@ class Stage(Gtk.Window):
         if self.get_realized():
             callback()
         else:
-            self.activate_callback = callback;
+            self.activate_callback = callback
 
     def deactivate(self, callback):
         """
