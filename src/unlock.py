@@ -262,11 +262,11 @@ class UnlockDialog(BaseWindow):
         self.set_user_details()
 
     def set_user_details(self):
-        if self.account_client.get_real_name() != None:
+        if self.account_client.get_real_name() is not None:
             self.real_name = self.account_client.get_real_name()
             self.update_realname_label()
 
-        if self.account_client.get_face_path() != None:
+        if self.account_client.get_face_path() is not None:
             self.face_image.set_from_path(self.account_client.get_face_path())
             self.face_image.show()
 
@@ -345,7 +345,7 @@ class UnlockDialog(BaseWindow):
     def on_blink_tick(self, data=None):
         window = self.get_window()
 
-        if window == None:
+        if window is None:
             return False
 
         x, y = window.get_position()

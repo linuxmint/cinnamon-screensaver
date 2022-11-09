@@ -62,7 +62,7 @@ class BaseClient(GObject.GObject):
         Use this as a safety check to see if a given proxy is valid
         and owned.
         """
-        return self.proxy and self.proxy.get_name_owner() != None
+        return self.proxy and self.proxy.get_name_owner() is not None
 
     def on_client_setup_complete(self):
         """

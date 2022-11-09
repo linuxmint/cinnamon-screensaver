@@ -170,4 +170,4 @@ class PlayerControl(Gtk.Box):
         """
         Checked by the AudioPanel, whether or not this widget should be displayed.
         """
-        return self.player != None
+        return self.player is not None
