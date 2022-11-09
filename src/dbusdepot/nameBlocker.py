@@ -3,6 +3,7 @@
 from gi.repository import Gio, GObject, GLib
 
 import status
+from util.utils import DEBUG
 
 class NameBlocker(GObject.GObject):
     """
@@ -29,16 +30,14 @@ class NameBlocker(GObject.GObject):
 
     def unwatch_all(self):
         for (handle, name) in self.owned_names:
-            if status.Debug:
-                print("Releasing dbus name: %s" % name)
+            DEBUG("Releasing dbus name: %s" % name)
 
             Gio.bus_unown_name(handle)
 
         self.owned_names = []
 
     def on_name_appeared(self, connection, name, name_owner, data=None):
-        if status.Debug:
-            print("%s appeared on the session bus, killing it" % name)
+        DEBUG("%s appeared on the session bus, killing it" % name)
 
         connection.call(name_owner,
                         "/" + name.replace(".", "/"),
@@ -51,12 +50,10 @@ class NameBlocker(GObject.GObject):
                         None)
 
     def on_name_lost(self, connection, name, data=None):
-        if status.Debug:
-            print("%s is gone from the session bus" % name)
+        DEBUG("%s is gone from the session bus" % name)
 
     def do_dispose(self):
-        if status.Debug:
-            print("nameBlocker do_dispose")
+        DEBUG("nameBlocker do_dispose")
 
         self.unwatch_all()
 

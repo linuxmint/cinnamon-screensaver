@@ -15,6 +15,7 @@ from stage import Stage
 import singletons
 from util import utils, settings, trackers
 from util.focusNavigator import FocusNavigator
+from util.utils import DEBUG
 
 class ScreensaverManager(GObject.Object):
     """
@@ -179,22 +180,21 @@ class ScreensaverManager(GObject.Object):
         if not status.Active:
             return
 
-        if status.Debug and not status.Awake:
-            print("*******************************************")
-            print("manager: user activity, waking:")
+        if not status.Awake:
+            DEBUG("*******************************************")
+            DEBUG("manager: user activity, waking:")
             # traceback.print_stack()
-            print("*******************************************")
+            DEBUG("*******************************************")
 
         if status.Locked and self.stage.initialize_pam():
-            if status.Debug and not status.Awake:
-                print("manager: locked, raising unlock widget")
+            if not status.Awake:
+                DEBUG("manager: locked, raising unlock widget")
 
             self.stage.raise_unlock_widget()
             self.grab_helper.release_mouse()
             self.stage.maybe_update_layout()
         else:
-            if status.Debug:
-                print("manager: not locked, queueing idle deactivation")
+            DEBUG("manager: not locked, queueing idle deactivation")
 
             trackers.timer_tracker_get().add_idle("idle-deactivate",
                                                   self.idle_deactivate)
@@ -225,8 +225,7 @@ class ScreensaverManager(GObject.Object):
         if self.fb_pid > 0:
             return
 
-        if status.Debug:
-            print("manager: spawning fallback window")
+        DEBUG("manager: spawning fallback window")
 
         if self.stage.get_realized():
             self._real_spawn_fallback_window(self)
@@ -292,7 +291,7 @@ class ScreensaverManager(GObject.Object):
             self.fb_pid = GLib.spawn_async(argv)[0]
         except GLib.Error as e:
             self.fb_failed_to_start = True
-            print("Could not start screensaver fallback process: %s" % e.message)
+            print("Could not start screensaver fallback process: %s" % e.message, flush=True)
 
         try:
             self.stage.disconnect_by_func(self._real_spawn_fallback_window)
@@ -303,19 +302,16 @@ class ScreensaverManager(GObject.Object):
         if self.fb_pid == 0 and not self.fb_failed_to_start:
             return
 
-        if status.Debug:
-            print("manager: killing fallback window")
+        DEBUG("manager: killing fallback window")
 
         try:
-            if status.Debug:
-                print("manager: checking if fallback window exists first.")
+            DEBUG("manager: checking if fallback window exists first.")
             if self.fb_pid > 0:
                 os.kill(self.fb_pid, 0)
             elif self.fb_failed_to_start:
                 raise ProcessLookupError("Fallback window failed to start")
         except ProcessLookupError:
-            if status.Debug:
-                print("manager: fallback window terminated before the main screensaver, something went wrong!")
+            DEBUG("manager: fallback window terminated before the main screensaver, something went wrong!")
             notification = Gio.Notification.new(_("Cinnamon Screensaver has experienced an error"))
 
             notification.set_body(_("The 'cs-backup-locker' process terminated before the screensaver did. "
@@ -395,8 +391,7 @@ class ScreensaverManager(GObject.Object):
             GObject.source_remove(self.stage_refresh_id)
             self.stage_refresh_id = 0
 
-        if status.Debug:
-            print("manager: queuing stage refresh")
+        DEBUG("manager: queuing stage refresh")
 
         # self.stage_refresh_id = GLib.timeout_add_seconds(3, self._update_full_stage_on_idle, priority=GLib.PRIORITY_DEFAULT)
         self.stage_refresh_id = GLib.idle_add(self._update_full_stage_on_idle, priority=GLib.PRIORITY_DEFAULT)
@@ -416,8 +411,7 @@ class ScreensaverManager(GObject.Object):
         return False
 
     def stage_refreshed(self):
-        if status.Debug:
-            print("manager: stage refresh complete")
+        DEBUG("manager: stage refresh complete")
 
         self.grab_stage()
 
@@ -425,8 +419,7 @@ class ScreensaverManager(GObject.Object):
         if self.refresh_again:
             self.refresh_again = False
 
-            if status.Debug:
-                print("Got refresh signal while refreshing, doing it again.")
+            DEBUG("Got refresh signal while refreshing, doing it again.")
             self.queue_refresh_stage()
 
         self.simulate_user_activity()
@@ -440,8 +433,7 @@ class ScreensaverManager(GObject.Object):
         if self.stage == None:
             return
 
-        if status.Debug:
-            print("Stage: refreshing")
+        DEBUG("Stage: refreshing")
 
         self.stage.cancel_unlocking()
 
@@ -479,8 +471,7 @@ class ScreensaverManager(GObject.Object):
         """
         Updates the lock status when our timer has hit its limit
         """
-        if status.Debug:
-            print("manager: locking after delay ('lock-delay')")
+        DEBUG("manager: locking after delay ('lock-delay')")
 
         self.set_locked(True)
 
@@ -545,8 +536,7 @@ class ScreensaverManager(GObject.Object):
         for the stage when the session goes idle.  Cancels the stage fade-in
         if idle becomes False before it has completed its animation.
         """
-        if status.Debug:
-            print("manager: session idle-changed - %s" % str(idle))
+        DEBUG("manager: session idle-changed - %s" % str(idle))
 
         if idle and not status.Active:
             self.set_active(True)

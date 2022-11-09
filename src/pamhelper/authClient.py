@@ -1,14 +1,16 @@
 #!/usr/bin/python3
 
-from gi.repository import Gio, GObject, GLib, CScreensaver
-
-import config
 import re
 import os
 import signal
 import platform
-import status
 import sys
+
+from gi.repository import Gio, GObject, GLib, CScreensaver
+
+import config
+import status
+from util.utils import DEBUG
 
 class AuthClient(GObject.Object):
     """
@@ -32,8 +34,7 @@ class AuthClient(GObject.Object):
         if self.initialized:
             return True
 
-        if status.Debug:
-            print("authClient: attempting to initialize")
+        DEBUG("authClient: attempting to initialize")
 
         self.cancellable = Gio.Cancellable()
 
@@ -87,8 +88,7 @@ class AuthClient(GObject.Object):
 
         self.initialized = True
 
-        if status.Debug:
-            print("authClient: initialized (helper pid %s)" % self.proc.get_identifier ())
+        DEBUG("authClient: initialized (helper pid %s)" % self.proc.get_identifier ())
 
         return True
 
@@ -108,18 +108,15 @@ class AuthClient(GObject.Object):
 
         self.cancellable.cancel()
         if self.proc != None:
-            if status.Debug:
-                print("authClient: cancel requested, killing helper.")
+            DEBUG("authClient: cancel requested, killing helper.")
             self.proc.send_signal(signal.SIGTERM)
         else:
-            if status.Debug:
-                print("authClient: cancel requested, but no helper process")
+            DEBUG("authClient: cancel requested, but no helper process")
 
         self.reset()
 
     def on_proc_completed(self, proc, res, data=None):
-        if status.Debug:
-            print("authClient: helper process (pid %s) completed..." % proc.get_identifier())
+        DEBUG("authClient: helper process (pid %s) completed..." % proc.get_identifier())
 
         try:
             ret = proc.wait_check_finish(res)
@@ -134,8 +131,7 @@ class AuthClient(GObject.Object):
             try:
                 pipe.close(None)
             except GLib.Error as e:
-                if status.Debug:
-                    print("helper process did not close in_pipe cleanly: %s" % e.message)
+                DEBUG("helper process did not close in_pipe cleanly: %s" % e.message)
 
         pipe = proc.get_stdout_pipe()
 
@@ -144,8 +140,7 @@ class AuthClient(GObject.Object):
             try:
                 pipe.close(None)
             except GLib.Error as e:
-                if status.Debug:
-                    print("helper process did not close out_pipe cleanly: %s" % e.message)
+                DEBUG("helper process did not close out_pipe cleanly: %s" % e.message)
 
         # Don't just reset - if another proc has been started we don't want to interfere.
         if self.proc == proc:
@@ -158,8 +153,7 @@ class AuthClient(GObject.Object):
         if self.cancellable == None or self.cancellable.is_cancelled():
             return
 
-        if status.Debug:
-            print("authClient: message to child")
+        DEBUG("authClient: message to child")
 
         try:
             b = GLib.Bytes.new(string.encode())
@@ -193,8 +187,7 @@ class AuthClient(GObject.Object):
             raw_string = bytes_read.get_data().decode()
             lines = raw_string.split("\n")
             for output in lines:
-                if status.Debug:
-                    print("Output from pam helper: '%s'" % output)
+                DEBUG("Output from pam helper: '%s'" % output)
                 if output:
                     if "CS_PAM_AUTH_FAILURE" in output:
                         self.emit_idle_failure()
@@ -222,31 +215,25 @@ class AuthClient(GObject.Object):
         pipe.read_bytes_async(1024, GLib.PRIORITY_DEFAULT, None, self.message_from_child)
 
     def emit_idle_busy_state(self, busy):
-        if status.Debug:
-            print("authClient: idle add auth-busy")
+        DEBUG("authClient: idle add auth-busy")
         GObject.idle_add(self.emit, "auth-busy", busy)
 
     def emit_idle_failure(self):
-        if status.Debug:
-            print("authClient: idle add failure")
+        DEBUG("authClient: idle add failure")
         GObject.idle_add(self.emit, "auth-failure")
 
     def emit_idle_success(self):
-        if status.Debug:
-            print("authClient: idle add success")
+        DEBUG("authClient: idle add success")
         GObject.idle_add(self.emit, "auth-success")
 
     def emit_idle_cancel(self):
-        if status.Debug:
-            print("authClient: idle add cancel")
+        DEBUG("authClient: idle add cancel")
         GObject.idle_add(self.emit, "auth-cancel")
 
     def emit_idle_auth_prompt(self, prompt):
-        if status.Debug:
-            print("authClient: idle add auth-prompt")
+        DEBUG("authClient: idle add auth-prompt")
         GObject.idle_add(self.emit, "auth-prompt", prompt)
 
     def emit_auth_info(self, info):
-        if status.Debug:
-            print("authClient: auth-info")
+        DEBUG("authClient: auth-info")
         GObject.idle_add(self.emit, "auth-info", info)

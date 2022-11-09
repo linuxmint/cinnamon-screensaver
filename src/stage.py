@@ -19,6 +19,7 @@ from osk import OnScreenKeyboard
 from floating import ALIGNMENTS
 from util import utils, trackers, settings
 from util.eventHandler import EventHandler
+from util.utils import DEBUG
 
 class Stage(Gtk.Window):
     """
@@ -157,8 +158,7 @@ class Stage(Gtk.Window):
         Wallpapers are secondary.
         """
 
-        if status.Debug:
-            print("Stage: Received screen size-changed signal, refreshing stage")
+        DEBUG("Stage: Received screen size-changed signal, refreshing stage")
 
         self.emit("needs-refresh")
 
@@ -168,15 +168,13 @@ class Stage(Gtk.Window):
         as on_screen_size_changed), and follow up at idle with actual monitor view
         refreshes (wallpapers.)
         """
-        if status.Debug:
-            print("Stage: Received screen monitors-changed signal, refreshing stage")
+        DEBUG("Stage: Received screen monitors-changed signal, refreshing stage")
 
         self.emit("needs-refresh")
 
     def on_composited_changed(self, screen, data=None):
         if self.get_realized():
-            if status.Debug:
-                print("Stage: Received screen composited-changed signal, refreshing stage")
+            DEBUG("Stage: Received screen composited-changed signal, refreshing stage")
 
             self.emit("needs-refresh")
 
@@ -467,8 +465,7 @@ class Stage(Gtk.Window):
         Callback for UPower changes, this will make our MonitorViews update
         themselves according to user setting and power state.
         """
-        if status.Debug:
-            print("stage: Power state changed, updating info panel")
+        DEBUG("stage: Power state changed, updating info panel")
 
         if self.info_panel != None:
             self.info_panel.update_visibility()
@@ -751,8 +748,7 @@ class Stage(Gtk.Window):
         else:
             self.rect = status.screen.get_screen_geometry()
 
-        if status.Debug:
-            print("Stage.update_geometry - new backdrop position: %d, %d  new size: %d x %d" % (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
+        DEBUG("Stage.update_geometry - new backdrop position: %d, %d  new size: %d x %d" % (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
         hints = Gdk.Geometry()
         hints.min_width = self.rect.width

@@ -29,7 +29,7 @@ class MuffinClient(GObject.Object):
                                                                                 self.MUFFIN_PATH,
                                                                                 None)
         except Exception as e:
-            print("Could not connect to Muffin's DisplayConfig service")
+            print("Could not connect to Muffin's DisplayConfig service", flush=True)
             return
         self.update()
         self.proxy.connect("monitors-changed", self.on_monitors_changed)
@@ -51,7 +51,7 @@ class MuffinClient(GObject.Object):
         try:
             serial, monitors, logical_monitors, properties = self.proxy.call_get_current_state_sync(None)
         except Exception as e:
-            print("Could not read current state from Muffin: %s", e.message)
+            print("Could not read current state from Muffin: %s" % e.message, flush=True)
             self.using_fractional_scaling = False
 
         fractional = False
@@ -64,7 +64,7 @@ class MuffinClient(GObject.Object):
                 break
 
         self.using_fractional_scaling = fractional
-        print("Fractional scaling active:", self.using_fractional_scaling)
+        print("Fractional scaling active: %r" % self.using_fractional_scaling, flush=True)
 
     def get_using_fractional_scaling(self):
         if self.proxy is None:

@@ -6,6 +6,7 @@ from util import trackers
 import singletons
 import constants as c
 import status
+from util.utils import DEBUG
 
 UPOWER_STATE_CHARGING = 1
 UPOWER_STATE_DISCHARGING = 2
@@ -79,8 +80,7 @@ class PowerWidget(Gtk.Frame):
             percentage = battery.get_property("percentage")
             gicon = self.get_gicon_for_current_level(battery);
 
-            if status.Debug:
-                print("powerWidget: Updating battery info: %s - icon: %s - percentage: %s" %
+            DEBUG("powerWidget: Updating battery info: %s - icon: %s - percentage: %s" %
                     (path, gicon.to_string(), percentage))
 
             image = Gtk.Image.new_from_gicon(gicon, Gtk.IconSize.LARGE_TOOLBAR)

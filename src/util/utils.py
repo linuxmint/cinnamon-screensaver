@@ -148,3 +148,7 @@ def clear_clipboards(widget):
 
 def do_quit():
     Gtk.main_quit()
+
+def DEBUG(message):
+    if status.Debug:
+        print(message, flush=True)

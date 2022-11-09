@@ -12,6 +12,7 @@ focusWidgets = []
 # user can still lock explicitly.  The function checks for the existence of correct PAM files,
 # as well as adjusting the UID if this process is started as root.
 LockEnabled = True
+UseFallback = True
 
 # Enables extra PAM/authentication/notification debugging
 # TODO: We do a *lot* of logging now, we should just use a debug() function that checks

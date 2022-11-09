@@ -7,6 +7,7 @@ import subprocess
 import status
 from dbusdepot.baseClient import BaseClient
 from dbusdepot.loginInterface import LoginInterface
+from util.utils import DEBUG
 
 class LogindClient(LoginInterface, BaseClient):
     """
@@ -43,10 +44,9 @@ class LogindClient(LoginInterface, BaseClient):
             current_session_id = subprocess.check_output(cmd, shell=True).decode().replace("\n", "")
 
             self.session_path = self.proxy.call_get_session_sync(current_session_id, None)
-            if status.Debug:
-                print("login client: found session path for user '%s' (session_id: %s): %s" % (current_user, current_session_id, self.session_path))
+            DEBUG("login client: found session path for user '%s' (session_id: %s): %s" % (current_user, current_session_id, self.session_path))
         except GLib.Error as e:
-            print("login client: could not get session path: %s" % e)
+            print("login client: could not get session path: %s" % e, flush=True)
             self.on_failure()
             return
 

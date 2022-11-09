@@ -8,6 +8,7 @@ from gi.repository import Gtk, CScreensaver, Gio, GObject
 import constants as c
 from manager import ScreensaverManager
 import status
+from util.utils import DEBUG
 
 class ScreensaverService(GObject.Object):
     """
@@ -59,8 +60,8 @@ class ScreensaverService(GObject.Object):
         self.interface.export(self.bus, c.SS_PATH)
 
     def poke_process(self, method_name):
-        if status.Debug and not status.Awake:
-            print("service: '%s' received, poking application." % method_name)
+        if not status.Awake:
+            DEBUG("service: '%s' received, poking application." % method_name)
 
         app = Gio.Application.get_default()
         app.hold()
@@ -134,8 +135,7 @@ class ScreensaverService(GObject.Object):
         if self.manager.is_locked():
             self.manager.simulate_user_activity()
         else:
-            if status.Debug:
-                print("Calling XResetScreenSaver");
+            DEBUG("Calling XResetScreenSaver");
 
             CScreensaver.Screen.reset_screensaver()
 

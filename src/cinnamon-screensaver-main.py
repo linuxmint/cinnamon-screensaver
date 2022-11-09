@@ -40,7 +40,7 @@ class Main(Gtk.Application):
         pass
 
     def do_startup(self):
-        print("Starting screensaver...")
+        print("Starting screensaver...", flush=True)
         Gtk.Application.do_startup(self)
 
         parser = argparse.ArgumentParser(description='Cinnamon Screensaver')
@@ -60,7 +60,7 @@ class Main(Gtk.Application):
         args = parser.parse_args()
 
         if settings.get_custom_screensaver() != '':
-            print("custom screensaver selected, exiting cinnamon-screensaver.")
+            print("custom screensaver selected, exiting cinnamon-screensaver.", flush=True)
             quit()
 
         if args.version:
@@ -80,14 +80,13 @@ class Main(Gtk.Application):
             self.release()
 
         if status.Debug:
-            print("Debug mode active")
+            print("Debug mode active", flush=True)
 
         if args.lock_disabled:
-            print("Locking disabled")
+            print("Locking disabled", flush=True)
 
         # This is here mainly to allow the notification watcher to have a valid status.Debug value
         import singletons
-
         Gtk.Settings.get_default().connect("notify::gtk-theme-name", self.on_theme_changed)
         self.do_style_overrides()
 
@@ -111,7 +110,7 @@ class Main(Gtk.Application):
         css = provider.to_string()
 
         if ".csstage" not in css:
-            print("Cinnamon Screensaver support not found in current theme - adding some...")
+            print("Cinnamon Screensaver support not found in current theme - adding some...", flush=True)
 
             path = os.path.join(config.pkgdatadir, "cinnamon-screensaver.css")
 
@@ -122,10 +121,10 @@ class Main(Gtk.Application):
             if "@define-color theme_selected_bg_color" in css:
                 pass
             elif "@define-color selected_bg_color" in css:
-                print("replacing theme_selected_bg_color with selected_bg_color")
+                print("replacing theme_selected_bg_color with selected_bg_color", flush=True)
                 fallback_css = fallback_css.replace("@theme_selected_bg_color", "@selected_bg_color")
             else:
-                print("replacing theme_selected_bg_color with Adwaita blue")
+                print("replacing theme_selected_bg_color with Adwaita blue", flush=True)
                 fallback_css = fallback_css.replace("@selected_bg_color", "#4a90d9")
 
             fallback_prov = Gtk.CssProvider()
