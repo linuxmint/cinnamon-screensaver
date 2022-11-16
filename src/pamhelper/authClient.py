@@ -103,11 +103,11 @@ class AuthClient(GObject.Object):
         self.end_proc()
 
     def end_proc(self):
-        if self.cancellable == None:
+        if self.cancellable is None:
             return
 
         self.cancellable.cancel()
-        if self.proc != None:
+        if self.proc is not None:
             DEBUG("authClient: cancel requested, killing helper.")
             self.proc.send_signal(signal.SIGTERM)
         else:
@@ -126,7 +126,7 @@ class AuthClient(GObject.Object):
 
         pipe = proc.get_stdin_pipe()
 
-        if pipe != None:
+        if pipe is not None:
             pipe.clear_pending()
             try:
                 pipe.close(None)
@@ -135,7 +135,7 @@ class AuthClient(GObject.Object):
 
         pipe = proc.get_stdout_pipe()
 
-        if pipe != None:
+        if pipe is not None:
             pipe.clear_pending()
             try:
                 pipe.close(None)
@@ -150,7 +150,7 @@ class AuthClient(GObject.Object):
         if not self.initialized:
             return
 
-        if self.cancellable == None or self.cancellable.is_cancelled():
+        if self.cancellable is None or self.cancellable.is_cancelled():
             return
 
         DEBUG("authClient: message to child")
@@ -171,7 +171,7 @@ class AuthClient(GObject.Object):
                 print("Error writing to pam helper: %s" % e.message)
 
     def message_from_child(self, pipe, res):
-        if self.cancellable == None or self.cancellable.is_cancelled():
+        if self.cancellable is None or self.cancellable.is_cancelled():
             return
 
         terminate = False

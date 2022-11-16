@@ -67,7 +67,7 @@ class FramedImage(Gtk.Image):
             message = "Could not load pixbuf from '%s' for FramedImage: %s" % (path, e.message)
             error = True
 
-        if pixbuf != None:
+        if pixbuf is not None:
             if (pixbuf.get_height() > scaled_max_size or pixbuf.get_width() > scaled_max_size) or \
                (self.scale_up and (pixbuf.get_height() < scaled_max_size / 2 or pixbuf.get_width() < scaled_max_size / 2)):
                 try:
@@ -90,7 +90,7 @@ class FramedImage(Gtk.Image):
         if self.path:
             self.set_image_internal(self.path)
         elif self.file:
-            if self.cancellable != None:
+            if self.cancellable is not None:
                 self.cancellable.cancel()
                 self.cancellable = None
 

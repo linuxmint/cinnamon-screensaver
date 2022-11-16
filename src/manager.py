@@ -252,7 +252,7 @@ class ScreensaverManager(GObject.Object):
 
             used_tty.sort()
 
-            if term_tty == None:
+            if term_tty is None:
                 for i in range(1, 6):
                     if str(i) not in used_tty:
                         term_tty = str(i)
@@ -260,13 +260,13 @@ class ScreensaverManager(GObject.Object):
         except Exception as e:
             print("Failed to get tty numbers using w -h: %s" % str(e))
 
-        if session_tty == None:
+        if session_tty is None:
             try:
                 session_tty = os.environ["XDG_VTNR"]
             except KeyError:
                 session_tty = "7"
 
-        if term_tty == None:
+        if term_tty is None:
             term_tty = "2" if session_tty != "2" else "1"
 
         return [term_tty, session_tty]
@@ -379,7 +379,7 @@ class ScreensaverManager(GObject.Object):
         Makes a hard grab on the Stage window, all keyboard and mouse events are dispatched or eaten
         by us now.
         """
-        if self.stage != None:
+        if self.stage is not None:
             self.grab_helper.move_to_window(self.stage.get_window(), Gdk.Screen.get_default(),  True)
 
     def queue_refresh_stage(self, stage):
@@ -430,7 +430,7 @@ class ScreensaverManager(GObject.Object):
         when our login manager tells us its "Active" property has changed.  We are always connected to the
         login manager, so we first check if we have a stage.
         """
-        if self.stage == None:
+        if self.stage is None:
             return
 
         DEBUG("Stage: refreshing")

@@ -305,39 +305,39 @@ class Stage(Gtk.Window):
             print(e)
 
         try:
-            if self.unlock_dialog != None:
+            if self.unlock_dialog is not None:
                 self.unlock_dialog.destroy()
         except Exception as e:
             print(e)
 
         try:
-            if self.clock_widget != None:
+            if self.clock_widget is not None:
                 self.clock_widget.stop_positioning()
                 self.clock_widget.destroy()
         except Exception as e:
             print(e)
 
         try:
-            if self.albumart_widget != None:
+            if self.albumart_widget is not None:
                 self.albumart_widget.stop_positioning()
                 self.albumart_widget.destroy()
         except Exception as e:
             print(e)
 
         try:
-            if self.info_panel != None:
+            if self.info_panel is not None:
                 self.info_panel.destroy()
         except Exception as e:
             print(e)
 
         try:
-            if self.info_panel != None:
+            if self.info_panel is not None:
                 self.audio_panel.destroy()
         except Exception as e:
             print(e)
 
         try:
-            if self.osk != None:
+            if self.osk is not None:
                 self.osk.destroy()
         except Exception as e:
             print(e)
@@ -467,7 +467,7 @@ class Stage(Gtk.Window):
         """
         DEBUG("stage: Power state changed, updating info panel")
 
-        if self.info_panel != None:
+        if self.info_panel is not None:
             self.info_panel.update_visibility()
 
     def setup_clock(self):
@@ -609,9 +609,9 @@ class Stage(Gtk.Window):
         widget, depending on the outcome.
         """
         if success:
-            if self.clock_widget != None:
+            if self.clock_widget is not None:
                 self.clock_widget.hide()
-            if self.albumart_widget != None:
+            if self.albumart_widget is not None:
                 self.albumart_widget.hide()
             self.unlock_dialog.hide()
             self.manager.unlock()
@@ -625,7 +625,7 @@ class Stage(Gtk.Window):
         """
         Passes along an away-message to the clock.
         """
-        if self.clock_widget != None:
+        if self.clock_widget is not None:
             self.clock_widget.set_message(msg)
 
     def initialize_pam(self):
@@ -644,9 +644,9 @@ class Stage(Gtk.Window):
 
         utils.clear_clipboards(self.unlock_dialog)
 
-        if self.clock_widget != None:
+        if self.clock_widget is not None:
             self.clock_widget.stop_positioning()
-        if self.albumart_widget != None:
+        if self.albumart_widget is not None:
             self.albumart_widget.stop_positioning()
 
         status.Awake = True
@@ -654,18 +654,18 @@ class Stage(Gtk.Window):
         if self.info_panel:
             self.info_panel.refresh_power_state()
 
-        if self.clock_widget != None:
+        if self.clock_widget is not None:
             self.clock_widget.show()
-        if self.albumart_widget != None:
+        if self.albumart_widget is not None:
             self.albumart_widget.show()
 
         self.unlock_dialog.show()
 
-        if self.audio_panel != None:
+        if self.audio_panel is not None:
             self.audio_panel.show_panel()
-        if self.info_panel != None:
+        if self.info_panel is not None:
             self.info_panel.refresh_power_state()
-        if self.osk != None:
+        if self.osk is not None:
             self.osk.show()
 
     def cancel_unlocking(self):
@@ -675,24 +675,24 @@ class Stage(Gtk.Window):
         self.set_timeout_active(None, False)
         utils.clear_clipboards(self.unlock_dialog)
 
-        if self.unlock_dialog != None:
+        if self.unlock_dialog is not None:
             self.unlock_dialog.hide()
-        if self.clock_widget != None:
+        if self.clock_widget is not None:
             self.clock_widget.hide()
-        if self.albumart_widget != None:
+        if self.albumart_widget is not None:
             self.albumart_widget.hide()
-        if self.audio_panel != None:
+        if self.audio_panel is not None:
             self.audio_panel.hide()
-        if self.info_panel != None:
+        if self.info_panel is not None:
             self.info_panel.hide()
-        if self.osk != None:
+        if self.osk is not None:
             self.osk.hide()
 
         status.Awake = False
 
         self.update_monitor_views()
 
-        if self.info_panel != None:
+        if self.info_panel is not None:
             self.info_panel.refresh_power_state()
 
     def update_monitor_views(self):
@@ -702,9 +702,9 @@ class Stage(Gtk.Window):
         """
 
         if not status.Awake:
-            if self.clock_widget != None and settings.get_show_clock():
+            if self.clock_widget is not None and settings.get_show_clock():
                 self.clock_widget.start_positioning()
-            if self.albumart_widget != None and settings.get_show_albumart():
+            if self.albumart_widget is not None and settings.get_show_albumart():
                 self.albumart_widget.start_positioning()
 
         for monitor in self.monitors:

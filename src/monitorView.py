@@ -51,7 +51,7 @@ class WallpaperStack(Gtk.Stack):
         GObject.timeout_add(2000, self.visible_image_changed)
 
     def visible_image_changed(self, data=None):
-        if self.current != None:
+        if self.current is not None:
             tmp = self.current
 
             self.remove(tmp)

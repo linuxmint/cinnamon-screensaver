@@ -43,14 +43,14 @@ class AlbumArt(Floating, BaseWindow):
                                            "surface-changed",
                                            self.on_surface_changed)
 
-        if self.player != None:
+        if self.player is not None:
             trackers.con_tracker_get().connect(self.player,
                                                "metadata-changed",
                                                self.on_metadata_changed)
             self.on_metadata_changed(self.player)
 
     def on_surface_changed(self, image, surface):
-        if surface != None:
+        if surface is not None:
             self.image.set_opacity(1.0)
         else:
             self.image.set_opacity(0.0)
