@@ -78,7 +78,7 @@ class PowerWidget(Gtk.Frame):
 
         for path, battery in batteries:
             percentage = battery.get_property("percentage")
-            gicon = self.get_gicon_for_current_level(battery);
+            gicon = self.get_gicon_for_current_level(battery)
 
             DEBUG("powerWidget: Updating battery info: %s - icon: %s - percentage: %s" %
                     (path, gicon.to_string(), percentage))

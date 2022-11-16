@@ -135,7 +135,7 @@ class ScreensaverService(GObject.Object):
         if self.manager.is_locked():
             self.manager.simulate_user_activity()
         else:
-            DEBUG("Calling XResetScreenSaver");
+            DEBUG("Calling XResetScreenSaver")
 
             CScreensaver.Screen.reset_screensaver()
 

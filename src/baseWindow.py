@@ -17,7 +17,7 @@ class BaseWindow(Gtk.Bin):
         self.disabled = False
 
         c = Gdk.RGBA(0, 0, 0, 0)
-        self.override_background_color (Gtk.StateFlags.NORMAL, c);
+        self.override_background_color (Gtk.StateFlags.NORMAL, c)
 
     def destroy_window(self):
         self.destroy()

@@ -77,10 +77,10 @@ class WallpaperStack(Gtk.Stack):
         r = widget.get_allocation()
 
         pattern = cairo.LinearGradient(0, 0, 0, r.height)
-        pattern.add_color_stop_rgba (0, 0, 0, 0, .75);
-        pattern.add_color_stop_rgba (.35, 0, 0, 0, .9);
-        pattern.add_color_stop_rgba (.65, 0, 0, 0, .9);
-        pattern.add_color_stop_rgba (1, 0, 0, 0, .75);
+        pattern.add_color_stop_rgba (0, 0, 0, 0, .75)
+        pattern.add_color_stop_rgba (.35, 0, 0, 0, .9)
+        pattern.add_color_stop_rgba (.65, 0, 0, 0, .9)
+        pattern.add_color_stop_rgba (1, 0, 0, 0, .75)
         cr.set_source(pattern)
         cr.paint()
 
