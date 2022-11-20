@@ -58,7 +58,6 @@ class MuffinClient(GObject.Object):
             serial, monitors, logical_monitors, properties = self.proxy.call_get_current_state_sync(None)
         except GLib.Error as e:
             print("Could not read current state from Muffin: %s" % e.message, flush=True)
-            print(e, e.code)
             self.using_fractional_scaling = False
             return self.using_fractional_scaling != old_scaling
 
