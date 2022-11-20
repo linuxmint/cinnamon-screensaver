@@ -384,7 +384,7 @@ window_monitor_thread (GTask        *task,
     }
     else
     {
-        g_debug ("Moncitoring screensaver window (0x%lx)", xid);
+        g_debug ("Monitoring screensaver window (0x%lx)", xid);
         g_subprocess_wait (xprop_proc, cancellable, &error);
         if (error != NULL && error->code != G_IO_ERROR_CANCELLED)
         {
