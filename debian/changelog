@@ -1,3 +1,16 @@
+cinnamon-screensaver (5.6.1) vera; urgency=medium
+
+  [ Michael Webster ]
+  * muffinClient.py: Fix behavior when muffin isn't available,
+
+  [ Fabio Fantoni ]
+  * fix a typing error
+
+  [ Michael Webster ]
+  * muffinClient.py: Remove leftover debugging line.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 21 Nov 2022 10:40:49 +0000
+
 cinnamon-screensaver (5.6.0) vera; urgency=medium
 
   [ Michael Webster ]
