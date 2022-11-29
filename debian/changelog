@@ -1,3 +1,14 @@
+cinnamon-screensaver (5.4.5) vera; urgency=medium
+
+  [ Michael Webster ]
+  * Use github instead of circleci.
+  * Clean up readme.
+  * Improve event grabber debugging info.
+  * Rework behavior surrounding sleep, display changes, fractional scaling.
+  * Rework stack management, separate backup locker lifecycle from main screensaver's.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 29 Nov 2022 13:47:47 +0000
+
 cinnamon-screensaver (5.4.4) vanessa; urgency=medium
 
   [ Michael Webster ]
