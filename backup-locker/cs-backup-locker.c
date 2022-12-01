@@ -250,7 +250,8 @@ backup_window_init (BackupWindow *window)
     gtk_image_set_pixel_size (GTK_IMAGE (widget), 100);
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
-
+    // This is the first line of text for the backup-locker, explaining how to switch to tty
+    // and run 'cinnamon-unlock-desktop' command.  This appears if the screensaver crashes.
     widget = gtk_label_new (_("Something went wrong with the screensaver."));
     attrs = pango_attr_list_new ();
     pango_attr_list_insert (attrs, pango_attr_size_new (20 * PANGO_SCALE));
@@ -259,7 +260,8 @@ backup_window_init (BackupWindow *window)
     pango_attr_list_unref (attrs);
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
-
+    
+    // This is a subtitle, and is a continuation of the previous entry
     widget = gtk_label_new (_("We'll help you get your desktop back"));
     attrs = pango_attr_list_new ();
     pango_attr_list_insert (attrs, pango_attr_size_new (12 * PANGO_SCALE));
@@ -268,7 +270,7 @@ backup_window_init (BackupWindow *window)
     pango_attr_list_unref (attrs);
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
-
+    // This is the last part of  the backup locker text
     gchar *inst = g_strdup_printf (_("• Switch to a console using <Control-Alt-F%u>.\n"
                                      "• Log in by typing your user name followed by your password.\n"
                                      "• At the prompt, type 'cinnamon-unlock-desktop' and press Enter.\n"
@@ -474,8 +476,8 @@ main (int    argc,
         { "xid", 0, 0, G_OPTION_ARG_STRING, &xid_str, "Window ID to monitor", NULL },
         { "term", 0, 0, G_OPTION_ARG_STRING, &term_tty_str, "Terminal tty number", NULL },
         { "session", 0, 0, G_OPTION_ARG_STRING, &session_tty_str, "Session tty number", NULL },
-        { "version", 0, 0, G_OPTION_ARG_NONE, &show_version, N_("Version of this application"), NULL },
-        { "debug", 0, 0, G_OPTION_ARG_NONE, &debug, N_("Enable debugging code"), NULL },
+        { "version", 0, 0, G_OPTION_ARG_NONE, &show_version, "Version of this application", NULL },
+        { "debug", 0, 0, G_OPTION_ARG_NONE, &debug, "Enable debugging code", NULL },
         { NULL }
     };
 
