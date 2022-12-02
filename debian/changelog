@@ -1,3 +1,14 @@
+cinnamon-screensaver (5.6.2) vera; urgency=medium
+
+  [ Michael Webster ]
+  * Fix makepot for the backup locker, don't translate its command-line arguments.
+  * backup-locker: Simplify translations.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 02 Dec 2022 21:30:12 +0000
+
 cinnamon-screensaver (5.6.1) vera; urgency=medium
 
   [ Michael Webster ]
