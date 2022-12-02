@@ -261,7 +261,7 @@ backup_window_init (BackupWindow *window)
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
     
-    // This is a subtitle, and is a continuation of the previous entry
+    // (continued) This is a subtitle
     widget = gtk_label_new (_("We'll help you get your desktop back"));
     attrs = pango_attr_list_new ();
     pango_attr_list_insert (attrs, pango_attr_size_new (12 * PANGO_SCALE));
@@ -270,17 +270,57 @@ backup_window_init (BackupWindow *window)
     pango_attr_list_unref (attrs);
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
-    // This is the last part of  the backup locker text
-    gchar *inst = g_strdup_printf (_("• Switch to a console using <Control-Alt-F%u>.\n"
-                                     "• Log in by typing your user name followed by your password.\n"
-                                     "• At the prompt, type 'cinnamon-unlock-desktop' and press Enter.\n"
-                                     "• Switch back to your unlocked desktop using <Control-Alt-F%u>.\n\n"
-                                     "If you can reproduce this behavior, please file a report here:\n"
-                                     "https://github.com/linuxmint/cinnamon-screensaver"),
-                                     term_tty, session_tty);
 
-    widget = gtk_label_new (inst);
-    g_free (inst);
+    const gchar *steps[] = {
+        // (new section) Bulleted list of steps to take to unlock the desktop;
+        N_("Switch to a console using <Control-Alt-F%u>."),
+        // (list continued)
+        N_("Log in by typing your user name followed by your password."),
+        // (list continued)
+        N_("At the prompt, type 'cinnamon-unlock-desktop' and press Enter."),
+        // (list continued)
+        N_("Switch back to your unlocked desktop using <Control-Alt-F%u>.")
+    };
+
+    const gchar *bug_report[] = {
+        // (end section) Final words after the list of steps
+        N_("If you can reproduce this behavior, please file a report here:"),
+        // (end section continued)
+        N_("https://github.com/linuxmint/cinnamon-screensaver")
+    };
+
+    GString *str = g_string_new (NULL);
+    gchar *tmp0 = NULL;
+    gchar *tmp1 = NULL;
+
+    tmp0 = g_strdup_printf (_(steps[0]), term_tty);
+    tmp1 = g_strdup_printf ("• %s\n", tmp0);
+    g_string_append (str, tmp1);
+    g_free (tmp0);
+    g_free (tmp1);
+    tmp1 = g_strdup_printf ("• %s\n", _(steps[1]));
+    g_string_append (str, tmp1);
+    g_free (tmp1);
+    tmp1 = g_strdup_printf ("• %s\n", _(steps[2]));
+    g_string_append (str, tmp1);
+    g_free (tmp1);
+    tmp0 = g_strdup_printf (_(steps[3]), session_tty);
+    tmp1 = g_strdup_printf ("• %s\n", tmp0);
+    g_string_append (str, tmp1);
+    g_free (tmp0);
+    g_free (tmp1);
+
+    g_string_append (str, "\n");
+
+    for (int i = 0; i < G_N_ELEMENTS (bug_report); i++)
+    {
+        gchar *line = g_strdup_printf ("%s\n", _(bug_report[i]));
+        g_string_append (str, line);
+        g_free (line);
+    }
+
+    widget = gtk_label_new (str->str);
+    g_string_free (str, TRUE);
 
     attrs = pango_attr_list_new ();
     pango_attr_list_insert (attrs, pango_attr_size_new (10 * PANGO_SCALE));

@@ -1,4 +1,4 @@
 #!/bin/bash
 xgettext --language=Python --from-code=UTF-8 --keyword=_ --output=cinnamon-screensaver.pot src/*.py 
-xgettext --language=C --from-code=UTF-8 --add-comments --keyword=_ --join-existing --output=cinnamon-screensaver.pot backup-locker/*.c
+xgettext --language=C --from-code=UTF-8 --add-comments --keyword=_ --keyword=N_ --join-existing --output=cinnamon-screensaver.pot backup-locker/*.c
 
