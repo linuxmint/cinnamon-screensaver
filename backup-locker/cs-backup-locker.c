@@ -260,7 +260,7 @@ backup_window_init (BackupWindow *window)
     pango_attr_list_unref (attrs);
     gtk_widget_set_halign (widget, GTK_ALIGN_CENTER);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 6);
-    
+
     // (continued) This is a subtitle
     widget = gtk_label_new (_("We'll help you get your desktop back"));
     attrs = pango_attr_list_new ();
@@ -286,7 +286,7 @@ backup_window_init (BackupWindow *window)
         // (end section) Final words after the list of steps
         N_("If you can reproduce this behavior, please file a report here:"),
         // (end section continued)
-        N_("https://github.com/linuxmint/cinnamon-screensaver")
+        "https://github.com/linuxmint/cinnamon-screensaver"
     };
 
     GString *str = g_string_new (NULL);

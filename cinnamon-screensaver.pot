@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-31 15:43+0100\n"
+"POT-Creation-Date: 2022-12-02 21:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,18 +69,18 @@ msgid_plural "The screensaver has been active for %d seconds.\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/manager.py:287
+#: src/manager.py:315
 msgid "Cinnamon Screensaver has experienced an error"
 msgstr ""
 
-#: src/manager.py:289
+#: src/manager.py:317
 msgid ""
 "The 'cs-backup-locker' process terminated before the screensaver did. Please "
 "report this issue and try to describe any actions you may have performed "
 "prior to this occurring."
 msgstr ""
 
-#: src/passwordEntry.py:23 src/unlock.py:221
+#: src/passwordEntry.py:23 src/unlock.py:216
 msgid "Please enter your password..."
 msgstr ""
 
@@ -92,14 +92,52 @@ msgstr ""
 msgid "Switch User"
 msgstr ""
 
-#: src/unlock.py:194
+#: src/unlock.py:189
 msgid "Incorrect password"
 msgstr ""
 
-#: src/unlock.py:211
+#: src/unlock.py:206
 msgid "Checking..."
 msgstr ""
 
-#: src/unlock.py:254
+#: src/unlock.py:250
 msgid "You have the Caps Lock key on."
+msgstr ""
+
+#. This is the first line of text for the backup-locker, explaining how to switch to tty
+#. and run 'cinnamon-unlock-desktop' command.  This appears if the screensaver crashes.
+#: backup-locker/cs-backup-locker.c:255
+msgid "Something went wrong with the screensaver."
+msgstr ""
+
+#. (continued) This is a subtitle
+#: backup-locker/cs-backup-locker.c:265
+msgid "We'll help you get your desktop back"
+msgstr ""
+
+#. (new section) Bulleted list of steps to take to unlock the desktop;
+#: backup-locker/cs-backup-locker.c:276
+#, c-format
+msgid "Switch to a console using <Control-Alt-F%u>."
+msgstr ""
+
+#. (list continued)
+#: backup-locker/cs-backup-locker.c:278
+msgid "Log in by typing your user name followed by your password."
+msgstr ""
+
+#. (list continued)
+#: backup-locker/cs-backup-locker.c:280
+msgid "At the prompt, type 'cinnamon-unlock-desktop' and press Enter."
+msgstr ""
+
+#. (list continued)
+#: backup-locker/cs-backup-locker.c:282
+#, c-format
+msgid "Switch back to your unlocked desktop using <Control-Alt-F%u>."
+msgstr ""
+
+#. (end section) Final words after the list of steps
+#: backup-locker/cs-backup-locker.c:287
+msgid "If you can reproduce this behavior, please file a report here:"
 msgstr ""
