@@ -138,11 +138,11 @@ class ScreensaverManager(GObject.Object):
                 return True
         else:
             if self.stage:
+                self.grab_helper.release()
                 self.despawn_stage()
                 Gio.Application.get_default().release()
                 status.focusWidgets = []
             status.screen = None
-            self.grab_helper.release()
             return True
 
     def get_active(self):
