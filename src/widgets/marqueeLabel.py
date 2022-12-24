@@ -16,7 +16,7 @@ class _fixedViewport(Gtk.Viewport):
         self.set_shadow_type(Gtk.ShadowType.NONE)
 
     def do_get_preferred_width(self):
-        return (400, 400)
+        return 400, 400
 
 class MarqueeLabel(Gtk.Stack):
     """

@@ -108,7 +108,7 @@ class KeyBindings(GObject.GObject):
             return True
 
         if status.Awake:
-            if (event.keyval in (Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab)):
+            if event.keyval in (Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab):
                 if event.keyval == Gdk.KEY_ISO_Left_Tab:
                     self.manager.propagate_tab_event(True)
                 else:
