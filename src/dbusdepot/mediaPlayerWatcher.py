@@ -266,16 +266,16 @@ class MediaPlayerWatcher(GObject.Object):
         only limited control from the lockscreen.
         """
         
-        firstIdle = None
+        first_idle = None
         
         for client in self.player_clients:
             if client.get_playback_status() == PlaybackStatus.Playing:
                 return client
 
-            if firstIdle is None and client.get_can_play_pause() and client.get_can_control():
-                firstIdle = client
+            if first_idle is None and client.get_can_play_pause() and client.get_can_control():
+                first_idle = client
 
-        return firstIdle
+        return first_idle
 
     def get_all_player_names(self):
         """
