@@ -1,3 +1,10 @@
+cinnamon-screensaver (5.6.3) vera; urgency=medium
+
+  [ Michael Webster ]
+  * manager.py:  Don't try to access self.grab_helper if it was never initialized.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 07 Jan 2023 15:56:27 +0000
+
 cinnamon-screensaver (5.6.2) vera; urgency=medium
 
   [ Michael Webster ]
