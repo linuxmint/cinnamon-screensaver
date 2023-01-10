@@ -260,19 +260,22 @@ class MediaPlayerWatcher(GObject.Object):
 
     def get_best_player(self):
         """
-        Find the first player in our list that is either playing, or
-        *can* be played.  Players that are simply loaded but don't have
-        any playlist queued up should not pass these tests - we have only
-        limited control from the lockscreen.
+        Find the first player in our list that is playing, then for one
+        that *can* be played.  Players that are simply loaded but don't 
+        have any playlist queued up should not pass these tests - we have
+        only limited control from the lockscreen.
         """
+        
+        first_idle = None
+        
         for client in self.player_clients:
             if client.get_playback_status() == PlaybackStatus.Playing:
                 return client
 
-            if client.get_can_play_pause() and client.get_can_control():
-                return client
+            if first_idle is None and client.get_can_play_pause() and client.get_can_control():
+                first_idle = client
 
-        return None
+        return first_idle
 
     def get_all_player_names(self):
         """
