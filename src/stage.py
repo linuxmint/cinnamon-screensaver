@@ -875,7 +875,7 @@ class Stage(Gtk.Window):
                 the unlock dialog, reduce our available region width to accomodate it, reducing
                 the allocation for the floating widgets as required.
                 """
-                if (unlock_nw > region_w):
+                if unlock_nw > region_w:
                     region_w = (monitor_rect.width - unlock_nw) / 2
 
                 region_h = monitor_rect.height

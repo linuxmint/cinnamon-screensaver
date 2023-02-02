@@ -64,7 +64,7 @@ class Main(Gtk.Application):
             quit()
 
         if args.version:
-            print("cinnamon-screensaver %s" % (config.VERSION))
+            print("cinnamon-screensaver %s" % config.VERSION)
             quit()
 
         status.LockEnabled = not args.lock_disabled

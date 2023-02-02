@@ -267,7 +267,7 @@ class OnScreenKeyboard(BaseWindow):
             if right_box.get_children():
                 row.pack_end(right_box, True, True, 0)
 
-        key_width = (self.max_width / (num_keys )) - (DEFAULT_PADDING * 2)
+        key_width = (self.max_width / num_keys) - (DEFAULT_PADDING * 2)
         key_height = row_height - (DEFAULT_PADDING * 2)
 
         for child in row_children:

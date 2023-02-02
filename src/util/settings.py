@@ -149,4 +149,4 @@ def get_osk_type():
     return osk_settings.get_string(OSK_TYPE)
 
 def get_osk_a11y_active():
-    return (a11y_settings.get_boolean(OSK_A11Y_ENABLED) and osk_settings.get_string(OSK_ACTIVATION) == 'accessible')
+    return a11y_settings.get_boolean(OSK_A11Y_ENABLED) and osk_settings.get_string(OSK_ACTIVATION) == 'accessible'

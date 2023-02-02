@@ -60,7 +60,7 @@ class ScreensaverCommand:
             quit()
 
         if args.action_id == Action.VERSION:
-            print("cinnamon-screensaver %s" % (config.VERSION))
+            print("cinnamon-screensaver %s" % config.VERSION)
             quit()
 
         self.action_id = args.action_id
