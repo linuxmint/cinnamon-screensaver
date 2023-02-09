@@ -103,6 +103,12 @@ def do_user_switch_timeout(data=None):
         app = Gio.AppInfo.create_from_commandline(command, "gdmflexiserver", 0)
         if app:
             app.launch(None, ctx)
+    elif process_is_running("gdm3"):
+        ctx = Gdk.Display.get_default().get_app_launch_context()
+
+        app = Gio.AppInfo.create_from_commandline("gdmflexiserver", None, 0)
+        if app:
+            app.launch(None, ctx)
     elif os.getenv("XDG_SEAT_PATH") is not None:
         try:
             bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
