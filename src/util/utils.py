@@ -93,20 +93,20 @@ def do_user_switch_timeout(data=None):
         command = "%s %s" % ("mdmflexiserver", "--startnew Standard")
         ctx = Gdk.Display.get_default().get_app_launch_context()
 
-        app = Gio.AppInfo.create_from_commandline(command, "mdmflexiserver", 0)
+        app = Gio.AppInfo.create_from_commandline(command, "mdmflexiserver", Gio.AppInfoCreateFlags.NONE)
         if app:
             app.launch(None, ctx)
     elif process_is_running("gdm"):
         command = "%s %s" % ("gdmflexiserver", "--startnew Standard")
         ctx = Gdk.Display.get_default().get_app_launch_context()
 
-        app = Gio.AppInfo.create_from_commandline(command, "gdmflexiserver", 0)
+        app = Gio.AppInfo.create_from_commandline(command, "gdmflexiserver", Gio.AppInfoCreateFlags.NONE)
         if app:
             app.launch(None, ctx)
     elif process_is_running("gdm3"):
         ctx = Gdk.Display.get_default().get_app_launch_context()
 
-        app = Gio.AppInfo.create_from_commandline("gdmflexiserver", None, 0)
+        app = Gio.AppInfo.create_from_commandline("gdmflexiserver", None, Gio.AppInfoCreateFlags.NONE)
         if app:
             app.launch(None, ctx)
     elif os.getenv("XDG_SEAT_PATH") is not None:
