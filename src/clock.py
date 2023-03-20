@@ -66,7 +66,7 @@ class ClockWidget(Floating, BaseWindow):
                                            self.on_clock_changed)
 
         tz = Gio.File.new_for_path(path="/etc/localtime")
-        self.tz_monitor = tz.monitor_file(0, None)
+        self.tz_monitor = tz.monitor_file(Gio.FileMonitorFlags.NONE, None)
 
         trackers.con_tracker_get().connect(self.tz_monitor,
                                            "changed",
