@@ -891,3 +891,28 @@ cs_screen_reset_screensaver (void)
 {
     XResetScreenSaver (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()));
 }
+
+/**
+ * cs_screen_get_global_scale:
+ *
+ * Retrieves the global scale factor from the GdkScreen.
+ *
+ */
+gint
+cs_screen_get_global_scale (void)
+{
+    GdkScreen *gdkscreen;
+    GValue value = G_VALUE_INIT;
+    gint window_scale = 1;
+
+    gdkscreen = gdk_screen_get_default ();
+
+    g_value_init (&value, G_TYPE_INT);
+
+    if (gdk_screen_get_setting (gdkscreen, "gdk-window-scaling-factor", &value))
+    {
+        window_scale = g_value_get_int (&value);
+    }
+
+    return window_scale;
+}
