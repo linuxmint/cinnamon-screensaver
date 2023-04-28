@@ -748,6 +748,10 @@ class Stage(Gtk.Window):
         else:
             self.rect = status.screen.get_screen_geometry()
 
+            scale = status.screen.get_global_scale()
+            self.rect.width *= scale
+            self.rect.height *= scale
+
         DEBUG("Stage.update_geometry - new backdrop position: %d, %d  new size: %d x %d" % (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
         hints = Gdk.Geometry()

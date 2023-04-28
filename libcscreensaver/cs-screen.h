@@ -84,6 +84,8 @@ gchar                       *cs_screen_get_net_wm_name (gulong       xwindow);
 
 void                         cs_screen_reset_screensaver (void);
 
+gint                         cs_screen_get_global_scale (void);
+
 G_END_DECLS
 
 #endif /* __CS_SCREEN_H */
