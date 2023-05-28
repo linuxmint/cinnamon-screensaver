@@ -40,6 +40,7 @@ Depends:
  python3-setproctitle,
  python3-xapp (>= 1.0.1),
  python3-xlib,
+ x11-utils,
  ${misc:Depends},
  ${python3:Depends},
  ${shlibs:Depends},
