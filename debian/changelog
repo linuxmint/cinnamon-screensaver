@@ -1,3 +1,25 @@
+cinnamon-screensaver (5.8.0) victoria; urgency=medium
+
+  [ IMarvinTPA ]
+  * Prioritize Playing Audio over other players. (#428)
+
+  [ hduelme ]
+  * remove redundant parentheses (#427)
+
+  [ Michael Webster ]
+  * utils.py: Add gdm3 to the switch user function.
+
+  [ hduelme ]
+  * use Gio flags instead of ints (#432)
+
+  [ Michael Webster ]
+  * github workflow: Add optional ssh session.
+  * stage: Multiply the stage window by the global scale.
+  * Fix stacking issue with the backup window.
+  * Add missing dependency on x11-util
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 01 Jun 2023 14:07:33 +0100
+
 cinnamon-screensaver (5.6.3) vera; urgency=medium
 
   [ Michael Webster ]
