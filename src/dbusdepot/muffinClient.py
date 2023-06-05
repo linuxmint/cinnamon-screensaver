@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
+import gi
+gi.require_version('CScreensaver', '1.0')
 from gi.repository import GLib, Gio, GObject, CScreensaver
-
-import status
 
 # TODO
 # self.monitors, etc.. replace or at least prefer this over CsScreen, as it will be more accurate.
@@ -34,7 +34,7 @@ class MuffinClient(GObject.Object):
             self.proxy.connect("notify::g-name-owner", self.on_name_owner_changed)
             self.update()
         except GLib.Error as e:
-            print("Could not connect to Muffin's DisplayConfig service", flush=True)
+            print(f"Could not connect to Muffin's DisplayConfig service: {e}", flush=True)
 
     def on_monitors_changed(self, proxy):
         self.update()
@@ -51,13 +51,13 @@ class MuffinClient(GObject.Object):
         old_scaling = self.using_fractional_scaling
 
         if self.proxy.get_name_owner() is None:
-            print("Muffin not running, skipping fractinal scaling check.")
+            print("Muffin not running, skipping fractional scaling check.")
             return False
 
         try:
-            serial, monitors, logical_monitors, properties = self.proxy.call_get_current_state_sync(None)
+            logical_monitors = self.proxy.call_get_current_state_sync(None)[2]
         except GLib.Error as e:
-            print("Could not read current state from Muffin: %s" % e.message, flush=True)
+            print(f"Could not read current state from Muffin: {e}", flush=True)
             self.using_fractional_scaling = False
             return self.using_fractional_scaling != old_scaling
 
@@ -65,7 +65,7 @@ class MuffinClient(GObject.Object):
         previous_scale = -1
 
         for monitor in logical_monitors.unpack():
-            x, y, scale, transform, primary, monitors, properties = monitor
+            scale = monitor[2]
 
             # one or more monitors using some non-integer scale.
             if int(scale) != scale:
@@ -80,7 +80,7 @@ class MuffinClient(GObject.Object):
             previous_scale = scale
 
         self.using_fractional_scaling = fractional
-        print("Fractional scaling active: %r" % self.using_fractional_scaling, flush=True)
+        print(f"Fractional scaling active: {self.using_fractional_scaling}", flush=True)
         return self.using_fractional_scaling != old_scaling
 
     def get_using_fractional_scaling(self):
