@@ -1,0 +1,38 @@
+<!DOCTYPE node PUBLIC
+"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd" >
+<node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+  <interface name="org.freedesktop.Accounts.User">
+
+  <property name="RealName" type="s" access="read">
+    <doc:doc>
+      <doc:description>
+        <doc:para>
+          The users real name.
+        </doc:para>
+      </doc:description>
+    </doc:doc>
+  </property>
+
+  <property name="IconFile" type="s" access="read">
+    <doc:doc>
+      <doc:description>
+        <doc:para>
+           The filename of a png file containing the users icon.
+        </doc:para>
+      </doc:description>
+    </doc:doc>
+  </property>
+
+  <property name="HomeDirectory" type="s" access="read">
+    <doc:doc>
+      <doc:description>
+        <doc:para>
+          The users home directory.
+        </doc:para>
+      </doc:description>
+    </doc:doc>
+  </property>
+
+  </interface>
+</node>

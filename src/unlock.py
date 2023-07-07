@@ -134,12 +134,11 @@ class UnlockDialog(BaseWindow):
         self.update_realname_label()
 
         self.account_client = singletons.AccountsServiceClient
-        if self.account_client.is_loaded:
-            self.set_user_details()
-        else:
-            trackers.con_tracker_get().connect(self.account_client,
-                                               "account-loaded",
-                                               self.on_account_client_loaded)
+
+        self.set_user_details()
+        trackers.con_tracker_get().connect(self.account_client,
+                                           "accounts-ready",
+                                           self.on_accounts_ready)
 
         self.keymap = Gdk.Keymap.get_default()
 
@@ -251,13 +250,13 @@ class UnlockDialog(BaseWindow):
         else:
             self.capslock_label.set_text("")
 
-    def on_account_client_loaded(self, client):
+    def on_accounts_ready(self, client):
         """
         Handler for the AccountsService - requests the user real name and .face image.
         """
         trackers.con_tracker_get().disconnect(self.account_client,
-                                           "account-loaded",
-                                           self.on_account_client_loaded)
+                                              "accounts-ready",
+                                              self.on_accounts_ready)
 
         self.set_user_details()
 

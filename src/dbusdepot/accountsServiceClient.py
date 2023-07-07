@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 import gi
-gi.require_version('AccountsService', '1.0')
-from gi.repository import GObject, AccountsService
+from gi.repository import GObject, CScreensaver, Gio, GLib
 import os
+import time
 
 from util import utils, trackers
 
@@ -12,41 +12,74 @@ class AccountsServiceClient(GObject.Object):
     Singleton for working with the AccountsService, which we use
     to retrieve the user's face image and their real name.
     """
+    ACCOUNTS_SERVICE = "org.freedesktop.Accounts"
+    ACCOUNTS_PATH    = "/org/freedesktop/Accounts"
+
     __gsignals__ = {
-        'account-loaded': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'accounts-ready': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self):
         super(AccountsServiceClient, self).__init__()
 
-        self.is_loaded = False
+        self.accounts = None
+        self.user = None
 
-        self.service = AccountsService.UserManager.get_default().get_user(utils.get_user_name())
-        trackers.con_tracker_get().connect(self.service,
-                                           "notify::is-loaded",
-                                           self.on_accounts_service_loaded)
+        print("Loading AccountsService")
 
-    def on_accounts_service_loaded(self, service, param):
-        trackers.con_tracker_get().disconnect(self.service,
-                                              "notify::is-loaded",
-                                              self.on_accounts_service_loaded)
+        CScreensaver.AccountsServiceProxy.new_for_bus(Gio.BusType.SYSTEM,
+                                                      Gio.DBusProxyFlags.DO_NOT_AUTO_START,
+                                                      self.ACCOUNTS_SERVICE,
+                                                      self.ACCOUNTS_PATH,
+                                                      None,
+                                                      self.on_accounts_connected)
 
-        self.is_loaded = True
-        self.emit("account-loaded")
+    def on_accounts_connected(self, source, res):
+        try:
+            self.accounts = CScreensaver.AccountsServiceProxy.new_for_bus_finish(res)
+        except GLib.Error as e:
+            print(f"Could not connect to AccountsService: {e}", flush=True)
+            return
+
+        self.accounts.call_find_user_by_name(utils.get_user_name(), None, self.got_user_proxy)
+
+    def got_user_proxy(self, source, res):
+        try:
+            proxy_path = self.accounts.call_find_user_by_name_finish(res)
+        except GLib.Error as e:
+            print(f"Could not get AccountsService User object path: {e}", flush=True)
+            return
+
+        CScreensaver.AccountsUserProxy.new_for_bus(Gio.BusType.SYSTEM,
+                                                   Gio.DBusProxyFlags.NONE,
+                                                   self.ACCOUNTS_SERVICE,
+                                                   proxy_path,
+                                                   None,
+                                                   self.on_user_loaded)
+
+    def on_user_loaded(self, source, res):
+        try:
+            self.user = CScreensaver.AccountsUserProxy.new_for_bus_finish(res)
+        except GLib.Error as e:
+            print(f"Could not create AccountsService.User: {e}", flush=True)
+
+        print("AccountsService ready")
+        self.emit("accounts-ready")
 
     def get_real_name(self):
-        return self.service.get_real_name()
+        if self.user is not None:
+            return self.user.get_property("real-name")
+
+        return None
 
     def get_face_path(self):
-        face_path = None
-        home_path = self.service.get_home_dir()
-        if home_path is None:
-            home_path = os.path.expanduser('~')
+        face = os.path.join(GLib.get_home_dir(), ".face")
+        if os.path.exists(face):
+            return face
 
-        for path in [os.path.join(home_path, ".face"),
-                     self.service.get_icon_file()]:
-            if os.path.exists(path):
-                face_path = path
-                break
+        if self.user is not None:
+            accounts_path = self.user.get_property("icon-file")
+            if os.path.exists(accounts_path):
+                    return accounts_path
 
-        return face_path
+        return None

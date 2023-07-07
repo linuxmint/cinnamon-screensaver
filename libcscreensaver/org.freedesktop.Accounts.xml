@@ -1,0 +1,31 @@
+<!DOCTYPE node PUBLIC
+"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd" >
+<node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+  <interface name="org.freedesktop.Accounts">
+
+    <!-- ************************************************************ -->
+
+    <method name="FindUserByName">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <arg name="name" direction="in" type="s">
+        <doc:doc><doc:summary>The username to look up</doc:summary></doc:doc>
+      </arg>
+      <arg name="user" direction="out" type="o">
+        <doc:doc><doc:summary>Object path of user</doc:summary></doc:doc>
+      </arg>
+
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            Finds a user by its username.
+          </doc:para>
+        </doc:description>
+        <doc:errors>
+          <doc:error name="org.freedesktop.Accounts.Error.Failed">if no user with the given username exists</doc:error>
+        </doc:errors>
+      </doc:doc>
+    </method>
+
+  </interface>
+</node>

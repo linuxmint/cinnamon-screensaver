@@ -87,6 +87,20 @@ dbus_files = [
     ],
     'org.cinnamon.Muffin.DisplayConfig'
   ],
+  [
+    'cs-accounts-service-proxy',
+    [
+      ['org.freedesktop.Accounts', 'org.gtk.GDBus.C.Name', 'AccountsService']
+    ],
+    'org.freedesktop.Accounts'
+  ],
+  [
+    'cs-accounts-user-proxy',
+    [
+      ['org.freedesktop.Accounts.User', 'org.gtk.GDBus.C.Name', 'AccountsUser']
+    ],
+    'org.freedesktop.Accounts.User'
+  ],
 ]
 
 dbus_built = []
