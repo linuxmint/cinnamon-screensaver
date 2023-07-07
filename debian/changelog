@@ -1,3 +1,13 @@
+cinnamon-screensaver (5.8.1) victoria; urgency=medium
+
+  [ Rick Calixte ]
+  * muffinClient.py: Fix typo and clean up Python (#435)
+
+  [ Michael Webster ]
+  * cinnamon-screensaver-command: Only try an action if the proxy activation was successful.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 07 Jul 2023 15:17:46 +0200
+
 cinnamon-screensaver (5.8.0) victoria; urgency=medium
 
   [ IMarvinTPA ]
