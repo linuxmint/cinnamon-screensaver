@@ -1,4 +1,4 @@
-project('cinnamon-screensaver', 'c', version: '5.8.1', meson_version: '>=0.46.0')
+project('cinnamon-screensaver', 'c', version: '5.8.1', meson_version: '>=0.56.0')
 
 cc = meson.get_compiler('c')
 
@@ -50,7 +50,7 @@ if not xdo.found()
   xdo = cc.find_library('xdo')
 endif
 
-dbus_services_dir = dependency('dbus-1').get_pkgconfig_variable('session_bus_services_dir', define_variable: ['datadir', datadir])
+dbus_services_dir = dependency('dbus-1').get_variable(pkgconfig: 'session_bus_services_dir', pkgconfig_define: ['datadir', datadir])
 
 # check for symbols and headers
 foreach header : [
