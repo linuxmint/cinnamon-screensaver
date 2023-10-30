@@ -12,6 +12,16 @@ import gettext
 import argparse
 import os
 import setproctitle
+import sys
+
+# Do this before importing ScreensaverService as that triggers all of the dbus services
+# including the XAppKbdLayoutController which is x11 only.
+try:
+    if os.environ["WAYLAND_DISPLAY"]:
+        print("Cinnamon Screensaver is unavailable on Wayland.")
+        sys.exit(0)
+except KeyError:
+    pass
 
 import config
 import status

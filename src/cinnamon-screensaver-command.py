@@ -4,6 +4,8 @@ import gi
 gi.require_version('CScreensaver', '1.0')
 
 from gi.repository import GLib, CScreensaver, Gio
+import os
+import sys
 import signal
 import argparse
 import gettext
@@ -120,6 +122,12 @@ class ScreensaverCommand:
         self.mainloop.quit()
 
 if __name__ == "__main__":
+    try:
+        if os.environ["WAYLAND_DISPLAY"]:
+            print("Cinnamon Screensaver is unavailable on Wayland.")
+            sys.exit(0)
+    except KeyError:
+        pass
 
     ml = GLib.MainLoop.new(None, True)
     main = ScreensaverCommand(ml)
