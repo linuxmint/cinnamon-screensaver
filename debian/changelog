@@ -1,3 +1,18 @@
+cinnamon-screensaver (6.0.0) virginia; urgency=medium
+
+  [ Michael Webster ]
+  * Don't use libaccountsservice, which can block startup.
+  * Update issue templates.
+
+  [ Rick Calixte ]
+  * Fix meson.build deprecations up to 0.56.0 (#444)
+
+  [ Michael Webster ]
+  * Disable screensaver in wayland sessions
+  * debian/control: Remove unused build dep librsvg.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 19 Nov 2023 13:42:28 +0000
+
 cinnamon-screensaver (5.8.1) victoria; urgency=medium
 
   [ Rick Calixte ]
