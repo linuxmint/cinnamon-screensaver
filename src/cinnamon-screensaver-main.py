@@ -139,9 +139,12 @@ class Main(Gtk.Application):
 
             fallback_prov = Gtk.CssProvider()
 
-            if fallback_prov.load_from_data(fallback_css.encode()):
+            try:
+                fallback_prov.load_from_data(fallback_css.encode())
                 Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), fallback_prov, 600)
                 Gtk.StyleContext.reset_widgets(Gdk.Screen.get_default())
+            except Exception as e:
+                print("Could not parse fallback css: %s" % str(e))
 
 if __name__ == "__main__":
     setproctitle.setproctitle('cinnamon-screensaver')
