@@ -147,6 +147,19 @@ restack (CsGdkEventFilter *filter,
 
             XRaiseWindow(GDK_DISPLAY_XDISPLAY (filter->display), filter->my_xid);
         }
+        else
+        {
+            g_debug ("BackupWindow received %s from screensaver window (0x%lx), restacking us below it.",
+                      event_type,
+                      event_window);
+
+            Window windows[] = {
+                filter->pretty_xid,
+                filter->my_xid
+            };
+
+            XRestackWindows (GDK_DISPLAY_XDISPLAY (filter->display), windows, 2);
+        }
     }
     else
     {
