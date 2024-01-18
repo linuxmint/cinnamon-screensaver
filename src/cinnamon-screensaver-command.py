@@ -122,13 +122,6 @@ class ScreensaverCommand:
         self.mainloop.quit()
 
 if __name__ == "__main__":
-    try:
-        if os.environ["WAYLAND_DISPLAY"]:
-            print("Cinnamon Screensaver is unavailable on Wayland.")
-            sys.exit(0)
-    except KeyError:
-        pass
-
     ml = GLib.MainLoop.new(None, True)
     main = ScreensaverCommand(ml)
 

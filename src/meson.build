@@ -49,18 +49,31 @@ app_css = [
   'cinnamon-screensaver.css',
 ]
 
+install_data(app_py + app_css,
+  install_dir: pkgdatadir
+)
+
 app_scripts = [
   ['cinnamon-screensaver-main.py', 'cinnamon-screensaver'],
   ['cinnamon-screensaver-command.py', 'cinnamon-screensaver-command']
 ]
 
-install_data(app_py + app_css,
-  install_dir: pkgdatadir
-)
-
 foreach script : app_scripts
-  install_data(script[0], install_dir: pkgdatadir)
-  meson.add_install_script('sh', '-c', 'mkdir -p "$DESTDIR/@0@"'.format(bindir))
-  meson.add_install_script('sh', '-c',
-    'ln -sf "@0@" "$DESTDIR/@1@"'.format(join_paths(pkgdatadir, script[0]), join_paths(bindir, script[1])))
+  prefix_info = configuration_data()
+  prefix_info.set('install_dir', pkgdatadir)
+  prefix_info.set('target', script[0])
+
+  bin_file = configure_file(
+    input : 'binfile.in',
+    output: script[1],
+    configuration: prefix_info,
+    install_dir: get_option('bindir'),
+    install_mode: 'rwxr-xr-x'
+  )
+
+  install_data(
+      script[0],
+      install_dir: pkgdatadir,
+      install_mode: 'rwxr-xr-x'
+  )
 endforeach

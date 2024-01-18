@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+  echo "cinnamon-screensaver is disabled in wayland sessions. Exiting."
+  exit 1
+fi
+
+exec @install_dir@/@target@ $@
