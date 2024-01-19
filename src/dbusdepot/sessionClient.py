@@ -3,6 +3,7 @@
 from gi.repository import Gio, GObject, CScreensaver
 
 from dbusdepot.baseClient import BaseClient
+from util.utils import DEBUG
 
 class SessionClient(BaseClient):
     """
@@ -31,8 +32,9 @@ class SessionClient(BaseClient):
     def on_status_changed(self, proxy, status):
         new_idle = status == 3
         if new_idle != self.idle:
+            DEBUG("SessionClient: status changed: %d to %d (Session manager code %d)" % (self.idle, new_idle, status))
             self.idle = new_idle
             self.emit("idle-changed", self.idle)
 
     def on_failure(self, *args):
-        print("Failed to connect to session manager - idle detection will not work.")
+        DEBUG("Failed to connect to session manager - idle detection will not work.")

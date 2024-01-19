@@ -531,12 +531,13 @@ class ScreensaverManager(GObject.Object):
         return self.focus_nav.get_focused_widget()
 
     def on_session_idle_changed(self, proxy, idle):
-        """
-        Call back for the session client - initiates a slow fade-in
-        for the stage when the session goes idle.  Cancels the stage fade-in
-        if idle becomes False before it has completed its animation.
-        """
         DEBUG("manager: session idle-changed - %s" % str(idle))
 
-        if idle and not status.Active:
-            self.set_active(True)
+        if idle:
+            if not status.Active:
+                DEBUG("manager: Activating because session is idle")
+                self.set_active(True)
+        else:
+            DEBUG("manager: Refreshing stage because session is no longer idle")
+            self.queue_refresh_stage(self.stage)
+
