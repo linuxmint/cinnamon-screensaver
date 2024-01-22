@@ -33,6 +33,8 @@ static void setup_window_monitor (BackupWindow *window, gulong xid);
 struct _BackupWindow
 {
     GtkWindow parent_instance;
+
+    GtkWidget *stack_window;
     GtkWidget *fixed;
     GtkWidget *info_box;
 
@@ -359,6 +361,7 @@ backup_window_finalize (GObject *object)
 
         backup_window_ungrab (window);
 
+        gtk_widget_destroy (window->stack_window);
         g_object_unref (window->event_filter);
         g_object_unref (window->grabber);
 
@@ -394,6 +397,16 @@ backup_window_new (gulong pretty_xid)
     g_signal_connect (window->event_filter, "screensaver-window-changed", G_CALLBACK (screensaver_window_changed), window);
 
     window->pretty_xid = pretty_xid;
+
+    GtkWindow *stack_window = g_object_new (GTK_TYPE_WINDOW,
+                                           "decorated", FALSE,
+                                           "type-hint", GDK_WINDOW_TYPE_HINT_DOCK,
+                                           NULL);
+    gtk_window_set_keep_below (stack_window, TRUE);
+    gtk_window_set_default_size (stack_window, 1, 1);
+    gtk_window_move (stack_window, -1, -1);
+    gtk_widget_show (GTK_WIDGET (stack_window));
+    window->stack_window = GTK_WIDGET (stack_window);
 
     return GTK_WIDGET (result);
 }
