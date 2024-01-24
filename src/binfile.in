@@ -5,4 +5,4 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
   exit 1
 fi
 
-exec @install_dir@/@target@ $@
+exec @install_dir@/@target@ "$@"
