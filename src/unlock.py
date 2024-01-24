@@ -227,7 +227,6 @@ class UnlockDialog(BaseWindow):
         """
         Clears the auth message text if we have any.
         """
-        self.auth_client.cancel()
         self.clear_entry()
 
     def queue_key_event(self, event):
