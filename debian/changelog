@@ -1,3 +1,14 @@
+cinnamon-screensaver (6.0.3) virginia; urgency=medium
+
+  [ Michael Webster ]
+  * Use a shell script to launch, where the environment can be checked before x11 resources are loaded in python.
+  * binfile.in: Enclose arguments in quotes.
+
+  [ Clement Lefebvre ]
+  * Revert "backup locker: Restore stack management when not activated."
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 24 Jan 2024 15:25:47 +0000
+
 cinnamon-screensaver (6.0.2) virginia; urgency=medium
 
   [ Michael Webster ]
