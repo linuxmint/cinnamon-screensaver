@@ -6,3 +6,4 @@ usr/include/cinnamon-screensaver/
 # precompiled python files
 */__pycache__/
 
+usr/share/gir-1.0/CScreensaver-1.0.gir
