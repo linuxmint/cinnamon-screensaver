@@ -1,3 +1,10 @@
+cinnamon-screensaver (6.2.0) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * debian: Don't install CScreensaver-1.0.gir.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Jun 2024 16:57:29 +0100
+
 cinnamon-screensaver (6.0.3) virginia; urgency=medium
 
   [ Michael Webster ]
