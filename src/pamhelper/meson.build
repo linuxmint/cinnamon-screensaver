@@ -10,6 +10,7 @@ executable('cinnamon-screensaver-pam-helper',
   dependencies: [gio_unix, glib],
   include_directories: inc,
   link_with: libcscreensaver,
+  install_rpath: pkglibdir,
   install: true,
-  install_dir: libexecdir
+  install_dir: pkglibdir
 )
