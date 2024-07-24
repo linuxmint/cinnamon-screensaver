@@ -631,6 +631,11 @@ main (int    argc,
 
     g_debug ("backup-locker: initializing");
 
+    if (!xid_str || !term_tty_str || !session_tty_str) {
+        g_critical ("xid, term and session arguments are mandatory, exiting.");
+        exit (1);
+    }
+
     gulong xid = term_tty = session_tty = 0;
 
     xid = strtoul (xid_str, NULL, 0);
