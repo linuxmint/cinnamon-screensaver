@@ -140,22 +140,11 @@ endif
 libcscreensaver = library(
   'cscreensaver',
   cscreensaver_sources + gir_sources,
-  version: '0.0.0',
   include_directories: inc,
   cpp_args: '-DG_LOG_DOMAIN="CScreensaver"',
   dependencies: libcscreensaver_deps,
+  install_dir: pkglibdir,
   install: true
-)
-
-pkgconfig.generate(
-  # TODO meson 0.46 replace libraries, name, version with positional library argument
-  libraries: libcscreensaver,
-  name: 'cscreensaver',
-  version: meson.project_version(),
-  description: 'Small utility lib used by cinnamon-screensaver v3.1+ to provide a GdkWindow filter (not currently introspectable)',
-  subdirs: 'cscreensaver',
-  # these should be their variables, but meson < 0.46 strikes again
-  requires: ['gobject-2.0', 'gtk+-3.0', 'gdk-3.0']
 )
 
 cscreensaver_gir = gnome.generate_gir(
@@ -166,8 +155,8 @@ cscreensaver_gir = gnome.generate_gir(
   identifier_prefix: 'Cs',
   symbol_prefix: 'cs_',
   includes: 'Gtk-3.0',
+  install_dir_typelib: typelibdir,
   install: true
-
 )
 
 test_passwd = executable(

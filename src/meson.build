@@ -8,17 +8,6 @@ subdir('widgets')
 config_py = configure_file(
   output: 'config.py',
   input: 'config.py.in',
-  # meson 0.49
-  #configuration: {
-  #  'prefix': prefix,
-  #  'datadir': datadir,
-  #  'pkgdatadir': pkgdatadir,
-  #  'libexecdir': libexecdir,
-  #  'libdir': libdir,
-  #  'PACKAGE': meson.project_name(),
-  #  'VERSION': meson.project_version(),
-  #  'GETTEXT_PACKAGE': meson.project_name()
-  #}
   configuration: misc_conf
 )
 
@@ -62,6 +51,8 @@ foreach script : app_scripts
   prefix_info = configuration_data()
   prefix_info.set('install_dir', pkgdatadir)
   prefix_info.set('target', script[0])
+  prefix_info.set('pkglibdir', pkglibdir)
+  prefix_info.set('typelibdir', typelibdir)
 
   bin_file = configure_file(
     input : 'binfile.in',

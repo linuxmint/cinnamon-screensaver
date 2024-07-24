@@ -30,7 +30,6 @@ Depends:
  gir1.2-gtk-3.0,
  gir1.2-xapp-1.0,
  iso-flag-png,
- libcscreensaver0 (= ${binary:Version}),
  libxdo3,
  python3,
  python3-gi,
@@ -46,7 +45,8 @@ Recommends: libpam-gnome-keyring
 Breaks: 
  cinnamon-screensaver-pam-helper (<< 3.8),
  cinnamon-screensaver-webkit-plugin (<< 3.9),
- cinnamon-screensaver-x-plugin (<< 3.9)
+ cinnamon-screensaver-x-plugin (<< 3.9),
+ libcscreensaver0 (<< ${source:Version})
 Replaces:
  cinnamon-screensaver-pam-helper (<< 3.8),
  cinnamon-screensaver-webkit-plugin (<< 3.9),
@@ -61,18 +61,6 @@ Priority: extra
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: libcscreensaver0 (= ${binary:Version}), ${misc:Depends}
+Depends: cinnamon-screensaver (= ${binary:Version}), ${misc:Depends}
 Description: Cinnamon Screensaver library - debug symbols
  This package contains the symbols files needed to debug the Cinnamon Screensaver library.
-
-Package: libcscreensaver0
-Section: libs
-Architecture: any
-Multi-Arch: same
-Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Description: library and introspection data used by cinnamon-screensaver
- cinnamon-screensaver is a screen saver and locker that aims to have simple,
- sane and secure defaults, and be well integrated with the Cinnamon desktop.
- .
- This package contains the library used by the screensaver.
