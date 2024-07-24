@@ -12,7 +12,8 @@ override_dh_strip:
 override_dh_auto_configure:
 	dh_auto_configure -- \
 	--libexecdir=lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver \
-	-D use-debian-pam=true
+	--buildtype=debugoptimized \
+	-D use-debian-pam=true \
 
 # there has never been a testsuite, so don't try running it and breaking
 # just because there isn't one

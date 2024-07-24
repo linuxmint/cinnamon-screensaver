@@ -104,47 +104,11 @@ dbus_files = [
 ]
 
 dbus_built = []
-# foreach dbus: dbus_files
-#   dbus_built += gnome.gdbus_codegen(dbus[0], '@0@.xml'.format(dbus[2]),
-#     namespace: 'Cs',
-#     annotations: dbus[1]
-#   )
-# endforeach
-
-# FIXME: Ugly workaround that simulates the generation of
-#        two different targets, so headers can be included
-#        explicitly for introspection.
-#
-# This can be removed once all platforms use meson >=.46
-# and replaced with gnome.gdbus_codegen
-codegen = find_program('g-codegen.py')
-
 foreach dbus: dbus_files
-    annotations = []
-
-    foreach item: dbus[1]
-        annotations += '--annotate'
-        annotations += item
-    endforeach
-
-    annotations_string = ' '.join(annotations)
-
-    generated = custom_target(
-        dbus[0],
-        input: '@0@.xml'.format(dbus[2]),
-        output: ['@0@.h'.format(dbus[0]), '@0@.c'.format(dbus[0])],
-        command: [
-            codegen,
-            dbus[2],
-            dbus[0],
-            annotations_string,
-            meson.current_build_dir(),
-            '@INPUT@', '@OUTPUT@'
-        ]
-    )
-
-    dbus_built += generated[0]
-    dbus_built += generated[1]
+  dbus_built += gnome.gdbus_codegen(dbus[0], '@0@.xml'.format(dbus[2]),
+    namespace: 'Cs',
+    annotations: dbus[1]
+  )
 endforeach
 
 # non-pam auth implementations are not implemented at this time
