@@ -11,7 +11,7 @@ override_dh_strip:
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
-	--libexecdir=lib/$(DEB_HOST_MULTIARCH)/cinnamon-screensaver \
+	--libexecdir=libexec \
 	--buildtype=debugoptimized \
 	-D use-debian-pam=true \
 

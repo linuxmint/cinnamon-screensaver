@@ -278,7 +278,7 @@ class ScreensaverManager(GObject.Object):
         term_tty, session_tty = self.get_tty_vals()
 
         argv = [
-            os.path.join(config.libexecdir, "cs-backup-locker"),
+            os.path.join(config.pkglibdir, "cs-backup-locker"),
             "--xid", str(self.stage.get_window().get_xid()),
             "--term", term_tty,
             "--session", session_tty

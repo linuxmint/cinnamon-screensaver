@@ -16,7 +16,8 @@ backup_locker = executable('cs-backup-locker',
   include_directories: inc,
   dependencies: [x11, gtk, glib],
   link_with: libcscreensaver,
-  install_dir: libexecdir,
+  install_rpath: pkglibdir,
+  install_dir: pkglibdir,
   install: true
 )
 
