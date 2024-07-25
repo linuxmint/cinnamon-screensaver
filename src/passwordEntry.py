@@ -29,6 +29,9 @@ class PasswordEntry(Gtk.Entry):
         self.set_placeholder_text (placeholder_text)
         self.set_can_default(True)
 
+        self.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "cinnamon-screensaver-view-reveal")
+        trackers.con_tracker_get().connect(self, "icon-press", self.on_icon_pressed)
+
         self.placeholder_text = placeholder_text
         self.current_icon_name = None
         self.current_flag_id = 0
@@ -174,6 +177,16 @@ class PasswordEntry(Gtk.Entry):
     def on_icon_pressed(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.PRIMARY:
             self.keyboard_controller.next_group()
+        elif icon_pos == Gtk.EntryIconPosition.SECONDARY:
+            if self.get_input_purpose() == Gtk.InputPurpose.FREE_FORM:
+                self.set_visibility(False)
+                self.set_input_purpose(Gtk.InputPurpose.PASSWORD)
+                self.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "cinnamon-screensaver-view-reveal")
+            else:
+                self.set_visibility(True)
+                self.set_input_purpose(Gtk.InputPurpose.FREE_FORM)
+                self.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "cinnamon-screensaver-view-conceal")
+            self.queue_draw()
 
     def update_layout_icon(self):
         """
@@ -221,10 +234,6 @@ class PasswordEntry(Gtk.Entry):
         self.keyboard_controller.set_current_group(new_group)
         self.update_saved_group(new_group)
         self.update_layout_icon()
-
-        trackers.con_tracker_get().connect(self,
-                                           "icon-press",
-                                           self.on_icon_pressed)
 
         trackers.con_tracker_get().connect(self,
                                            "draw",
