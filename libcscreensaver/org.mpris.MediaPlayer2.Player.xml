@@ -38,7 +38,7 @@
       </tp:enumvalue>
       <tp:enumvalue suffix="Track" value="Track">
         <tp:docstring xmlns="http://www.w3.org/1999/xhtml">
-          <p>The current track will start again from the begining once it has finished playing</p>
+          <p>The current track will start again from the beginning once it has finished playing</p>
         </tp:docstring>
       </tp:enumvalue>
       <tp:enumvalue suffix="Playlist" value="Playlist">
@@ -328,7 +328,7 @@
         <p>May be:
           <ul>
             <li>"None" if the playback will stop when there are no more tracks to play</li>
-            <li>"Track" if the current track will start again from the begining once it has finished playing</li>
+            <li>"Track" if the current track will start again from the beginning once it has finished playing</li>
             <li>"Playlist" if the playback loops through a list of tracks</li>
           </ul>
         </p>
@@ -440,9 +440,9 @@
             setting this property has no effect and can raise an error.
           </p>
           <p>
-            If the playback progresses in a way that is inconstistant with the
+            If the playback progresses in a way that is inconsistent with the
             <tp:member-ref>Rate</tp:member-ref> property, the
-            <tp:member-ref>Seeked</tp:member-ref> signal is emited.
+            <tp:member-ref>Seeked</tp:member-ref> signal is emitted.
           </p>
         </tp:docstring>
     </property>

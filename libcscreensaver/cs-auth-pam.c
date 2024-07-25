@@ -234,7 +234,7 @@ cs_auth_run_message_handler (struct pam_closure *c,
         g_idle_add ((GSourceFunc) cs_auth_queued_message_handler, &data);
 
         if (cs_auth_get_verbose ()) {
-                DEBUG ("cs-auth-pam (pid %i): Waiting for respose to message style %d: '%s'\n", getpid (), style, msg);
+                DEBUG ("cs-auth-pam (pid %i): Waiting for response to message style %d: '%s'\n", getpid (), style, msg);
         }
 
         /* Wait for the response
@@ -244,7 +244,7 @@ cs_auth_run_message_handler (struct pam_closure *c,
         g_mutex_unlock (message_handler_mutex);
 
         if (cs_auth_get_verbose ()) {
-                DEBUG ("cs-auth-pam (pid %i): Got respose to message style %d: interrupt:%d\n", getpid (), style, data.should_interrupt_stack);
+                DEBUG ("cs-auth-pam (pid %i): Got response to message style %d: interrupt:%d\n", getpid (), style, data.should_interrupt_stack);
         }
 
         return data.should_interrupt_stack == FALSE;

@@ -34,7 +34,7 @@ class EventHandler:
     def on_motion_event(self, event):
         """
         Any mouse movement is sent here - there is a threshold to reach when
-        asleep, so that inadvertant motion doesn't wake the system unintentionally.
+        asleep, so that inadvertent motion doesn't wake the system unintentionally.
         """
         if status.Awake:
             self.on_user_activity()

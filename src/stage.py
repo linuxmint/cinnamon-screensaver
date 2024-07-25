@@ -32,7 +32,7 @@ class Stage(Gtk.Window):
     It is Gtk.WindowType.POPUP to avoid being managed/composited by muffin,
     and to prevent animation during its creation and destruction.
 
-    The Stage reponds pretty much only to the instructions of the
+    The Stage responds pretty much only to the instructions of the
     ScreensaverManager.
     """
     __gsignals__ = {
@@ -876,7 +876,7 @@ class Stage(Gtk.Window):
                 unlock_mw, unlock_nw = self.unlock_dialog.get_preferred_width()
                 """
                 If, for whatever reason, we need more than 1/3 of the screen to fully display
-                the unlock dialog, reduce our available region width to accomodate it, reducing
+                the unlock dialog, reduce our available region width to accommodate it, reducing
                 the allocation for the floating widgets as required.
                 """
                 if unlock_nw > region_w:

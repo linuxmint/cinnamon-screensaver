@@ -538,7 +538,7 @@ cs_event_grabber_grab_window (CsEventGrabber    *grab,
            is that both a keyboard grab and a mouse grab are mandatory
 
            - If we don't have a keyboard grab, then we won't be able to
-           read a password to unlock, so the kbd grab is manditory.
+           read a password to unlock, so the kbd grab is mandatory.
 
            - If we don't have a mouse grab, then we might not see mouse
            clicks as a signal to unblank, on-screen widgets won't work ideally,
