@@ -97,10 +97,16 @@ class UnlockDialog(BaseWindow):
         trackers.con_tracker_get().connect(self.auth_unlock_button,
                                            "clicked",
                                            self.on_unlock_clicked)
-
         button_box.pack_start(self.auth_unlock_button, False, False, 4)
 
         status.focusWidgets = [self.password_entry, self.auth_unlock_button]
+
+        self.auth_reveal_password_button = TransparentButton("view-reveal-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        trackers.con_tracker_get().connect(self.auth_reveal_password_button,
+                                           "clicked",
+                                           self.auth_reveal_password_clicked)
+        button_box.pack_start(self.auth_reveal_password_button, False, False, 4)
+        status.focusWidgets.append(self.auth_reveal_password_button)
 
         if not settings.get_boolean("disable-user-switching"):
             self.auth_switch_button = TransparentButton("screensaver-switch-users-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
@@ -288,6 +294,19 @@ class UnlockDialog(BaseWindow):
 
         return Gdk.EVENT_PROPAGATE
 
+    def auth_reveal_password(self, widget, button=None):
+        """
+        Reveals the plaintext password to the user"
+        """
+        if self.password_entry.get_visibility() == False:
+            self.password_entry.set_visibility(True)
+            new_image = Gtk.Image.new_from_icon_name("view-conceal-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            self.auth_reveal_password_button.set_image(new_image)
+        else:
+            self.password_entry.set_visibility(False)
+            new_image = Gtk.Image.new_from_icon_name("view-reveal-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            self.auth_reveal_password_button.set_image(new_image)
+
     def on_unlock_clicked(self, button=None):
         """
         Callback for the unlock button.  Activates the 'progress' animation
@@ -317,6 +336,12 @@ class UnlockDialog(BaseWindow):
         Callback for the switch-user button.
         """
         utils.do_user_switch()
+
+    def auth_reveal_password_clicked(self, widget):
+        """
+        Callback for the auth-reveal-password button
+        """
+        self.auth_reveal_password(self)
 
     def clear_entry(self):
         """
