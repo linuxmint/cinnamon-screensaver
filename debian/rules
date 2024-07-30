@@ -15,6 +15,11 @@ override_dh_auto_configure:
 	--buildtype=debugoptimized \
 	-D use-debian-pam=true \
 
+execute_after_dh_fixperms:
+	: # fix executable libraries
+	chmod 0644 debian/cinnamon-screensaver/usr/libexec/cinnamon-screensaver/girepository-1.0/CScreensaver-1.0.typelib
+	chmod 0644 debian/cinnamon-screensaver/usr/libexec/cinnamon-screensaver/libcscreensaver.so
+
 # there has never been a testsuite, so don't try running it and breaking
 # just because there isn't one
 override_dh_auto_test:
