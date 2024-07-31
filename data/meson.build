@@ -8,8 +8,6 @@ endif
 dbus_service = configure_file(
   output: 'org.cinnamon.ScreenSaver.service',
   input: 'org.cinnamon.ScreenSaver.service.in',
-  # meson 0.49
-  # configuration: { 'EXPANDED_BINDIR': bindir }
   configuration: misc_conf
 )
 

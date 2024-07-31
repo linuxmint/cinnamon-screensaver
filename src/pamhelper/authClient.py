@@ -40,25 +40,10 @@ class AuthClient(GObject.Object):
 
         try:
             helper_path = None
-            architecture = platform.machine()
-            paths = [config.libexecdir, "/usr/lib", "/usr/lib/cinnamon-screensaver", "/usr/libexec", "/usr/libexec/cinnamon-screensaver"]
 
-            # On x86 archs, iterate through multiple paths
-            # For instance, on a Mint i686 box, the path is actually /usr/lib/i386-linux-gnu
-            x86archs = ["i386", "i486", "i586", "i686"]
-            if architecture in x86archs:
-                for arch in x86archs:
-                    paths += ["/usr/lib/%s" % arch, "/usr/lib/%s-linux-gnu" % arch]
-            elif architecture == "x86_64":
-                paths += ["/usr/lib/x86_64", "/usr/lib/x86_64-linux-gnu", "/usr/lib64"]
-            else:
-                paths += ["/usr/lib/%s" % architecture, "/usr/lib/%s-linux-gnu" % architecture]
-
-            for path in paths:
-                full_path = os.path.join(path, "cinnamon-screensaver-pam-helper")
-                if os.path.exists(full_path):
-                    helper_path = full_path
-                    break
+            full_path = os.path.join(config.pkglibdir, "cinnamon-screensaver-pam-helper")
+            if os.path.exists(full_path):
+                helper_path = full_path
 
             if helper_path is None:
                 print ("authClient: critical Error: PAM Helper could not be found!")

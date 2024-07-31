@@ -5,4 +5,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
   exit 1
 fi
 
+export GI_TYPELIB_PATH="@typelibdir@"
+export LD_LIBRARY_PATH="@pkglibdir@"
+
 exec @install_dir@/@target@ "$@"
