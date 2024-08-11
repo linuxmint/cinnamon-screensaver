@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  debhelper (>= 11.1~),
- dh-python,
+ dh-sequence-python3,
  gnome-pkg-tools (>= 0.10),
  gobject-introspection,
  intltool (>= 0.40.0),
