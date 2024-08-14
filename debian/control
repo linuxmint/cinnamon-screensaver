@@ -3,19 +3,19 @@ Section: x11
 Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
- debhelper (>= 11.1~),
- dh-python,
- gnome-pkg-tools (>= 0.10),
+ debhelper-compat (= 13),
+ dh-sequence-python3,
+ gnome-pkg-tools,
  gobject-introspection,
- intltool (>= 0.40.0),
+ intltool,
  libdbus-1-dev,
  libgirepository1.0-dev,
- libglib2.0-dev (>= 2.37.3),
- libgtk-3-dev (>= 3.22),
+ libglib2.0-dev,
+ libgtk-3-dev,
  libpam0g-dev,
  libxdo-dev,
  libxext-dev,
- meson (>= 0.40.0),
+ meson,
  python3,
 Standards-Version: 3.9.6
 
@@ -23,11 +23,17 @@ Package: cinnamon-screensaver
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends:
- cinnamon-desktop-data (>= 3.5),
- gir1.2-cinnamondesktop-3.0 (>= 4.8),
+ cinnamon-desktop-data (>= 6.0),
+ gir1.2-caribou-1.0,
+ gir1.2-cinnamondesktop-3.0 (>= 6.0),
+ gir1.2-gdk-3.0,
+ gir1.2-gdkpixbuf-2.0,
+ gir1.2-gio-2.0,
  gir1.2-gkbd-3.0,
  gir1.2-glib-2.0,
+ gir1.2-gobject-2.0,
  gir1.2-gtk-3.0,
+ gir1.2-pango-1.0,
  gir1.2-xapp-1.0,
  iso-flag-png,
  libxdo3,
@@ -35,22 +41,14 @@ Depends:
  python3-gi,
  python3-gi-cairo,
  python3-setproctitle,
- python3-xapp (>= 1.0.1),
+ python3-xapp,
  python3-xlib,
  x11-utils,
  ${misc:Depends},
  ${python3:Depends},
  ${shlibs:Depends},
 Recommends: libpam-gnome-keyring
-Breaks: 
- cinnamon-screensaver-pam-helper (<< 3.8),
- cinnamon-screensaver-webkit-plugin (<< 3.9),
- cinnamon-screensaver-x-plugin (<< 3.9),
- libcscreensaver0 (<< ${source:Version})
-Replaces:
- cinnamon-screensaver-pam-helper (<< 3.8),
- cinnamon-screensaver-webkit-plugin (<< 3.9),
- cinnamon-screensaver-x-plugin (<< 3.9)
+Breaks: libcscreensaver0 (<< ${source:Version})
 Description: Cinnamon screen saver and locker
  cinnamon-screensaver is a screen saver and locker that aims to have simple,
  sane and secure defaults, and be well integrated with the Cinnamon desktop.

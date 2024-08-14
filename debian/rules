@@ -1,10 +1,9 @@
 #!/usr/bin/make -f
 
-export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 %:
-	dh $@ --with=python3
+	dh $@
 
 override_dh_strip:
 	dh_strip --dbg-package=libcscreensaver-dbg
@@ -23,10 +22,6 @@ execute_after_dh_fixperms:
 # there has never been a testsuite, so don't try running it and breaking
 # just because there isn't one
 override_dh_auto_test:
-
-# --list-missing will be default in compat 12
-override_dh_missing:
-	dh_missing --list-missing
 
 override_dh_python3:
 	dh_python3 usr/share/cinnamon-screensaver
