@@ -1,3 +1,10 @@
+cinnamon-screensaver (6.2.1) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * keybindings: Ignore shift-f10 (alternate menu popup shortcut).
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 23 Sep 2024 11:23:07 +0100
+
 cinnamon-screensaver (6.2.0) wilma; urgency=medium
 
   [ Michael Webster ]
