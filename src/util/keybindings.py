@@ -104,7 +104,7 @@ class KeyBindings(GObject.GObject):
                 self.manager.cancel_unlocking()
                 return True
 
-        if event.keyval == Gdk.KEY_Menu:
+        if event.keyval in (Gdk.KEY_Menu, Gdk.KEY_F10):
             return True
 
         if status.Awake:
