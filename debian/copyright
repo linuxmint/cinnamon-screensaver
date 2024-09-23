@@ -1,20 +1,21 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: cinnamon-screensaver
 Upstream-Contact: Linux Mint Project <root@linuxmint.com>
 Source: https://github.com/linuxmint/cinnamon-screensaver.git
 
 Files: *
-Copyright: 2016, Michael Webster <miketwebster@gmail.com>
+Copyright: 2003, Bill Nottingham <notting@redhat.com>
+           1989-1991, Free Software Foundation, Inc
+           1991-2004, Jamie Zawinski <jwz@jwz.org>
+           2016, Michael Webster <miketwebster@gmail.com>
+           2006, Ray Strode <rstrode@redhat.com>
+           2002, Sun Microsystems
+           2004-2006, William Jon McCann <mccann@jhu.edu>
 License: GPL-2+
 
-Files: COPYING.LIB
-Copyright: 1951, Franklin Street - Suite 500, Boston, MA, 02110-1335, USA
-           1991, Free Software Foundation, Inc
-License: LGPL-2+
-
 Files: debian/*
-Copyright: 2014-2017, Maximiliano Curia <maxy@debian.org>
-Copyright: 2013-2017, Linux Mint Project <root@linuxmint.com>
+Copyright: 2014-2016, Maximiliano Curia <maxy@debian.org>
+           2013-2024, Linux Mint Project <root@linuxmint.com>
 License: LGPL-2+
 
 Files: libcscreensaver/setuid.c
@@ -24,11 +25,6 @@ Files: libcscreensaver/setuid.c
 Copyright: 1991-2004, Jamie Zawinski <jwz@jwz.org>
            2004, William Jon McCann <mccann@jhu.edu>
 License: MIT/X11
-
-Files: po/Makefile.in.in
-Copyright: 2004-2008, Rodney Dawes <dobey.pwns@gmail.com>
-           1995-1997, Ulrich Drepper <drepper@gnu.ai.mit.edu>
-License: Permissive
 
 License: GPL-2+
  This program is free software; you can redistribute it and/or
@@ -66,8 +62,3 @@ License: MIT/X11
  documentation.  No representations are made about the suitability of this
  software for any purpose.  It is provided "as is" without express or
  implied warranty.
-
-License: Permissive
- This file may be copied and used freely without restrictions.  It may
- be used in projects which are not available under a GNU Public License,
- but which still want to provide support for the GNU gettext functionality.
