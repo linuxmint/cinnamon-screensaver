@@ -416,7 +416,7 @@ is_full_change (CsScreen *screen)
 {
     // Check to see if the union of monitor rects is the same size as the screen
 
-    GdkRectangle total_monitors;
+    GdkRectangle total_monitors = {0};
     gint i;
     gboolean same;
 
