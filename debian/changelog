@@ -1,3 +1,33 @@
+cinnamon-screensaver (6.4.0) xia; urgency=medium
+
+  [ Michael Webster ]
+  * build: Use debugoptimized, remove some obsolete meson bits.
+  * cs-backup-locker.c: Exit gracefully if incorrect arguments are given, instead of crashing.
+  * Make codespell happy.
+  * unlock dialog: Allow password visibility to be toggled.
+
+  [ Matt Turnbull ]
+  * Follow-up to 60ad855 - remove g-codegen.py now that it is unreferenced. (#458)
+
+  [ Michael Webster ]
+  * Don't package private library and typelib files separately.
+  * Simplify authClient.py pam helper path.
+
+  [ Fabio Fantoni ]
+  * fix executable libraries
+  * Debian packaging improvement (#459)
+
+  [ Michael Webster ]
+  * keybindings: Ignore shift-f10 (alternate menu popup shortcut).
+
+  [ Fabio Fantoni ]
+  * Update debian/copyright (#461)
+
+  [ Alex Badea ]
+  * libscreensaver: fix detection of monitor hotplug (#463)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 26 Nov 2024 13:50:06 +0000
+
 cinnamon-screensaver (6.2.0) wilma; urgency=medium
 
   [ Michael Webster ]
