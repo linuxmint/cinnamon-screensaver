@@ -34,6 +34,7 @@ ALLOW_SHORTCUTS = "allow-keyboard-shortcuts"
 ALLOW_MEDIA_CONTROL = "allow-media-control"
 SHOW_INFO_PANEL = "show-info-panel"
 FLOATING_WIDGETS = "floating-widgets"
+HIDE_OSK_BUTTON_KEY = "hide-on-screen-keyboard-button"
 
 # Interface settings - the same logic applies here as above - we don't
 # need to listen to changes to these.
@@ -144,6 +145,9 @@ def get_show_info_panel():
 
 def get_allow_floating():
     return ss_settings.get_boolean(FLOATING_WIDGETS)
+
+def get_hide_osk_button():
+    return ss_settings.get_boolean(HIDE_OSK_BUTTON_KEY)
 
 def get_osk_type():
     return osk_settings.get_string(OSK_TYPE)

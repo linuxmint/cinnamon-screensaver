@@ -150,15 +150,16 @@ class OnScreenKeyboard(BaseWindow):
         self.base_stack = Gtk.Stack()
         self.add(self.base_stack)
 
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
+        if not settings.get_hide_osk_button():
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
                       halign=Gtk.Align.CENTER,
                       valign=Gtk.Align.END)
 
-        activate_button = TransparentButton("input-keyboard-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
-        activate_button.connect("clicked", self.on_activate_button_clicked)
-
-        box.pack_start(activate_button, False, False, 0)
-        box.show_all()
+            activate_button = TransparentButton("input-keyboard-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            activate_button.connect("clicked", self.on_activate_button_clicked)
+       
+            box.pack_start(activate_button, False, False, 0)
+            box.show_all()
 
         self.base_stack.add_named(box, "disabled")
         self.base_stack.show_all()
