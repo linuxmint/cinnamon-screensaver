@@ -41,6 +41,7 @@ class UnlockDialog(BaseWindow):
         super(UnlockDialog, self).__init__()
 
         settings = Gio.Settings.new("org.cinnamon.desktop.lockdown")
+        settingsScreenSaver = Gio.Settings.new("org.cinnamon.desktop.screensaver")
 
         self.set_halign(Gtk.Align.CENTER)
         self.set_valign(Gtk.Align.CENTER)
@@ -97,8 +98,8 @@ class UnlockDialog(BaseWindow):
         trackers.con_tracker_get().connect(self.auth_unlock_button,
                                            "clicked",
                                            self.on_unlock_clicked)
-
-        button_box.pack_start(self.auth_unlock_button, False, False, 4)
+        if not settingsScreenSaver.get_boolean("hide-unlock-button"):
+            button_box.pack_start(self.auth_unlock_button, False, False, 4)   
 
         status.focusWidgets = [self.password_entry, self.auth_unlock_button]
 
