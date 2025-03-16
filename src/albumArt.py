@@ -21,10 +21,9 @@ class AlbumArt(Floating, BaseWindow):
     using a timer which randomizes its halign and valign properties
     as well as its current monitor.
     """
-    def __init__(self, away_message=None, initial_monitor=0):
-        super(AlbumArt, self).__init__(initial_monitor)
+    def __init__(self, initial_monitor=0, low_res=False):
+        super(AlbumArt, self).__init__(initial_monitor, Gtk.Align.END, Gtk.Align.CENTER)
         self.get_style_context().add_class("albumart")
-        self.set_halign(Gtk.Align.END)
 
         if not settings.get_show_albumart():
             return
@@ -34,7 +33,7 @@ class AlbumArt(Floating, BaseWindow):
 
         self.current_url = None
 
-        self.image = FramedImage(status.screen.get_low_res_mode(), scale_up=True)
+        self.image = FramedImage(low_res, scale_up=True)
         self.image.show()
         self.image.set_opacity(0.0)
         self.add(self.image)

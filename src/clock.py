@@ -21,10 +21,8 @@ class ClockWidget(Floating, BaseWindow):
     as well as its current monitor.
     """
     def __init__(self, away_message=None, initial_monitor=0, low_res=False):
-        super(ClockWidget, self).__init__(initial_monitor)
+        super(ClockWidget, self).__init__(initial_monitor, Gtk.Align.START, Gtk.Align.CENTER)
         self.get_style_context().add_class("clock")
-        self.set_halign(Gtk.Align.START)
-
         self.set_property("margin", 6)
 
         self.clock = None

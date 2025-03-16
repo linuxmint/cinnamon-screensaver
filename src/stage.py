@@ -9,6 +9,7 @@ import random
 import status
 import constants as c
 import singletons
+from floating import Floating
 from monitorView import MonitorView
 from unlock import UnlockDialog
 from clock import ClockWidget
@@ -16,10 +17,11 @@ from albumArt import AlbumArt
 from audioPanel import AudioPanel
 from infoPanel import InfoPanel
 from osk import OnScreenKeyboard
-from floating import ALIGNMENTS
 from util import utils, trackers, settings
 from util.eventHandler import EventHandler
 from util.utils import DEBUG
+
+FLOATER_POSITIONING_TIMEOUT = 30
 
 class Stage(Gtk.Window):
     """
@@ -75,6 +77,7 @@ class Stage(Gtk.Window):
         self.osk = None
 
         self.floaters = []
+        self.floaters_need_update = False
 
         self.event_handler = EventHandler(manager)
 
@@ -298,7 +301,28 @@ class Stage(Gtk.Window):
             self.audio_panel = None
             self.info_panel = None
 
+        self.start_float_timer()
+
+    def start_float_timer(self):
+        if settings.get_allow_floating():
+            if status.Debug:
+                timeout = 5
+            else:
+                timeout = FLOATER_POSITIONING_TIMEOUT
+            trackers.timer_tracker_get().start_seconds("floater-update", timeout, self.update_floaters)
+
+    def update_floaters(self):
+        self.floaters_need_update = True
+        self.overlay.queue_allocate()
+        return GLib.SOURCE_CONTINUE
+
+    def stop_float_timer(self):
+        trackers.timer_tracker_get().cancel("floater-update")
+        self.floaters_need_update = False
+
     def destroy_children(self):
+        self.stop_float_timer()
+
         try:
             self.destroy_monitor_views()
         except Exception as e:
@@ -312,14 +336,12 @@ class Stage(Gtk.Window):
 
         try:
             if self.clock_widget is not None:
-                self.clock_widget.stop_positioning()
                 self.clock_widget.destroy()
         except Exception as e:
             print(e)
 
         try:
             if self.albumart_widget is not None:
-                self.albumart_widget.stop_positioning()
                 self.albumart_widget.destroy()
         except Exception as e:
             print(e)
@@ -496,7 +518,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.albumart_widget = AlbumArt(None, status.screen.get_mouse_monitor())
+        self.albumart_widget = AlbumArt(status.screen.get_mouse_monitor(), status.screen.get_low_res_mode())
         self.add_child_widget(self.albumart_widget)
 
         self.floaters.append(self.albumart_widget)
@@ -644,20 +666,12 @@ class Stage(Gtk.Window):
 
         utils.clear_clipboards(self.unlock_dialog)
 
-        if self.clock_widget is not None:
-            self.clock_widget.stop_positioning()
-        if self.albumart_widget is not None:
-            self.albumart_widget.stop_positioning()
+        self.stop_float_timer()
 
         status.Awake = True
 
         if self.info_panel:
             self.info_panel.refresh_power_state()
-
-        if self.clock_widget is not None:
-            self.clock_widget.show()
-        if self.albumart_widget is not None:
-            self.albumart_widget.show()
 
         self.unlock_dialog.show()
 
@@ -677,10 +691,6 @@ class Stage(Gtk.Window):
 
         if self.unlock_dialog is not None:
             self.unlock_dialog.hide()
-        if self.clock_widget is not None:
-            self.clock_widget.hide()
-        if self.albumart_widget is not None:
-            self.albumart_widget.hide()
         if self.audio_panel is not None:
             self.audio_panel.hide()
         if self.info_panel is not None:
@@ -691,6 +701,7 @@ class Stage(Gtk.Window):
         status.Awake = False
 
         self.update_monitor_views()
+        self.start_float_timer()
 
         if self.info_panel is not None:
             self.info_panel.refresh_power_state()
@@ -700,13 +711,6 @@ class Stage(Gtk.Window):
         Updates all of our MonitorViews based on the power
         or Awake states.
         """
-
-        if not status.Awake:
-            if self.clock_widget is not None and settings.get_show_clock():
-                self.clock_widget.start_positioning()
-            if self.albumart_widget is not None and settings.get_show_albumart():
-                self.albumart_widget.start_positioning()
-
         for monitor in self.monitors:
                 monitor.show()
 
@@ -846,7 +850,7 @@ class Stage(Gtk.Window):
 
             return True
 
-        if isinstance(child, ClockWidget) or isinstance(child, AlbumArt):
+        if isinstance(child, Floating):
             """
             ClockWidget and AlbumArt behave differently depending on if status.Awake is True or not.
 
@@ -856,19 +860,36 @@ class Stage(Gtk.Window):
             valign, and current monitor every so many seconds, calling a queue_resize on itself after
             each timer tick (which forces this function to run).
             """
+            if settings.get_allow_floating():
+                if self.floaters_need_update:
+                    alignments = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
+                    n_monitors = status.screen.get_n_monitors()
+                    alignment_positions = []
+                    for i in range(n_monitors):
+                        for halign in alignments:
+                            for valign in alignments:
+                                alignment_positions.append((i, halign, valign))
+
+                    for floater in self.floaters:
+                        position = alignment_positions.pop(random.randint(0, len(alignment_positions) - 1))
+                        floater.set_next_position(*position)
+
+                    self.floaters_need_update = False
+
+                child.apply_next_position()
+
             min_rect, nat_rect = child.get_preferred_size()
+            current_monitor = child.current_monitor
+            monitor_rect = status.screen.get_monitor_geometry(current_monitor)
+            region_w = monitor_rect.width / 3
+            region_h = monitor_rect.height / 3
 
             if status.Awake:
                 current_monitor = status.screen.get_mouse_monitor()
-            else:
-                current_monitor = child.current_monitor
+                monitor_rect = status.screen.get_monitor_geometry(current_monitor)
+                region_w = monitor_rect.width / 3
+                region_h = monitor_rect.height / 3
 
-            monitor_rect = status.screen.get_monitor_geometry(current_monitor)
-
-            region_w = monitor_rect.width / 3
-            region_h = monitor_rect.height
-
-            if status.Awake:
                 """
                 If we're Awake, force the clock to track to the active monitor, and be aligned to
                 the left-center.  The albumart widget aligns right-center.
@@ -882,38 +903,8 @@ class Stage(Gtk.Window):
                 if unlock_nw > region_w:
                     region_w = (monitor_rect.width - unlock_nw) / 2
 
-                region_h = monitor_rect.height
-
-                if isinstance(child, ClockWidget):
-                    child.set_halign(Gtk.Align.START)
-                else:
-                    child.set_halign(Gtk.Align.END)
-
-                child.set_valign(Gtk.Align.CENTER)
-            else:
-                if settings.get_allow_floating():
-                    for floater in self.floaters:
-                        """
-                        Don't let our floating widgets end up in the same spot.
-                        """
-                        if floater is child:
-                            continue
-                        if floater.get_halign() != child.get_halign() and floater.get_valign() != child.get_valign():
-                            continue
-
-                        region_h = monitor_rect.height / 3
-
-                        fa = floater.get_halign()
-                        ca = child.get_halign()
-                        while fa == ca:
-                            ca = ALIGNMENTS[random.randint(0, 2)]
-                        child.set_halign(ca)
-
-                        fa = floater.get_valign()
-                        ca = child.get_valign()
-                        while fa == ca:
-                            ca = ALIGNMENTS[random.randint(0, 2)]
-                        child.set_valign(ca)
+                child.set_awake_position(current_monitor)
+                child.apply_next_position()
 
             # Restrict the widget size to the allowable region sizes if necessary.
             allocation.width = min(nat_rect.width, region_w)

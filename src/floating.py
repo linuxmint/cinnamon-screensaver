@@ -7,52 +7,32 @@ import status
 from util import trackers
 from util import settings
 
-POSITIONING_TIMEOUT = 30
-ALIGNMENTS = [int(Gtk.Align.START), int(Gtk.Align.END), int(Gtk.Align.CENTER)]
+class PositionInfo():
+    def __init__(self, monitor, halign, valign):
+        self.monitor = monitor
+        self.halign = halign
+        self.valign = valign
 
 class Floating:
-    def __init__(self, initial_monitor=0):
+    def __init__(self, initial_monitor=0, halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER):
         super(Floating, self).__init__()
-        self.set_halign(Gtk.Align.CENTER)
-        self.set_valign(Gtk.Align.CENTER)
+        self.awake_position = PositionInfo(initial_monitor, halign, valign)
+        self.next_position = self.awake_position
         self.current_monitor = initial_monitor
+        self.apply_next_position()
 
     def start_positioning(self):
+        self.apply_next_position()
         self.show()
-        if settings.get_allow_floating():
-            trackers.timer_tracker_get().cancel(str(self) + "positioning")
-            trackers.timer_tracker_get().start_seconds(str(self) + "positioning",
-                                                       POSITIONING_TIMEOUT,
-                                                       self.positioning_callback)
 
-    def stop_positioning(self):
-        if settings.get_allow_floating():
-            trackers.timer_tracker_get().cancel(str(self) + "positioning")
+    def set_next_position(self, monitor, halign, valign):
+        self.next_position = PositionInfo(monitor, halign, valign)
 
-    def positioning_callback(self):
-        current_halign = int(self.get_halign())
-        horizontal = current_halign
+    def apply_next_position(self):
+        self.current_monitor = self.next_position.monitor
+        self.set_halign(self.next_position.halign)
+        self.set_valign(self.next_position.valign)
 
-        current_valign = int(self.get_valign())
-        vertical = current_valign
-
-        while horizontal == current_halign:
-            horizontal = ALIGNMENTS[random.randint(0, 2)]
-        while vertical == current_valign:
-            vertical = ALIGNMENTS[random.randint(0, 2)]
-
-        self.set_halign(Gtk.Align(horizontal))
-        self.set_valign(Gtk.Align(vertical))
-
-        if status.screen.get_n_monitors() > 1:
-            new_monitor = self.current_monitor
-            n = status.screen.get_n_monitors()
-
-            while new_monitor == self.current_monitor:
-                new_monitor = random.randint(0, n - 1)
-
-            self.current_monitor = new_monitor
-
-        self.queue_resize()
-
-        return True
+    def set_awake_position(self, monitor):
+        self.awake_position.monitor = monitor
+        self.next_position = self.awake_position
