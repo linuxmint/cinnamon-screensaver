@@ -532,7 +532,7 @@ class Stage(Gtk.Window):
 
         self.floaters.append(self.weather_widget)
 
-        if settings.get_show_albumart():
+        if settings.get_show_weather():
             self.weather_widget.start_positioning()
 
     def setup_osk(self):

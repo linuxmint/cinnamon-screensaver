@@ -8,61 +8,61 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-22 04:11-0600\n"
+"POT-Creation-Date: 2022-12-02 21:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/cinnamon-screensaver-command.py:43
+#: src/cinnamon-screensaver-command.py:41
 msgid "Causes the screensaver to exit gracefully"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:45
+#: src/cinnamon-screensaver-command.py:43
 msgid "Query the state of the screensaver"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:47
+#: src/cinnamon-screensaver-command.py:45
 msgid "Query the length of time the screensaver has been active"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:49
+#: src/cinnamon-screensaver-command.py:47
 msgid "Tells the running screensaver process to lock the screen immediately"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:51
+#: src/cinnamon-screensaver-command.py:49
 msgid "Turn the screensaver on (blank the screen)"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:53
+#: src/cinnamon-screensaver-command.py:51
 msgid "If the screensaver is active then deactivate it (un-blank the screen)"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:55
+#: src/cinnamon-screensaver-command.py:53
 msgid "Version of this application"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:57
+#: src/cinnamon-screensaver-command.py:55
 msgid "Message to be displayed in lock screen"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:106
+#: src/cinnamon-screensaver-command.py:105
 msgid "The screensaver is active\n"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:108
+#: src/cinnamon-screensaver-command.py:107
 msgid "The screensaver is inactive\n"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:112
+#: src/cinnamon-screensaver-command.py:111
 msgid "The screensaver is not currently active.\n"
 msgstr ""
 
-#: src/cinnamon-screensaver-command.py:114
+#: src/cinnamon-screensaver-command.py:113
 #, python-format
 msgid "The screensaver has been active for %d second.\n"
 msgid_plural "The screensaver has been active for %d seconds.\n"
@@ -80,7 +80,7 @@ msgid ""
 "prior to this occurring."
 msgstr ""
 
-#: src/passwordEntry.py:23 src/unlock.py:215
+#: src/passwordEntry.py:23 src/unlock.py:216
 msgid "Please enter your password..."
 msgstr ""
 
@@ -92,56 +92,52 @@ msgstr ""
 msgid "Switch User"
 msgstr ""
 
-#: src/unlock.py:188
+#: src/unlock.py:189
 msgid "Incorrect password"
 msgstr ""
 
-#: src/unlock.py:205
+#: src/unlock.py:206
 msgid "Checking..."
 msgstr ""
 
-#: src/unlock.py:249
+#: src/unlock.py:250
 msgid "You have the Caps Lock key on."
-msgstr ""
-
-#: src/weather.py:102
-msgid "in"
 msgstr ""
 
 #. This is the first line of text for the backup-locker, explaining how to switch to tty
 #. and run 'cinnamon-unlock-desktop' command.  This appears if the screensaver crashes.
-#: backup-locker/cs-backup-locker.c:306
+#: backup-locker/cs-backup-locker.c:255
 msgid "Something went wrong with the screensaver."
 msgstr ""
 
 #. (continued) This is a subtitle
-#: backup-locker/cs-backup-locker.c:316
+#: backup-locker/cs-backup-locker.c:265
 msgid "We'll help you get your desktop back"
 msgstr ""
 
 #. (new section) Bulleted list of steps to take to unlock the desktop;
-#: backup-locker/cs-backup-locker.c:327
+#: backup-locker/cs-backup-locker.c:276
 #, c-format
 msgid "Switch to a console using <Control-Alt-F%u>."
 msgstr ""
 
 #. (list continued)
-#: backup-locker/cs-backup-locker.c:329
+#: backup-locker/cs-backup-locker.c:278
 msgid "Log in by typing your user name followed by your password."
 msgstr ""
 
 #. (list continued)
-#: backup-locker/cs-backup-locker.c:331
+#: backup-locker/cs-backup-locker.c:280
 msgid "At the prompt, type 'cinnamon-unlock-desktop' and press Enter."
 msgstr ""
 
 #. (list continued)
-#: backup-locker/cs-backup-locker.c:333
+#: backup-locker/cs-backup-locker.c:282
 #, c-format
 msgid "Switch back to your unlocked desktop using <Control-Alt-F%u>."
 msgstr ""
 
 #. (end section) Final words after the list of steps
-#: backup-locker/cs-backup-locker.c:338
+#: backup-locker/cs-backup-locker.c:287
 msgid "If you can reproduce this behavior, please file a report here:"
 msgstr ""
