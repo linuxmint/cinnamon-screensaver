@@ -24,11 +24,8 @@ class WeatherWidget(Floating, BaseWindow):
     """
 
     def __init__(self, initial_monitor=0, low_res=False):
-        super(WeatherWidget, self).__init__(initial_monitor)
+        super(WeatherWidget, self).__init__(initial_monitor, Gtk.Align.CENTER, Gtk.Align.START)
         self.get_style_context().add_class("weather")
-        # trying to find a spot that won't overlap with clock or albumArt on init
-        self.set_halign(Gtk.Align.CENTER)
-        self.set_valign(Gtk.Align.END)
         self.set_property("margin", 6)
 
         self.low_res = low_res

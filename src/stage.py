@@ -333,7 +333,6 @@ class Stage(Gtk.Window):
 
         try:
             if self.weather_widget is not None:
-                self.weather_widget.stop_positioning()
                 self.weather_widget.destroy()
         except Exception as e:
             print(e)
@@ -528,7 +527,7 @@ class Stage(Gtk.Window):
         Initially invisible, regardless - its visibility is controlled via its
         own positioning timer.
         """
-        self.weather_widget = WeatherWidget(None, status.screen.get_mouse_monitor())
+        self.weather_widget = WeatherWidget(status.screen.get_mouse_monitor())
         self.add_child_widget(self.weather_widget)
 
         self.floaters.append(self.weather_widget)
