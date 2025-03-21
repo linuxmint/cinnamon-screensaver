@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk, Pango, Gio
 
 from baseWindow import BaseWindow
 from floating import Floating
@@ -24,11 +24,8 @@ class WeatherWidget(Floating, BaseWindow):
     """
 
     def __init__(self, initial_monitor=0, low_res=False):
-        super(WeatherWidget, self).__init__(initial_monitor)
+        super(WeatherWidget, self).__init__(initial_monitor, Gtk.Align.CENTER, Gtk.Align.START)
         self.get_style_context().add_class("weather")
-        # trying to find a spot that won't overlap with clock or albumArt on init
-        self.set_halign(Gtk.Align.CENTER)
-        self.set_valign(Gtk.Align.END)
         self.set_property("margin", 6)
 
         self.low_res = low_res
@@ -122,10 +119,8 @@ class WeatherWidget(Floating, BaseWindow):
             '<span font_desc="%s">%s°</span>' % (weather_font.to_string(), temp_string)
         )
         self.desc_label.set_markup(markup)
-
-        self.condition_icon.set_from_icon_name(
-            weather_data.condition.icons[0], Gtk.IconSize.DIALOG
-        )
+        gicon = Gio.ThemedIcon.new_from_names(weather_data.condition.icons)
+        self.condition_icon.set_from_gicon(gicon, Gtk.IconSize.DIALOG)
         self.condition_icon.set_pixel_size(self.icon_size)
 
     @staticmethod
