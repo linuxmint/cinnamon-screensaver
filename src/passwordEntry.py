@@ -235,9 +235,9 @@ class PasswordEntry(Gtk.Entry):
         self.update_saved_group(new_group)
         self.update_layout_icon()
 
-        trackers.con_tracker_get().connect(self,
-                                           "draw",
-                                           self.on_draw)
+        trackers.con_tracker_get().connect_after(self,
+                                                 "draw",
+                                                 self.on_draw)
 
     def update_saved_group(self, group):
         settings.set_kb_group(group)

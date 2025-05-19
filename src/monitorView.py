@@ -69,21 +69,8 @@ class WallpaperStack(Gtk.Stack):
         significant gradient vertically framing the unlock dialog
         when Awake.
         """
-        if not status.Awake:
-            cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
-            cr.paint()
-            return False
-
-        r = widget.get_allocation()
-
-        pattern = cairo.LinearGradient(0, 0, 0, r.height)
-        pattern.add_color_stop_rgba (0, 0, 0, 0, .75)
-        pattern.add_color_stop_rgba (.35, 0, 0, 0, .9)
-        pattern.add_color_stop_rgba (.65, 0, 0, 0, .9)
-        pattern.add_color_stop_rgba (1, 0, 0, 0, .75)
-        cr.set_source(pattern)
+        cr.set_source_rgba(0.0, 0.0, 0.0, 0.7)
         cr.paint()
-
         return False
 
 class MonitorView(BaseWindow):

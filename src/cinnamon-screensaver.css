@@ -69,7 +69,7 @@
     border-style: solid;
     color: white;
     background-image: none;
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, .6);
     border-image: none;
     border-width: 1px;
     box-shadow: none;
@@ -88,7 +88,7 @@
 }
 
 .csstage .passwordentry image.left {
-    padding-right: 10px;
+    padding-right: 14px;
 }
 
 /* Use :backdrop for alt-text keyboard layout */
@@ -104,7 +104,7 @@
     border-image: none;
     box-shadow: none;
     background-image: none;
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, .6);
     border-radius: 20px;
     -gtk-outline-radius: 20px;
     outline-color: transparent;
@@ -123,7 +123,6 @@
 
 .csstage .passwordentry:focus,
 .csstage .transparentbutton:focus {
-    background-color: alpha(grey, .3);
     border-color: @theme_selected_bg_color;
     box-shadow: 1px 1px alpha(white, 0.1);
 }
@@ -138,21 +137,18 @@
 .csstage .passwordentry:hover:focus,
 .csstage .transparentbutton:hover:focus {
     border-color: @theme_selected_bg_color;
-    background-color: alpha(grey, .4);
     box-shadow: 1px 1px alpha(white, 0.1);
 }
 
 .csstage .passwordentry:active,
 .csstage .transparentbutton:active {
     border-color: @theme_selected_bg_color;
-    background-color: alpha(grey, .6);
     box-shadow: 1px 1px alpha(white, 0.1);
 }
 
 .csstage .passwordentry:active:focus,
 .csstage .transparentbutton:active:focus {
     border-color: @theme_selected_bg_color;
-    background-color: alpha(grey, .9);
     box-shadow: 1px 1px alpha(white, 0.1);
 }
 
