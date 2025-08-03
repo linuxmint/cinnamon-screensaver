@@ -171,6 +171,8 @@ class UnlockDialog(BaseWindow):
 
 
         self.box.show_all()
+        self.password_entry.hide()
+        self.auth_unlock_button.hide()
 
     def initialize_auth_client(self):
         return self.auth_client.initialize()
@@ -186,6 +188,9 @@ class UnlockDialog(BaseWindow):
         """
         self.set_busy(False)
         self.auth_message_label.set_text(_("Incorrect password"))
+
+        self.password_entry.hide()
+        self.auth_unlock_button.hide()
 
         self.emit("authenticate-failure")
         self.emit("uninhibit-timeout")
@@ -211,6 +216,9 @@ class UnlockDialog(BaseWindow):
             self.update_authinfo_label()
 
     def on_authentication_prompt_changed(self, auth_client, prompt):
+        self.password_entry.show_all()
+        self.auth_unlock_button.show_all()
+
         if "password:" in prompt.lower():
             prompt = _("Please enter your password...")
         else:
