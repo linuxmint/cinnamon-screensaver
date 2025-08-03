@@ -174,11 +174,11 @@ class PasswordEntry(Gtk.Entry):
         self.update_layout_icon()
 
     def on_layout_sources_changed(self, cinnamon):
-        if not self.cinnamon.has_multiple_keyboard_layouts():
-            return
-
         self.system_layout_source = self.cinnamon.get_current_layout_source()
         self.lockscreen_layout_source = self.system_layout_source
+
+        if not self.cinnamon.has_multiple_keyboard_layouts():
+            return
 
         self.set_lockscreen_keyboard_layout()
 
