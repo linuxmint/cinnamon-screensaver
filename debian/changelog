@@ -1,3 +1,12 @@
+cinnamon-screensaver (6.4.1) zara; urgency=medium
+
+  [ Michael Webster ]
+  * Refactor positioning of floating UI elements.
+  * unlock: Remove additional dimming when unlock dialog is shown.
+  * unlock.py: Don't show password entry and unlock button until prompted by pam.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 05 Aug 2025 09:50:45 +0200
+
 cinnamon-screensaver (6.4.0) xia; urgency=medium
 
   [ Michael Webster ]
