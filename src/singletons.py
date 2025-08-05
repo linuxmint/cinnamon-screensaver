@@ -48,12 +48,6 @@ Backgrounds = CinnamonDesktop.BG()
 Backgrounds.load_from_preferences(settings.bg_settings)
 settings.bg_settings.connect("changed", lambda s,k: Backgrounds.load_from_preferences(s))
 
-# We use XAppKbdLayoutController as a wrapper around libgnomekbd to supply the icon theme
-# with icons, as well as providing correct group names.
-gi.require_version('XApp', '1.0')
-from gi.repository import XApp
-KeyboardLayoutController = XApp.KbdLayoutController()
-
 # This sets up synchronously, as we need to know the fractional scaling state before
 # setting up the screensaver.
 MuffinClient = _MuffinClient()
