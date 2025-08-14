@@ -20,6 +20,7 @@ from osk import OnScreenKeyboard
 from util import utils, trackers, settings
 from util.eventHandler import EventHandler
 from util.utils import DEBUG
+from weather import WeatherWidget
 
 FLOATER_POSITIONING_TIMEOUT = 30
 
@@ -71,6 +72,7 @@ class Stage(Gtk.Window):
         self.overlay = None
         self.clock_widget = None
         self.albumart_widget = None
+        self.weather_widget = None
         self.unlock_dialog = None
         self.audio_panel = None
         self.info_panel = None
@@ -295,6 +297,11 @@ class Stage(Gtk.Window):
             print("Problem setting up albumart widget: %s" % str(e))
             self.albumart_widget = None
         try:
+            self.setup_weather()
+        except Exception as e:
+            print("Problem setting up weather widget: %s" % str(e))
+            self.weather_widget = None
+        try:
             self.setup_status_bars()
         except Exception as e:
             print("Problem setting up status bars: %s" % str(e))
@@ -347,6 +354,12 @@ class Stage(Gtk.Window):
             print(e)
 
         try:
+            if self.weather_widget is not None:
+                self.weather_widget.destroy()
+        except Exception as e:
+            print(e)
+
+        try:
             if self.info_panel is not None:
                 self.info_panel.destroy()
         except Exception as e:
@@ -367,6 +380,7 @@ class Stage(Gtk.Window):
         self.unlock_dialog = None
         self.clock_widget = None
         self.albumart_widget = None
+        self.weather_widget = None
         self.info_panel = None
         self.audio_panel = None
         self.osk = None
@@ -525,6 +539,23 @@ class Stage(Gtk.Window):
 
         if settings.get_show_albumart():
             self.albumart_widget.start_positioning()
+
+    def setup_weather(self):
+        """
+        Construct the Weather widget and add it to the overlay, but only actually
+        show it if we're a) Not running a plug-in, and b) The user wants it via
+        preferences.
+
+        Initially invisible, regardless - its visibility is controlled via its
+        own positioning timer.
+        """
+        self.weather_widget = WeatherWidget(status.screen.get_mouse_monitor())
+        self.add_child_widget(self.weather_widget)
+
+        self.floaters.append(self.weather_widget)
+
+        if settings.get_show_weather():
+            self.weather_widget.start_positioning()
 
     def setup_osk(self):
         self.osk = OnScreenKeyboard()
