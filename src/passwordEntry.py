@@ -33,20 +33,13 @@ class PasswordEntry(Gtk.Entry):
         trackers.con_tracker_get().connect(self, "icon-press", self.on_icon_pressed)
 
         self.placeholder_text = placeholder_text
-        self.current_icon_name = None
-        self.current_flag_id = 0
-        self.original_group = 0
+        self.lockscreen_layout_source = None
+        self.system_layout_source = None
 
-        self.keyboard_controller = singletons.KeyboardLayoutController
-        trackers.con_tracker_get().connect(self.keyboard_controller,
-                                           "config-changed",
-                                           self.on_config_changed)
-
-        trackers.con_tracker_get().connect(self.keyboard_controller,
-                                           "layout-changed",
-                                           self.on_layout_changed)
-
-        self.set_lockscreen_keyboard_layout()
+        self.cinnamon = singletons.CinnamonClient
+        self.cinnamon.connect("current-input-source-changed", self.on_current_layout_changed)
+        self.cinnamon.connect("input-sources-changed", self.on_layout_sources_changed)
+        self.on_layout_sources_changed(self.cinnamon)
 
         trackers.con_tracker_get().connect(self,
                                            "destroy",
@@ -59,9 +52,6 @@ class PasswordEntry(Gtk.Entry):
         update_layout_icon(), just so GtkEntry thinks there's an icon there,
         that way it allocates space for it, and responds to clicks in the area.
         """
-        if not self.keyboard_controller.get_enabled():
-            return False
-
         icon_rect = widget.get_icon_area(Gtk.EntryIconPosition.PRIMARY)
         x = icon_rect.x
         y = icon_rect.y + 2
@@ -69,15 +59,11 @@ class PasswordEntry(Gtk.Entry):
         height = icon_rect.height - 4
 
         handled = False
-
         if settings.get_show_flags():
-            name = self.keyboard_controller.get_current_icon_name()
-
             ui_scale = self.get_scale_factor()
 
-            if name:
-                filename = "/usr/share/iso-flag-png/%s.png" % name
-
+            if self.lockscreen_layout_source.flag_name != "":
+                filename = "/usr/share/iso-flag-png/%s.png" % self.lockscreen_layout_source.flag_name
                 try:
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, -1, height * ui_scale)
 
@@ -98,26 +84,37 @@ class PasswordEntry(Gtk.Entry):
 
                     cr.paint()
 
-                    self.keyboard_controller.render_cairo_subscript(cr,
-                                                                    render_x + (logical_width / 2),
-                                                                    render_y + (logical_height / 2),
-                                                                    logical_width / 2,
-                                                                    logical_height / 2,
-                                                                    self.keyboard_controller.get_current_flag_id())
+                    if self.lockscreen_layout_source.dupe_id > 0:
+                        x = render_x + logical_width / 2
+                        y = render_y + logical_height / 2
+                        width = logical_width / 2 + 2
+                        height = logical_height / 2 + 2
+
+                        cr.set_source_rgba(0, 0, 0, 0.5)
+                        cr.rectangle(x, y, width, height)
+                        cr.fill()
+
+                        cr.set_source_rgba(1.0, 1.0, 1.0, 0.8)
+                        cr.rectangle(x + 1, y + 1, width - 2, height - 2)
+                        cr.fill()
+
+                        cr.set_source_rgba(0.0, 0.0, 0.0, 1.0)
+                        cr.select_font_face("sans", cairo.FontSlant.NORMAL, cairo.FontWeight.BOLD)
+                        cr.set_font_size(height - 2.0)
+
+                        dupe_str = str(self.lockscreen_layout_source.dupe_id)
+
+                        ext = cr.text_extents(dupe_str)
+                        cr.move_to((x + (width / 2.0) - (ext.width / 2.0)),
+                                   (y + (height / 2.0) + (ext.height / 2.0)))
+                        cr.show_text(dupe_str)
 
                     handled = True
                 except GLib.Error:
                     pass
 
         if not handled:
-            if settings.get_use_layout_variant_names():
-                name = self.keyboard_controller.get_current_variant_label()
-            else:
-                name = self.keyboard_controller.get_current_short_group_label()
-
-            if settings.get_show_upper_case_layout():
-                name = name.upper()
-
+            name = self.lockscreen_layout_source.short_name
             ctx = widget.get_style_context()
             ctx.save()
 
@@ -167,16 +164,27 @@ class PasswordEntry(Gtk.Entry):
         self.progress_pulse()
         return True
 
-    def on_layout_changed(self, controller, layout):
+    def on_current_layout_changed(self, cinnamon):
+        if not self.cinnamon.has_multiple_keyboard_layouts():
+            return
+
+        self.lockscreen_layout_source = self.cinnamon.get_current_layout_source()
+
         self.grab_focus()
         self.update_layout_icon()
 
-    def on_config_changed(self, controller):
+    def on_layout_sources_changed(self, cinnamon):
+        self.system_layout_source = self.cinnamon.get_current_layout_source()
+        self.lockscreen_layout_source = self.system_layout_source
+
+        if not self.cinnamon.has_multiple_keyboard_layouts():
+            return
+
         self.set_lockscreen_keyboard_layout()
 
     def on_icon_pressed(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.PRIMARY:
-            self.keyboard_controller.next_group()
+            self.cinnamon.activate_next_layout()
         elif icon_pos == Gtk.EntryIconPosition.SECONDARY:
             if self.get_input_purpose() == Gtk.InputPurpose.FREE_FORM:
                 self.set_visibility(False)
@@ -195,62 +203,46 @@ class PasswordEntry(Gtk.Entry):
         also ensures a redraw at the correct time to update the flag image.
         """
         self.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "screensaver-blank")
-        self.set_icon_tooltip_text(Gtk.EntryIconPosition.PRIMARY, self.keyboard_controller.get_current_name())
-
-        self.update_saved_group(self.keyboard_controller.get_current_group())
+        self.set_icon_tooltip_text(Gtk.EntryIconPosition.PRIMARY, self.lockscreen_layout_source.display_name)
 
     def on_destroy(self, widget, data=None):
         self.stop_progress()
 
-        trackers.con_tracker_get().disconnect(self.keyboard_controller,
-                                              "config-changed",
-                                              self.on_config_changed)
-
-        trackers.con_tracker_get().disconnect(self.keyboard_controller,
-                                              "layout-changed",
-                                              self.on_layout_changed)
-
         self.restore_original_layout()
 
     def set_lockscreen_keyboard_layout(self):
-        if not self.keyboard_controller.get_enabled():
-            return
-
         # If there are multiple keyboard layouts, we want to store
         # the one the user ends up using in the unlock widget, as they'll
         # want to use the same one each time, at least until they change
         # their password.
 
-        saved_group = settings.get_kb_group()
-        self.original_group = self.keyboard_controller.get_current_group()
+        saved_index = settings.get_kb_group()
+        new_index = 0
 
-        new_group = 0
-
-        if saved_group == -1:
-            new_group = self.original_group
+        if saved_index == -1:
+            new_index = self.system_layout_source.index
+            settings.set_kb_group(new_index)
         else:
-            new_group = saved_group
+            new_index = saved_index
 
-        self.keyboard_controller.set_current_group(new_group)
-        self.update_saved_group(new_group)
+        if new_index != self.system_layout_source.index:
+            self.cinnamon.activate_layout_index(new_index)
+
         self.update_layout_icon()
 
         trackers.con_tracker_get().connect_after(self,
                                                  "draw",
                                                  self.on_draw)
 
-    def update_saved_group(self, group):
-        settings.set_kb_group(group)
-
     def restore_original_layout(self):
         """
         Called when the unlock dialog is destroyed, restores
         the group that was active before the screensaver was activated.
         """
-        if not self.keyboard_controller.get_enabled():
-            return
+        if settings.get_kb_group() != self.lockscreen_layout_source.index:
+            settings.set_kb_group(self.lockscreen_layout_source.index)
 
-        self.keyboard_controller.set_current_group(self.original_group)
+        self.cinnamon.activate_layout_index(self.system_layout_source.index)
 
     def grab_focus(self):
         Gtk.Widget.grab_focus(self)
