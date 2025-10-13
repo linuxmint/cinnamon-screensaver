@@ -101,38 +101,35 @@ class PowerWidget(Gtk.Frame):
         if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_DISCHARGING,
                      UPOWER_STATE_PENDING_CHARGE, UPOWER_STATE_PENDING_DISCHARGE):
             if percentage < 10:
-                names = ["battery-level-0", "battery-caution"]
+                names = ["xapp-battery-level-0"]
             elif percentage < 20:
-                names = ["battery-level-10", "battery-low"]
+                names = ["xapp-battery-level-10"]
             elif percentage < 30:
-                names = ["battery-level-20", "battery-low"]
+                names = ["xapp-battery-level-20"]
             elif percentage < 40:
-                names = ["battery-level-30", "battery-good"]
+                names = ["xapp-battery-level-30"]
             elif percentage < 50:
-                names = ["battery-level-40", "battery-good"]
+                names = ["xapp-battery-level-40"]
             elif percentage < 60:
-                names = ["battery-level-50", "battery-good"]
+                names = ["xapp-battery-level-50"]
             elif percentage < 70:
-                names = ["battery-level-60", "battery-full"]
+                names = ["xapp-battery-level-60"]
             elif percentage < 80:
-                names = ["battery-level-70", "battery-full"]
+                names = ["xapp-battery-level-70"]
             elif percentage < 90:
-                names = ["battery-level-80", "battery-full"]
+                names = ["xapp-battery-level-80"]
             elif percentage < 99:
-                names = ["battery-level-90", "battery-full"]
+                names = ["xapp-battery-level-90"]
             else:
-                names = ["battery-level-100", "battery-full"]
+                names = ["xapp-battery-level-100"]
 
             if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_PENDING_CHARGE):
                 names[0] += "-charging"
-                names[1] += "-charging"
 
             names[0] += "-symbolic"
-            names[1] += "-symbolic"
+
         elif state == UPOWER_STATE_FULLY_CHARGED:
-            names = ["battery-level-100-charged-symbolic",
-                     "battery-full-charged-symbolic",
-                     "battery-full-charging-symbolic"]
+            names = ["xapp-battery-level-100-charged-symbolic"]
         else:
             names = (battery.get_property("icon-name"),)
 
