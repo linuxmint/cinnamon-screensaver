@@ -40,7 +40,7 @@ class PlayerControl(Gtk.Box):
         vbox.pack_start(button_box, True, True, 0)
         vbox.set_valign(Gtk.Align.CENTER)
 
-        self.previous_button = TransparentButton("xapp-media-skip-backward-symbolic", Gtk.IconSize.BUTTON)
+        self.previous_button = TransparentButton("xsi-media-skip-backward-symbolic", Gtk.IconSize.BUTTON)
         self.previous_button.show()
         trackers.con_tracker_get().connect(self.previous_button,
                                            "clicked",
@@ -55,7 +55,7 @@ class PlayerControl(Gtk.Box):
                                            self.on_play_pause_clicked)
         button_box.pack_start(self.play_pause_button, True, True, 2)
 
-        self.next_button = TransparentButton("xapp-media-skip-forward-symbolic", Gtk.IconSize.BUTTON)
+        self.next_button = TransparentButton("xsi-media-skip-forward-symbolic", Gtk.IconSize.BUTTON)
         self.next_button.show()
         trackers.con_tracker_get().connect(self.next_button,
                                            "clicked",
@@ -111,9 +111,9 @@ class PlayerControl(Gtk.Box):
 
     def get_play_pause_icon_name(self, status):
         if status == PlaybackStatus.Playing:
-            icon_name = "xapp-media-playback-pause-symbolic"
+            icon_name = "xsi-media-playback-pause-symbolic"
         else:
-            icon_name = "xapp-media-playback-start-symbolic"
+            icon_name = "xsi-media-playback-start-symbolic"
 
         return icon_name
 

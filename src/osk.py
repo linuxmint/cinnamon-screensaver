@@ -154,7 +154,7 @@ class OnScreenKeyboard(BaseWindow):
                       halign=Gtk.Align.CENTER,
                       valign=Gtk.Align.END)
 
-        activate_button = TransparentButton("xapp-input-keyboard-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        activate_button = TransparentButton("xsi-input-keyboard-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         activate_button.connect("clicked", self.on_activate_button_clicked)
 
         box.pack_start(activate_button, False, False, 0)

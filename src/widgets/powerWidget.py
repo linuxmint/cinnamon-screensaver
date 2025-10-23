@@ -101,27 +101,27 @@ class PowerWidget(Gtk.Frame):
         if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_DISCHARGING,
                      UPOWER_STATE_PENDING_CHARGE, UPOWER_STATE_PENDING_DISCHARGE):
             if percentage < 10:
-                names = ["xapp-battery-level-0"]
+                names = ["xsi-battery-level-0"]
             elif percentage < 20:
-                names = ["xapp-battery-level-10"]
+                names = ["xsi-battery-level-10"]
             elif percentage < 30:
-                names = ["xapp-battery-level-20"]
+                names = ["xsi-battery-level-20"]
             elif percentage < 40:
-                names = ["xapp-battery-level-30"]
+                names = ["xsi-battery-level-30"]
             elif percentage < 50:
-                names = ["xapp-battery-level-40"]
+                names = ["xsi-battery-level-40"]
             elif percentage < 60:
-                names = ["xapp-battery-level-50"]
+                names = ["xsi-battery-level-50"]
             elif percentage < 70:
-                names = ["xapp-battery-level-60"]
+                names = ["xsi-battery-level-60"]
             elif percentage < 80:
-                names = ["xapp-battery-level-70"]
+                names = ["xsi-battery-level-70"]
             elif percentage < 90:
-                names = ["xapp-battery-level-80"]
+                names = ["xsi-battery-level-80"]
             elif percentage < 99:
-                names = ["xapp-battery-level-90"]
+                names = ["xsi-battery-level-90"]
             else:
-                names = ["xapp-battery-level-100"]
+                names = ["xsi-battery-level-100"]
 
             if state in (UPOWER_STATE_CHARGING, UPOWER_STATE_PENDING_CHARGE):
                 names[0] += "-charging"
@@ -129,7 +129,7 @@ class PowerWidget(Gtk.Frame):
             names[0] += "-symbolic"
 
         elif state == UPOWER_STATE_FULLY_CHARGED:
-            names = ["xapp-battery-level-100-charged-symbolic"]
+            names = ["xsi-battery-level-100-charged-symbolic"]
         else:
             names = (battery.get_property("icon-name"),)
 
