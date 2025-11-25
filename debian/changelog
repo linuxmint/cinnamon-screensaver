@@ -1,3 +1,13 @@
+cinnamon-screensaver (6.6.0) zena; urgency=medium
+
+  [ Michael Webster ]
+  * Handle layout switching thru cinnamon, remove use of XApp. (#477)
+
+  [ Clement Lefebvre ]
+  * Switch to xapp-symbolic-icons (XSI)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 25 Nov 2025 14:16:46 +0000
+
 cinnamon-screensaver (6.4.1) zara; urgency=medium
 
   [ Michael Webster ]
