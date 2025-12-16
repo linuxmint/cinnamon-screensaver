@@ -16,10 +16,15 @@ from clock import ClockWidget
 from albumArt import AlbumArt
 from audioPanel import AudioPanel
 from infoPanel import InfoPanel
-from osk import OnScreenKeyboard
 from util import utils, trackers, settings
 from util.eventHandler import EventHandler
 from util.utils import DEBUG
+
+try:
+    from osk import OnScreenKeyboard
+except Exception as e:
+    print("Failed to import on-screen keyboard: %s" % str(e))
+    OnScreenKeyboard = None
 
 FLOATER_POSITIONING_TIMEOUT = 30
 
@@ -275,10 +280,13 @@ class Stage(Gtk.Window):
                 print("Problem setting up clock widget: %s" % str(e))
                 self.clock_widget = None
 
-            try:
-                self.setup_osk()
-            except Exception as e:
-                print("Problem setting up on-screen keyboard: %s" % str(e))
+            if OnScreenKeyboard:
+                try:
+                    self.setup_osk()
+                except Exception as e:
+                    print("Problem setting up on-screen keyboard: %s" % str(e))
+                    self.osk = None
+            else:
                 self.osk = None
 
             trackers.timer_tracker_get().start("setup-delayed-components",
