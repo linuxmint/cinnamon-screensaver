@@ -2,13 +2,15 @@
 # coding: utf-8
 
 import gi
+import cairo
+import math
 
 gi.require_version('CinnamonDesktop', '3.0')
 from gi.repository import Gtk, GdkPixbuf, Gio, GLib, GObject, Gdk
 
 from util import utils, trackers
 
-MAX_IMAGE_SIZE = 320
+MAX_IMAGE_SIZE = 400
 MAX_IMAGE_SIZE_LOW_RES = 200
 
 class FramedImage(Gtk.Image):
@@ -71,6 +73,7 @@ class FramedImage(Gtk.Image):
             if (pixbuf.get_height() > scaled_max_size or pixbuf.get_width() > scaled_max_size) or \
                (self.scale_up and (pixbuf.get_height() < scaled_max_size / 2 or pixbuf.get_width() < scaled_max_size / 2)):
                 try:
+                    print("Scaled..")
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, scaled_max_size, scaled_max_size)
                 except GLib.Error as e:
                     message = "Could not scale pixbuf from '%s' for FramedImage: %s" % (path, e.message)
@@ -80,6 +83,8 @@ class FramedImage(Gtk.Image):
             surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf,
                                                            self.get_scale_factor(),
                                                            self.get_window())
+ 
+            surface = self.crop(surface)
             self.set_from_surface(surface)
             self.emit("surface-changed", surface)
         else:
@@ -121,3 +126,25 @@ class FramedImage(Gtk.Image):
                 self.set_image_internal(file.get_path())
         except GLib.Error:
             pass
+
+    def crop(self, surface):
+        w = int(surface.get_width())
+        h = int(surface.get_height())
+        res_size = min(w, h)
+
+        res_surface = cairo.ImageSurface(cairo.Format.ARGB32, res_size, res_size)
+        scale = self.get_scale_factor()
+        res_surface.set_device_scale(scale, scale)
+
+        # crop a cricle
+        context = cairo.Context(res_surface)
+        radius = res_size / (2 * scale)
+        context.arc(radius, radius, radius, 0, 2 * math.pi)
+        context.clip()
+        # get the center of the image
+        x = (res_size - w) / (2 * scale)
+        y = (res_size - h) / (2 * scale)
+        context.set_source_surface(surface, x, y)
+        context.paint()
+
+        return res_surface

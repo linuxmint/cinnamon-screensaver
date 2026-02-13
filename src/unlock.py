@@ -56,8 +56,9 @@ class UnlockDialog(BaseWindow):
         self.box.get_style_context().add_class("unlockbox")
         self.add(self.box)
 
-        self.face_image = FramedImage(status.screen.get_low_res_mode())
+        self.face_image = FramedImage(status.screen.get_low_res_mode(), True)
         self.face_image.set_halign(Gtk.Align.CENTER)
+        self.face_image.set_margin_top(100)
         self.face_image.get_style_context().add_class("faceimage")
         self.face_image.set_no_show_all(True)
 
@@ -69,7 +70,7 @@ class UnlockDialog(BaseWindow):
 
         self.box.pack_start(self.realname_label, False, False, 10)
 
-        self.entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, halign=Gtk.Align.CENTER)
+        self.entry_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, halign=Gtk.Align.CENTER)
 
         self.box.pack_start(self.entry_box, True, True, 2)
 
@@ -89,7 +90,7 @@ class UnlockDialog(BaseWindow):
 
         self.entry_box.pack_start(self.password_entry, False, False, 15)
 
-        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, halign=Gtk.Align.CENTER)
         self.entry_box.pack_end(button_box, False, False, 0)
 
         self.auth_unlock_button = TransparentButton("screensaver-unlock-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
