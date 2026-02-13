@@ -30,6 +30,9 @@ KB_LAYOUT_KEY = "layout-group"
 
 SHOW_CLOCK_KEY = "show-clock"
 SHOW_ALBUMART = "show-album-art"
+SHOW_WEATHER = "show-weather"
+WEATHER_LOCATION = "weather-location"
+WEATHER_UNITS = "weather-units"
 ALLOW_SHORTCUTS = "allow-keyboard-shortcuts"
 ALLOW_MEDIA_CONTROL = "allow-media-control"
 SHOW_INFO_PANEL = "show-info-panel"
@@ -55,6 +58,7 @@ OSK_A11Y_ENABLED = "screen-keyboard-enabled"
 # main code if you see "settings.get_default_away_message()" than seeing
 # "settings.ss_settings.get_string(settings.DEFAULT_MESSAGE_KEY)" or keeping
 # instances of GioSettings wherever we need them.
+
 
 def _check_string(string):
     if string and string != "":
@@ -132,6 +136,24 @@ def get_show_clock():
 
 def get_show_albumart():
     return ss_settings.get_boolean(SHOW_ALBUMART)
+
+def get_show_weather():
+    return ss_settings.get_boolean(SHOW_WEATHER)
+
+def get_weather_location():
+    location_string = ss_settings.get_string(WEATHER_LOCATION)  # string LAT,LON
+    return _check_string(location_string)
+
+def get_weather_units():
+    units = ["metric", "imperial"]
+    units_string = _check_string(ss_settings.get_string(WEATHER_UNITS))
+    return units_string if units_string in units else "metric"
+
+def get_weather_font():
+    # reusing the Clock widget Time font for now (it's big)
+    time_font = ss_settings.get_string(FONT_TIME_KEY)
+
+    return _check_string(time_font)
 
 def get_allow_shortcuts():
     return ss_settings.get_boolean(ALLOW_SHORTCUTS)
