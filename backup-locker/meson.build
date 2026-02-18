@@ -21,7 +21,3 @@ backup_locker = executable('cs-backup-locker',
   install: true
 )
 
-install_data('cinnamon-unlock-desktop',
-    install_dir: bindir,
-    install_mode: 'rwxr-xr-x'
-)
