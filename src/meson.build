@@ -44,7 +44,6 @@ install_data(app_py + app_css,
 
 app_scripts = [
   ['cinnamon-screensaver-main.py', 'cinnamon-screensaver'],
-  ['cinnamon-screensaver-command.py', 'cinnamon-screensaver-command']
 ]
 
 foreach script : app_scripts

@@ -1,2 +1,1 @@
 cinnamon-screensaver: binary-without-manpage usr/bin/cinnamon-screensaver
-cinnamon-screensaver: binary-without-manpage usr/bin/cinnamon-screensaver-command
