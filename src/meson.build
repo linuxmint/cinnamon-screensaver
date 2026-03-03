@@ -32,6 +32,7 @@ app_py = [
   'status.py',
   'unlock.py',
   'volumeControl.py',
+  'weather.py'
 ]
 
 app_css = [
