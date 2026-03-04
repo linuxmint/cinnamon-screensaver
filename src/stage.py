@@ -20,6 +20,8 @@ from util import utils, trackers, settings
 from util.eventHandler import EventHandler
 from util.utils import DEBUG
 
+MIN_MONITOR_DIMENSION = 64
+
 try:
     from osk import OnScreenKeyboard
 except Exception as e:
@@ -160,14 +162,52 @@ class Stage(Gtk.Window):
         except Exception as e:
             print("Problem updating monitor views views: %s" % str(e))
 
+    def _is_geometry_valid(self):
+        """
+        Check that all monitor geometries and the screen geometry are sane.
+        Returns False if any dimension is below MIN_MONITOR_DIMENSION.
+        """
+        screen_rect = status.screen.get_screen_geometry()
+        if screen_rect.width < MIN_MONITOR_DIMENSION or screen_rect.height < MIN_MONITOR_DIMENSION:
+            DEBUG("Stage: screen geometry %dx%d is below minimum %d"
+                  % (screen_rect.width, screen_rect.height, MIN_MONITOR_DIMENSION))
+            return False
+
+        n = status.screen.get_n_monitors()
+        for i in range(n):
+            rect = status.screen.get_monitor_geometry(i)
+            if rect.width < MIN_MONITOR_DIMENSION or rect.height < MIN_MONITOR_DIMENSION:
+                DEBUG("Stage: monitor %d geometry %dx%d is below minimum %d"
+                      % (i, rect.width, rect.height, MIN_MONITOR_DIMENSION))
+                return False
+
+        return True
+
+    def _deferred_geometry_recheck(self):
+        """
+        Called after a delay when invalid geometry was detected.
+        Re-checks and emits needs-refresh if now valid.
+        """
+        if self._is_geometry_valid():
+            DEBUG("Stage: deferred geometry re-check passed, refreshing")
+            self.emit("needs-refresh")
+        else:
+            DEBUG("Stage: deferred geometry re-check still invalid, skipping refresh")
+        return False
+
     def on_screen_size_changed(self, screen, data=None):
         """
         The screen changing size should be acted upon immediately, to ensure coverage.
         Wallpapers are secondary.
         """
+        DEBUG("Stage: Received screen size-changed signal")
 
-        DEBUG("Stage: Received screen size-changed signal, refreshing stage")
+        if not self._is_geometry_valid():
+            DEBUG("Stage: invalid geometry detected in size-changed, scheduling deferred re-check")
+            trackers.timer_tracker_get().start("geometry-recheck", 1000, self._deferred_geometry_recheck)
+            return
 
+        trackers.timer_tracker_get().cancel("geometry-recheck")
         self.emit("needs-refresh")
 
     def on_monitors_changed(self, screen, data=None):
@@ -176,8 +216,14 @@ class Stage(Gtk.Window):
         as on_screen_size_changed), and follow up at idle with actual monitor view
         refreshes (wallpapers.)
         """
-        DEBUG("Stage: Received screen monitors-changed signal, refreshing stage")
+        DEBUG("Stage: Received screen monitors-changed signal")
 
+        if not self._is_geometry_valid():
+            DEBUG("Stage: invalid geometry detected in monitors-changed, scheduling deferred re-check")
+            trackers.timer_tracker_get().start("geometry-recheck", 1000, self._deferred_geometry_recheck)
+            return
+
+        trackers.timer_tracker_get().cancel("geometry-recheck")
         self.emit("needs-refresh")
 
     def on_composited_changed(self, screen, data=None):
@@ -424,6 +470,7 @@ class Stage(Gtk.Window):
         self.set_timeout_active(None, False)
 
         trackers.timer_tracker_get().cancel("setup-delayed-components")
+        trackers.timer_tracker_get().cancel("geometry-recheck")
         self.destroy_children()
 
         self.gdk_filter.stop()
@@ -461,6 +508,13 @@ class Stage(Gtk.Window):
 
         for index in monitors:
             monitor = MonitorView(index)
+
+            if (monitor.rect.width < MIN_MONITOR_DIMENSION
+                    or monitor.rect.height < MIN_MONITOR_DIMENSION):
+                DEBUG("Stage: skipping monitor %d with invalid geometry %dx%d"
+                      % (index, monitor.rect.width, monitor.rect.height))
+                monitor.destroy()
+                continue
 
             image = Gtk.Image()
 
@@ -756,13 +810,19 @@ class Stage(Gtk.Window):
 
         if status.InteractiveDebug:
             monitor_n = status.screen.get_primary_monitor()
-            self.rect = status.screen.get_monitor_geometry(monitor_n)
+            new_rect = status.screen.get_monitor_geometry(monitor_n)
         else:
-            self.rect = status.screen.get_screen_geometry()
+            new_rect = status.screen.get_screen_geometry()
 
             scale = status.screen.get_global_scale()
-            self.rect.width *= scale
-            self.rect.height *= scale
+            new_rect.width *= scale
+            new_rect.height *= scale
+
+        if new_rect.width < MIN_MONITOR_DIMENSION or new_rect.height < MIN_MONITOR_DIMENSION:
+            DEBUG("Stage.update_geometry - rejecting invalid geometry: %d x %d" % (new_rect.width, new_rect.height))
+            return
+
+        self.rect = new_rect
 
         DEBUG("Stage.update_geometry - new backdrop position: %d, %d  new size: %d x %d" % (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 

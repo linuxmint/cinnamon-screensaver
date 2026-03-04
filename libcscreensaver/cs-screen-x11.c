@@ -42,6 +42,7 @@ static gboolean debug_mode = FALSE;
 #define cs_XFree(p) do { if ((p)) XFree ((p)); } while (0)
 
 #define PRIMARY_MONITOR 0
+#define MIN_MONITOR_DIMENSION 64
 
 static gboolean
 cs_rectangle_equal (const GdkRectangle *src1,
@@ -438,25 +439,127 @@ is_full_change (CsScreen *screen)
     return same;
 }
 
+static gboolean
+has_valid_monitor_dimensions (CsScreen *screen)
+{
+    gint i;
+
+    for (i = 0; i < screen->n_monitor_infos; i++)
+    {
+        if (screen->monitor_infos[i].rect.width < MIN_MONITOR_DIMENSION ||
+            screen->monitor_infos[i].rect.height < MIN_MONITOR_DIMENSION)
+        {
+            g_printerr ("Monitor %d has invalid dimensions %dx%d (minimum %d), rejecting geometry\n",
+                         i,
+                         screen->monitor_infos[i].rect.width,
+                         screen->monitor_infos[i].rect.height,
+                         MIN_MONITOR_DIMENSION);
+            return FALSE;
+        }
+    }
+
+    if (screen->rect.width < MIN_MONITOR_DIMENSION ||
+        screen->rect.height < MIN_MONITOR_DIMENSION)
+    {
+        g_printerr ("Screen has invalid dimensions %dx%d (minimum %d), rejecting geometry\n",
+                     screen->rect.width,
+                     screen->rect.height,
+                     MIN_MONITOR_DIMENSION);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
+deferred_geometry_recheck (gpointer user_data)
+{
+    CsScreen *screen = CS_SCREEN (user_data);
+
+    screen->deferred_recheck_id = 0;
+
+    DEBUG ("CsScreen deferred geometry re-check firing at %ld\n", g_get_monotonic_time () / 1000);
+
+    /* Re-read current geometry and check if it has settled to a valid state */
+    CsMonitorInfo *old_monitor_infos = screen->monitor_infos;
+    GdkRectangle old_rect = screen->rect;
+
+    reload_monitor_infos (screen);
+    reload_screen_info (screen);
+
+    if (!has_valid_monitor_dimensions (screen) || !is_full_change (screen))
+    {
+        /* Still invalid - revert again */
+        g_printerr ("Deferred re-check: geometry still invalid, keeping previous state\n");
+        g_free (screen->monitor_infos);
+        screen->monitor_infos = old_monitor_infos;
+        screen->rect = old_rect;
+        return G_SOURCE_REMOVE;
+    }
+
+    g_free (old_monitor_infos);
+
+    g_printerr ("Deferred re-check: geometry settled, emitting change signals\n");
+    g_signal_emit (screen, signals[SCREEN_MONITORS_CHANGED], 0);
+    g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
+
+    return G_SOURCE_REMOVE;
+}
+
+static void
+schedule_deferred_recheck (CsScreen *screen)
+{
+    if (screen->deferred_recheck_id > 0)
+    {
+        g_source_remove (screen->deferred_recheck_id);
+    }
+
+    screen->deferred_recheck_id = g_timeout_add (500, deferred_geometry_recheck, screen);
+}
+
 static void
 on_monitors_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
     CsScreen *screen;
     CsMonitorInfo *old_monitor_infos;
+    GdkRectangle old_rect;
+    gint old_n_monitor_infos;
 
     screen = CS_SCREEN (user_data);
 
     DEBUG ("CsScreen received 'monitors-changed' signal from GdkScreen %ld\n", g_get_monotonic_time () / 1000);
     gdk_flush ();
 
+    /* Save old state for rollback */
     old_monitor_infos = screen->monitor_infos;
+    old_rect = screen->rect;
+    old_n_monitor_infos = screen->n_monitor_infos;
+
     reload_monitor_infos (screen);
-    g_free (old_monitor_infos);
     reload_screen_info (screen);
+
+    if (!has_valid_monitor_dimensions (screen))
+    {
+        /* Invalid geometry - revert to old state and schedule re-check */
+        g_printerr ("Monitors-changed: invalid geometry detected, reverting and scheduling re-check\n");
+        g_free (screen->monitor_infos);
+        screen->monitor_infos = old_monitor_infos;
+        screen->n_monitor_infos = old_n_monitor_infos;
+        screen->rect = old_rect;
+        schedule_deferred_recheck (screen);
+        return;
+    }
+
+    g_free (old_monitor_infos);
 
     if (is_full_change (screen))
     {
         g_signal_emit (screen, signals[SCREEN_MONITORS_CHANGED], 0);
+    }
+    else
+    {
+        /* Screen/monitor rects don't add up - schedule re-check */
+        schedule_deferred_recheck (screen);
     }
 }
 
@@ -465,20 +568,44 @@ on_screen_changed (GdkScreen *gdk_screen, gpointer user_data)
 {
     CsScreen *screen;
     CsMonitorInfo *old_monitor_infos;
+    GdkRectangle old_rect;
+    gint old_n_monitor_infos;
 
     screen = CS_SCREEN (user_data);
 
     DEBUG ("CsScreen received 'size-changed' signal from GdkScreen %ld\n", g_get_monotonic_time () / 1000);
     gdk_flush ();
 
+    /* Save old state for rollback */
     old_monitor_infos = screen->monitor_infos;
+    old_rect = screen->rect;
+    old_n_monitor_infos = screen->n_monitor_infos;
+
     reload_monitor_infos (screen);
-    g_free (old_monitor_infos);
     reload_screen_info (screen);
+
+    if (!has_valid_monitor_dimensions (screen))
+    {
+        /* Invalid geometry - revert to old state and schedule re-check */
+        g_printerr ("Size-changed: invalid geometry detected, reverting and scheduling re-check\n");
+        g_free (screen->monitor_infos);
+        screen->monitor_infos = old_monitor_infos;
+        screen->n_monitor_infos = old_n_monitor_infos;
+        screen->rect = old_rect;
+        schedule_deferred_recheck (screen);
+        return;
+    }
+
+    g_free (old_monitor_infos);
 
     if (is_full_change (screen))
     {
         g_signal_emit (screen, signals[SCREEN_SIZE_CHANGED], 0);
+    }
+    else
+    {
+        /* Screen/monitor rects don't add up - schedule re-check */
+        schedule_deferred_recheck (screen);
     }
 }
 
@@ -562,6 +689,12 @@ cs_screen_dispose (GObject *object)
     {
         g_signal_handler_disconnect (screen->gdk_screen, screen->composited_changed_id);
         screen->composited_changed_id = 0;
+    }
+
+    if (screen->deferred_recheck_id > 0)
+    {
+        g_source_remove (screen->deferred_recheck_id);
+        screen->deferred_recheck_id = 0;
     }
 
     DEBUG ("CsScreen dispose\n");

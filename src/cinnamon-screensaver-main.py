@@ -11,8 +11,10 @@ import signal
 import gettext
 import argparse
 import os
+import atexit
 import setproctitle
 import sys
+import traceback
 
 import config
 import status
@@ -21,6 +23,46 @@ from service import ScreensaverService
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install("cinnamon-screensaver", "/usr/share/locale")
+
+
+def _excepthook(exc_type, exc_value, exc_tb):
+    """Log full tracebacks for unhandled exceptions instead of silent death."""
+    print("cinnamon-screensaver: unhandled exception:", flush=True)
+    traceback.print_exception(exc_type, exc_value, exc_tb)
+
+sys.excepthook = _excepthook
+
+
+def _cleanup_pam_helpers():
+    """Kill any orphaned cinnamon-screensaver-pam-helper child processes."""
+    try:
+        import subprocess
+        pid = os.getpid()
+        result = subprocess.run(
+            ["pgrep", "-P", str(pid), "-f", "cinnamon-screensaver-pam-helper"],
+            capture_output=True, text=True
+        )
+        for line in result.stdout.strip().split("\n"):
+            if line.strip():
+                child_pid = int(line.strip())
+                print("cinnamon-screensaver: cleaning up orphaned PAM helper pid %d" % child_pid, flush=True)
+                try:
+                    os.kill(child_pid, signal.SIGTERM)
+                except OSError:
+                    pass
+    except Exception as e:
+        print("cinnamon-screensaver: error cleaning up PAM helpers: %s" % e, flush=True)
+
+atexit.register(_cleanup_pam_helpers)
+
+
+def _sigterm_handler(signum, frame):
+    """Handle SIGTERM gracefully: clean up PAM helpers and exit."""
+    print("cinnamon-screensaver: received SIGTERM, cleaning up...", flush=True)
+    _cleanup_pam_helpers()
+    sys.exit(0)
+
+signal.signal(signal.SIGTERM, _sigterm_handler)
 
 class Main(Gtk.Application):
     """
