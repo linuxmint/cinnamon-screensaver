@@ -45,6 +45,9 @@ typedef struct
     gboolean low_res;
     gint smallest_width;
     gint smallest_height;
+
+    /* Deferred geometry re-check after transient mismatch (e.g. NVIDIA multi-monitor) */
+    guint deferred_recheck_id;
 } CsScreen;
 
 typedef struct
