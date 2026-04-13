@@ -1,3 +1,10 @@
+cinnamon-screensaver (6.7.1) zena; urgency=medium
+
+  [ Michael Webster ]
+  * Add stale workflow.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 13 Apr 2026 08:35:00 +0100
+
 cinnamon-screensaver (6.7.0) unstable; urgency=medium
 
   * Remove cinnamon-screensaver-command and cinnamon-unlock-desktop
