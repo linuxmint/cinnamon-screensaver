@@ -70,7 +70,7 @@ def user_can_lock():
         pass
 
     # Don't lock the screensaver in guest or live sessions
-    if xapp.os.is_live_session() or xapp.os.is_guest_session():
+    if xapp.os.is_guest_session():
         return False
 
     return True
