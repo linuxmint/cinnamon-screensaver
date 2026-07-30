@@ -16,16 +16,6 @@ from passwordEntry import PasswordEntry
 from pamhelper.authClient import AuthClient
 from widgets.transparentButton import TransparentButton
 
-# Dummy strings to force xgettext to extract fprintd PAM messages for translation
-_dummy_strings_fprintd = [
-    _("Place your finger on the fingerprint reader"),
-    _("Swipe your finger across the fingerprint reader"),
-    _("Place your left thumb on the fingerprint reader"),
-    _("Swipe your left thumb across the fingerprint reader"),
-    _("Failed to match fingerprint"),
-    _("Fingerprint authentication failed")
-]
-
 class UnlockDialog(BaseWindow):
     """
     The main widget for the unlock dialog - this is a direct child of
@@ -222,7 +212,6 @@ class UnlockDialog(BaseWindow):
             self.entry_box.set_sensitive(True)
             self.password_entry.stop_progress()
             self.password_entry.set_placeholder_text (self.password_entry.placeholder_text)
-            self.update_authinfo_label()
 
     def on_authentication_prompt_changed(self, auth_client, prompt):
         self.password_entry.show_all()
@@ -236,9 +225,47 @@ class UnlockDialog(BaseWindow):
         self.password_entry.placeholder_text = prompt
         self.password_entry.set_placeholder_text(self.password_entry.placeholder_text)
 
+    # Dummy strings for fprintd translations so they get extracted into the .pot file
+    def _dummy_strings_for_translation(self):
+        _("Place your finger on the fingerprint reader")
+        _("Swipe your finger across the fingerprint reader")
+        _("Failed to match fingerprint")
+        _("Swipe your finger again")
+        _("Place your left thumb on the fingerprint reader")
+        _("Swipe your left thumb across the fingerprint reader")
+        _("Place your left index finger on the fingerprint reader")
+        _("Swipe your left index finger across the fingerprint reader")
+        _("Place your left middle finger on the fingerprint reader")
+        _("Swipe your left middle finger across the fingerprint reader")
+        _("Place your left ring finger on the fingerprint reader")
+        _("Swipe your left ring finger across the fingerprint reader")
+        _("Place your left little finger on the fingerprint reader")
+        _("Swipe your left little finger across the fingerprint reader")
+        _("Place your right thumb on the fingerprint reader")
+        _("Swipe your right thumb across the fingerprint reader")
+        _("Place your right index finger on the fingerprint reader")
+        _("Swipe your right index finger across the fingerprint reader")
+        _("Place your right middle finger on the fingerprint reader")
+        _("Swipe your right middle finger across the fingerprint reader")
+        _("Place your right ring finger on the fingerprint reader")
+        _("Swipe your right ring finger across the fingerprint reader")
+        _("Place your right little finger on the fingerprint reader")
+        _("Swipe your right little finger across the fingerprint reader")
+        _("Place your finger on the reader again")
+        _("Your finger was not centered, try swiping your finger again")
+        _("Remove your finger, and try swiping your finger again")
+
     def on_authentication_info_changed(self, auth_client, info):
-        self.auth_info = _(info)
-        self.update_authinfo_label()
+        translated_info = _(info)
+        
+        # If the info is an error message, show it in the red error label and shake the screen
+        if "fail" in info.lower() or "not match" in info.lower() or "error" in info.lower():
+            self.auth_message_label.set_text(translated_info)
+            self.auth_message_label.show()
+            self.blink()
+        else:
+            self.auth_info = translated_info
+            self.update_authinfo_label()
 
     def cancel(self):
         """
