@@ -16,6 +16,16 @@ from passwordEntry import PasswordEntry
 from pamhelper.authClient import AuthClient
 from widgets.transparentButton import TransparentButton
 
+# Dummy strings to force xgettext to extract fprintd PAM messages for translation
+_dummy_strings_fprintd = [
+    _("Place your finger on the fingerprint reader"),
+    _("Swipe your finger across the fingerprint reader"),
+    _("Place your left thumb on the fingerprint reader"),
+    _("Swipe your left thumb across the fingerprint reader"),
+    _("Failed to match fingerprint"),
+    _("Fingerprint authentication failed")
+]
+
 class UnlockDialog(BaseWindow):
     """
     The main widget for the unlock dialog - this is a direct child of
@@ -212,7 +222,6 @@ class UnlockDialog(BaseWindow):
             self.entry_box.set_sensitive(True)
             self.password_entry.stop_progress()
             self.password_entry.set_placeholder_text (self.password_entry.placeholder_text)
-            self.auth_info = ""
             self.update_authinfo_label()
 
     def on_authentication_prompt_changed(self, auth_client, prompt):
@@ -228,7 +237,7 @@ class UnlockDialog(BaseWindow):
         self.password_entry.set_placeholder_text(self.password_entry.placeholder_text)
 
     def on_authentication_info_changed(self, auth_client, info):
-        self.auth_info = info
+        self.auth_info = _(info)
         self.update_authinfo_label()
 
     def cancel(self):

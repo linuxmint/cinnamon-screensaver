@@ -201,6 +201,10 @@ auth_message_handler (CsAuthMessageStyle style,
             break;
         case CS_AUTH_MESSAGE_ERROR_MSG:
             DEBUG ("CS_AUTH_MESSAGE_ERROR_MSG\n");
+            if (msg != NULL)
+            {
+              send_info (msg);
+            }
             break;
         case CS_AUTH_MESSAGE_TEXT_INFO:
             DEBUG ("CS_AUTH_MESSAGE_TEXT_INFO\n");
