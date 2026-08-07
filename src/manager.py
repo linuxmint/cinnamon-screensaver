@@ -288,7 +288,9 @@ class ScreensaverManager(GObject.Object):
             argv.append("--debug")
 
         try:
-            self.fb_pid = GLib.spawn_async(argv)[0]
+            # pygobject >= 3.57 returns a plain GLib.Pid object here, which no
+            # longer behaves like an int - keep the raw pid for os.kill().
+            self.fb_pid = int(GLib.spawn_async(argv)[0])
         except GLib.Error as e:
             self.fb_failed_to_start = True
             print("Could not start screensaver fallback process: %s" % e.message, flush=True)
