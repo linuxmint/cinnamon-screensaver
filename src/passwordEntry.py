@@ -59,6 +59,8 @@ class PasswordEntry(Gtk.Entry):
         height = icon_rect.height - 4
 
         handled = False
+        if self.lockscreen_layout_source is None:
+            return False
         if settings.get_show_flags():
             ui_scale = self.get_scale_factor()
 
@@ -203,6 +205,8 @@ class PasswordEntry(Gtk.Entry):
         also ensures a redraw at the correct time to update the flag image.
         """
         self.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "screensaver-blank")
+        if self.lockscreen_layout_source is None:
+            return
         self.set_icon_tooltip_text(Gtk.EntryIconPosition.PRIMARY, self.lockscreen_layout_source.display_name)
 
     def on_destroy(self, widget, data=None):
@@ -239,6 +243,8 @@ class PasswordEntry(Gtk.Entry):
         Called when the unlock dialog is destroyed, restores
         the group that was active before the screensaver was activated.
         """
+        if self.lockscreen_layout_source is None or self.system_layout_source is None:
+            return
         if settings.get_kb_group() != self.lockscreen_layout_source.index:
             settings.set_kb_group(self.lockscreen_layout_source.index)
 
