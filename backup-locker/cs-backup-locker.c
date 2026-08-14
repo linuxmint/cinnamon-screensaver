@@ -538,8 +538,6 @@ screensaver_window_gone (GObject      *source,
 
         g_mutex_unlock (&pretty_xid_mutex);
     }
-
-    g_clear_object (&task_cancellable);
 }
 
 static void
@@ -554,6 +552,7 @@ setup_window_monitor (BackupWindow *window, gulong xid)
     window->should_grab = FALSE;
     window->pretty_xid = xid;
 
+    g_clear_object (&window_monitor_cancellable);
     window_monitor_cancellable = g_cancellable_new ();
     task = g_task_new (NULL, window_monitor_cancellable, screensaver_window_gone, window);
 
