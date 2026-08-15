@@ -1,3 +1,13 @@
+cinnamon-screensaver (6.7.2) alfa; urgency=medium
+
+  [ CyberNomad ]
+  * passwordEntry: guard against None layout sources (#504)
+
+  [ Fabio Fantoni ]
+  * Fix the desktop staying locked after entering the password with pygobject >= 3.57 (#508)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 15 Aug 2026 12:40:37 +0200
+
 cinnamon-screensaver (6.7.1) zena; urgency=medium
 
   [ Michael Webster ]
