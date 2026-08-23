@@ -152,7 +152,7 @@ class AuthClient(GObject.Object):
 
             self.in_pipe.flush(None)
         except GLib.Error as e:
-            if e.code != Gib.IOErrorEnum.CANCELLED:
+            if e.code != Gio.IOErrorEnum.CANCELLED:
                 print("Error writing to pam helper: %s" % e.message)
 
     def message_from_child(self, pipe, res):
