@@ -245,6 +245,13 @@ class PasswordEntry(Gtk.Entry):
         """
         if self.lockscreen_layout_source is None or self.system_layout_source is None:
             return
+
+        # Mirror the guards in on_layout_sources_changed() /
+        # on_current_layout_changed(): with a single layout there is nothing to
+        # restore, and set_lockscreen_keyboard_layout() never ran either.
+        if not self.cinnamon.has_multiple_keyboard_layouts():
+            return
+
         if settings.get_kb_group() != self.lockscreen_layout_source.index:
             settings.set_kb_group(self.lockscreen_layout_source.index)
 
