@@ -1,3 +1,10 @@
+cinnamon-screensaver (6.7.3) alfa; urgency=medium
+
+  [ Michael Webster ]
+  * authClient.py: Fix typo.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 05 Sep 2026 15:14:54 +0100
+
 cinnamon-screensaver (6.7.2) alfa; urgency=medium
 
   [ CyberNomad ]
