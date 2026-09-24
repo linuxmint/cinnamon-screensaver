@@ -76,9 +76,6 @@ class CinnamonClient(BaseClient):
                 return source
         return None
 
-    def activate_layout_index(self, index):
-        self.proxy.ActivateInputSourceIndex("(i)", index)
-
     def activate_next_layout(self):
         current = 0
 
@@ -92,7 +89,35 @@ class CinnamonClient(BaseClient):
         if new > len(self.sources) - 1:
             new = 0
 
-        self.proxy.ActivateInputSourceIndex("(i)", self.sources[new].index)
+        self.activate_layout_index(self.sources[new].index)
+
+    def activate_layout_index(self, index):
+        """
+        Activate a keyboard layout without blocking our main loop.
+
+        Cinnamon services this call on its single JS main loop, and the work it
+        does there is not cheap - an xkb reconfiguration plus an IBus
+        round-trip.  When Cinnamon is busy (for instance reconfiguring monitors
+        while resuming on a docking station) a synchronous call parks us for the
+        full 25s default GDBus timeout.  During that time the unlock dialog is
+        frozen: keystrokes are never delivered and the PAM conversation fails,
+        so the user cannot log back in.  Fire and forget instead.
+        """
+        if not self.ensure_proxy_alive():
+            return
+
+        # NOTE: PyGI selects the async path on the *presence* of the
+        # result_handler key, so it has to be a real callable - passing None
+        # makes it raise TypeError from the reply handler instead.
+        self.proxy.ActivateInputSourceIndex("(i)", index,
+                                            result_handler=self.activate_layout_finished,
+                                            error_handler=self.activate_layout_error)
+
+    def activate_layout_finished(self, proxy, result, data=None):
+        pass
+
+    def activate_layout_error(self, proxy, error, data=None):
+        print("Failed to activate keyboard layout: %s" % error.message, flush=True)
 
     def exit_expo_and_overview(self):
         if self.ensure_proxy_alive():
