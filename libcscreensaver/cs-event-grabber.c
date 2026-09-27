@@ -325,11 +325,6 @@ cs_event_grabber_move_mouse (CsEventGrabber    *grab,
 
         result = cs_event_grabber_get_mouse (grab, window, screen, hide_cursor);
 
-        if (result != GDK_GRAB_SUCCESS) {
-                sleep (1);
-                result = cs_event_grabber_get_mouse (grab, window, screen, hide_cursor);
-        }
-
         if ((result != GDK_GRAB_SUCCESS) && old_window) {
                 DEBUG ("Could not grab mouse for new window.  Resuming previous grab.\n");
                 cs_event_grabber_get_mouse (grab, old_window, old_screen, old_hide_cursor);
@@ -378,11 +373,6 @@ cs_event_grabber_move_keyboard (CsEventGrabber    *grab,
         }
 
         result = cs_event_grabber_get_keyboard (grab, window, screen);
-
-        if (result != GDK_GRAB_SUCCESS) {
-                sleep (1);
-                result = cs_event_grabber_get_keyboard (grab, window, screen);
-        }
 
         if ((result != GDK_GRAB_SUCCESS) && old_window) {
                 DEBUG ("Could not grab keyboard for new window.  Resuming previous grab.\n");
@@ -600,28 +590,30 @@ cs_event_grabber_grab_offscreen (CsEventGrabber *grab,
         return res;
 }
 
-/* This is similar to cs_event_grabber_grab_window but doesn't fail */
-void
+/* Keep the previous grab if the new window is not ready yet. The caller can
+ * retry after returning to the main loop instead of blocking it indefinitely.
+ */
+gboolean
 cs_event_grabber_move_to_window (CsEventGrabber    *grab,
                         GdkWindow *window,
                         GdkScreen *screen,
                         gboolean   hide_cursor)
 {
-        gboolean result = FALSE;
+        g_return_val_if_fail (CS_IS_EVENT_GRABBER (grab), FALSE);
+        g_return_val_if_fail (window != NULL, FALSE);
+        g_return_val_if_fail (screen != NULL, FALSE);
 
-        g_return_if_fail (CS_IS_EVENT_GRABBER (grab));
+        if (gdk_window_is_destroyed (window) || !gdk_window_is_viewable (window)) {
+                return FALSE;
+        }
 
         xorg_lock_smasher_set_active (grab, FALSE);
 
-        do {
-                result = cs_event_grabber_move_keyboard (grab, window, screen);
-                gdk_flush ();
-        } while (!result);
+        if (!cs_event_grabber_move_keyboard (grab, window, screen)) {
+                return FALSE;
+        }
 
-        do {
-                result = cs_event_grabber_move_mouse (grab, window, screen, hide_cursor);
-                gdk_flush ();
-        } while (!result);
+        return cs_event_grabber_move_mouse (grab, window, screen, hide_cursor);
 }
 
 static void
