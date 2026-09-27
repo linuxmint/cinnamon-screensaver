@@ -34,6 +34,7 @@ class ScreensaverManager(GObject.Object):
         self.stage = None
         self.old_stage = None
         self.stage_refresh_id = 0
+        self.grab_retry_id = 0
         self.refreshing = False
         self.refresh_again = False
 
@@ -381,8 +382,24 @@ class ScreensaverManager(GObject.Object):
         Makes a hard grab on the Stage window, all keyboard and mouse events are dispatched or eaten
         by us now.
         """
-        if self.stage is not None:
-            self.grab_helper.move_to_window(self.stage.get_window(), Gdk.Screen.get_default(),  True)
+        if self.stage is None:
+            return
+
+        window = self.stage.get_window()
+        if window is not None and self.grab_helper.move_to_window(window, Gdk.Screen.get_default(), True):
+            self.cancel_grab_retry()
+        elif self.grab_retry_id == 0:
+            self.grab_retry_id = GLib.timeout_add_seconds(1, self.retry_grab_stage)
+
+    def retry_grab_stage(self):
+        self.grab_retry_id = 0
+        self.grab_stage()
+        return False
+
+    def cancel_grab_retry(self):
+        if self.grab_retry_id > 0:
+            GLib.source_remove(self.grab_retry_id)
+            self.grab_retry_id = 0
 
     def queue_refresh_stage(self, stage):
         """
@@ -461,6 +478,7 @@ class ScreensaverManager(GObject.Object):
         """
         self.activated_timestamp = 0
         self.stop_lock_delay()
+        self.cancel_grab_retry()
 
     def cancel_unlocking(self):
         """
