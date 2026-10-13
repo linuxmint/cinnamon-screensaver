@@ -1,3 +1,10 @@
+cinnamon-screensaver (6.7.4) adrien; urgency=medium
+
+  [ Kamil Krzywanski ]
+  * cinnamonClient: don't block the main loop when activating a keyboard layout (#514)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 13 Oct 2026 13:26:01 +0100
+
 cinnamon-screensaver (6.7.3) alfa; urgency=medium
 
   [ Michael Webster ]
