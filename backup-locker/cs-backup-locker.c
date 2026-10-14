@@ -30,6 +30,7 @@ G_DECLARE_FINAL_TYPE (BackupWindow, backup_window, BACKUP, WINDOW, GtkWindow)
 
 static void setup_window_monitor (BackupWindow *window, gulong xid);
 static void quit (BackupWindow *window);
+static gboolean activate_backup_window_cb (BackupWindow *window);
 
 struct _BackupWindow
 {
@@ -143,23 +144,35 @@ activate_backup_window_cb (BackupWindow *window)
         if (cs_event_grabber_grab_root (window->grabber, FALSE))
         {
             guint32 user_time;
-            cs_event_grabber_move_to_window (window->grabber,
-                                          gtk_widget_get_window (GTK_WIDGET (window)),
-                                          gtk_widget_get_screen (GTK_WIDGET (window)),
-                                          FALSE);
-            g_signal_connect_swapped (window, "grab-broken-event", G_CALLBACK (window_grab_broken), window);
 
+            /* Keep the fallback opaque while waiting for its window to accept
+             * the grab. Otherwise the failed transfer leaves it transparent.
+             */
             set_active_background (window, TRUE);
+            gtk_widget_show (window->info_box);
+            position_info_box (window);
+
+            if (!cs_event_grabber_move_to_window (window->grabber,
+                                                  gtk_widget_get_window (GTK_WIDGET (window)),
+                                                  gtk_widget_get_screen (GTK_WIDGET (window)),
+                                                  FALSE))
+            {
+                window->activate_idle_id = g_timeout_add_seconds (1,
+                                                                   (GSourceFunc) activate_backup_window_cb,
+                                                                   window);
+                return G_SOURCE_REMOVE;
+            }
+            g_signal_connect_swapped (window, "grab-broken-event", G_CALLBACK (window_grab_broken), window);
 
             user_time = gdk_x11_display_get_user_time (gtk_widget_get_display (GTK_WIDGET (window)));
             gdk_x11_window_set_user_time (gtk_widget_get_window (GTK_WIDGET (window)), user_time);
-
-            gtk_widget_show (window->info_box);
-            position_info_box (window);
         }
         else
         {
-            return G_SOURCE_CONTINUE;
+            window->activate_idle_id = g_timeout_add_seconds (1,
+                                                               (GSourceFunc) activate_backup_window_cb,
+                                                               window);
+            return G_SOURCE_REMOVE;
         }
     }
 
@@ -177,6 +190,7 @@ activate_backup_window (BackupWindow *window)
 static void
 backup_window_ungrab (BackupWindow *window)
 {
+    g_clear_handle_id (&window->activate_idle_id, g_source_remove);
     cs_event_grabber_release (window->grabber);
 
     window->should_grab = FALSE;

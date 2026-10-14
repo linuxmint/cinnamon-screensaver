@@ -46,7 +46,7 @@ gboolean  cs_event_grabber_grab_root        (CsEventGrabber    *grab,
 gboolean  cs_event_grabber_grab_offscreen   (CsEventGrabber    *grab,
                                     gboolean   hide_cursor);
 
-void      cs_event_grabber_move_to_window   (CsEventGrabber    *grab,
+gboolean  cs_event_grabber_move_to_window   (CsEventGrabber    *grab,
                                     GdkWindow *window,
                                     GdkScreen *screen,
                                     gboolean   hide_cursor);
