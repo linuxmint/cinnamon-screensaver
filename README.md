@@ -40,6 +40,18 @@ Once the user types their password and hits enter or clicks unlock, we authentic
 If the authentication is successful, all widgets are destroyed, all grabs released, and we go back
 to the idle listening state.
 
+### logind lock state
+
+The logind session's `LockedHint` is true only while the screensaver is both
+active and locked. Merely blanking the screen during the idle grace period
+does not mark the session locked. A lock request does not set the hint until
+the stage is visible; unlocking clears it when the stage is dismissed.
+
+The existing logind `Lock` and `Unlock` signals continue to drive the manager.
+Hint updates are asynchronous so an unavailable logind does not block the
+screensaver's main loop. ConsoleKit behavior is unchanged.
+
+
 Files:
 
 application.css:  Application priority css, stuff to make the unlock dialog, clock widgets look ok against

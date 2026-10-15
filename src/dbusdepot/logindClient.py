@@ -71,6 +71,19 @@ class LogindClient(LoginInterface, BaseClient):
 
         self.emit("startup-status", True)
 
+    def on_manager_state_changed(self, manager, *args):
+        # Activation can precede locking (the idle grace period), and locking
+        # can precede activation (the stage is still being constructed).
+        locked = manager.get_active() and manager.is_locked()
+        self.session_proxy.call_set_locked_hint(locked, None,
+                                                self.on_locked_hint_set, None)
+
+    def on_locked_hint_set(self, proxy, result, data=None):
+        try:
+            proxy.call_set_locked_hint_finish(result)
+        except GLib.Error as e:
+            print("login client: could not set locked hint: %s" % e, flush=True)
+
     def on_active_changed(self, proxy, pspec, data=None):
         if self.session_proxy.get_property("active"):
             self.emit("active")

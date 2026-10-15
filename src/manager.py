@@ -24,6 +24,7 @@ class ScreensaverManager(GObject.Object):
     """
     __gsignals__ = {
         'active-changed': (GObject.SignalFlags.RUN_LAST, None, (bool, )),
+        'locked-changed': (GObject.SignalFlags.RUN_LAST, None, (bool, )),
     }
 
     def __init__(self):
@@ -63,6 +64,7 @@ class ScreensaverManager(GObject.Object):
         return status.Locked
 
     def set_locked(self, locked):
+        was_locked = status.Locked
         if locked:
             status.Locked = True
             if status.UseFallback:
@@ -71,6 +73,9 @@ class ScreensaverManager(GObject.Object):
             status.Locked = False
             if status.UseFallback:
                 self.kill_fallback_window()
+
+        if was_locked != status.Locked:
+            self.emit("locked-changed", status.Locked)
 
     def lock(self, msg=""):
         """

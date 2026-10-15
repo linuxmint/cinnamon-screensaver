@@ -86,6 +86,13 @@ class LoginClientResolver:
             print("Successfully using logind", flush=True)
             self.login_client = client
             self.setup_manager_connections()
+            trackers.con_tracker_get().connect(self.manager,
+                                               "active-changed",
+                                               client.on_manager_state_changed)
+            trackers.con_tracker_get().connect(self.manager,
+                                               "locked-changed",
+                                               client.on_manager_state_changed)
+            client.on_manager_state_changed(self.manager)
         else:
             print("Failed to connect to logind, or it doesn't exist.", flush=True)
             self.try_console_kit()

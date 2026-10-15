@@ -6,6 +6,10 @@
   <property name="Active" type="b" access="read">
   </property>
 
+  <method name="SetLockedHint">
+    <arg name="locked" type="b" direction="in"/>
+  </method>
+
   <signal name="Lock">
   </signal>
   <signal name="Unlock">

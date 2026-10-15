@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+
+"""Run with the built CScreensaver typelib and src on PYTHONPATH."""
+
+import unittest
+from types import SimpleNamespace
+from unittest.mock import Mock
+
+from dbusdepot.logindClient import LogindClient
+
+
+class LockedHintTests(unittest.TestCase):
+    def test_only_a_visible_locked_stage_reports_locked(self):
+        proxy = Mock()
+        callback = Mock()
+        client = SimpleNamespace(session_proxy=proxy, on_locked_hint_set=callback)
+        # Initial state, lock requested before the stage is visible, stage
+        # visible, stage dismissed, and idle blanking without a password.
+        states = [(False, False), (False, True), (True, True),
+                  (False, True), (True, False)]
+        for active, locked in states:
+            manager = SimpleNamespace(get_active=lambda: active,
+                                      is_locked=lambda: locked)
+            LogindClient.on_manager_state_changed(client, manager)
+        self.assertEqual([call.args[0] for call in proxy.call_set_locked_hint.call_args_list],
+                         [False, False, True, False, False])
+        for call in proxy.call_set_locked_hint.call_args_list:
+            self.assertEqual(call.args[1:], (None, callback, None))
+
+    def test_completes_the_asynchronous_call(self):
+        proxy = Mock()
+        result = object()
+        LogindClient.on_locked_hint_set(None, proxy, result)
+        proxy.call_set_locked_hint_finish.assert_called_once_with(result)
+
+
+if __name__ == "__main__":
+    unittest.main()
