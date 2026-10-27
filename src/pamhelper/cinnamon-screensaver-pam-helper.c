@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
+#include <locale.h>
 
 #include <glib-unix.h>
 #include <glib/gi18n.h>
@@ -510,6 +511,9 @@ main (int    argc,
         response_lock_init_failed ();
         exit (1);
     }
+
+    /* PAM modules translate their messages using the process locale. */
+    setlocale (LC_ALL, "");
 
     static GOptionEntry entries [] = {
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug_mode,
