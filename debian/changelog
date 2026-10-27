@@ -1,3 +1,16 @@
+cinnamon-screensaver (6.6.2) adrien; urgency=medium
+
+  [ Fabio Fantoni ]
+  * Fix the desktop staying locked after entering the password with pygobject >= 3.57 (#508)
+
+  [ Michael Webster ]
+  * authClient.py: Fix typo.
+
+  [ Ilya Valyaev ]
+  * pam-helper: Initialize locale for translated PAM messages (#523)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 27 Oct 2026 10:54:41 +0000
+
 cinnamon-screensaver (6.6.1) zena; urgency=medium
 
   [ Balló György ]
