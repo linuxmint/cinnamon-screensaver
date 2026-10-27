@@ -389,7 +389,7 @@ class ScreensaverManager(GObject.Object):
         if window is not None and self.grab_helper.move_to_window(window, Gdk.Screen.get_default(), True):
             self.cancel_grab_retry()
         elif self.grab_retry_id == 0:
-            self.grab_retry_id = GLib.timeout_add_seconds(1, self.retry_grab_stage)
+            self.grab_retry_id = GLib.timeout_add(100, self.retry_grab_stage)
 
     def retry_grab_stage(self):
         self.grab_retry_id = 0

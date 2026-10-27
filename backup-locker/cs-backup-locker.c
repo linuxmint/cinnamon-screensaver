@@ -157,9 +157,9 @@ activate_backup_window_cb (BackupWindow *window)
                                                   gtk_widget_get_screen (GTK_WIDGET (window)),
                                                   FALSE))
             {
-                window->activate_idle_id = g_timeout_add_seconds (1,
-                                                                   (GSourceFunc) activate_backup_window_cb,
-                                                                   window);
+                window->activate_idle_id = g_timeout_add (250,
+                                                           (GSourceFunc) activate_backup_window_cb,
+                                                           window);
                 return G_SOURCE_REMOVE;
             }
             g_signal_connect_swapped (window, "grab-broken-event", G_CALLBACK (window_grab_broken), window);
