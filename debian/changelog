@@ -1,3 +1,19 @@
+cinnamon-screensaver (6.8.0) adrien; urgency=medium
+
+  [ Leigh Scott ]
+  * Add pam_oo7.so to optional authentication (#522)
+
+  [ Ilya Valyaev ]
+  * pam-helper: Initialize locale for translated PAM messages (#523)
+
+  [ Andrii Podkolzin ]
+  * Avoid blocking input grab retries on lock screen (#520)
+
+  [ Clement Lefebvre ]
+  * Reduce the amount of time between input grabs retries
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 27 Oct 2026 11:07:28 +0000
+
 cinnamon-screensaver (6.7.4) adrien; urgency=medium
 
   [ Kamil Krzywanski ]
