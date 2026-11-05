@@ -439,7 +439,6 @@ class ScreensaverManager(GObject.Object):
 
         self.cancel_timers()
         status.focusWidgets = []
-        self.grab_helper.release()
         away_message = self.stage.away_message
 
         self.old_stage = self.stage
