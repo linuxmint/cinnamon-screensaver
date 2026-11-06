@@ -1,3 +1,9 @@
+cinnamon-screensaver (6.2.2) wilma; urgency=medium
+
+  * Keep the input grab while refreshing the lock screen
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Nov 2026 11:50:00 +0000
+
 cinnamon-screensaver (6.2.1) wilma; urgency=medium
 
   [ Michael Webster ]
