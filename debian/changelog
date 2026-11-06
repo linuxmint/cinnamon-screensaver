@@ -1,4 +1,10 @@
-cinnamon-screensaver (6.6.2) adrien; urgency=medium
+cinnamon-screensaver (6.6.3) zena; urgency=medium
+
+  * Keep the input grab while refreshing the lock screen
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Nov 2026 11:52:37 +0000
+
+cinnamon-screensaver (6.6.2) zena; urgency=medium
 
   [ Fabio Fantoni ]
   * Fix the desktop staying locked after entering the password with pygobject >= 3.57 (#508)
