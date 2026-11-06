@@ -1,3 +1,9 @@
+cinnamon-screensaver (5.8.2) victoria; urgency=medium
+
+  * Keep the input grab while refreshing the lock screen
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Nov 2026 11:35:11 +0000
+
 cinnamon-screensaver (5.8.1) victoria; urgency=medium
 
   [ Rick Calixte ]
