@@ -1,3 +1,9 @@
+cinnamon-screensaver (6.8.1) adrien; urgency=medium
+
+  * Keep the input grab while refreshing the lock screen
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Nov 2026 12:18:14 +0000
+
 cinnamon-screensaver (6.8.0) adrien; urgency=medium
 
   [ Leigh Scott ]
