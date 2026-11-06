@@ -1,3 +1,9 @@
+cinnamon-screensaver (6.4.2) zara; urgency=medium
+
+  * Keep the input grab while refreshing the lock screen
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Nov 2026 11:51:31 +0000
+
 cinnamon-screensaver (6.4.1) zara; urgency=medium
 
   [ Michael Webster ]
