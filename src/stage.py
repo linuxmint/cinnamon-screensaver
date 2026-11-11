@@ -758,11 +758,15 @@ class Stage(Gtk.Window):
             monitor_n = status.screen.get_primary_monitor()
             self.rect = status.screen.get_monitor_geometry(monitor_n)
         else:
+            # get_screen_geometry() is in application pixels: the monitor
+            # rectangles it is derived from are already divided by the
+            # monitor scale factor (see apply_scale_factor() in
+            # cs-screen-x11.c), and the monitor views are laid out using
+            # those same rectangles. Scaling the rectangle a second time
+            # made the stage 'scale' times larger than the screen in each
+            # direction (4x the area at 200%), which forces the compositor
+            # to keep a needlessly large pixmap for the whole lock screen.
             self.rect = status.screen.get_screen_geometry()
-
-            scale = status.screen.get_global_scale()
-            self.rect.width *= scale
-            self.rect.height *= scale
 
         DEBUG("Stage.update_geometry - new backdrop position: %d, %d  new size: %d x %d" % (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
