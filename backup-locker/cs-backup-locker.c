@@ -93,6 +93,13 @@ root_window_size_changed (CsGdkEventFilter *filter,
     w = DisplayWidth (xdisplay, screen_num);
     h = DisplayHeight (xdisplay, screen_num);
 
+    /* DisplayWidth/Height are device pixels, but gdk_window_move_resize()
+     * takes application pixels. Without converting, the backup window is
+     * created 'scale' times larger than the screen (4x the area at 200%). */
+    gint scale = gdk_window_get_scale_factor (gdk_win);
+    w /= scale;
+    h /= scale;
+
     gdk_window_move_resize (gtk_widget_get_window (GTK_WIDGET (window)), 
                             0, 0, w, h);
     position_info_box (window);
