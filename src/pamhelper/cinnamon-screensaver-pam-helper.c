@@ -69,8 +69,11 @@ shutdown (void)
 {
     DEBUG ("cinnamon-screensaver-pam-helper (pid %i): shutting down.\n", getpid ());
 
+    /* stdin_cancellable is deliberately kept: shutdown can run from a nested
+     * main loop iteration while a PAM conversation is still pending, and
+     * g_cancellable_is_cancelled (NULL) returns FALSE, which would leave
+     * auth_message_handler waiting for a password forever. */
     g_clear_handle_id (&shutdown_id, g_source_remove);
-    g_clear_object (&stdin_cancellable);
     g_clear_pointer (&password_ptr, g_free);
 
     g_main_loop_quit (ml);
@@ -274,6 +277,11 @@ auth_check_idle (gpointer user_data)
         again = FALSE;
         send_success ();
     }
+    else if (g_cancellable_is_cancelled (stdin_cancellable))
+    {
+        /* Cancelled by SIGTERM or stdin closing: don't start another PAM attempt. */
+        again = FALSE;
+    }
     else
     {
         loop_counter++;
@@ -321,7 +329,7 @@ stdin_monitor_task_thread (GTask        *task,
         // Blocks
         size = g_input_stream_read (stream, input, 255, cancellable, &error);
 
-        if (error)
+        if (error || size == 0)
         {
             g_cancellable_cancel (cancellable);
             break;
