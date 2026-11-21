@@ -401,10 +401,14 @@ class ScreensaverManager(GObject.Object):
             GLib.source_remove(self.grab_retry_id)
             self.grab_retry_id = 0
 
-    def queue_refresh_stage(self, stage):
+    def queue_refresh_stage(self, stage=None):
         """
         Queues a complete refresh of the stage, resizing the screen if necessary,
         reconstructing the individual monitor objects, etc...
+
+        'stage' is unused - it is only here because this is also connected to the
+        Stage's "needs-refresh" signal. It needs a default, because
+        stage_refreshed() calls this with no arguments.
         """
         if self.stage_refresh_id > 0:
             GObject.source_remove(self.stage_refresh_id)
